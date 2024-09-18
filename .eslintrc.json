@@ -1,3 +1,75 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "prettier"],
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "createDefaultProgram": true
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "ignorePatterns": ["node_modules/"],
+  "extends": [
+    "airbnb",
+    "airbnb-typescript",
+    "airbnb/hooks",
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "no-bitwise": ["error", { "allow": ["~", "|", ">>", "<<", "&"] }],
+    "no-restricted-syntax": "warn",
+    "import/no-cycle": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "react/no-array-index-key": "warn",
+    "no-plusplus": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "react/require-default-props": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-props-no-spreading": 0,
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/semi": "off",
+    "react/jsx-filename-extension": ["warn", { "extensions": [".ts", ".tsx"] }],
+    "no-useless-catch": "off",
+    "import/no-unresolved": "off",
+    "import/extensions": "off",
+    "react/function-component-definition": [
+      2,
+      { "namedComponents": ["arrow-function", "function-declaration"] }
+    ],
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": "variable",
+        "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+        "leadingUnderscore": "allow"
+      }
+    ],
+    "no-param-reassign": [
+      "warn",
+      { "props": true, "ignorePropertyModificationsFor": ["state"] }
+    ],
+    "@typescript-eslint/no-empty-interface": "off",
+    "no-underscore-dangle": ["warn"],
+    "import/prefer-default-export": "warn",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "react/button-has-type": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "consistent-return": "off",
+    "no-new": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"  // 또는 "lf", "crlf" 설정
+      }
+    ]
+  }
 }
