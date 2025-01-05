@@ -35,7 +35,14 @@
 │   ├── widgets/           # 독립적으로 재사용 가능한 UI 컴포넌트
 │   ├── features/          # 기능 단위 모듈 (예: 로그인, 회원가입)
 │   ├── entities/          # 도메인 엔티티 (예: User, Product)
-│   └── shared/            # 공용 모듈 (예: Button, Modal)
+│   ├── shared/            # 공용 모듈 (예: Button, Modal)
+│   └── shadcn-ui/         # ShadCN UI 컴포넌트 관리 디렉토리
+│       ├── components/    # ShadCN의 기본 컴포넌트
+│       │   ├── Button.tsx
+│       │   ├── Input.tsx
+│       │   └── Modal.tsx
+│       └── lib/         # ShadCN 관련 유틸리티 (예: 클래스 머지)
+│           └── utils.ts
 ├── middleware.ts          # Next.js 미들웨어
 ├── package.json           # 프로젝트 종속성 및 스크립트
 ├── tsconfig.json          # TypeScript 설정
@@ -122,7 +129,55 @@ views/
 
 ---
 
+### **8. src/shadcn-ui/**
+
+- ShadCN UI 컴포넌트를 효율적으로 관리하기 위한 디렉토리.
+
+#### 주요 하위 디렉토리
+
+- ``: ShadCN 기본 컴포넌트 (Button, Input, Modal 등).
+- ``: 글로벌 스타일 확장 및 ShadCN 컴포넌트 커스터마이징.
+- ``: ShadCN 관련 유틸리티 함수 (예: `clsx`나 `classnames` 래퍼).
+
+#### 예: `Button.tsx`
+
+```tsx
+import { cn } from '@/src/shadcn-ui/utils/classMerge';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary';
+}
+
+export const Button = ({ className, variant = 'primary', ...props }: ButtonProps) => {
+  return (
+    <button
+      className={cn(
+        'px-4 py-2 rounded-md text-white',
+        variant === 'primary' && 'bg-blue-500 hover:bg-blue-600',
+        variant === 'secondary' && 'bg-gray-500 hover:bg-gray-600',
+        className
+      )}
+      {...props}
+    />
+  );
+};
+```
+
+#### 예: `classMerge.ts`
+
+```ts
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+---
+
 ## **경로 Alias 설정**
+
 - `tsconfig.json`에서 경로 Alias를 설정하여 간단하게 import할 수 있습니다:
   ```json
   {
@@ -134,16 +189,17 @@ views/
     }
   }
   ```
-- 예: `@/views/About`로 간단히 import 가능.
+- 예: `@/shadcn-ui/components/Button`로 간단히 import 가능.
 
 ---
 
 ## **폴더 구조 설계 원칙**
+
 1. **관심사 분리**: 페이지, 상태 관리, 공용 모듈을 명확히 구분.
 2. **재사용성**: 위젯과 공용 컴포넌트를 통해 코드 중복 최소화.
 3. **확장성**: 새로운 기능 추가 시 기존 코드에 최소한의 영향을 미침.
 
 ---
 
-이 구조를 통해 FSD와 Next.js의 장점을 결합하여 유지보수성과 생산성을 극대화할 수 있습니다!
+이 구조를 통해 FSD와 ShadCN UI를 효과적으로 결합하여 생산성과 유지보수성을 극대화할 수 있습니다!
 
