@@ -13,7 +13,7 @@ const config = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jest-fixed-jsdom',
   preset: 'ts-jest',
   testEnvironmentOptions: {
     customExportConditions: [''],
