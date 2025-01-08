@@ -1,17 +1,41 @@
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+type Todo = {
+  id: number;
+  name: string;
+};
+
+type CreateTodoRequestBody = {
+  id: number;
+  name: string;
+};
+
+type TodosResponseBody = Todo[];
+type CreateTodoResponseBody = Todo;
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 
 // Mock todos rows response
-const todos = [{ id: 1, name: 'Do laundry' }];
+const todos: Todo[] = [{ id: 1, name: 'Do laundry' }];
 
 export const handlers = [
-  http.get(`${SUPABASE_URL}/rest/v1/todos`, async (req, res, ctx) => {
-    return res(ctx.json(todos));
-  }),
-  http.post(`${SUPABASE_URL}/rest/v1/todos`, async (req, res, ctx) => {
-    const newTodo = await req.json();
+  // GET 요청 핸들러
+  http.get<Record<string, never>, never, TodosResponseBody>(
+    `${SUPABASE_URL}/rest/v1/todos`,
+    async ({ request }) => {
+      return HttpResponse.json(todos);
+    },
+  ),
+
+  // POST 요청 핸들러
+  http.post<
+    Record<string, never>,
+    CreateTodoRequestBody,
+    CreateTodoResponseBody
+  >(`${SUPABASE_URL}/rest/v1/todos`, async ({ request }) => {
+    const newTodo = await request.json();
     todos.push(newTodo);
-    return res(ctx.status(201), ctx.json(newTodo));
+
+    return HttpResponse.json(newTodo, { status: 201 });
   }),
 ];
