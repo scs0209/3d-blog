@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["./src"],
+  "out": "docs",
+  "readme": "README.md",
+  "theme": "default",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeExternals": true,
+  "exclude": ["./src/shared/mocks/**/*"]
+}
