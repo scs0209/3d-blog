@@ -6,5 +6,6 @@
   "includeVersion": true,
   "excludePrivate": true,
   "excludeExternals": true,
+  "json": "docs/typedoc.json",
   "exclude": ["./src/shared/mocks/**/*"]
 }
