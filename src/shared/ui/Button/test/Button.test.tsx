@@ -3,6 +3,6 @@ import Button from '../Button';
 
 test('renders Button component', () => {
   render(<Button />);
-  const buttonElement = screen.getByText(/Button/i);
+  const buttonElement = screen.getByText(/Post/i);
   expect(buttonElement).toBeInTheDocument();
 });

@@ -1,4 +1,4 @@
-import prisma from './db';
+import prisma from '../src/shared/lib/db';
 
 interface CreateUser {
   name: string;
