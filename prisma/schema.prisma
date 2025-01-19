@@ -14,9 +14,54 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  name      String
+  role      Role      @default(USER) // 관리자와 일반 사용자 구분
+  createdAt DateTime  @default(now())
+
+  posts     Post[]    // 작성한 게시글
+  comments  Comment[] // 작성한 댓글
+  likes     Like[]    // 좋아요한 기록
+}
+
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   title     String
-  content   String?
-  createdAt DateTime @default(now())
+  content   String
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  createdAt DateTime  @default(now())
+
+  comments  Comment[] // 게시글에 달린 댓글
+  likes     Like[]    // 게시글에 달린 좋아요
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    Int
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  parentId  Int?      // 대댓글을 위해 부모 댓글을 참조
+  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentToComment") // 대댓글
+  createdAt DateTime  @default(now())
+}
+
+model Like {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    Int
+  createdAt DateTime  @default(now())
+}
+
+enum Role {
+  ADMIN
+  USER
 }
