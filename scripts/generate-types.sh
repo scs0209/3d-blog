@@ -9,4 +9,4 @@ else
     exit 1
 fi
 
-openapi-typescript "$API_DOCS_URL" -o src/shared/api/generated/index.ts
+openapi-typescript "$API_DOCS_URL" -o src/shared/api/generated/index.d.ts
