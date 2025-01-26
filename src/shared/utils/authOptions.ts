@@ -1,6 +1,6 @@
 import { NextAuthConfig } from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import Credentials from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { compare } from 'bcrypt';
 import prisma from '../lib/db';
@@ -8,7 +8,7 @@ import prisma from '../lib/db';
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -22,7 +22,7 @@ export const authOptions = {
 
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email,
+            email: credentials.email as string,
           },
         });
 
@@ -30,7 +30,10 @@ export const authOptions = {
           throw new Error('No user found');
         }
 
-        const isValid = await compare(credentials.password, user.password);
+        const isValid = compare(
+          credentials.password as string,
+          user.password as string,
+        );
 
         if (!isValid) {
           throw new Error('Invalid password');
@@ -56,8 +59,6 @@ export const authOptions = {
           id: account?.id ? account.id : user.id,
           accessToken: account?.access_token,
           role: user.role,
-          address: user.address,
-          detail_address: user.detail_address,
         };
       }
       return token;
@@ -71,8 +72,6 @@ export const authOptions = {
           name: token.name,
           accessToken: token.accessToken ? token.accessToken : null,
           role: token.role,
-          address: token.address,
-          detail_address: token.detail_address,
         },
       };
     },

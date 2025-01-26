@@ -23,7 +23,7 @@ const LoginPage = () => {
     if (result?.error) {
       setError(result.error);
     } else {
-      router.push('/dashboard'); // 성공 시 리다이렉션 경로 설정
+      router.push('/');
     }
   };
 
@@ -70,8 +70,9 @@ const LoginPage = () => {
             />
           </div>
           <button
-            type="submit"
+            type="button"
             className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+            onClick={handleSubmit}
           >
             로그인
           </button>
