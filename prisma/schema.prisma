@@ -1,16 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -19,46 +13,44 @@ model User {
   email     String    @unique
   password  String
   name      String
-  role      Role      @default(USER) // 관리자와 일반 사용자 구분
+  role      Role      @default(USER)
   createdAt DateTime  @default(now())
-
-  posts     Post[]    // 작성한 게시글
-  comments  Comment[] // 작성한 댓글
-  likes     Like[]    // 좋아요한 기록
+  comments  Comment[]
+  likes     Like[]
+  posts     Post[]
 }
 
 model Post {
   id        Int       @id @default(autoincrement())
   title     String
   content   String
-  author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
   createdAt DateTime  @default(now())
-
-  comments  Comment[] // 게시글에 달린 댓글
-  likes     Like[]    // 게시글에 달린 좋아요
+  comments  Comment[]
+  likes     Like[]
+  author    User      @relation(fields: [authorId], references: [id])
 }
 
 model Comment {
   id        Int       @id @default(autoincrement())
   content   String
-  post      Post      @relation(fields: [postId], references: [id])
   postId    Int
-  author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
-  parentId  Int?      // 대댓글을 위해 부모 댓글을 참조
-  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentToComment") // 대댓글
+  parentId  Int?
   createdAt DateTime  @default(now())
+  author    User      @relation(fields: [authorId], references: [id])
+  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentToComment")
+  post      Post      @relation(fields: [postId], references: [id])
 }
 
 model Like {
-  id        Int       @id @default(autoincrement())
-  user      User      @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
   userId    Int
-  post      Post      @relation(fields: [postId], references: [id])
   postId    Int
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 enum Role {

@@ -51,6 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    authorized: ({ token }) => !!token,
     async jwt({ token, user, account }) {
       if (user) {
         // OAuth 로그인 시 로직
@@ -76,8 +77,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       };
     },
   },
+  pages: {
+    signIn: 'login',
+  },
   session: {
     strategy: 'jwt',
   },
-  debug: true,
+  debug: process.env.NODE_ENV !== 'production',
 });
