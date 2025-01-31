@@ -22,6 +22,7 @@
       "prettier"
     ],
     "rules": {
+      "radix": "off",
       "react/display-name": "off",
       "no-bitwise": ["error", { "allow": ["~", "|", ">>", "<<", "&"] }],
       "no-restricted-syntax": "warn",
