@@ -4,7 +4,7 @@ import NextAuth from 'next-auth';
 import { authConfig } from './src/shared/utils/auth.config';
 // import { auth } from '@/shared/utils/auth';
 
-const protectedRoutes = ['/'];
+const protectedRoutes = ['/admin'];
 
 const { auth } = NextAuth(authConfig);
 export async function middleware(request: NextRequest) {
@@ -18,25 +18,10 @@ export async function middleware(request: NextRequest) {
   if (!session?.user) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
+
+  if (session?.user.role !== 'ADMIN' && isProtected) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
 }
 
-export const config = { matcher: ['/'] };
-
-// /**
-//  * Middleware for authentication
-//  * @returns NextResponse or null if not authenticated
-//  */
-// export default async function middleware(request: NextRequest) {
-//   const { pathname } = request.nextUrl;
-//   console.log(request.cookies);
-
-//   const isProtected = protectedRoutes.some((route) =>
-//     pathname.startsWith(route),
-//   );
-
-//   if (!isProtected) {
-//     // return (await auth()) // 세션 정보 확인
-//     // ? NextResponse.next()
-//     NextResponse.redirect(new URL('/login', request.url));
-//   }
-// }
+export const config = { matcher: ['/', '/admin'] };
