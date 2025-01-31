@@ -20,15 +20,33 @@ model User {
   posts     Post[]
 }
 
-model Post {
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  posts       Post[]
+  createdAt   DateTime @default(now())
+}
+
+model Tag {
   id        Int       @id @default(autoincrement())
-  title     String
-  content   String
-  authorId  Int
+  name      String    @unique
+  posts     Post[]    @relation("PostToTag")
   createdAt DateTime  @default(now())
-  comments  Comment[]
-  likes     Like[]
-  author    User      @relation(fields: [authorId], references: [id])
+}
+
+model Post {
+  id         Int       @id @default(autoincrement())
+  title      String
+  content    String
+  authorId   Int
+  categoryId Int
+  createdAt  DateTime  @default(now())
+  comments   Comment[]
+  likes      Like[]
+  author     User      @relation(fields: [authorId], references: [id])
+  category   Category  @relation(fields: [categoryId], references: [id])
+  tags       Tag[]     @relation("PostToTag")
 }
 
 model Comment {
