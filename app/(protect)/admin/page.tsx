@@ -1,13 +1,14 @@
 import React from 'react';
-import { CategoryForm } from '@/features/category/ui/category-form';
+import { fetchCategories } from '@/features/category/api/category-api';
+import { CategoryModal } from '@/widgets/category';
 
-const PostPage = () => {
+export default async function PostPage() {
+  const data = await fetchCategories();
+
   return (
     <div className="container py-8 mx-auto">
       <h1 className="mb-4 text-2xl font-bold">새 카테고리 생성</h1>
-      <CategoryForm />
+      <CategoryModal />
     </div>
   );
-};
-
-export default PostPage;
+}

@@ -9,7 +9,6 @@ import { Textarea } from '@/shadcn-ui/components/ui/textarea';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,38 +19,39 @@ import {
   CategoryFormSchema,
 } from '../model/category-schema';
 import { createCategory } from '../api/category-api';
+import { Category } from '@/entities/category/model';
 
-export function CategoryForm() {
+type CategoryFormProps = {
+  onSubmit: (data: CategoryFormSchema) => Promise<void>;
+  initialData?: Category;
+};
+
+const CategoryForm = ({ onSubmit, initialData }: CategoryFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<CategoryFormSchema>({
     resolver: zodResolver(categoryFormSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       name: '',
-      slug: '',
       description: '',
     },
   });
 
-  const handleCreateCategory = async (data: CategoryFormSchema) => {
-    try {
-      await createCategory(data);
-      alert('성공');
-    } catch (error) {
-      console.error('Failed to create category:', error);
-    }
-  };
-
   const handleFormSubmit = async (data: CategoryFormSchema) => {
     setIsLoading(true);
     try {
-      await handleCreateCategory(data);
-      form.reset();
+      await onSubmit(data);
     } catch (error) {
-      console.error('Failed to create category:', error);
+      console.error('Failed to submit category:', error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getButtonText = (loading: boolean, initData?: Category): string => {
+    if (loading) return '처리 중...';
+    if (initData) return '수정';
+    return '생성';
   };
 
   return (
@@ -75,23 +75,6 @@ export function CategoryForm() {
         />
         <FormField
           control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>슬러그</FormLabel>
-              <FormControl>
-                <Input placeholder="category-slug" {...field} />
-              </FormControl>
-              <FormDescription>
-                URL에 사용될 고유 식별자입니다. 소문자, 숫자, 하이픈(-)만 사용
-                가능합니다.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
@@ -107,9 +90,11 @@ export function CategoryForm() {
           )}
         />
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? '생성 중...' : '카테고리 생성'}
+          {getButtonText(isLoading, initialData)}
         </Button>
       </form>
     </Form>
   );
-}
+};
+
+export default CategoryForm;

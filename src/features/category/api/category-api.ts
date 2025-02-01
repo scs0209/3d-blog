@@ -103,3 +103,44 @@ export const getCategoryPosts = async (
 
   return res.json();
 };
+
+interface CategoryInput {
+  name: string;
+  description?: string;
+}
+
+// Update category
+export async function updateCategory(
+  id: string,
+  data: CategoryInput,
+): Promise<Category> {
+  const response = await fetch(`/api/category/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update category');
+  }
+
+  return response.json();
+}
+
+// Delete category
+export async function deleteCategory(id: string): Promise<boolean> {
+  const response = await fetch(`/api/category/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete category');
+  }
+
+  const { success } = await response.json();
+  return success;
+}
