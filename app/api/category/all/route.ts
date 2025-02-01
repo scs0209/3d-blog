@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getSession } from 'next-auth/react';
 import prisma from '@/shared/lib/db';
 import { auth } from '@/shared/utils/auth';
+import { createSlug } from '@/shared/utils/create-slug';
 
 /**
  * @swagger
@@ -160,6 +160,7 @@ export async function POST(request: Request) {
     const category = await prisma.category.create({
       data: {
         name: name.trim(),
+        slug: createSlug(name),
         description: description?.trim(),
       },
     });
