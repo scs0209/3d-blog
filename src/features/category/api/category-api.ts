@@ -40,7 +40,7 @@ interface CategoryWithPosts extends Category {
 }
 
 // 카테고리 목록 조회
-export const fetchCategories = async ({
+export const getCategories = async ({
   includePostCount = false,
   page = 1,
   limit = 10,
