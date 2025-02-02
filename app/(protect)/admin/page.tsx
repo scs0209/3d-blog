@@ -1,9 +1,9 @@
 import React from 'react';
-import { fetchCategories } from '@/features/category/api/category-api';
+import { getCategories } from '@/features/category/api/category-api';
 import { CategoryModal } from '@/widgets/category';
 
 export default async function PostPage() {
-  const data = await fetchCategories();
+  const data = await getCategories();
 
   return (
     <div className="container py-8 mx-auto">
