@@ -1,0 +1,94 @@
+import qs, { ParsedUrlQueryInput } from 'querystring';
+import { paths } from '.';
+
+type Path = keyof paths;
+type Method<P extends Path> = keyof paths[P];
+
+type RequestBody<P extends Path, M extends Method<P>> = paths[P][M] extends {
+  requestBody: { content: { 'application/json': unknown } };
+}
+  ? paths[P][M]['requestBody']['content']['application/json']
+  : undefined;
+
+type RequestPathParams<
+  P extends Path,
+  M extends Method<P>,
+> = paths[P][M] extends {
+  parameters: { path: unknown };
+}
+  ? paths[P][M]['parameters']['path']
+  : undefined;
+
+type RequestQueryParams<
+  P extends Path,
+  M extends Method<P>,
+> = paths[P][M] extends {
+  parameters: { query?: unknown };
+}
+  ? paths[P][M]['parameters']['query']
+  : undefined;
+
+type BodyParameter<P extends Path, M extends Method<P>> =
+  RequestBody<P, M> extends undefined
+    ? Record<string, never>
+    : { body: RequestBody<P, M> };
+
+type QueryParameters<P extends Path, M extends Method<P>> =
+  RequestQueryParams<P, M> extends undefined
+    ? Record<string, never>
+    : { query?: RequestQueryParams<P, M> };
+
+type PathParameters<P extends Path, M extends Method<P>> =
+  RequestPathParams<P, M> extends undefined
+    ? Record<string, never>
+    : { path: RequestPathParams<P, M> };
+
+type FetcherParams<P extends Path, M extends Method<P>> = {
+  url: P;
+  method: M;
+  config?: Omit<RequestInit, 'url' | 'method'>;
+} & BodyParameter<P, M> &
+  QueryParameters<P, M> &
+  PathParameters<P, M>;
+
+export const fetcher = async <P extends Path, M extends Method<P>>({
+  url,
+  method,
+  config,
+  ...restParams
+}: FetcherParams<P, M>) => {
+  let finalUrl = `${url}`;
+
+  const body =
+    'body' in restParams ? JSON.stringify(restParams.body) : undefined;
+
+  if ('query' in restParams) {
+    const queryStr = qs.stringify(restParams.query as ParsedUrlQueryInput);
+    finalUrl += `?${queryStr}`;
+  }
+
+  if ('path' in restParams) {
+    const pathObj = restParams.path as Record<string, string | number>;
+    const replacedPathUrl = finalUrl.replace(/\{(\w+)\}/g, (match, key) =>
+      String(pathObj[key] || match),
+    );
+
+    finalUrl = replacedPathUrl;
+  }
+
+  const res = await fetch(url, {
+    ...config,
+    method: method as string,
+    body,
+    headers: {
+      ...config?.headers,
+      ...(body ? { 'Content-type': 'application/json' } : {}),
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error();
+  }
+
+  return res.json();
+};

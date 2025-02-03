@@ -1,4 +1,4 @@
-import { paths } from './generated';
+import { paths } from '.';
 
 export type ApiResponse<
   T extends keyof paths,
