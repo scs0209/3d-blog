@@ -4,7 +4,102 @@ import prisma from '@/shared/lib/db';
 import { createSlug } from '@/shared/utils/create-slug';
 import { auth } from '@/shared/utils/auth';
 
-// GET /api/categories/[id] - Get a single category with its posts
+/**
+ * @swagger
+ * /api/categories/{slug}:
+ *   get:
+ *     summary: Get a single category with its posts
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Category slug
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *     responses:
+ *       200:
+ *         description: Returns category with posts and pagination info
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 name:
+ *                   type: string
+ *                 slug:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                   nullable: true
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 posts:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       title:
+ *                         type: string
+ *                       content:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                       author:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           name:
+ *                             type: string
+ *                       _count:
+ *                         type: object
+ *                         properties:
+ *                           comments:
+ *                             type: integer
+ *                           likes:
+ *                             type: integer
+ *                 _count:
+ *                   type: object
+ *                   properties:
+ *                     posts:
+ *                       type: integer
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *       404:
+ *         description: Category not found
+ *       500:
+ *         description: Internal server error
+ */
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } },
@@ -73,7 +168,70 @@ export async function GET(
   }
 }
 
-// PATCH /api/categories/[id] - Update a category
+/**
+ * @swagger
+ * /api/categories/{slug}:
+ *   patch:
+ *     summary: Update a category
+ *     security:
+ *       - AdminAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Category ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 1
+ *               description:
+ *                 type: string
+ *                 nullable: true
+ *     responses:
+ *       200:
+ *         description: Category updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 name:
+ *                   type: string
+ *                 slug:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                   nullable: true
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Invalid input or duplicate category name
+ *       403:
+ *         description: Forbidden - Admin access required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Forbidden: Admin access required"
+ *       500:
+ *         description: Internal server error
+ */
 export async function PATCH(
   request: Request,
   { params }: { params: { slug: string } },
@@ -135,7 +293,47 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/categories/[id] - Delete a category
+/**
+ * @swagger
+ * /api/categories/{slug}:
+ *   delete:
+ *     summary: Delete a category
+ *     security:
+ *       - AdminAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Category ID
+ *     responses:
+ *       200:
+ *         description: Category deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *       400:
+ *         description: Cannot delete category with posts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Cannot delete category that contains posts"
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       404:
+ *         description: Category not found
+ *       500:
+ *         description: Internal server error
+ */
 export async function DELETE(
   request: Request,
   { params }: { params: { slug: string } },
