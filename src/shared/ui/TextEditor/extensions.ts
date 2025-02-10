@@ -7,7 +7,7 @@ import {
   GlobalDragHandle,
   HighlightExtension,
   HorizontalRule,
-  // Markd,
+  MarkdownExtension,
   Mathematics,
   Placeholder,
   StarterKit,
@@ -19,9 +19,9 @@ import {
   TiptapUnderline,
   Twitter,
   UpdatedImage,
-  UploadImagesPlugin,
   Youtube,
-} from 'novel';
+} from 'novel/extensions';
+import { UploadImagesPlugin } from 'novel/plugins';
 
 import { cx } from 'class-variance-authority';
 import { common, createLowlight } from 'lowlight';
@@ -150,16 +150,16 @@ const mathematics = Mathematics.configure({
 
 const characterCount = CharacterCount.configure();
 
-// const markdownExtension = MarkdownExtension.configure({
-//   html: true,
-//   tightLists: true,
-//   tightListClass: 'tight',
-//   bulletListMarker: '-',
-//   linkify: false,
-//   breaks: false,
-//   transformPastedText: false,
-//   transformCopiedText: false,
-// });
+const markdownExtension = MarkdownExtension.configure({
+  html: true,
+  tightLists: true,
+  tightListClass: 'tight',
+  bulletListMarker: '-',
+  linkify: false,
+  breaks: false,
+  transformPastedText: false,
+  transformCopiedText: false,
+});
 
 export const defaultExtensions = [
   starterKit,
@@ -177,7 +177,7 @@ export const defaultExtensions = [
   mathematics,
   characterCount,
   TiptapUnderline,
-  // markdownExtension,
+  markdownExtension,
   HighlightExtension,
   TextStyle,
   Color,

@@ -24,7 +24,6 @@ import {
 import { postFormSchema, type PostFormSchema } from '../model/post-form-schema';
 import { getCategories } from '@/features/category/api/category-api';
 import { Category } from '@/entities/category/model';
-import { Textarea } from '@/shadcn-ui/components/ui/textarea';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 
 type PostFormProps = {
@@ -54,6 +53,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
 
   const handleFormSubmit = async (data: PostFormSchema) => {
     setIsLoading(true);
+    console.log(data);
     try {
       await onSubmit(data);
       form.reset();
@@ -90,12 +90,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
             <FormItem>
               <FormLabel>내용</FormLabel>
               <FormControl>
-                <NovelEditor />
-                {/* <Textarea
-                  placeholder="블로그 내용을 입력하세요"
-                  className="min-h-[400px]"
-                  {...field}
-                /> */}
+                <NovelEditor value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormDescription>블로그 내용을 작성하세요.</FormDescription>
               <FormMessage />
