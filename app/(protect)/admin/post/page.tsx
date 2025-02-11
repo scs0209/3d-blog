@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { createPost } from '@/features/post/api/post-api';
 import { PostFormSchema } from '@/features/post/model/post-form-schema';
 import PostForm from '@/features/post/ui/post-form';
+import { TagInput } from '@/features/tag/ui/tag-input';
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function NewBlogPostPage() {
     <div className="container py-8 mx-auto">
       <h1 className="mb-4 text-2xl font-bold">새 블로그 포스트 작성</h1>
       <PostForm onSubmit={handleCreatePost} />
+      <TagInput />
     </div>
   );
 }
