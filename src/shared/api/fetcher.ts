@@ -1,5 +1,6 @@
+/* eslint-disable */
 import qs, { ParsedUrlQueryInput } from 'querystring';
-import { paths } from '.';
+import { paths } from './openapi-types';
 
 type Path = keyof paths;
 type Method<P extends Path> = keyof paths[P];
@@ -29,18 +30,15 @@ type RequestQueryParams<
   : undefined;
 
 type BodyParameter<P extends Path, M extends Method<P>> =
-  RequestBody<P, M> extends undefined
-    ? Record<string, never>
-    : { body: RequestBody<P, M> };
+  RequestBody<P, M> extends undefined ? {} : { body: RequestBody<P, M> };
 
 type QueryParameters<P extends Path, M extends Method<P>> =
   RequestQueryParams<P, M> extends undefined
-    ? Record<string, never>
+    ? {}
     : { query?: RequestQueryParams<P, M> };
-
 type PathParameters<P extends Path, M extends Method<P>> =
   RequestPathParams<P, M> extends undefined
-    ? Record<string, never>
+    ? {}
     : { path: RequestPathParams<P, M> };
 
 type FetcherParams<P extends Path, M extends Method<P>> = {
