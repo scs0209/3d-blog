@@ -27,8 +27,6 @@ const NovelEditor = ({
   //   ? (JSON.parse(value) as JSONContent)
   //   : undefined;
 
-  console.log(value);
-
   return (
     <div className="relative w-full max-w-screen-lg min-h-[500px]">
       <EditorRoot>
