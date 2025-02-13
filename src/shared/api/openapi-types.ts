@@ -318,6 +318,183 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/posts/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 특정 게시물 조회
+     * @description 게시물 ID를 기반으로 상세 정보를 조회합니다.
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          /** @description 게시물 ID */
+          id: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description 게시물 조회 성공 */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              id?: number;
+              title?: string;
+              content?: string;
+              author?: {
+                id?: number;
+                name?: string;
+                email?: string;
+              };
+              category?: Record<string, never>;
+              tags?: unknown[];
+              comments?: unknown[];
+              likes?: unknown[];
+            };
+          };
+        };
+        /** @description 게시물을 찾을 수 없음 */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description 서버 에러 */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    /**
+     * 게시물 수정
+     * @description 특정 게시물의 정보를 수정합니다.
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          /** @description 게시물 ID */
+          id: number;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /** @description 게시물 제목 */
+            title?: string;
+            /** @description 게시물 내용 */
+            content?: string;
+            /** @description 카테고리 ID */
+            categoryId?: number;
+            /** @description 태그 ID 배열 */
+            tags?: number[];
+          };
+        };
+      };
+      responses: {
+        /** @description 게시물 수정 성공 */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description 잘못된 요청 */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description 게시물을 찾을 수 없음 */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description 서버 에러 */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    post?: never;
+    /**
+     * 게시물 삭제
+     * @description 특정 게시물과 관련된 모든 데이터(댓글, 좋아요)를 삭제합니다.
+     */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          /** @description 게시물 ID */
+          id: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description 게시물 삭제 성공 */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** @example Post deleted successfully */
+              message?: string;
+            };
+          };
+        };
+        /** @description 잘못된 요청 */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description 게시물을 찾을 수 없음 */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description 서버 에러 */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/posts': {
     parameters: {
       query?: never;
