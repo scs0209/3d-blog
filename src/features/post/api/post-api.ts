@@ -1,5 +1,6 @@
 import { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
+import { fetcher } from '@/shared/api';
 
 type CreatePostInput = {
   title: string;
@@ -35,3 +36,25 @@ export const createPost = async (data: CreatePostInput): Promise<Post> => {
 
   return response.json();
 };
+
+export const getPostDetail = (id: number) =>
+  fetcher({
+    url: '/api/posts/{id}',
+    path: { id },
+    method: 'get',
+  });
+
+export const updatePost = (id: number) =>
+  fetcher({
+    url: '/api/posts/{id}',
+    path: { id },
+    method: 'put',
+    body: { title: '', content: '', categoryId: 1 },
+  });
+
+export const deletePost = (id: number) =>
+  fetcher({
+    url: '/api/posts/{id}',
+    path: { id },
+    method: 'delete',
+  });
