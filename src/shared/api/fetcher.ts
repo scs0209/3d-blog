@@ -74,7 +74,7 @@ export const fetcher = async <P extends Path, M extends Method<P>>({
     finalUrl = replacedPathUrl;
   }
 
-  const res = await fetch(url, {
+  const res = await fetch(finalUrl, {
     ...config,
     method: method as string,
     body,
