@@ -1,4 +1,4 @@
-import { paths } from '.';
+import { paths } from './openapi-types';
 
 export type ApiResponse<
   T extends keyof paths,
