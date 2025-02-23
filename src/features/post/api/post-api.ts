@@ -1,6 +1,10 @@
 import { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
 import { ApiRequest, fetcher } from '@/shared/api';
+import { GetPostListResponse } from '../model/post-types';
+
+export const getPostList = (): GetPostListResponse =>
+  fetcher({ url: '/api/posts', method: 'get' });
 
 type CreatePostInput = {
   title: string;
