@@ -22,7 +22,6 @@ export default function NewBlogPostPage() {
     <div className="container py-8 mx-auto">
       <h1 className="mb-4 text-2xl font-bold">새 블로그 포스트 작성</h1>
       <PostForm onSubmit={handleCreatePost} />
-      <TagInput />
     </div>
   );
 }
