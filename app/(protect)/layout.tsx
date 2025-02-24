@@ -8,8 +8,8 @@ import AuthSidebar from '@/shared/ui/AuthSidebar';
 const ProtectLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
-      <main className="protect">
-        <AuthSidebar />
+      <AuthSidebar />
+      <main className="p-4 protect">
         <SidebarTrigger />
         {children}
       </main>
