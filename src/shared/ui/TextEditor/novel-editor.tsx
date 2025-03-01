@@ -7,13 +7,11 @@ import {
   EditorCommandList,
   EditorContent,
   EditorRoot,
-  JSONContent,
 } from 'novel';
+import { handleCommandNavigation } from 'novel/extensions';
 import { defaultExtensions } from './extensions';
 
 import { slashCommand, suggestionItems } from './slash-command';
-
-const hljs = require('highlight.js');
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -22,34 +20,27 @@ const NovelEditor = ({
   onChange,
 }: {
   value?: string;
-  onChange: (val: JSONContent) => void;
+  onChange: (val: string) => void;
 }) => {
-  // const parsedValue: JSONContent | undefined = value
-  //   ? (JSON.parse(value) as JSONContent)
-  //   : undefined;
-
-  // Apply Codeblock Highlighting on the HTML from editor.getHTML()
-  const highlightCodeblocks = (content: string) => {
-    const doc = new DOMParser().parseFromString(content, 'text/html');
-    doc.querySelectorAll('pre code').forEach((el) => {
-      // @ts-ignore
-      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
-      hljs.highlightElement(el);
-    });
-    return new XMLSerializer().serializeToString(doc);
-  };
-
   return (
     <div className="relative w-full max-w-screen-lg min-h-[500px]">
       <EditorRoot>
         <EditorContent
-          className="relative min-h-[500px] w-full max-w-screen-lg border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
+          className="min-h-[400px] rounded-xl border p-4"
           immediatelyRender={false}
           extensions={extensions}
-          initialContent={highlightCodeblocks(value)}
+          editorProps={{
+            handleDOMEvents: {
+              keydown: (_view, event) => handleCommandNavigation(event),
+            },
+            attributes: {
+              class:
+                'prose dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full',
+            },
+          }}
+          initialContent={value || ''}
           onUpdate={({ editor }) => {
-            const json = editor.getJSON();
-            onChange(highlightCodeblocks(editor.getHTML()));
+            onChange(editor.getHTML());
           }}
         />
         <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
@@ -60,8 +51,9 @@ const NovelEditor = ({
             {suggestionItems.map((item) => (
               <EditorCommandItem
                 value={item.title}
-                onCommand={(val) => item.command(val)}
-                className="flex items-center w-full px-2 py-1 space-x-2 text-sm text-left rounded-md hover:bg-accent aria-selected:bg-accent"
+                tabIndex={-1}
+                onCommand={(val) => item.command?.(val)}
+                className="command-item flex items-center w-full px-2 py-1 space-x-2 text-sm text-left rounded-md"
                 key={item.title}
               >
                 <div className="flex items-center justify-center w-10 h-10 border rounded-md border-muted bg-background">
