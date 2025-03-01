@@ -13,6 +13,8 @@ import { defaultExtensions } from './extensions';
 
 import { slashCommand, suggestionItems } from './slash-command';
 
+const hljs = require('highlight.js');
+
 const extensions = [...defaultExtensions, slashCommand];
 
 const NovelEditor = ({
@@ -26,6 +28,17 @@ const NovelEditor = ({
   //   ? (JSON.parse(value) as JSONContent)
   //   : undefined;
 
+  // Apply Codeblock Highlighting on the HTML from editor.getHTML()
+  const highlightCodeblocks = (content: string) => {
+    const doc = new DOMParser().parseFromString(content, 'text/html');
+    doc.querySelectorAll('pre code').forEach((el) => {
+      // @ts-ignore
+      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
+      hljs.highlightElement(el);
+    });
+    return new XMLSerializer().serializeToString(doc);
+  };
+
   return (
     <div className="relative w-full max-w-screen-lg min-h-[500px]">
       <EditorRoot>
@@ -33,10 +46,10 @@ const NovelEditor = ({
           className="relative min-h-[500px] w-full max-w-screen-lg border-muted bg-background sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:shadow-lg"
           immediatelyRender={false}
           extensions={extensions}
-          initialContent={value}
+          initialContent={highlightCodeblocks(value)}
           onUpdate={({ editor }) => {
             const json = editor.getJSON();
-            onChange(editor.getHTML());
+            onChange(highlightCodeblocks(editor.getHTML()));
           }}
         />
         <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
