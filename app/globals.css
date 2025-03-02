@@ -109,7 +109,7 @@ body {
   background-color: hsl(var(--accent)) !important;
   outline: none;
 }
-/* pre {
+pre {
   background: #0d0d0d;
   border-radius: 0.5rem;
   color: #fff;
@@ -174,5 +174,5 @@ body {
   .hljs-strong {
     font-weight: 700;
   }
-} */
+}
 
