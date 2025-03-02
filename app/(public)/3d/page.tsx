@@ -2,19 +2,20 @@
 
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
-import { Model } from '@/shared/ui/Scene';
+import { OrbitControls } from '@react-three/drei';
+import { Model as RoomModel } from '@/shared/ui/Room';
+import { CameraLogger } from '@/shared/ui/CameraLogger';
 
 const GlTFPage = () => {
   return (
     <div className="w-screen h-screen bg-black">
-      <Canvas>
-        <PerspectiveCamera
-          position={[0, 5, 10]}
-          rotation={[-Math.PI / 4, 0, 0]} // x축 기준으로 -45도 회전
-        />
-        <Model />
+      <Canvas
+        camera={{ fov: 75, near: 0.1, far: 1000, position: [12, 238, -410] }}
+      >
+        <ambientLight intensity={2} color="white" />
+        <RoomModel position={[0, -100, 0]} />
         <OrbitControls />
+        <CameraLogger />
       </Canvas>
     </div>
   );
