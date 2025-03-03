@@ -6,6 +6,7 @@ import { OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import { useControls } from 'leva';
 import { Model as RoomModel } from '@/shared/ui/Room';
 import { CameraLogger } from '@/shared/ui/CameraLogger';
+import { CubeModel } from '@/shared/ui/Cube';
 // import SkyBox from '@/shared/ui/SkyBox';
 import { Model } from '@/shared/ui/Scene';
 import CanvasLoader from '@/shared/ui/Loader';
@@ -63,6 +64,7 @@ const GlTFPage = () => {
             color="#fff3b0"
           />
           <Model />
+          {/* <CubeModel /> */}
           <OrbitControls />
           <CameraLogger />
         </Suspense>

@@ -181,7 +181,7 @@ pre {
   height: 100vh;
   font-family: sans-serif;
   background-image: linear-gradient(
-    180deg,
+    360deg,
     hsl(0, 90%, 4%) 1%,
     hsl(200deg 100% 3%) 17%,
     hsl(200deg 100% 6%) 26%,
