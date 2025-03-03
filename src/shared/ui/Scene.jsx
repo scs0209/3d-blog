@@ -6,17 +6,46 @@ Source: https://sketchfab.com/3d-models/space-boi-f6a8c6a6727b4f2cb020c8b50bb2ee
 Title: space boi
 */
 
-import React, { useRef } from 'react';
-import { useGLTF } from '@react-three/drei';
+import React, { useRef, useState } from 'react';
+import { Text3D, useGLTF } from '@react-three/drei';
+import { MeshStandardMaterial } from 'three';
 import { Model as RoomModel } from '@/shared/ui/Room';
+import { CubeModel } from './Cube';
+
+const mirrorMaterial = new MeshStandardMaterial({
+  color: 'white', // 색상 (투명도가 있음)
+  transparent: true, // 투명 활성화
+  opacity: 0.2, // 투명도 (0 = 완전 투명, 1 = 불투명)
+  depthWrite: false, // 깊이 버퍼에 쓰지 않음 (겹칠 때 문제 방지)
+});
 
 export function Model(props) {
   const { nodes, materials } = useGLTF('/space_boi.glb');
+  const [isCubeHovered, setIsCubeHovered] = useState(false);
+
+  // 호버 상태 변경 핸들러
+  const handleCubeHover = (hovered) => {
+    setIsCubeHovered(hovered);
+  };
+
   return (
     <group {...props} dispose={null}>
       <group scale={0.01}>
         <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
-          <RoomModel />
+          <RoomModel position={[0, 0, 20]} />
+          <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
+          {isCubeHovered && (
+            <Text3D
+              font="/gt.json" // 저장한 폰트 경로에 맞게 변경
+              size={100}
+              height={2}
+              position={[-300, 0, 350]} // CubeModel 위쪽에 배치
+              rotation={[Math.PI / 2, 0, 0]}
+            >
+              Hovered!
+            </Text3D>
+          )}
+
           {/* <mesh
             castShadow
             receiveShadow
@@ -163,11 +192,12 @@ export function Model(props) {
           rotation={[-Math.PI / 2, 0, 0]}
           scale={16.881}
         />
+        {/* 바닥 */}
         <mesh
           castShadow
           receiveShadow
           geometry={nodes.Sphere011_Material002_0.geometry}
-          material={materials['Material.002']}
+          material={mirrorMaterial}
           position={[-553.462, 331.074, -379.067]}
           rotation={[-Math.PI / 2, 0, 0]}
           scale={11.437}
@@ -176,7 +206,7 @@ export function Model(props) {
           castShadow
           receiveShadow
           geometry={nodes.Cube_Material001_0.geometry}
-          material={materials['Material.001']}
+          material={mirrorMaterial}
           position={[0, -101.673, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
           scale={[1120.013, 1120.013, 100]}
