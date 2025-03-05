@@ -43,6 +43,15 @@ export function Model(props) {
               rotation={[Math.PI / 2, 0, 0]}
             >
               Hovered!
+              <meshStandardMaterial
+                color="#00ffff"
+                transparent
+                opacity={0.5}
+                emissive="#00ffff"
+                emissiveIntensity={1.2}
+                roughness={0.1}
+                metalness={0.8}
+              />
             </Text3D>
           )}
 
