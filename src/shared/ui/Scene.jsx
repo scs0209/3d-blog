@@ -6,9 +6,11 @@ Source: https://sketchfab.com/3d-models/space-boi-f6a8c6a6727b4f2cb020c8b50bb2ee
 Title: space boi
 */
 
-import React, { useRef, useState } from 'react';
-import { Text3D, useGLTF } from '@react-three/drei';
+import React, { useRef, useState, Suspense, useMemo } from 'react';
+import { Text, useGLTF } from '@react-three/drei';
 import { MeshStandardMaterial } from 'three';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 import { Model as RoomModel } from '@/shared/ui/Room';
 import { CubeModel } from './Cube';
 
@@ -18,6 +20,71 @@ const mirrorMaterial = new MeshStandardMaterial({
   opacity: 0.2, // 투명도 (0 = 완전 투명, 1 = 불투명)
   depthWrite: false, // 깊이 버퍼에 쓰지 않음 (겹칠 때 문제 방지)
 });
+
+function Ellipse(props) {
+  const geometry = useMemo(() => {
+    const curve = new THREE.EllipseCurve(0, 0, 10, 3, 0, 2 * Math.PI, false, 0);
+    const points = curve.getPoints(50);
+    return new THREE.BufferGeometry().setFromPoints(points);
+  }, []);
+  return (
+    <line geometry={geometry} {...props}>
+      <meshBasicMaterial />
+    </line>
+  );
+}
+
+function ReactAtom(props) {
+  return (
+    <group {...props}>
+      <Ellipse />
+      <Ellipse rotation={[0, 0, Math.PI / 3]} />
+      <Ellipse rotation={[0, 0, -Math.PI / 3]} />
+      <mesh>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshBasicMaterial color="red" />
+      </mesh>
+    </group>
+  );
+}
+
+function Number() {
+  const ref = useRef();
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.position.x = THREE.MathUtils.lerp(
+        ref.current.position.x,
+        state.mouse.x * 2,
+        0.1,
+      );
+      ref.current.rotation.x = THREE.MathUtils.lerp(
+        ref.current.rotation.x,
+        state.mouse.y / 2,
+        0.1,
+      );
+      ref.current.rotation.y = 0.8;
+    }
+  });
+  return (
+    <Suspense fallback={null}>
+      <group ref={ref}>
+        <Text
+          size={10}
+          onClick={(e) =>
+            window.open(
+              'https://github.com/react-spring/react-three-fiber/blob/master/whatsnew.md',
+              '_blank',
+            )
+          }
+          position={[-300, 0, 350]}
+        >
+          4
+        </Text>
+        <ReactAtom position={[-300, 0, 350]} scale={[1, 0.5, 1]} />
+      </group>
+    </Suspense>
+  );
+}
 
 export function Model(props) {
   const { nodes, materials } = useGLTF('/space_boi.glb');
@@ -35,24 +102,25 @@ export function Model(props) {
           <RoomModel position={[0, 0, 20]} />
           <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
           {isCubeHovered && (
-            <Text3D
-              font="/gt.json" // 저장한 폰트 경로에 맞게 변경
-              size={100}
-              height={2}
-              position={[-300, 0, 350]} // CubeModel 위쪽에 배치
-              rotation={[Math.PI / 2, 0, 0]}
-            >
-              Hovered!
-              <meshStandardMaterial
-                color="#00ffff"
-                transparent
-                opacity={0.5}
-                emissive="#00ffff"
-                emissiveIntensity={1.2}
-                roughness={0.1}
-                metalness={0.8}
-              />
-            </Text3D>
+            // <Text3D
+            //   font="/gt.json" // 저장한 폰트 경로에 맞게 변경
+            //   size={100}
+            //   height={2}
+            //   position={[-300, 0, 350]} // CubeModel 위쪽에 배치
+            //   rotation={[Math.PI / 2, 0, 0]}
+            // >
+            //   Hovered!
+            //   <meshStandardMaterial
+            //     color="#00ffff"
+            //     transparent
+            //     opacity={0.5}
+            //     emissive="#00ffff"
+            //     emissiveIntensity={1.2}
+            //     roughness={0.1}
+            //     metalness={0.8}
+            //   />
+            // </Text3D>
+            <Number />
           )}
 
           {/* <mesh
