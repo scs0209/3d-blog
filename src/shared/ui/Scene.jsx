@@ -7,12 +7,14 @@ Title: space boi
 */
 
 import React, { useRef, useState, Suspense, useMemo } from 'react';
-import { Text, useGLTF } from '@react-three/drei';
+import { Text, useGLTF, Float } from '@react-three/drei';
 import { MeshStandardMaterial } from 'three';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Model as RoomModel } from '@/shared/ui/Room';
 import { CubeModel } from './Cube';
+import { Atom } from './Atom';
 
 const mirrorMaterial = new MeshStandardMaterial({
   color: 'white', // 색상 (투명도가 있음)
@@ -101,6 +103,12 @@ export function Model(props) {
         <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
           <RoomModel position={[0, 0, 20]} />
           <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
+          <Float speed={4} rotationIntensity={1} floatIntensity={2}>
+            <Atom />
+          </Float>
+          <EffectComposer>
+            <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} />
+          </EffectComposer>
           {isCubeHovered && (
             // <Text3D
             //   font="/gt.json" // 저장한 폰트 경로에 맞게 변경
@@ -120,7 +128,7 @@ export function Model(props) {
             //     metalness={0.8}
             //   />
             // </Text3D>
-            <Number />
+            <></>
           )}
 
           {/* <mesh
