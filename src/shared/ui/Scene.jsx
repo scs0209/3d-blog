@@ -103,12 +103,6 @@ export function Model(props) {
         <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
           <RoomModel position={[0, 0, 20]} />
           <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
-          <Float speed={4} rotationIntensity={1} floatIntensity={2}>
-            <Atom />
-          </Float>
-          <EffectComposer>
-            <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} />
-          </EffectComposer>
           {isCubeHovered && (
             // <Text3D
             //   font="/gt.json" // 저장한 폰트 경로에 맞게 변경
@@ -128,7 +122,14 @@ export function Model(props) {
             //     metalness={0.8}
             //   />
             // </Text3D>
-            <></>
+            <>
+              <Float speed={4} rotationIntensity={1} floatIntensity={2}>
+                <Atom position={[0, -50, 0]} />
+              </Float>
+              <EffectComposer>
+                <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} />
+              </EffectComposer>
+            </>
           )}
 
           {/* <mesh
