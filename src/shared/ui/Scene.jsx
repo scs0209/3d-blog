@@ -124,7 +124,7 @@ export function Model(props) {
             // </Text3D>
             <>
               <Float speed={4} rotationIntensity={1} floatIntensity={2}>
-                <Atom position={[0, -50, 0]} />
+                <Atom />
               </Float>
               <EffectComposer>
                 <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} />
