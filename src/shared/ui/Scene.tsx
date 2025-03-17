@@ -6,10 +6,9 @@ Source: https://sketchfab.com/3d-models/space-boi-f6a8c6a6727b4f2cb020c8b50bb2ee
 Title: space boi
 */
 
-import React, { useRef, useState, Suspense, useMemo } from 'react';
-import { Text, useGLTF, Float } from '@react-three/drei';
-import { MeshStandardMaterial } from 'three';
-import { useFrame } from '@react-three/fiber';
+import React, { useState, useMemo } from 'react';
+import { useGLTF, Float } from '@react-three/drei';
+import { MeshStandardMaterial } from 'three'; // Fixed the unterminated string literal
 import * as THREE from 'three';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Model as RoomModel } from '@/shared/ui/Room';
@@ -23,77 +22,12 @@ const mirrorMaterial = new MeshStandardMaterial({
   depthWrite: false, // 깊이 버퍼에 쓰지 않음 (겹칠 때 문제 방지)
 });
 
-function Ellipse(props) {
-  const geometry = useMemo(() => {
-    const curve = new THREE.EllipseCurve(0, 0, 10, 3, 0, 2 * Math.PI, false, 0);
-    const points = curve.getPoints(50);
-    return new THREE.BufferGeometry().setFromPoints(points);
-  }, []);
-  return (
-    <line geometry={geometry} {...props}>
-      <meshBasicMaterial />
-    </line>
-  );
-}
-
-function ReactAtom(props) {
-  return (
-    <group {...props}>
-      <Ellipse />
-      <Ellipse rotation={[0, 0, Math.PI / 3]} />
-      <Ellipse rotation={[0, 0, -Math.PI / 3]} />
-      <mesh>
-        <sphereGeometry args={[0.5, 32, 32]} />
-        <meshBasicMaterial color="red" />
-      </mesh>
-    </group>
-  );
-}
-
-function Number() {
-  const ref = useRef();
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.position.x = THREE.MathUtils.lerp(
-        ref.current.position.x,
-        state.mouse.x * 2,
-        0.1,
-      );
-      ref.current.rotation.x = THREE.MathUtils.lerp(
-        ref.current.rotation.x,
-        state.mouse.y / 2,
-        0.1,
-      );
-      ref.current.rotation.y = 0.8;
-    }
-  });
-  return (
-    <Suspense fallback={null}>
-      <group ref={ref}>
-        <Text
-          size={10}
-          onClick={(e) =>
-            window.open(
-              'https://github.com/react-spring/react-three-fiber/blob/master/whatsnew.md',
-              '_blank',
-            )
-          }
-          position={[-300, 0, 350]}
-        >
-          4
-        </Text>
-        <ReactAtom position={[-300, 0, 350]} scale={[1, 0.5, 1]} />
-      </group>
-    </Suspense>
-  );
-}
-
-export function Model(props) {
+export function Model(props: React.ComponentProps<'group'>) {
   const { nodes, materials } = useGLTF('/space_boi.glb');
   const [isCubeHovered, setIsCubeHovered] = useState(false);
 
   // 호버 상태 변경 핸들러
-  const handleCubeHover = (hovered) => {
+  const handleCubeHover = (hovered: boolean) => {
     setIsCubeHovered(hovered);
   };
 
@@ -104,24 +38,6 @@ export function Model(props) {
           <RoomModel position={[0, 0, 20]} />
           <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
           {isCubeHovered && (
-            // <Text3D
-            //   font="/gt.json" // 저장한 폰트 경로에 맞게 변경
-            //   size={100}
-            //   height={2}
-            //   position={[-300, 0, 350]} // CubeModel 위쪽에 배치
-            //   rotation={[Math.PI / 2, 0, 0]}
-            // >
-            //   Hovered!
-            //   <meshStandardMaterial
-            //     color="#00ffff"
-            //     transparent
-            //     opacity={0.5}
-            //     emissive="#00ffff"
-            //     emissiveIntensity={1.2}
-            //     roughness={0.1}
-            //     metalness={0.8}
-            //   />
-            // </Text3D>
             <>
               <Float speed={4} rotationIntensity={1} floatIntensity={2}>
                 <Atom />
@@ -131,19 +47,6 @@ export function Model(props) {
               </EffectComposer>
             </>
           )}
-
-          {/* <mesh
-            castShadow
-            receiveShadow
-            geometry={nodes.body_Material001_0.geometry}
-            material={materials['Material.001']}
-          />
-          <mesh
-            castShadow
-            receiveShadow
-            geometry={nodes.body_Material002_0.geometry}
-            material={materials['Material.002']}
-          /> */}
         </group>
         <group
           position={[-357.404, 392.646, 0]}
@@ -153,13 +56,13 @@ export function Model(props) {
           <mesh
             castShadow
             receiveShadow
-            geometry={nodes.Sphere002_Material001_0.geometry}
+            geometry={(nodes.Sphere002_Material001_0 as THREE.Mesh).geometry}
             material={materials['Material.001']}
           />
           <mesh
             castShadow
             receiveShadow
-            geometry={nodes.Sphere002_Material002_0.geometry}
+            geometry={(nodes.Sphere002_Material002_0 as THREE.Mesh).geometry}
             material={materials['Material.002']}
           />
         </group>
@@ -171,20 +74,20 @@ export function Model(props) {
           <mesh
             castShadow
             receiveShadow
-            geometry={nodes.Sphere007_Material001_0.geometry}
+            geometry={(nodes.Sphere007_Material001_0 as THREE.Mesh).geometry}
             material={materials['Material.001']}
           />
           <mesh
             castShadow
             receiveShadow
-            geometry={nodes.Sphere007_Material002_0.geometry}
+            geometry={(nodes.Sphere007_Material002_0 as THREE.Mesh).geometry}
             material={materials['Material.002']}
           />
         </group>
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.waves_Material002_0.geometry}
+          geometry={(nodes.waves_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           rotation={[-Math.PI / 2, 0, 0]}
           scale={[100, 100, 1.891]}
@@ -192,7 +95,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.waves1_Material002_0.geometry}
+          geometry={(nodes.waves1_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           rotation={[-Math.PI / 2, 0, 0]}
           scale={[100, 100, 1.891]}
@@ -200,7 +103,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.waves2_Material002_0.geometry}
+          geometry={(nodes.waves2_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[92.464, 15.529, 2.112]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -209,7 +112,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.particles_Material002_0.geometry}
+          geometry={(nodes.particles_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[489.69, 793.811, 355.293]}
           rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
@@ -218,7 +121,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere_Material001_0.geometry}
+          geometry={(nodes.Sphere_Material001_0 as THREE.Mesh).geometry}
           material={materials['Material.001']}
           position={[375.469, 427.948, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -227,7 +130,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere001_Material002_0.geometry}
+          geometry={(nodes.Sphere001_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[375.469, 427.948, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -236,7 +139,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere004_Material002_0.geometry}
+          geometry={(nodes.Sphere004_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[375.469, 427.948, 0]}
           rotation={[-0.688, 0, 0]}
@@ -245,7 +148,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere005_Material001_0.geometry}
+          geometry={(nodes.Sphere005_Material001_0 as THREE.Mesh).geometry}
           material={materials['Material.001']}
           position={[-341.988, 460.196, -117.028]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -254,7 +157,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere006_Material002_0.geometry}
+          geometry={(nodes.Sphere006_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[-341.988, 460.196, -117.028]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -263,7 +166,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere009_Material002_0.geometry}
+          geometry={(nodes.Sphere009_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[507.522, 667.594, -214.475]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -272,7 +175,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere010_Material002_0.geometry}
+          geometry={(nodes.Sphere010_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[-287.442, 585.792, -311.857]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -282,7 +185,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere011_Material002_0.geometry}
+          geometry={(nodes.Sphere011_Material002_0 as THREE.Mesh).geometry}
           material={mirrorMaterial}
           position={[-553.462, 331.074, -379.067]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -291,7 +194,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Cube_Material001_0.geometry}
+          geometry={(nodes.Cube_Material001_0 as THREE.Mesh).geometry}
           material={mirrorMaterial}
           position={[0, -101.673, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -300,7 +203,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere003_Material002_0.geometry}
+          geometry={(nodes.Sphere003_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[-357.404, 392.646, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -309,7 +212,7 @@ export function Model(props) {
         <mesh
           castShadow
           receiveShadow
-          geometry={nodes.Sphere008_Material002_0.geometry}
+          geometry={(nodes.Sphere008_Material002_0 as THREE.Mesh).geometry}
           material={materials['Material.002']}
           position={[199.634, 566.883, -221.001]}
           rotation={[-Math.PI / 2, 0, 0]}
