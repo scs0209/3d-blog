@@ -6,7 +6,7 @@ Source: https://sketchfab.com/3d-models/space-boi-f6a8c6a6727b4f2cb020c8b50bb2ee
 Title: space boi
 */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useGLTF, Float } from '@react-three/drei';
 import { MeshStandardMaterial } from 'three'; // Fixed the unterminated string literal
 import * as THREE from 'three';
