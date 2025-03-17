@@ -7,13 +7,15 @@ Title: space boi
 */
 
 import React, { useState } from 'react';
-import { useGLTF, Float } from '@react-three/drei';
-import { MeshStandardMaterial } from 'three'; // Fixed the unterminated string literal
+import { useGLTF, Float, TrackballControls } from '@react-three/drei';
+import { MeshStandardMaterial } from 'three';
 import * as THREE from 'three';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Model as RoomModel } from '@/shared/ui/Room';
 import { CubeModel } from './Cube';
 import { Atom } from './Atom';
+import { NeuralNetwork } from './NeutralNetwork';
+import { Cloud } from './Cloud';
 
 const mirrorMaterial = new MeshStandardMaterial({
   color: 'white', // 색상 (투명도가 있음)
@@ -37,6 +39,11 @@ export function Model(props: React.ComponentProps<'group'>) {
         <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
           <RoomModel position={[0, 0, 20]} />
           <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
+          <NeuralNetwork />
+          {/* <group rotation={[10, 10.5, 10]} scale={30}>
+            <Cloud />
+          </group> */}
+          {/* <TrackballControls /> */}
           {isCubeHovered && (
             <>
               <Float speed={4} rotationIntensity={1} floatIntensity={2}>
