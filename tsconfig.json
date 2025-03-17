@@ -23,11 +23,17 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "scripts/checkType.js", "Scene.jsx", "src/shared/ui/Room.jsx", "src/shared/ui/Atom.jsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "scripts/checkType.js"
+  ],
   "exclude": ["node_modules", "./src/shared/mocks/**/*"],
   "typedocOptions": {
-        "entryPoints": ["src"],
-        "out": "docs",
-        "exclude": ["node_modules", "./src/shared/mocks/**/*"],
-    }
+    "entryPoints": ["src"],
+    "out": "docs",
+    "exclude": ["node_modules", "./src/shared/mocks/**/*"]
+  }
 }
