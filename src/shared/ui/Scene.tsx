@@ -40,9 +40,11 @@ export function Model(props: React.ComponentProps<'group'>) {
           <RoomModel position={[0, 0, 20]} />
           <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
           <NeuralNetwork />
-          {/* <group rotation={[10, 10.5, 10]} scale={30}>
+          <group rotation={[10, 10.5, 10]} scale={30}>
+            <fog attach="fog" args={['#202025', 0, 80]} />
+
             <Cloud />
-          </group> */}
+          </group>
           {/* <TrackballControls /> */}
           {isCubeHovered && (
             <>
