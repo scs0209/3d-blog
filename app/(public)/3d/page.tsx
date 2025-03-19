@@ -10,7 +10,6 @@ import { CubeModel } from '@/shared/ui/Cube';
 // import SkyBox from '@/shared/ui/SkyBox';
 import { Model } from '@/shared/ui/Scene';
 import CanvasLoader from '@/shared/ui/Loader';
-import { Cloud } from '@/shared/ui/Cloud';
 
 const CameraController = () => {
   const { camera } = useThree();
@@ -68,10 +67,7 @@ const GlTFPage = () => {
           {/* <CubeModel /> */}
 
           <OrbitControls />
-          <fog attach="fog" args={['#202025', 0, 80]} />
-          <Cloud count={8} radius={20} />
-          {/* <group rotation={[10, 10.5, 10]} scale={0.1}>
-          </group> */}
+
           <CameraLogger />
         </Suspense>
       </Canvas>
