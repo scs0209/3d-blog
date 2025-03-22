@@ -64,7 +64,6 @@ const GlTFPage = () => {
             color="#fff3b0"
           />
           <Model />
-          {/* <CubeModel /> */}
 
           <OrbitControls />
 
