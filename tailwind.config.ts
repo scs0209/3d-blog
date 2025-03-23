@@ -8,6 +8,7 @@ export default {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/shadcn-ui/**/*.{js,ts,jsx,tsx}',
+    './src/shared/ui/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
