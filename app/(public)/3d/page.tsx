@@ -15,6 +15,7 @@ import { CameraLogger } from '@/shared/ui/CameraLogger';
 import { Model } from '@/shared/ui/Scene';
 import CanvasLoader from '@/shared/ui/Loader';
 import { Cloud } from '@/shared/ui/Cloud';
+import Navbar from '@/shared/ui/Navbar';
 
 const CameraController = () => {
   const { camera } = useThree();
@@ -274,9 +275,10 @@ const GlTFPage = () => {
 
   return (
     <div className="w-screen h-screen scene-wrapper">
+      <Navbar />
       <Canvas
         camera={{ fov: 75, near: 0.1, zoom: 0.9, position: [-5.3, 3.1, -6.7] }}
-        onPointerMissed={() => setActiveObject(null)}
+        // onPointerMissed={() => setActiveObject(null)}
       >
         <ambientLight intensity={2} color="white" />
         <directionalLight position={[5, 10, 5]} intensity={2} castShadow />
@@ -306,15 +308,16 @@ const GlTFPage = () => {
           />
 
           {/* 각 요소를 별도의 그룹으로 관리 */}
-          <ModelGroup />
-          <CloudGroup />
+          {/* <ModelGroup /> */}
+          <Model />
+          {/* <CloudGroup /> */}
 
           {/* 카메라 조작용 기본 컨트롤 - 회전 방지 */}
           <OrbitControls
             makeDefault
             enableDamping
             dampingFactor={0.05}
-            enableRotate={false}
+            // enableRotate={false}
             enablePan
             enableZoom
           />
