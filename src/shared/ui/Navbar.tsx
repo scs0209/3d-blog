@@ -2,33 +2,46 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Orbit } from 'lucide-react';
 
 const MinimalistNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-[10px] left-0 z-50 py-4 px-5 bg-[#1c1c1c]">
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
+    <header className="fixed top-[10px] left-1/2 -translate-x-1/2 z-50 py-[5px] pl-5 pr-2 bg-[#1c1c1c] rounded-lg">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-8">
         {/* 네비게이션 링크 - 데스크톱 */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link
-            href="/manifesto"
-            className="text-gray-300 hover:text-white text-sm font-normal"
-          >
-            Manifesto
+          <Orbit fill="white" />
+          <Link href="/manifesto" className="group relative overflow-hidden">
+            <div className="relative flex overflow-hidden">
+              <span className="block text-gray-300 text-sm font-normal transition-all duration-[800ms] ease-[cubic-bezier(0.165,0.84,0.44,1)] group-hover:translate-y-[100%] group-hover:opacity-0">
+                Portfolio
+              </span>
+              <span className="block absolute left-0 text-white text-sm font-normal -translate-y-full opacity-0 transition-all duration-[800ms] ease-[cubic-bezier(0.165,0.84,0.44,1)] group-hover:translate-y-0 group-hover:opacity-100">
+                Portfolio
+              </span>
+            </div>
           </Link>
-          <Link
-            href="/careers"
-            className="text-gray-300 hover:text-white text-sm font-normal"
-          >
-            Careers
+          <Link href="/careers" className="group relative overflow-hidden">
+            <div className="relative flex overflow-hidden">
+              <span className="block text-gray-300 text-sm font-normal transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-[100%]">
+                Blog
+              </span>
+              <span className="block absolute left-0 text-white text-sm font-normal -translate-y-full transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-0">
+                Blog
+              </span>
+            </div>
           </Link>
-          <Link
-            href="/discover"
-            className="text-gray-300 hover:text-white text-sm font-normal"
-          >
-            Discover
+          <Link href="/discover" className="group relative overflow-hidden">
+            <div className="relative flex overflow-hidden">
+              <span className="block text-gray-300 text-sm font-normal transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-[100%]">
+                Contact
+              </span>
+              <span className="block absolute left-0 text-white text-sm font-normal -translate-y-full transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-0">
+                Contact
+              </span>
+            </div>
           </Link>
         </nav>
 
@@ -36,15 +49,23 @@ const MinimalistNavbar = () => {
         <div className="flex items-center gap-2">
           <Link
             href="/login"
-            className="text-white text-sm font-normal py-2 px-4 rounded-sm border border-gray-700 bg-gray-800/80 hover:bg-gray-700/80 transition-colors"
+            className="text-white text-sm font-semibold py-2 px-4 border border-[#858585] rounded-xl transition-all duration-300 hover:border-[#ffffff] hover:shadow-[0_0_10px_#ffffff]"
           >
             Log In
           </Link>
           <Link
             href="/signup"
-            className="text-gray-800 text-sm font-medium py-2 px-4 rounded-full bg-gray-200 hover:bg-white transition-colors"
+            className="group relative overflow-hidden text-sm font-semibold py-2 px-4 rounded-xl bg-[#E5E4DF]"
           >
-            Sign up
+            <div className="relative flex overflow-hidden">
+              <span className="block transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-[100%]">
+                Sign up
+              </span>
+              <span className="block absolute left-0 -translate-y-full transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-0">
+                Sign up
+              </span>
+            </div>
+            <div className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-[#0066FF] via-[#6942EF] to-[#FF00E5] blur-md opacity-80" />
           </Link>
 
           {/* 모바일 메뉴 버튼 */}
