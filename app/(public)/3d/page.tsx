@@ -11,6 +11,7 @@ import {
 } from '@react-three/drei';
 import { useControls, button, folder } from 'leva';
 import * as THREE from 'three';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { CameraLogger } from '@/shared/ui/CameraLogger';
 import { Model } from '@/shared/ui/Scene';
 import CanvasLoader from '@/shared/ui/Loader';
@@ -270,12 +271,52 @@ const SceneController = () => {
   return null;
 };
 
+const HologramCard = () => {
+  const cardRef = useRef<THREE.Mesh>(null);
+
+  // 회전 애니메이션 적용
+  useFrame(() => {
+    if (cardRef.current) {
+      cardRef.current.rotation.y += 0.005;
+    }
+  });
+
+  return (
+    <>
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={0.2}
+          luminanceSmoothing={0.9}
+          intensity={1.5}
+        />
+      </EffectComposer>
+      <mesh ref={cardRef} position={[0, 0, 0]}>
+        <planeGeometry args={[2, 3, 32, 32]} />
+        <meshPhysicalMaterial
+          transparent
+          transmission={1} // 완전 투명
+          roughness={0}
+          thickness={1.2} // 두께 증가
+          ior={1.5} // 굴절률
+          reflectivity={1} // 반사율 추가
+          clearcoat={1}
+          clearcoatRoughness={0.1}
+          attenuationColor="#00ffff" // 빛이 투과될 때 색깔 조정
+          emissive="#00ffff" // 네온 빛 효과 유지
+          emissiveIntensity={1.2}
+        />
+      </mesh>
+    </>
+  );
+};
+
 const GlTFPage = () => {
   const [activeObject, setActiveObject] = useState(null);
 
   return (
     <div className="w-screen h-screen scene-wrapper">
       <Navbar />
+
       <Canvas
         camera={{ fov: 75, near: 0.1, zoom: 0.9, position: [-5.3, 3.1, -6.7] }}
         // onPointerMissed={() => setActiveObject(null)}
@@ -311,6 +352,9 @@ const GlTFPage = () => {
           {/* <ModelGroup /> */}
           <Model />
           {/* <CloudGroup /> */}
+          <ambientLight intensity={0.5} />
+          <pointLight position={[5, 5, 5]} intensity={2} />
+          <HologramCard />
 
           {/* 카메라 조작용 기본 컨트롤 - 회전 방지 */}
           <OrbitControls
