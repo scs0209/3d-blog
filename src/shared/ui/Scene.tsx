@@ -51,9 +51,9 @@ export function Model(props: React.ComponentProps<'group'>) {
               <Float speed={4} rotationIntensity={1} floatIntensity={2}>
                 <Atom />
               </Float>
-              <EffectComposer>
+              {/* <EffectComposer>
                 <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} />
-              </EffectComposer>
+              </EffectComposer> */}
             </>
           )}
         </group>
