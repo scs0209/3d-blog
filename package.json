@@ -27,6 +27,7 @@
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^9.0.0-alpha.8",
     "@react-three/postprocessing": "^3.0.4",
+    "@react-three/rapier": "^2.0.0",
     "@react-three/uikit": "^0.8.14",
     "@react-three/uikit-default": "^0.8.14",
     "@supabase/supabase-js": "^2.47.10",
