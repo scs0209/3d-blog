@@ -48,43 +48,45 @@ const LoginPage = () => {
   };
 
   return (
-    <Canvas
-      camera={{ position: [0, 0, 18], fov: 32.5 }}
-      style={{ height: '100dvh', touchAction: 'none' }}
-      gl={{ localClippingEnabled: true }}
-    >
-      <ambientLight intensity={Math.PI} />
-      <spotLight
-        decay={0}
-        position={[0, 5, 10]}
-        angle={0.25}
-        penumbra={1}
-        intensity={2}
-        castShadow
-      />
-      <Suspense fallback="Loading...">
-        <CardPage />
-      </Suspense>
-      <Fullscreen
-        flexDirection="column"
-        justifyContent="flex-end"
-        alignItems="center"
-        paddingBottom={32}
+    <Suspense fallback="Loading...">
+      <Canvas
+        camera={{ position: [0, 0, 18], fov: 32.5 }}
+        style={{ height: '100dvh', touchAction: 'none' }}
+        gl={{ localClippingEnabled: true }}
       >
-        <Button
-          onClick={() =>
-            window.open(
-              'https://github.com/pmndrs/uikit/tree/main/examples/card',
-              '_blank',
-            )
-          }
+        <ambientLight intensity={Math.PI} />
+        <spotLight
+          decay={0}
+          position={[0, 5, 10]}
+          angle={0.25}
+          penumbra={1}
+          intensity={2}
+          castShadow
+        />
+        <Suspense fallback="Loading...">
+          <CardPage />
+          <Environment preset="city" />
+          <Rig />
+        </Suspense>
+        <Fullscreen
+          flexDirection="column"
+          justifyContent="flex-end"
+          alignItems="center"
+          paddingBottom={32}
         >
-          <Text>Source Code</Text>
-        </Button>
-      </Fullscreen>
-      <Environment preset="city" />
-      <Rig />
-    </Canvas>
+          <Button
+            onClick={() =>
+              window.open(
+                'https://github.com/pmndrs/uikit/tree/main/examples/card',
+                '_blank',
+              )
+            }
+          >
+            <Text>Source Code</Text>
+          </Button>
+        </Fullscreen>
+      </Canvas>
+    </Suspense>
     // <div className="flex items-center justify-center min-h-screen bg-gray-100">
     //   <div className="w-full max-w-sm p-6 bg-white rounded shadow-md">
     //     <h2 className="mb-4 text-2xl font-bold text-center">로그인</h2>

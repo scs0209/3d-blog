@@ -13,7 +13,6 @@ import {
   CardTitle,
   Button,
   Switch,
-  Avatar,
   colors,
 } from '@react-three/uikit-default';
 import { BellRing, Check } from '@react-three/uikit-lucide';
@@ -21,24 +20,19 @@ import {
   Environment,
   MeshPortalMaterial,
   PerspectiveCamera,
-  Box,
 } from '@react-three/drei';
 import { signal } from '@preact/signals-core';
 import { Physical } from './Simulation';
-// import { BellRing, Check } from 'lucide-react';
 
 const notifications = [
   { title: 'Your call has been confirmed.', description: '1 hour ago' },
 ];
+const cardGeometry = new geometry.RoundedPlaneGeometry(1, 1, 0.025);
 
 export function CardPage() {
   const openRef = useRef(false);
   const translateY = useMemo(() => signal(-460), []);
   const translateZ = useMemo(() => signal(0), []);
-  const cardGeometry = useMemo(
-    () => new geometry.RoundedPlaneGeometry(1, 1, 0.025),
-    [],
-  );
 
   useFrame((_, delta) => {
     easing.damp(translateY, 'current', openRef.current ? 0 : -460, 0.2, delta);
@@ -64,21 +58,18 @@ export function CardPage() {
           transformTranslateZ={1}
           padding={14}
           keepAspectRatio={false}
-          width="100%"
+          width={440}
           height={400}
         >
-          <Suspense fallback="Loading...">
-            <mesh geometry={cardGeometry}>
-              <planeGeometry args={[1, 1]} />
-              <MeshPortalMaterial transparent blend={1}>
-                <color attach="background" args={['white']} />
-                <ambientLight intensity={Math.PI} />
-                <Environment preset="city" />
-                <Physical />
-                <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
-              </MeshPortalMaterial>
-            </mesh>
-          </Suspense>
+          <mesh geometry={cardGeometry}>
+            <MeshPortalMaterial transparent>
+              <color attach="background" args={['white']} />
+              <ambientLight intensity={Math.PI} />
+              <Environment preset="city" />
+              <Physical />
+              <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
+            </MeshPortalMaterial>
+          </mesh>
         </Content>
         <Container
           backgroundColor={0xffffff}
