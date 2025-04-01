@@ -1,4 +1,4 @@
-import { Float, useGLTF } from '@react-three/drei';
+import { Float, OrbitControls, useGLTF } from '@react-three/drei';
 import { useMemo, useRef } from 'react';
 import {
   Physics,
@@ -57,29 +57,25 @@ export function Floating(props: any) {
   );
 }
 
-function RigidShape({
-  mesh,
-  vec = new THREE.Vector3(),
-}: {
-  mesh: THREE.Mesh;
-  vec?: THREE.Vector3;
-}) {
+function RigidShape({ mesh }: { mesh: THREE.Mesh }) {
   const api = useRef<RapierRigidBody>(null);
+  const vec = useRef(new THREE.Vector3());
+
   useFrame((state, delta) => {
     delta = Math.min(0.1, delta);
-    api.current?.applyImpulse(
-      vec
-        .copy(api.current.translation())
-        .negate()
-        .add({ x: 0, y: 2, z: 0 })
-        .multiplyScalar(0.2),
-      false,
-    );
+    if (api.current) {
+      const position = api.current.translation();
+      vec.current
+        .set(-position.x, -position.y + 2, -position.z)
+        .multiplyScalar(0.2);
+      api.current.applyImpulse(vec.current, false);
+    }
   });
+
   return (
     <RigidBody
       ref={api}
-      scale={0.2}
+      scale={2}
       position={[
         THREE.MathUtils.randFloatSpread(10),
         THREE.MathUtils.randFloatSpread(10),
@@ -119,7 +115,7 @@ function Pointer({ vec = new THREE.Vector3() }) {
 }
 
 export function Physical() {
-  const { nodes, materials } = useGLTF('/tesseract_cube.glb');
+  const { nodes, materials } = useGLTF('/cute_astronaut.glb');
   const meshes = useMemo(
     () => Object.values(nodes).filter((node) => 'isMesh' in node),
     [nodes],
@@ -130,7 +126,7 @@ export function Physical() {
       {meshes.map((mesh) => (
         <RigidShape key={mesh.uuid} mesh={mesh as THREE.Mesh} />
       ))}
-      <Pointer />
+      <OrbitControls />
     </Physics>
   );
 }

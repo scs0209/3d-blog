@@ -18,11 +18,15 @@ import {
 import { BellRing, Check } from '@react-three/uikit-lucide';
 import {
   Environment,
+  Float,
   MeshPortalMaterial,
   PerspectiveCamera,
+  Stars,
+  OrbitControls,
 } from '@react-three/drei';
 import { signal } from '@preact/signals-core';
 import { Physical } from './Simulation';
+import { Atom } from '@/shared/ui/Atom';
 
 const notifications = [
   { title: 'Your call has been confirmed.', description: '1 hour ago' },
@@ -63,11 +67,20 @@ export function CardPage() {
         >
           <mesh geometry={cardGeometry}>
             <MeshPortalMaterial transparent>
-              <color attach="background" args={['white']} />
-              <ambientLight intensity={Math.PI} />
+              <color attach="background" args={['#000033']} />
+              <ambientLight intensity={1.5} />
               <Environment preset="city" />
+              <Stars
+                radius={100}
+                depth={50}
+                count={5000}
+                factor={4}
+                saturation={0}
+                fade
+                speed={1}
+              />
               <Physical />
-              <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
+              <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={75} />
             </MeshPortalMaterial>
           </mesh>
         </Content>
