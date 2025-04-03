@@ -114,18 +114,35 @@ function Pointer({ vec = new THREE.Vector3() }) {
   );
 }
 
-export function Physical() {
+export function Physical(props: any) {
   const { nodes, materials } = useGLTF('/cute_astronaut.glb');
-  const meshes = useMemo(
-    () => Object.values(nodes).filter((node) => 'isMesh' in node),
-    [nodes],
-  );
+  const groupRef = useRef<THREE.Group>(null);
+  const time = useRef(0);
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      time.current += delta;
+      // 부드러운 떠다니는 효과
+      groupRef.current.position.y = Math.sin(time.current * 0.5) * 0.2;
+      // 천천히 회전하는 효과
+      groupRef.current.rotation.y += delta * 0.2;
+    }
+  });
+
   return (
-    // eslint-disable-next-line react/jsx-no-undef
     <Physics gravity={[0, 0, 0]}>
-      {meshes.map((mesh) => (
-        <RigidShape key={mesh.uuid} mesh={mesh as THREE.Mesh} />
-      ))}
+      <group {...props} dispose={null}>
+        <group ref={groupRef} scale={0.01}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={(nodes.Mesh_0_Material_0_0 as any).geometry}
+            material={materials.Material_0}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={100}
+          />
+        </group>
+      </group>
       <OrbitControls />
     </Physics>
   );
