@@ -51,11 +51,15 @@ const CardPage = () => {
   }
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
+    <div className="w-full h-screen flex justify-center items-center bg-black">
       <div style={{ width: '400px' }}>
         <Canvas
           camera={{ position: [0, 0, 18], fov: 32.5 }}
-          style={{ touchAction: 'none', width: '400px', height: '400px' }}
+          style={{
+            touchAction: 'none',
+            width: '400px',
+            height: '400px',
+          }}
           gl={{ localClippingEnabled: true }}
         >
           <ambientLight intensity={Math.PI} />
@@ -68,10 +72,14 @@ const CardPage = () => {
             castShadow
           />
           <Suspense fallback="Loading">
-            <Fullscreen flexDirection="column" distanceToCamera={10}>
+            <Fullscreen
+              flexDirection="column"
+              distanceToCamera={10}
+              backgroundColor="white"
+            >
               <Container
                 backgroundColor={0xffffff}
-                dark={{ backgroundColor: 0x0 }}
+                // dark={{ backgroundColor: 0x0 }}
                 borderRadius={20}
                 cursor="pointer"
                 flexDirection="column"
@@ -120,13 +128,16 @@ const CardPage = () => {
             </Fullscreen>
           </Suspense>
         </Canvas>
-        <div className=" w-full relative max-w-xs">
-          <div className="relative shadow-xl bg-gray-900 border border-gray-800  px-4 py-8 h-full overflow-hidden rounded-md flex flex-col justify-end items-start">
-            <form onSubmit={handleSubmit}>
+        <div className="w-full relative">
+          <div className="relative shadow-xl bg-gray-900 border-2 border-solid px-4 py-8 h-full overflow-hidden rounded-md flex flex-col justify-end items-start animate-gradient-border">
+            <h1 className="w-full text-2xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-cyan-300 to-purple-400 tracking-[0.2em] drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+              로그인
+            </h1>
+            <form onSubmit={handleSubmit} className="w-full">
               <div className="mb-4">
                 <label
                   htmlFor="email"
-                  className="block mb-1 text-sm font-medium text-white"
+                  className="block mb-1 text-sm font-medium text-slate-300"
                 >
                   이메일
                 </label>
@@ -136,13 +147,13 @@ const CardPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded bg-slate-900/50 text-slate-300 border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-transparent backdrop-blur-sm placeholder-slate-500"
                 />
               </div>
               <div className="mb-4">
                 <label
                   htmlFor="password"
-                  className="block mb-1 text-sm font-medium text-white"
+                  className="block mb-1 text-sm font-medium text-slate-300"
                 >
                   비밀번호
                 </label>
@@ -152,19 +163,18 @@ const CardPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border rounded bg-slate-900/50 text-slate-300 border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-transparent backdrop-blur-sm placeholder-slate-500"
                 />
               </div>
               <button
                 type="button"
-                className="border px-4 py-1 rounded-lg  border-gray-500 text-gray-300"
+                className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500/80 via-blue-500/80 to-cyan-500/80 text-white border-0 transition-all duration-300 hover:from-purple-600/90 hover:via-blue-600/90 hover:to-cyan-600/90 hover:scale-[1.02] shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:shadow-[0_0_20px_rgba(147,51,234,0.5)]"
                 onClick={handleSubmit}
               >
                 로그인
               </button>
             </form>
 
-            {/* Meaty part - Meteor effect */}
             <Meteors number={20} />
           </div>
         </div>
