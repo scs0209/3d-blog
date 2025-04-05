@@ -1,6 +1,4 @@
-'use client';
-
-import CardPage from '@/widgets/login/ui/CardPage';
+import CardPage from '@/views/login/ui/CardPage';
 
 const LoginPage = () => {
   return <CardPage />;
