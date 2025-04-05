@@ -1,7 +1,7 @@
-import CardPage from '@/views/login/ui/CardPage';
+import { AuthPage } from '@/views/login';
 
 const LoginPage = () => {
-  return <CardPage />;
+  return <AuthPage type="login" />;
 };
 
 export default LoginPage;
