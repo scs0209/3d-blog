@@ -30,7 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error('No user found');
         }
 
-        const isValid = compare(
+        const isValid = await compare(
           credentials.password as string,
           user.password as string,
         );
