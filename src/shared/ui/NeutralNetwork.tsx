@@ -172,7 +172,7 @@ export function NeuralNetwork() {
   });
 
   return (
-    <group ref={groupRef} dispose={null} scale={100}>
+    <group ref={groupRef} dispose={null} scale={10} position={[0, -50, 300]}>
       <points>
         <bufferGeometry ref={particlesRef}>
           <bufferAttribute
