@@ -17,7 +17,11 @@ interface TagDetail {
   }>;
 }
 
-export default function TagDetailPage({ params }: { params: { id: string } }) {
+export default function TagDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const router = useRouter();
   const [tag, setTag] = useState<TagDetail | null>(null);
   const [isEditing, setIsEditing] = useState(false);

@@ -5,7 +5,7 @@ import { CategoryModal } from '@/widgets/category';
 export default async function CategoryPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
   const data = await getCategoryPosts(slug);

@@ -7,7 +7,11 @@ import {
   updatePost,
 } from '@/features/post/api/post-api';
 
-export default function TestPage({ params }: { params: { id: string } }) {
+export default function TestPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const [post, setPost] = useState<{
     title: string;
     content: string;
