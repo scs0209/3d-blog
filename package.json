@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "lint:check": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "lint:fix:all": "eslint . --ext .ts,.tsx --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "generate-types": "sh scripts/generate-types.sh",
@@ -15,6 +18,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
+    "@biomejs/cli-win32-x64": "^1.9.4",
     "@hookform/resolvers": "^3.10.0",
     "@preact/signals-core": "^1.8.0",
     "@prisma/client": "^6.1.0",
@@ -57,6 +61,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "^3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
