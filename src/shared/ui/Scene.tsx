@@ -9,11 +9,11 @@ Title: space boi
 import { Model as RoomModel } from '@/shared/ui/Room';
 import { Float, useGLTF } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { MeshStandardMaterial } from 'three';
-import * as three from 'three';
+import type * as three from 'three';
 import { Atom } from './Atom';
-import { Cloud } from './Cloud';
 import { CubeModel } from './Cube';
 import { NeuralNetwork } from './NeutralNetwork';
 
@@ -44,7 +44,7 @@ export function Model(props: React.ComponentProps<'group'>) {
 
   return (
     <>
-      <fog attach='fog' args={['#000022', 0, 3000]} />
+      <fog attach="fog" args={['#000022', 0, 3000]} />
       <group {...props} dispose={null}>
         <group scale={0.01}>
           <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
@@ -68,7 +68,11 @@ export function Model(props: React.ComponentProps<'group'>) {
               </>
             )}
           </group>
-          <group position={[-357.404, 392.646, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={39.706}>
+          <group
+            position={[-357.404, 392.646, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={39.706}
+          >
             <mesh
               castShadow
               receiveShadow
@@ -82,7 +86,11 @@ export function Model(props: React.ComponentProps<'group'>) {
               material={materials['Material.002']}
             />
           </group>
-          <group position={[199.634, 566.883, -221.001]} rotation={[-Math.PI / 2, 0, 0]} scale={39.706}>
+          <group
+            position={[199.634, 566.883, -221.001]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={39.706}
+          >
             <mesh
               castShadow
               receiveShadow
@@ -194,7 +202,7 @@ export function Model(props: React.ComponentProps<'group'>) {
             scale={16.881}
           />
           {/* 바닥 */}
-          <mesh
+          {/* <mesh
             castShadow
             receiveShadow
             geometry={(nodes.Sphere011_Material002_0 as three.Mesh).geometry}
@@ -211,7 +219,7 @@ export function Model(props: React.ComponentProps<'group'>) {
             position={[0, -101.673, 0]}
             rotation={[-Math.PI / 2, 0, 0]}
             scale={[50000, 50000, 100]}
-          />
+          /> */}
           <mesh
             castShadow
             receiveShadow
