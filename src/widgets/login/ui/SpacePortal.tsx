@@ -5,7 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { Container, Content, Fullscreen } from '@react-three/uikit';
 import { geometry } from 'maath';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import AstronautModel from './AstronautModel';
 
 const cardGeometry = new geometry.RoundedPlaneGeometry(16, 16, 0.025);

@@ -29,7 +29,7 @@ export default function TagDetailPage({
   const [name, setName] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const id = parseInt(params.id);
+  const id = Number.parseInt(params.id);
 
   useEffect(() => {
     const fetchTag = async () => {

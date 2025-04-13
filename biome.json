@@ -89,11 +89,6 @@
               {
                 "selector": { "kind": "typeAlias" },
                 "formats": ["PascalCase"]
-              },
-              {
-                "selector": { "kind": "variable" },
-                "match": "_?([^_]*)",
-                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
               }
             ]
           }

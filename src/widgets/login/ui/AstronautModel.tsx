@@ -4,7 +4,7 @@ import { OrbitControls, useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 import { useRef } from 'react';
-import * as three from 'three';
+import type * as three from 'three';
 
 const AstronautModel = (props: any) => {
   const { nodes, materials } = useGLTF('/cute_astronaut.glb');
