@@ -1,4 +1,3 @@
-import React from 'react';
 import { getCategoryPosts } from '@/features/category/api/category-api';
 import { CategoryModal } from '@/widgets/category';
 

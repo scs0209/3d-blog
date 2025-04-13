@@ -3,7 +3,7 @@
 import { TagInput } from '@/features/tag/ui/tag-input';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import Modal from '@/shared/ui/modal';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export const CreateTagModal = () => {
   const [open, setOpen] = useState(false);
