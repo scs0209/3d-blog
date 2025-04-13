@@ -41,10 +41,7 @@
     "no-useless-catch": "off",
     "import/no-unresolved": "off",
     "import/extensions": "off",
-    "react/function-component-definition": [
-      2,
-      { "namedComponents": ["arrow-function", "function-declaration"] }
-    ],
+    "react/function-component-definition": [2, { "namedComponents": ["arrow-function", "function-declaration"] }],
     "@typescript-eslint/naming-convention": [
       "warn",
       {
@@ -53,10 +50,7 @@
         "leadingUnderscore": "allow"
       }
     ],
-    "no-param-reassign": [
-      "warn",
-      { "props": true, "ignorePropertyModificationsFor": ["state"] }
-    ],
+    "no-param-reassign": ["warn", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
     "@typescript-eslint/no-empty-interface": "off",
     "no-underscore-dangle": ["warn"],
     "import/prefer-default-export": "off",

@@ -100,10 +100,7 @@ import { auth } from '@/shared/utils/auth';
  *       500:
  *         description: Internal server error
  */
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(request: Request, { params }: { params: { slug: string } }) {
   try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -144,10 +141,7 @@ export async function GET(
     });
 
     if (!category) {
-      return NextResponse.json(
-        { error: 'Category not found' },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -161,10 +155,7 @@ export async function GET(
     });
   } catch (error) {
     console.error('GET /api/categories/[id] error:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -232,27 +223,18 @@ export async function GET(
  *       500:
  *         description: Internal server error
  */
-export async function PATCH(
-  request: Request,
-  { params }: { params: { slug: string } },
-) {
+export async function PATCH(request: Request, { params }: { params: { slug: string } }) {
   try {
     const session = await auth();
     if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
     const { name, description } = await request.json();
     const categoryId = parseInt(params.slug);
 
     if (!name?.trim()) {
-      return NextResponse.json(
-        { error: 'Category name is required' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
     }
 
     // Check for duplicate category name, excluding current category
@@ -266,10 +248,7 @@ export async function PATCH(
     });
 
     if (existing) {
-      return NextResponse.json(
-        { error: 'Category with this name already exists' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Category with this name already exists' }, { status: 400 });
     }
 
     const category = await prisma.category.update({
@@ -286,10 +265,7 @@ export async function PATCH(
     return NextResponse.json(category);
   } catch (error) {
     console.error('PATCH /api/categories/[id] error:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -334,17 +310,11 @@ export async function PATCH(
  *       500:
  *         description: Internal server error
  */
-export async function DELETE(
-  request: Request,
-  { params }: { params: { slug: string } },
-) {
+export async function DELETE(request: Request, { params }: { params: { slug: string } }) {
   try {
     const session = await auth();
     if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
     const categoryId = parseInt(params.slug);
@@ -362,17 +332,11 @@ export async function DELETE(
     });
 
     if (!category) {
-      return NextResponse.json(
-        { error: 'Category not found' },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
 
     if (category._count.posts > 0) {
-      return NextResponse.json(
-        { error: 'Cannot delete category that contains posts' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Cannot delete category that contains posts' }, { status: 400 });
     }
 
     await prisma.category.delete({
@@ -382,9 +346,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE /api/categories/[id] error:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -7,7 +7,7 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <main className="flex flex-col items-center row-start-2 gap-8 sm:items-start">
+    <main className='flex flex-col items-center row-start-2 gap-8 sm:items-start'>
       <BlogHeader />
       <BlogMain />
       <div>{session?.user.name}</div>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Home from '../app/page';
+import Home from '../app/(public)/page';
 
 test('renders Home component', () => {
   render(<Home />);

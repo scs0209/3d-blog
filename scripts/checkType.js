@@ -8,13 +8,9 @@ function loadTypedocData(typedocFilePath) {
     return JSON.parse(data);
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(
-        `Unable to read or parse Typedoc JSON file: ${error.message}`,
-      );
+      throw new Error(`Unable to read or parse Typedoc JSON file: ${error.message}`);
     } else {
-      throw new Error(
-        'An unknown error occurred while reading the Typedoc JSON file.',
-      );
+      throw new Error('An unknown error occurred while reading the Typedoc JSON file.');
     }
   }
 }
@@ -36,14 +32,10 @@ function getExistingTypes(typedocData) {
 // 새 타입 이름 확인 함수
 function checkTypeName(typeName, existingTypes) {
   if (existingTypes.has(typeName)) {
-    console.error(
-      `\x1b[31m[ERROR]\x1b[0m Type "${typeName}" is already defined in Typedoc.`,
-    );
+    console.error(`\x1b[31m[ERROR]\x1b[0m Type "${typeName}" is already defined in Typedoc.`);
     process.exit(1);
   } else {
-    console.log(
-      `\x1b[32m[PASS]\x1b[0m Type "${typeName}" is not defined. You can proceed.`,
-    );
+    console.log(`\x1b[32m[PASS]\x1b[0m Type "${typeName}" is not defined. You can proceed.`);
   }
 }
 
@@ -53,9 +45,7 @@ function main() {
   const typeName = process.argv[2];
 
   if (!typeName) {
-    console.error(
-      '\x1b[31m[ERROR]\x1b[0m Please provide a type name as an argument.',
-    );
+    console.error('\x1b[31m[ERROR]\x1b[0m Please provide a type name as an argument.');
     process.exit(1);
   }
 
@@ -67,9 +57,7 @@ function main() {
     if (error instanceof Error) {
       console.error(`\x1b[31m[ERROR]\x1b[0m ${error.message}`);
     } else {
-      console.error(
-        '\x1b[31m[ERROR]\x1b[0m An unknown error occurred during execution.',
-      );
+      console.error('\x1b[31m[ERROR]\x1b[0m An unknown error occurred during execution.');
     }
     process.exit(1);
   }

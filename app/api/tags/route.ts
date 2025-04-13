@@ -52,10 +52,7 @@ export async function GET() {
     });
     return NextResponse.json(tags);
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch tags' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to fetch tags' }, { status: 500 });
   }
 }
 
@@ -126,10 +123,7 @@ export async function POST(req: Request) {
     });
 
     if (existingTag) {
-      return NextResponse.json(
-        { error: 'Tag already exists' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Tag already exists' }, { status: 400 });
     }
 
     const tag = await prisma.tag.create({
@@ -138,9 +132,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(tag, { status: 201 });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to create tag' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to create tag' }, { status: 500 });
   }
 }

@@ -16,10 +16,7 @@ export const getTagDetail = (id: number) =>
     method: 'get',
   });
 
-export const updateTag = (
-  id: number,
-  body: ApiRequest<'/api/tags/{id}', 'put'>,
-) =>
+export const updateTag = (id: number, body: ApiRequest<'/api/tags/{id}', 'put'>) =>
   fetcher({
     url: '/api/tags/{id}',
     method: 'put',

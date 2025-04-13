@@ -1,6 +1,6 @@
 import { Category } from '@/entities/category/model';
-import { CategoryFormSchema } from '../model/category-schema';
 import { baseUrl } from '@/shared/consts/baseUrl';
+import { CategoryFormSchema } from '../model/category-schema';
 
 interface FetchCategoriesParams {
   includePostCount?: boolean;
@@ -40,11 +40,7 @@ interface CategoryWithPosts extends Category {
 }
 
 // 카테고리 목록 조회
-export const getCategories = async ({
-  includePostCount = false,
-  page = 1,
-  limit = 10,
-}: FetchCategoriesParams = {}) => {
+export const getCategories = async ({ includePostCount = false, page = 1, limit = 10 }: FetchCategoriesParams = {}) => {
   const params = new URLSearchParams({
     includePostCount: String(includePostCount),
     page: String(page),
@@ -65,10 +61,7 @@ export const getCategories = async ({
 };
 
 // 새 카테고리 생성
-export const createCategory = async ({
-  name,
-  description,
-}: CategoryFormSchema) => {
+export const createCategory = async ({ name, description }: CategoryFormSchema) => {
   const response = await fetch('/api/category/all', {
     method: 'POST',
     headers: {
@@ -90,12 +83,9 @@ export const getCategoryPosts = async (
   page: number = 1,
   limit: number = 10,
 ): Promise<CategoryWithPosts> => {
-  const res = await fetch(
-    `${baseUrl}/api/category/${slug}?page=${page}&limit=${limit}`,
-    {
-      cache: 'no-store',
-    },
-  );
+  const res = await fetch(`${baseUrl}/api/category/${slug}?page=${page}&limit=${limit}`, {
+    cache: 'no-store',
+  });
 
   if (!res.ok) {
     throw new Error('Failed to fetch category posts');
@@ -110,10 +100,7 @@ interface CategoryInput {
 }
 
 // Update category
-export async function updateCategory(
-  id: string,
-  data: CategoryInput,
-): Promise<Category> {
+export async function updateCategory(id: string, data: CategoryInput): Promise<Category> {
   const response = await fetch(`/api/category/${id}`, {
     method: 'PATCH',
     headers: {

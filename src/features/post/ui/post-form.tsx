@@ -1,10 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Category } from '@/entities/category/model';
+import { getCategories } from '@/features/category/api/category-api';
 import { Button } from '@/shadcn-ui/components/ui/button';
-import { Input } from '@/shadcn-ui/components/ui/input';
 import {
   Form,
   FormControl,
@@ -14,17 +12,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/shadcn-ui/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/shadcn-ui/components/ui/select';
-import { postFormSchema, type PostFormSchema } from '../model/post-form-schema';
-import { getCategories } from '@/features/category/api/category-api';
-import { Category } from '@/entities/category/model';
+import { Input } from '@/shadcn-ui/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { type PostFormSchema, postFormSchema } from '../model/post-form-schema';
 
 type PostFormProps = {
   onSubmit: (data: PostFormSchema) => Promise<void>;
@@ -66,18 +60,15 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleFormSubmit)}
-        className="space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className='space-y-8'>
         <FormField
           control={form.control}
-          name="title"
+          name='title'
           render={({ field }) => (
             <FormItem>
               <FormLabel>제목</FormLabel>
               <FormControl>
-                <Input placeholder="블로그 포스트 제목" {...field} />
+                <Input placeholder='블로그 포스트 제목' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,7 +76,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
         />
         <FormField
           control={form.control}
-          name="content"
+          name='content'
           render={({ field }) => (
             <FormItem>
               <FormLabel>내용</FormLabel>
@@ -99,22 +90,17 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
         />
         <FormField
           control={form.control}
-          name="categoryId"
+          name='categoryId'
           render={({ field }) => {
             return (
               <FormItem>
                 <FormLabel>카테고리</FormLabel>
                 <FormControl>
-                  <Select
-                    value={field.value}
-                    onValueChange={(value) => field.onChange(value)}
-                  >
+                  <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
                     <SelectTrigger>
                       <SelectValue
-                        placeholder="카테고리를 선택하세요"
-                        defaultValue={
-                          categories.find((c) => c.id === field.value)?.name
-                        }
+                        placeholder='카테고리를 선택하세요'
+                        defaultValue={categories.find((c) => c.id === field.value)?.name}
                       />
                     </SelectTrigger>
                     <SelectContent>
@@ -126,15 +112,13 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormDescription>
-                  최소 1개의 카테고리를 선택해야 합니다.
-                </FormDescription>
+                <FormDescription>최소 1개의 카테고리를 선택해야 합니다.</FormDescription>
                 <FormMessage />
               </FormItem>
             );
           }}
         />
-        <Button type="submit" disabled={isLoading}>
+        <Button type='submit' disabled={isLoading}>
           {isLoading ? '게시 중...' : '게시하기'}
         </Button>
       </form>

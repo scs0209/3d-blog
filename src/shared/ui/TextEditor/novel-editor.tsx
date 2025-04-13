@@ -23,10 +23,10 @@ const NovelEditor = ({
   onChange: (val: string) => void;
 }) => {
   return (
-    <div className="relative w-full max-w-screen-lg min-h-[500px]">
+    <div className='relative w-full max-w-screen-lg min-h-[500px]'>
       <EditorRoot>
         <EditorContent
-          className="min-h-[400px] rounded-xl border p-4"
+          className='min-h-[400px] rounded-xl border p-4'
           immediatelyRender={false}
           extensions={extensions}
           editorProps={{
@@ -34,8 +34,7 @@ const NovelEditor = ({
               keydown: (_view, event) => handleCommandNavigation(event),
             },
             attributes: {
-              class:
-                'prose dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full',
+              class: 'prose dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full',
             },
           }}
           initialContent={value || ''}
@@ -43,27 +42,23 @@ const NovelEditor = ({
             onChange(editor.getHTML());
           }}
         />
-        <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
-          <EditorCommandEmpty className="px-2 text-muted-foreground">
-            No results
-          </EditorCommandEmpty>
+        <EditorCommand className='z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all'>
+          <EditorCommandEmpty className='px-2 text-muted-foreground'>No results</EditorCommandEmpty>
           <EditorCommandList>
             {suggestionItems.map((item) => (
               <EditorCommandItem
                 value={item.title}
                 tabIndex={-1}
                 onCommand={(val) => item.command?.(val)}
-                className="command-item flex items-center w-full px-2 py-1 space-x-2 text-sm text-left rounded-md"
+                className='command-item flex items-center w-full px-2 py-1 space-x-2 text-sm text-left rounded-md'
                 key={item.title}
               >
-                <div className="flex items-center justify-center w-10 h-10 border rounded-md border-muted bg-background">
+                <div className='flex items-center justify-center w-10 h-10 border rounded-md border-muted bg-background'>
                   {item.icon}
                 </div>
                 <div>
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <p className='font-medium'>{item.title}</p>
+                  <p className='text-xs text-muted-foreground'>{item.description}</p>
                 </div>
               </EditorCommandItem>
             ))}

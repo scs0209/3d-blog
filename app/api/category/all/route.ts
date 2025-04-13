@@ -82,10 +82,7 @@ export async function GET(request: Request) {
     return NextResponse.json(categories);
   } catch (error) {
     console.error('GET /api/categories error:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -130,19 +127,13 @@ export async function POST(request: Request) {
   try {
     const session = await auth();
     if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Forbidden: Admin access required' },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
     const { name, description } = await request.json();
 
     if (!name?.trim()) {
-      return NextResponse.json(
-        { error: 'Category name is required' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
     }
 
     // Check for duplicate category name
@@ -151,10 +142,7 @@ export async function POST(request: Request) {
     });
 
     if (existing) {
-      return NextResponse.json(
-        { error: 'Category with this name already exists' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Category with this name already exists' }, { status: 400 });
     }
 
     const category = await prisma.category.create({
@@ -168,9 +156,6 @@ export async function POST(request: Request) {
     return NextResponse.json(category);
   } catch (error) {
     console.error('POST /api/categories error:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

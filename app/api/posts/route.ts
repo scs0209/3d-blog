@@ -120,31 +120,19 @@ export async function POST(req: NextRequest) {
 
     // 필수 필드 유효성 검사
     if (!body.title || typeof body.title !== 'string') {
-      return NextResponse.json(
-        { error: 'Title is required and must be a string' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Title is required and must be a string' }, { status: 400 });
     }
 
     if (!body.content || typeof body.content !== 'string') {
-      return NextResponse.json(
-        { error: 'Content is required and must be a string' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Content is required and must be a string' }, { status: 400 });
     }
 
     if (!authorId || typeof authorId !== 'number') {
-      return NextResponse.json(
-        { error: 'Author ID is required and must be a number' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Author ID is required and must be a number' }, { status: 400 });
     }
 
     if (!categoryId || typeof categoryId !== 'number') {
-      return NextResponse.json(
-        { error: 'Category ID is required and must be a number' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Category ID is required and must be a number' }, { status: 400 });
     }
 
     const newPost = await prisma.post.create({
@@ -169,9 +157,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newPost, { status: 201 });
   } catch (error) {
     console.error('Error creating post:', error);
-    return NextResponse.json(
-      { error: 'Failed to create post' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
   }
 }

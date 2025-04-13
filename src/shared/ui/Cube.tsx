@@ -6,10 +6,10 @@ Source: https://sketchfab.com/3d-models/tesseract-cube-43c205c3ea964d96b0e40319c
 Title: Tesseract Cube
 */
 
-import React, { useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import React, { useRef } from 'react';
+import * as three from 'three';
 
 type CubeModelProps = {
   onHover: (isHovered: boolean) => void;
@@ -18,8 +18,8 @@ type CubeModelProps = {
 
 export function CubeModel({ onHover, position, ...props }: CubeModelProps) {
   const { nodes, materials } = useGLTF('/tesseract_cube.glb');
-  const textRef = useRef<THREE.Mesh | null>(null);
-  const cubeRef = useRef<THREE.Group | null>(null);
+  const textRef = useRef<three.Mesh | null>(null);
+  const cubeRef = useRef<three.Group | null>(null);
 
   // Animation for the cube when hovered
   useFrame((state, delta) => {
@@ -28,8 +28,7 @@ export function CubeModel({ onHover, position, ...props }: CubeModelProps) {
 
       // Optional animation for text
       if (textRef.current) {
-        textRef.current.position.y =
-          Math.sin(state.clock.elapsedTime * 2) * 0.1 + 2;
+        textRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.1 + 2;
       }
     }
   });
@@ -47,7 +46,7 @@ export function CubeModel({ onHover, position, ...props }: CubeModelProps) {
         <mesh
           castShadow
           receiveShadow
-          geometry={(nodes.Cube_Material_0 as THREE.Mesh).geometry}
+          geometry={(nodes.Cube_Material_0 as three.Mesh).geometry}
           material={materials.Material}
           rotation={[-Math.PI / 2, 0, 0]}
           scale={100}

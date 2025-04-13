@@ -39,10 +39,7 @@ export type CreatePostReq = ApiRequest<'/api/posts', 'post'>;
  * //   ]
  * // }
  */
-export const groupBy = <T>(
-  array: T[],
-  keyFn: (item: T) => string | number,
-): Record<string | number, T[]> => {
+export const groupBy = <T>(array: T[], keyFn: (item: T) => string | number): Record<string | number, T[]> => {
   return array.reduce((acc: Record<string | number, T[]>, item: T) => {
     const key = keyFn(item);
     if (!acc[key]) {

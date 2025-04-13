@@ -11,9 +11,7 @@ export async function middleware(request: NextRequest) {
   const session = await auth();
   const { pathname } = request.nextUrl;
 
-  const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
+  const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
 
   if (!session?.user) {
     return NextResponse.redirect(new URL('/login', request.url));

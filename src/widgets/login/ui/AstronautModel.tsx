@@ -1,14 +1,14 @@
 'use client';
 
 import { OrbitControls, useGLTF } from '@react-three/drei';
-import { useRef } from 'react';
-import { Physics } from '@react-three/rapier';
-import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
+import { Physics } from '@react-three/rapier';
+import { useRef } from 'react';
+import * as three from 'three';
 
 const AstronautModel = (props: any) => {
   const { nodes, materials } = useGLTF('/cute_astronaut.glb');
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<three.Group>(null);
   const time = useRef(0);
 
   useFrame((state, delta) => {

@@ -85,14 +85,12 @@ export default {
           '0%, 100%': {
             borderImage:
               'linear-gradient(0deg, rgba(255,128,0,0.7), rgba(255,255,0,0.7), rgba(0,255,0,0.7), rgba(0,255,255,0.7), rgba(0,0,255,0.7), rgba(128,0,255,0.7), rgba(255,0,128,0.7)) 1',
-            boxShadow:
-              '0 0 5px rgba(255,0,0,0.2), 0 0 10px rgba(0,255,255,0.2), 0 0 15px rgba(255,0,255,0.2)',
+            boxShadow: '0 0 5px rgba(255,0,0,0.2), 0 0 10px rgba(0,255,255,0.2), 0 0 15px rgba(255,0,255,0.2)',
           },
           '50%': {
             borderImage:
               'linear-gradient(180deg, rgba(255,128,0,0.7), rgba(255,255,0,0.7), rgba(0,255,0,0.7), rgba(0,255,255,0.7), rgba(0,0,255,0.7), rgba(128,0,255,0.7), rgba(255,0,128,0.7)) 1',
-            boxShadow:
-              '0 0 10px rgba(255,0,0,0.3), 0 0 20px rgba(0,255,255,0.3), 0 0 30px rgba(255,0,255,0.3)',
+            boxShadow: '0 0 10px rgba(255,0,0,0.3), 0 0 20px rgba(0,255,255,0.3), 0 0 30px rgba(255,0,255,0.3)',
           },
         },
       },

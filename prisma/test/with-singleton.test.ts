@@ -53,7 +53,5 @@ test('should throw an error if user ID is missing for update', async () => {
     email: 'hello@prisma.io',
   };
 
-  await expect(updateUsername(user)).rejects.toThrowError(
-    'User ID is required for update!',
-  );
+  await expect(updateUsername(user)).rejects.toThrowError('User ID is required for update!');
 });

@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { Button } from '@/shadcn-ui/components/ui/button';
+import React from 'react';
 
 async function createPost() {
   try {

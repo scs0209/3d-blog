@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { useGLTF } from '@react-three/drei';
+import React from 'react';
 
 type ModelProps = {
   // Define the props type to avoid implicit 'any' type

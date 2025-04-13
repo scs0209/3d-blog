@@ -11,35 +11,28 @@ type RequestBody<P extends Path, M extends Method<P>> = paths[P][M] extends {
   ? paths[P][M]['requestBody']['content']['application/json']
   : undefined;
 
-type RequestPathParams<
-  P extends Path,
-  M extends Method<P>,
-> = paths[P][M] extends {
+type RequestPathParams<P extends Path, M extends Method<P>> = paths[P][M] extends {
   parameters: { path: unknown };
 }
   ? paths[P][M]['parameters']['path']
   : undefined;
 
-type RequestQueryParams<
-  P extends Path,
-  M extends Method<P>,
-> = paths[P][M] extends {
+type RequestQueryParams<P extends Path, M extends Method<P>> = paths[P][M] extends {
   parameters: { query?: unknown };
 }
   ? paths[P][M]['parameters']['query']
   : undefined;
 
-type BodyParameter<P extends Path, M extends Method<P>> =
-  RequestBody<P, M> extends undefined ? {} : { body: RequestBody<P, M> };
+type BodyParameter<P extends Path, M extends Method<P>> = RequestBody<P, M> extends undefined
+  ? {}
+  : { body: RequestBody<P, M> };
 
-type QueryParameters<P extends Path, M extends Method<P>> =
-  RequestQueryParams<P, M> extends undefined
-    ? {}
-    : { query?: RequestQueryParams<P, M> };
-type PathParameters<P extends Path, M extends Method<P>> =
-  RequestPathParams<P, M> extends undefined
-    ? {}
-    : { path: RequestPathParams<P, M> };
+type QueryParameters<P extends Path, M extends Method<P>> = RequestQueryParams<P, M> extends undefined
+  ? {}
+  : { query?: RequestQueryParams<P, M> };
+type PathParameters<P extends Path, M extends Method<P>> = RequestPathParams<P, M> extends undefined
+  ? {}
+  : { path: RequestPathParams<P, M> };
 
 type FetcherParams<P extends Path, M extends Method<P>> = {
   url: P;
@@ -57,8 +50,7 @@ export const fetcher = async <P extends Path, M extends Method<P>>({
 }: FetcherParams<P, M>) => {
   let finalUrl = `${url}`;
 
-  const body =
-    'body' in restParams ? JSON.stringify(restParams.body) : undefined;
+  const body = 'body' in restParams ? JSON.stringify(restParams.body) : undefined;
 
   if ('query' in restParams) {
     const queryStr = qs.stringify(restParams.query as ParsedUrlQueryInput);
@@ -67,9 +59,7 @@ export const fetcher = async <P extends Path, M extends Method<P>>({
 
   if ('path' in restParams) {
     const pathObj = restParams.path as Record<string, string | number>;
-    const replacedPathUrl = finalUrl.replace(/\{(\w+)\}/g, (match, key) =>
-      String(pathObj[key] || match),
-    );
+    const replacedPathUrl = finalUrl.replace(/\{(\w+)\}/g, (match, key) => String(pathObj[key] || match));
 
     finalUrl = replacedPathUrl;
   }

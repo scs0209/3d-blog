@@ -1,10 +1,9 @@
+import { ApiRequest, fetcher } from '@/shared/api';
 import { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
-import { ApiRequest, fetcher } from '@/shared/api';
 import { GetPostListResponse } from '../model/post-types';
 
-export const getPostList = (): GetPostListResponse =>
-  fetcher({ url: '/api/posts', method: 'get' });
+export const getPostList = (): GetPostListResponse => fetcher({ url: '/api/posts', method: 'get' });
 
 type CreatePostInput = {
   title: string;
@@ -48,10 +47,7 @@ export const getPostDetail = (id: number) =>
     method: 'get',
   });
 
-export const updatePost = (
-  id: number,
-  body: ApiRequest<'/api/posts/{id}', 'put'>,
-) =>
+export const updatePost = (id: number, body: ApiRequest<'/api/posts/{id}', 'put'>) =>
   fetcher({
     url: '/api/posts/{id}',
     path: { id },

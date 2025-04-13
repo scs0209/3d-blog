@@ -1,8 +1,8 @@
-import NextAuth from 'next-auth';
-import GithubProvider from 'next-auth/providers/github';
-import Credentials from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { compare } from 'bcrypt';
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import GithubProvider from 'next-auth/providers/github';
 import prisma from '../lib/db';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -30,10 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error('No user found');
         }
 
-        const isValid = await compare(
-          credentials.password as string,
-          user.password as string,
-        );
+        const isValid = await compare(credentials.password as string, user.password as string);
 
         if (!isValid) {
           throw new Error('Invalid password');

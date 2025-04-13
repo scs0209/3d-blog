@@ -1,14 +1,8 @@
 'use client';
 
-import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import {
-  AdditiveBlending,
-  Vector3,
-  Group,
-  Points,
-  BufferGeometry,
-} from 'three';
+import React, { useRef, useMemo, useEffect } from 'react';
+import { AdditiveBlending, BufferGeometry, Group, Points, Vector3 } from 'three';
 
 interface ParticleData {
   velocity: Vector3;
@@ -34,10 +28,7 @@ export function NeuralNetwork() {
   const positions = useMemo(() => new Float32Array(segments * 3), [segments]);
   const colors = useMemo(() => new Float32Array(segments * 3), [segments]);
 
-  const particlePositions = useMemo(
-    () => new Float32Array(maxParticleCount * 3),
-    [],
-  );
+  const particlePositions = useMemo(() => new Float32Array(maxParticleCount * 3), []);
 
   const particlesData: ParticleData[] = useMemo(() => {
     const data: ParticleData[] = [];
@@ -59,11 +50,7 @@ export function NeuralNetwork() {
       particlePositions[i * 3 + 1] = y;
       particlePositions[i * 3 + 2] = z;
 
-      const velocity = new Vector3(
-        -1 + Math.random() * 2,
-        -1 + Math.random() * 2,
-        -1 + Math.random() * 2,
-      );
+      const velocity = new Vector3(-1 + Math.random() * 2, -1 + Math.random() * 2, -1 + Math.random() * 2);
       particlesData[i].velocity = velocity.normalize().divideScalar(50);
     }
 
@@ -73,8 +60,7 @@ export function NeuralNetwork() {
   }, [particleCount, particlesData, particlePositions]);
 
   useFrame((_, delta) => {
-    if (!particlesRef.current || !linesGeometryRef.current || !groupRef.current)
-      return;
+    if (!particlesRef.current || !linesGeometryRef.current || !groupRef.current) return;
 
     vertexpos = 0;
     colorpos = 0;
@@ -91,38 +77,27 @@ export function NeuralNetwork() {
 
       if (!particleData) continue;
 
-      v.set(
-        particlePositions[i * 3],
-        particlePositions[i * 3 + 1],
-        particlePositions[i * 3 + 2],
-      )
+      v.set(particlePositions[i * 3], particlePositions[i * 3 + 1], particlePositions[i * 3 + 2])
         .add(particleData.velocity)
         .setLength(10);
       particlePositions[i * 3] = v.x;
       particlePositions[i * 3 + 1] = v.y;
       particlePositions[i * 3 + 2] = v.z;
 
-      if (
-        particlePositions[i * 3 + 1] < -rHalf ||
-        particlePositions[i * 3 + 1] > rHalf
-      )
+      if (particlePositions[i * 3 + 1] < -rHalf || particlePositions[i * 3 + 1] > rHalf)
         particleData.velocity.y = -particleData.velocity.y;
 
       if (particlePositions[i * 3] < -rHalf || particlePositions[i * 3] > rHalf)
         particleData.velocity.x = -particleData.velocity.x;
 
-      if (
-        particlePositions[i * 3 + 2] < -rHalf ||
-        particlePositions[i * 3 + 2] > rHalf
-      )
+      if (particlePositions[i * 3 + 2] < -rHalf || particlePositions[i * 3 + 2] > rHalf)
         particleData.velocity.z = -particleData.velocity.z;
 
       if (particleData.numConnections >= maxConnections) continue;
 
       for (let j = i + 1; j < particleCount; j++) {
         const particleDataB = particlesData[j];
-        if (!particleDataB || particleDataB.numConnections >= maxConnections)
-          continue;
+        if (!particleDataB || particleDataB.numConnections >= maxConnections) continue;
 
         const dx = particlePositions[i * 3] - particlePositions[j * 3];
         const dy = particlePositions[i * 3 + 1] - particlePositions[j * 3 + 1];
@@ -175,41 +150,16 @@ export function NeuralNetwork() {
     <group ref={groupRef} dispose={null} scale={10} position={[0, -50, 300]}>
       <points>
         <bufferGeometry ref={particlesRef}>
-          <bufferAttribute
-            attach="attributes-position"
-            count={particleCount}
-            array={particlePositions}
-            itemSize={3}
-          />
+          <bufferAttribute attach='attributes-position' count={particleCount} array={particlePositions} itemSize={3} />
         </bufferGeometry>
-        <pointsMaterial
-          color="white"
-          size={3}
-          blending={AdditiveBlending}
-          transparent
-          sizeAttenuation={false}
-        />
+        <pointsMaterial color='white' size={3} blending={AdditiveBlending} transparent sizeAttenuation={false} />
       </points>
       <lineSegments>
         <bufferGeometry ref={linesGeometryRef}>
-          <bufferAttribute
-            attach="attributes-position"
-            count={positions.length / 3}
-            array={positions}
-            itemSize={3}
-          />
-          <bufferAttribute
-            attach="attributes-color"
-            count={colors.length / 3}
-            array={colors}
-            itemSize={3}
-          />
+          <bufferAttribute attach='attributes-position' count={positions.length / 3} array={positions} itemSize={3} />
+          <bufferAttribute attach='attributes-color' count={colors.length / 3} array={colors} itemSize={3} />
         </bufferGeometry>
-        <lineBasicMaterial
-          vertexColors
-          blending={AdditiveBlending}
-          transparent
-        />
+        <lineBasicMaterial vertexColors blending={AdditiveBlending} transparent />
       </lineSegments>
     </group>
   );

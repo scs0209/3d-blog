@@ -1,11 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/shadcn-ui/components/ui/button';
-import { Input } from '@/shadcn-ui/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import {
   Form,
   FormControl,
@@ -15,20 +11,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/shadcn-ui/components/ui/form';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/shadcn-ui/components/ui/card';
-import {
-  loginSchema,
-  signupSchema,
-  type LoginSchema,
-  type SignupSchema,
-} from '../model/auth-schema';
+import { Input } from '@/shadcn-ui/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { type LoginSchema, type SignupSchema, loginSchema, signupSchema } from '../model/auth-schema';
 
 interface AuthFormProps {
   onSubmit: (data: LoginSchema | SignupSchema) => Promise<void>;
@@ -79,25 +67,22 @@ export function AuthForm({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className='w-full max-w-md mx-auto'>
       <CardHeader>
-        <CardTitle className="text-2xl">{title}</CardTitle>
+        <CardTitle className='text-2xl'>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleFormSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="email"
+              name='email'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>이메일</FormLabel>
                   <FormControl>
-                    <Input placeholder="your@email.com" {...field} />
+                    <Input placeholder='your@email.com' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -105,28 +90,21 @@ export function AuthForm({
             />
             <FormField
               control={form.control}
-              name="password"
+              name='password'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>비밀번호</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? 'text' : 'password'}
-                        {...field}
-                      />
+                    <div className='relative'>
+                      <Input type={showPassword ? 'text' : 'password'} {...field} />
                       <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-2 top-1/2 -translate-y-1/2"
+                        type='button'
+                        variant='ghost'
+                        size='icon'
+                        className='absolute right-2 top-1/2 -translate-y-1/2'
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? (
-                          <EyeOff size={20} />
-                        ) : (
-                          <Eye size={20} />
-                        )}
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                       </Button>
                     </div>
                   </FormControl>
@@ -138,12 +116,12 @@ export function AuthForm({
               <>
                 <FormField
                   control={form.control}
-                  name="name"
+                  name='name'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>이름</FormLabel>
                       <FormControl>
-                        <Input placeholder="이름을 입력하세요" {...field} />
+                        <Input placeholder='이름을 입력하세요' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -151,30 +129,21 @@ export function AuthForm({
                 />
                 <FormField
                   control={form.control}
-                  name="confirmPassword"
+                  name='confirmPassword'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>비밀번호 확인</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            {...field}
-                          />
+                        <div className='relative'>
+                          <Input type={showConfirmPassword ? 'text' : 'password'} {...field} />
                           <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-2 top-1/2 -translate-y-1/2"
-                            onClick={() =>
-                              setShowConfirmPassword(!showConfirmPassword)
-                            }
+                            type='button'
+                            variant='ghost'
+                            size='icon'
+                            className='absolute right-2 top-1/2 -translate-y-1/2'
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           >
-                            {showConfirmPassword ? (
-                              <EyeOff size={20} />
-                            ) : (
-                              <Eye size={20} />
-                            )}
+                            {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                           </Button>
                         </div>
                       </FormControl>
@@ -185,21 +154,21 @@ export function AuthForm({
               </>
             )}
             {error && (
-              <div className="flex items-center space-x-2 text-red-600">
+              <div className='flex items-center space-x-2 text-red-600'>
                 <AlertCircle size={20} />
-                <p className="text-sm">{error}</p>
+                <p className='text-sm'>{error}</p>
               </div>
             )}
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type='submit' className='w-full' disabled={isLoading}>
               {isLoading ? '처리 중...' : buttonText}
             </Button>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex justify-center">
-        <p className="text-sm text-gray-600">
+      <CardFooter className='flex justify-center'>
+        <p className='text-sm text-gray-600'>
           {footerText}{' '}
-          <a href={footerLinkHref} className="text-blue-600 hover:underline">
+          <a href={footerLinkHref} className='text-blue-600 hover:underline'>
             {footerLinkText}
           </a>
         </p>

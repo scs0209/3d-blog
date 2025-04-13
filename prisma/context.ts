@@ -28,9 +28,7 @@ export async function updateUsername(user: UpdateUser) {
   // 업데이트할 필드가 있는지 확인
   const { name, email, password } = user;
   if (!name && !email && !password) {
-    throw new Error(
-      'At least one field (name, email, or password) must be provided for update!',
-    );
+    throw new Error('At least one field (name, email, or password) must be provided for update!');
   }
 
   return await prisma.user.update({

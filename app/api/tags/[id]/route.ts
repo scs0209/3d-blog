@@ -22,10 +22,7 @@ import prisma from '@/shared/lib/db';
  *       500:
  *         description: Server error
  */
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const id = parseInt(params.id);
     const tag = await prisma.tag.findUnique({
@@ -82,10 +79,7 @@ export async function GET(
  *       500:
  *         description: Server error
  */
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
     const id = parseInt(params.id);
     const { name } = await req.json();
@@ -95,10 +89,7 @@ export async function PUT(
     });
 
     if (existingTag && existingTag.id !== id) {
-      return NextResponse.json(
-        { error: 'Tag name already in use' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'Tag name already in use' }, { status: 400 });
     }
 
     const tag = await prisma.tag.update({
@@ -111,10 +102,7 @@ export async function PUT(
     if ((error as any).code === 'P2025') {
       return NextResponse.json({ error: 'Tag not found' }, { status: 404 });
     }
-    return NextResponse.json(
-      { error: 'Failed to update tag' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to update tag' }, { status: 500 });
   }
 }
 
@@ -139,10 +127,7 @@ export async function PUT(
  *       500:
  *         description: Server error
  */
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
     const id = parseInt(params.id);
     await prisma.tag.delete({
@@ -154,9 +139,6 @@ export async function DELETE(
     if ((error as any).code === 'P2025') {
       return NextResponse.json({ error: 'Tag not found' }, { status: 404 });
     }
-    return NextResponse.json(
-      { error: 'Failed to delete tag' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to delete tag' }, { status: 500 });
   }
 }

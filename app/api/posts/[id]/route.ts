@@ -50,10 +50,7 @@ import prisma from '@/shared/lib/db';
  *       500:
  *         description: 서버 에러
  */
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const postId = parseInt(params.id);
 
@@ -113,10 +110,7 @@ export async function GET(
     return NextResponse.json(post, { status: 200 });
   } catch (error) {
     console.error('Error fetching post:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch post' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to fetch post' }, { status: 500 });
   }
 }
 
@@ -164,10 +158,7 @@ export async function GET(
  *       500:
  *         description: 서버 에러
  */
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const postId = parseInt(params.id);
     const body = await req.json();
@@ -215,10 +206,7 @@ export async function PUT(
     return NextResponse.json(updatedPost, { status: 200 });
   } catch (error) {
     console.error('Error updating post:', error);
-    return NextResponse.json(
-      { error: 'Failed to update post' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
   }
 }
 
@@ -253,10 +241,7 @@ export async function PUT(
  *       500:
  *         description: 서버 에러
  */
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const postId = parseInt(params.id);
 
@@ -284,15 +269,9 @@ export async function DELETE(
       }),
     ]);
 
-    return NextResponse.json(
-      { message: 'Post deleted successfully' },
-      { status: 200 },
-    );
+    return NextResponse.json({ message: 'Post deleted successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting post:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete post' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 });
   }
 }

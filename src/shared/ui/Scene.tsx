@@ -6,16 +6,16 @@ Source: https://sketchfab.com/3d-models/space-boi-f6a8c6a6727b4f2cb020c8b50bb2ee
 Title: space boi
 */
 
-import React, { useState } from 'react';
-import { useGLTF, Float } from '@react-three/drei';
-import { MeshStandardMaterial } from 'three';
-import * as THREE from 'three';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Model as RoomModel } from '@/shared/ui/Room';
-import { CubeModel } from './Cube';
+import { Float, useGLTF } from '@react-three/drei';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import React, { useState } from 'react';
+import { MeshStandardMaterial } from 'three';
+import * as three from 'three';
 import { Atom } from './Atom';
-import { NeuralNetwork } from './NeutralNetwork';
 import { Cloud } from './Cloud';
+import { CubeModel } from './Cube';
+import { NeuralNetwork } from './NeutralNetwork';
 
 const mirrorMaterial = new MeshStandardMaterial({
   color: 'white',
@@ -44,7 +44,7 @@ export function Model(props: React.ComponentProps<'group'>) {
 
   return (
     <>
-      <fog attach="fog" args={['#000022', 0, 3000]} />
+      <fog attach='fog' args={['#000022', 0, 3000]} />
       <group {...props} dispose={null}>
         <group scale={0.01}>
           <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
@@ -68,46 +68,38 @@ export function Model(props: React.ComponentProps<'group'>) {
               </>
             )}
           </group>
-          <group
-            position={[-357.404, 392.646, 0]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            scale={39.706}
-          >
+          <group position={[-357.404, 392.646, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={39.706}>
             <mesh
               castShadow
               receiveShadow
-              geometry={(nodes.Sphere002_Material001_0 as THREE.Mesh).geometry}
+              geometry={(nodes.Sphere002_Material001_0 as three.Mesh).geometry}
               material={materials['Material.001']}
             />
             <mesh
               castShadow
               receiveShadow
-              geometry={(nodes.Sphere002_Material002_0 as THREE.Mesh).geometry}
+              geometry={(nodes.Sphere002_Material002_0 as three.Mesh).geometry}
               material={materials['Material.002']}
             />
           </group>
-          <group
-            position={[199.634, 566.883, -221.001]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            scale={39.706}
-          >
+          <group position={[199.634, 566.883, -221.001]} rotation={[-Math.PI / 2, 0, 0]} scale={39.706}>
             <mesh
               castShadow
               receiveShadow
-              geometry={(nodes.Sphere007_Material001_0 as THREE.Mesh).geometry}
+              geometry={(nodes.Sphere007_Material001_0 as three.Mesh).geometry}
               material={materials['Material.001']}
             />
             <mesh
               castShadow
               receiveShadow
-              geometry={(nodes.Sphere007_Material002_0 as THREE.Mesh).geometry}
+              geometry={(nodes.Sphere007_Material002_0 as three.Mesh).geometry}
               material={materials['Material.002']}
             />
           </group>
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.waves_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.waves_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             rotation={[-Math.PI / 2, 0, 0]}
             scale={[100, 100, 1.891]}
@@ -115,7 +107,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.waves1_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.waves1_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             rotation={[-Math.PI / 2, 0, 0]}
             scale={[100, 100, 1.891]}
@@ -123,7 +115,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.waves2_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.waves2_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[92.464, 15.529, 2.112]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -132,7 +124,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.particles_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.particles_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[489.69, 793.811, 355.293]}
             rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
@@ -141,7 +133,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere_Material001_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere_Material001_0 as three.Mesh).geometry}
             material={materials['Material.001']}
             position={[375.469, 427.948, 0]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -150,7 +142,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere001_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere001_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[375.469, 427.948, 0]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -159,7 +151,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere004_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere004_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[375.469, 427.948, 0]}
             rotation={[-0.688, 0, 0]}
@@ -168,7 +160,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere005_Material001_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere005_Material001_0 as three.Mesh).geometry}
             material={materials['Material.001']}
             position={[-341.988, 460.196, -117.028]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -177,7 +169,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere006_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere006_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[-341.988, 460.196, -117.028]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -186,7 +178,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere009_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere009_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[507.522, 667.594, -214.475]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -195,7 +187,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere010_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere010_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[-287.442, 585.792, -311.857]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -205,7 +197,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere011_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere011_Material002_0 as three.Mesh).geometry}
             material={mirrorMaterial}
             position={[-553.462, 331.074, -379.067]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -214,7 +206,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Cube_Material001_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Cube_Material001_0 as three.Mesh).geometry}
             material={spaceMaterial}
             position={[0, -101.673, 0]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -223,7 +215,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere003_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere003_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[-357.404, 392.646, 0]}
             rotation={[-Math.PI / 2, 0, 0]}
@@ -232,7 +224,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <mesh
             castShadow
             receiveShadow
-            geometry={(nodes.Sphere008_Material002_0 as THREE.Mesh).geometry}
+            geometry={(nodes.Sphere008_Material002_0 as three.Mesh).geometry}
             material={materials['Material.002']}
             position={[199.634, 566.883, -221.001]}
             rotation={[-Math.PI / 2, 0, 0]}

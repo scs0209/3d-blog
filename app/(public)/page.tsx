@@ -1,14 +1,14 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import { useControls, button } from 'leva';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { CameraLogger } from '@/shared/ui/CameraLogger';
 import { Model } from '@/shared/ui/Scene';
 import CanvasLoader from '@/shared/ui/Loader';
 import Navbar from '@/shared/ui/Navbar';
+import { Avatar } from '@/widgets/home';
 
 const CameraController = () => {
   const { camera } = useThree();
@@ -45,12 +45,7 @@ const SceneClickHandler = () => {
   };
 
   return (
-    <mesh
-      position={[0, 0, -100]}
-      scale={[1000, 1000, 1]}
-      onClick={handleBackgroundClick}
-      visible={false}
-    >
+    <mesh position={[0, 0, -100]} scale={[1000, 1000, 1]} onClick={handleBackgroundClick} visible={false}>
       <planeGeometry />
       <meshBasicMaterial transparent opacity={0} />
     </mesh>
@@ -82,40 +77,25 @@ const GlTFPage = () => {
   const [activeObject, setActiveObject] = useState(null);
 
   return (
-    <div className="w-screen h-screen scene-wrapper">
+    <div className='w-screen h-screen scene-wrapper'>
       <Navbar />
 
       <Canvas
         camera={{ fov: 75, near: 0.1, zoom: 0.9, position: [-5.3, 3.1, -6.7] }}
         // onPointerMissed={() => setActiveObject(null)}
       >
-        <ambientLight intensity={2} color="white" />
+        <ambientLight intensity={2} color='white' />
         <directionalLight position={[5, 10, 5]} intensity={2} castShadow />
-        <fog attach="fog" args={['#000000', 500, 2000]} />
+        <fog attach='fog' args={['#000000', 500, 2000]} />
 
         <Suspense fallback={<CanvasLoader />}>
           <CameraController />
           <SceneController />
           <SceneClickHandler />
 
-          <Stars
-            radius={100}
-            depth={100}
-            count={4000}
-            factor={4}
-            saturation={0}
-            fade
-            speed={0.2}
-          />
-          <Sparkles
-            count={300}
-            size={3}
-            speed={0.02}
-            opacity={1}
-            scale={20}
-            color="#fff3b0"
-          />
-
+          <Stars radius={100} depth={100} count={4000} factor={4} saturation={0} fade speed={0.2} />
+          <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
+          <Avatar />
           <Model />
           <ambientLight intensity={0.5} />
           <pointLight position={[5, 5, 5]} intensity={2} />

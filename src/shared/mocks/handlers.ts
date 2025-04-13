@@ -20,22 +20,18 @@ const todos: Todo[] = [{ id: 1, name: 'Do laundry' }];
 
 export const handlers = [
   // GET 요청 핸들러
-  http.get<Record<string, never>, never, TodosResponseBody>(
-    `${SUPABASE_URL}/rest/v1/todos`,
-    async ({ request }) => {
-      return HttpResponse.json(todos);
-    },
-  ),
+  http.get<Record<string, never>, never, TodosResponseBody>(`${SUPABASE_URL}/rest/v1/todos`, async ({ request }) => {
+    return HttpResponse.json(todos);
+  }),
 
   // POST 요청 핸들러
-  http.post<
-    Record<string, never>,
-    CreateTodoRequestBody,
-    CreateTodoResponseBody
-  >(`${SUPABASE_URL}/rest/v1/todos`, async ({ request }) => {
-    const newTodo = await request.json();
-    todos.push(newTodo);
+  http.post<Record<string, never>, CreateTodoRequestBody, CreateTodoResponseBody>(
+    `${SUPABASE_URL}/rest/v1/todos`,
+    async ({ request }) => {
+      const newTodo = await request.json();
+      todos.push(newTodo);
 
-    return HttpResponse.json(newTodo, { status: 201 });
-  }),
+      return HttpResponse.json(newTodo, { status: 201 });
+    },
+  ),
 ];

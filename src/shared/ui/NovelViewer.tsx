@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useEffect } from 'react';
 
 interface NovelViewerProps {
   content: string;

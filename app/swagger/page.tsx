@@ -6,7 +6,7 @@ import ReactSwagger from '@/shared/ui/react-swagger/ReactSwagger';
 export default async function SwaggerPage() {
   const spec = await getApiDocs();
   return (
-    <main className="p-4">
+    <main className='p-4'>
       <ReactSwagger spec={spec} />
     </main>
   );

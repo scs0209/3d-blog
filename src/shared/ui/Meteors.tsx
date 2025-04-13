@@ -1,5 +1,5 @@
-import React from 'react';
 import { cn } from '@/shadcn-ui/lib/utils';
+import React from 'react';
 
 export const Meteors = ({
   number,

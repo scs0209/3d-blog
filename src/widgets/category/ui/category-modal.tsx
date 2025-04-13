@@ -1,15 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { Category } from '@/entities/category/model';
+import { createCategory, updateCategory } from '@/features/category/api/category-api';
+import { CategoryFormSchema } from '@/features/category/model/category-schema';
 import CategoryForm from '@/features/category/ui/category-form';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import Modal from '@/shared/ui/modal';
-import {
-  createCategory,
-  updateCategory,
-} from '@/features/category/api/category-api';
-import { Category } from '@/entities/category/model';
-import { CategoryFormSchema } from '@/features/category/model/category-schema';
+import { useState } from 'react';
 
 type CategoryModalProps = {
   category?: Category;
@@ -34,17 +31,9 @@ export const CategoryModal = ({ category }: CategoryModalProps) => {
 
   return (
     <Modal
-      trigger={
-        <Button variant={category ? 'outline' : 'default'}>
-          {category ? '수정' : '새 카테고리'}
-        </Button>
-      }
+      trigger={<Button variant={category ? 'outline' : 'default'}>{category ? '수정' : '새 카테고리'}</Button>}
       title={category ? '카테고리 수정' : '새 카테고리 생성'}
-      description={
-        category
-          ? '카테고리 정보를 수정하세요.'
-          : '새 카테고리의 정보를 입력하세요.'
-      }
+      description={category ? '카테고리 정보를 수정하세요.' : '새 카테고리의 정보를 입력하세요.'}
       open={open}
       onOpenChange={setOpen}
     >

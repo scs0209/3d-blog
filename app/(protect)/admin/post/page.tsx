@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { createPost } from '@/features/post/api/post-api';
-import { PostFormSchema } from '@/features/post/model/post-form-schema';
+import type { PostFormSchema } from '@/features/post/model/post-form-schema';
 import PostForm from '@/features/post/ui/post-form';
 
 export default function NewBlogPostPage() {

@@ -1,20 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Tag } from '@/entities/tag/model';
+import { Button } from '@/shadcn-ui/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/shadcn-ui/components/ui/form';
+import { Input } from '@/shadcn-ui/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { createTag } from '../api/tag-api';
 import { TagSchema, tagSchema } from '../model/tag-schema';
-import { Tag } from '@/entities/tag/model';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/shadcn-ui/components/ui/form';
-import { Input } from '@/shadcn-ui/components/ui/input';
-import { Button } from '@/shadcn-ui/components/ui/button';
 
 type TagInputProps = {
   onTagsChange?: (tags: Tag[]) => void;
@@ -45,25 +39,22 @@ export function TagInput({ onTagsChange }: TagInputProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleCreateTag)}
-          className="flex space-x-2"
-        >
+        <form onSubmit={form.handleSubmit(handleCreateTag)} className='flex space-x-2'>
           <FormField
             control={form.control}
-            name="name"
+            name='name'
             render={({ field }) => (
-              <FormItem className="flex-grow">
+              <FormItem className='flex-grow'>
                 <FormControl>
-                  <Input placeholder="새 태그 입력" {...field} />
+                  <Input placeholder='새 태그 입력' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isLoading}>
+          <Button type='submit' disabled={isLoading}>
             {isLoading ? '추가 중...' : '추가'}
           </Button>
         </form>

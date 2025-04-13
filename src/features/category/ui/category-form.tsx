@@ -1,25 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Category } from '@/entities/category/model';
 import { Button } from '@/shadcn-ui/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shadcn-ui/components/ui/form';
 import { Input } from '@/shadcn-ui/components/ui/input';
 import { Textarea } from '@/shadcn-ui/components/ui/textarea';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/shadcn-ui/components/ui/form';
-import {
-  categoryFormSchema,
-  CategoryFormSchema,
-} from '../model/category-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { createCategory } from '../api/category-api';
-import { Category } from '@/entities/category/model';
+import { CategoryFormSchema, categoryFormSchema } from '../model/category-schema';
 
 type CategoryFormProps = {
   onSubmit: (data: CategoryFormSchema) => Promise<void>;
@@ -56,18 +46,15 @@ const CategoryForm = ({ onSubmit, initialData }: CategoryFormProps) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleFormSubmit)}
-        className="space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className='space-y-8'>
         <FormField
           control={form.control}
-          name="name"
+          name='name'
           render={({ field }) => (
             <FormItem>
               <FormLabel>카테고리 이름</FormLabel>
               <FormControl>
-                <Input placeholder="카테고리 이름" {...field} />
+                <Input placeholder='카테고리 이름' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,21 +62,18 @@ const CategoryForm = ({ onSubmit, initialData }: CategoryFormProps) => {
         />
         <FormField
           control={form.control}
-          name="description"
+          name='description'
           render={({ field }) => (
             <FormItem>
               <FormLabel>설명 (선택사항)</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="카테고리에 대한 간단한 설명을 입력하세요."
-                  {...field}
-                />
+                <Textarea placeholder='카테고리에 대한 간단한 설명을 입력하세요.' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading}>
+        <Button type='submit' disabled={isLoading}>
           {getButtonText(isLoading, initialData)}
         </Button>
       </form>
