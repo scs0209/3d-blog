@@ -83,10 +83,6 @@
             "strictCase": false,
             "conventions": [
               {
-                "selector": { "kind": "function" },
-                "formats": ["camelCase", "PascalCase"]
-              },
-              {
                 "selector": { "kind": "interface" },
                 "formats": ["PascalCase"]
               },
