@@ -15,12 +15,12 @@
     "generate-types": "sh scripts/generate-types.sh",
     "docs": "typedoc --options typedoc.json --entryPointStrategy expand",
     "docs:entities": "typedoc --entryPoints src/entities --out docs/entities --entryPointStrategy expand",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
-    "lint:biome": "biome lint .",
-    "lint:biome:fix": "biome lint --apply .",
-    "check": "biome check .",
-    "check:fix": "biome check --apply ."
+    "format": "node -e \"console.time('format'); require('child_process').execSync('biome format --write .', {stdio: 'inherit'}); console.timeEnd('format');\"",
+    "format:check": "node -e \"console.time('format:check'); require('child_process').execSync('biome format .', {stdio: 'inherit'}); console.timeEnd('format:check');\"",
+    "lint:biome": "node -e \"console.time('lint'); require('child_process').execSync('biome lint .', {stdio: 'inherit'}); console.timeEnd('lint');\"",
+    "lint:biome:fix": "node -e \"console.time('lint:fix'); require('child_process').execSync('biome lint --apply .', {stdio: 'inherit'}); console.timeEnd('lint:fix');\"",
+    "check": "node -e \"console.time('check'); require('child_process').execSync('biome check .', {stdio: 'inherit'}); console.timeEnd('check');\"",
+    "check:fix": "node -e \"console.time('check:fix'); require('child_process').execSync('biome check --apply .', {stdio: 'inherit'}); console.timeEnd('check:fix');\""
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
