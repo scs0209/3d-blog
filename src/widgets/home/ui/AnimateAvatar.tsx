@@ -22,6 +22,7 @@ export function AnimateAvatar(props: { [key: string]: any }) {
   const { nodes, materials, animations } = gltf as unknown as GLTFResult;
   const { actions } = useAnimations(animations, group);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // idle 애니메이션 실행
     const idleAction = actions['astro_bones|idle_1'];
@@ -46,44 +47,28 @@ export function AnimateAvatar(props: { [key: string]: any }) {
 
   return (
     <group ref={group} {...props} dispose={null}>
-      <group name="Sketchfab_Scene">
-        <group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
-          <group
-            name="e952fa4833e348ad9d5195d3a7080abbfbx"
-            rotation={[Math.PI / 2, 0, 0]}
-            scale={0.01}
-          >
-            <group name="Object_2">
-              <group name="RootNode">
-                <group
-                  name="suit_low_poly"
-                  rotation={[-Math.PI / 2, 0, 0]}
-                  scale={100}
-                />
-                <group
-                  name="astro_bones"
-                  rotation={[-Math.PI / 2, 0, 0]}
-                  scale={100}
-                >
-                  <group name="Object_6">
+      <group name='Sketchfab_Scene'>
+        <group name='Sketchfab_model' rotation={[-Math.PI / 2, 0, 0]}>
+          <group name='e952fa4833e348ad9d5195d3a7080abbfbx' rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+            <group name='Object_2'>
+              <group name='RootNode'>
+                <group name='suit_low_poly' rotation={[-Math.PI / 2, 0, 0]} scale={100} />
+                <group name='astro_bones' rotation={[-Math.PI / 2, 0, 0]} scale={100}>
+                  <group name='Object_6'>
                     <primitive object={nodes._rootJoint} />
                     <skinnedMesh
-                      name="Object_9"
+                      name='Object_9'
                       geometry={nodes.Object_9.geometry}
                       material={materials.bake_1}
                       skeleton={nodes.Object_9.skeleton}
                     />
                     <skinnedMesh
-                      name="Object_10"
+                      name='Object_10'
                       geometry={nodes.Object_10.geometry}
                       material={materials.bake_2}
                       skeleton={nodes.Object_10.skeleton}
                     />
-                    <group
-                      name="Object_8"
-                      rotation={[-Math.PI / 2, 0, 0]}
-                      scale={100}
-                    />
+                    <group name='Object_8' rotation={[-Math.PI / 2, 0, 0]} scale={100} />
                   </group>
                 </group>
               </group>
