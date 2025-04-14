@@ -1,22 +1,24 @@
 import { useEffect, useRef } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
-import type { Group } from 'three';
+import type { Group, Mesh, Material } from 'three';
+import type { GLTF } from 'three-stdlib';
+
+type GLTFResult = GLTF & {
+  nodes: Record<string, Mesh>;
+  materials: Record<string, Material>;
+};
 
 export function Planet(props: any) {
   const group = useRef<Group>(null);
-  const { nodes, materials, animations } = useGLTF('/earth_globe_hologram_2mb_looping_animation.glb');
+  const { nodes, materials, animations } = useGLTF(
+    '/earth_globe_hologram_2mb_looping_animation.glb',
+  ) as unknown as GLTFResult;
   const { actions } = useAnimations(animations, group);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    // 사용 가능한 애니메이션 확인
-    console.log(
-      'Available animations:',
-      animations.map((anim) => anim.name),
-    );
-    console.log('Available actions:', Object.keys(actions));
-
     // 모든 애니메이션 실행
-    Object.values(actions).forEach((action) => {
+    for (const action of Object.values(actions)) {
       if (action) {
         action
           .reset()
@@ -26,15 +28,15 @@ export function Planet(props: any) {
           .play()
           .setLoop(2201, Number.POSITIVE_INFINITY);
       }
-    });
+    }
 
     return () => {
       // cleanup: 모든 애니메이션 페이드 아웃
-      Object.values(actions).forEach((action) => {
+      for (const action of Object.values(actions)) {
         if (action) {
           action.fadeOut(0.5);
         }
-      });
+      }
     };
   }, [actions]);
 
@@ -50,7 +52,7 @@ export function Planet(props: any) {
                     name='Earth_2_Earth_Surface002_0'
                     castShadow
                     receiveShadow
-                    geometry={nodes.Earth_2_Earth_Surface002_0.geometry}
+                    geometry={nodes.Earth_2_Earth_Surface002_0?.geometry}
                     material={materials['Earth_Surface.002']}
                   />
                 </group>
@@ -59,7 +61,7 @@ export function Planet(props: any) {
                     name='Earth_rays_2_transparent004_0'
                     castShadow
                     receiveShadow
-                    geometry={nodes.Earth_rays_2_transparent004_0.geometry}
+                    geometry={nodes.Earth_rays_2_transparent004_0?.geometry}
                     material={materials['transparent.004']}
                   />
                 </group>
