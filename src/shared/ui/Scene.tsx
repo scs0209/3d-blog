@@ -11,27 +11,10 @@ import { Float, useGLTF } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type React from 'react';
 import { useState } from 'react';
-import { MeshStandardMaterial } from 'three';
 import type * as three from 'three';
 import { Atom } from './Atom';
 import { CubeModel } from './Cube';
 import { NeuralNetwork } from './NeutralNetwork';
-
-const mirrorMaterial = new MeshStandardMaterial({
-  color: 'white',
-  transparent: true,
-  opacity: 0.2,
-  depthWrite: false,
-});
-
-const spaceMaterial = new MeshStandardMaterial({
-  color: '#000011',
-  roughness: 0.2,
-  transparent: true,
-  opacity: 0.4,
-  emissive: '#000033',
-  emissiveIntensity: 0.2,
-});
 
 export function Model(props: React.ComponentProps<'group'>) {
   const { nodes, materials } = useGLTF('/space_boi.glb');
@@ -44,7 +27,7 @@ export function Model(props: React.ComponentProps<'group'>) {
 
   return (
     <>
-      <fog attach="fog" args={['#000022', 0, 3000]} />
+      <fog attach='fog' args={['#000022', 0, 3000]} />
       <group {...props} dispose={null}>
         <group scale={0.01}>
           <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
@@ -68,11 +51,7 @@ export function Model(props: React.ComponentProps<'group'>) {
               </>
             )}
           </group>
-          <group
-            position={[-357.404, 392.646, 0]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            scale={39.706}
-          >
+          <group position={[-357.404, 392.646, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={39.706}>
             <mesh
               castShadow
               receiveShadow
@@ -86,11 +65,7 @@ export function Model(props: React.ComponentProps<'group'>) {
               material={materials['Material.002']}
             />
           </group>
-          <group
-            position={[199.634, 566.883, -221.001]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            scale={39.706}
-          >
+          <group position={[199.634, 566.883, -221.001]} rotation={[-Math.PI / 2, 0, 0]} scale={39.706}>
             <mesh
               castShadow
               receiveShadow
