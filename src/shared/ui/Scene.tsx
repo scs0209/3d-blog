@@ -3,7 +3,6 @@ import { Float, useGLTF } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type React from 'react';
 import { useState, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
 import type * as three from 'three';
 import { Atom } from './Atom';
 import { CubeModel } from './Cube';
@@ -18,21 +17,6 @@ export function Model(props: React.ComponentProps<'group'>) {
   const handleCubeHover = (hovered: boolean) => {
     setIsCubeHovered(hovered);
   };
-
-  // 배경 전체가 떠다니는 애니메이션
-  useFrame((state) => {
-    if (floatingGroupRef.current) {
-      const time = state.clock.elapsedTime;
-      // 부드러운 상하 움직임
-      floatingGroupRef.current.position.y = Math.sin(time * 0.5) * 0.2;
-      // 천천히 회전
-      floatingGroupRef.current.rotation.y += 0.001;
-      // 부드러운 좌우 움직임
-      floatingGroupRef.current.position.x = Math.sin(time * 0.3) * 0.1;
-      // 부드러운 전후 움직임
-      floatingGroupRef.current.position.z = Math.cos(time * 0.3) * 0.1;
-    }
-  });
 
   return (
     <>
