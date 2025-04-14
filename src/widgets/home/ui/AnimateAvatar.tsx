@@ -20,7 +20,12 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function AnimateAvatar(props: { [key: string]: any }) {
+type AnimateAvatarProps = {
+  scale?: number;
+  position?: [number, number, number];
+};
+
+export function AnimateAvatar(props: AnimateAvatarProps) {
   const group = useRef<Group>(null);
   const gltf = useGLTF('/astronaut_rigged_and_animated.glb');
   const { nodes, materials, animations } = gltf as unknown as GLTFResult;
@@ -60,7 +65,7 @@ export function AnimateAvatar(props: { [key: string]: any }) {
       // 위치 업데이트
       group.current.position.set(x, y, z);
 
-      // 움직임에 따른 회전 계산
+      // 움직임에 따른 회전 계산 로직
       const moveX = Math.cos(time * 0.3) * 0.3; // 좌우 움직임에 따른 회전
       const moveY = Math.cos(time * 0.5) * 0.5; // 상하 움직임에 따른 회전
       const moveZ = Math.sin(time * 0.3) * 0.3; // 전후 움직임에 따른 회전
