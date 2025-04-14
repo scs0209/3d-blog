@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import { useControls, button } from 'leva';
@@ -39,13 +39,14 @@ const SceneClickHandler = () => {
   const handleBackgroundClick = () => {
     // 모든 객체의 선택 상태 해제
     scene.traverse((object) => {
-      if (object.userData && object.userData.isSelected) {
+      if (object.userData?.isSelected) {
         object.userData.isSelected = false;
       }
     });
   };
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <mesh position={[0, 0, -100]} scale={[1000, 1000, 1]} onClick={handleBackgroundClick} visible={false}>
       <planeGeometry />
       <meshBasicMaterial transparent opacity={0} />
@@ -75,8 +76,6 @@ const SceneController = () => {
 };
 
 const GlTFPage = () => {
-  const [activeObject, setActiveObject] = useState(null);
-
   return (
     <div className='w-screen h-screen scene-wrapper'>
       <Navbar />
@@ -96,8 +95,7 @@ const GlTFPage = () => {
 
           <Stars radius={100} depth={100} count={4000} factor={4} saturation={0} fade speed={0.2} />
           <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
-          <AnimateAvatar scale={0.1} />
-          {/* <Avatar /> */}
+          <AnimateAvatar scale={0.1} position={[0, 5, 0]} />
           <Model />
           <ambientLight intensity={0.5} />
           <pointLight position={[5, 5, 5]} intensity={2} />
@@ -111,13 +109,6 @@ const GlTFPage = () => {
             enablePan
             enableZoom
           />
-          {/* <EffectComposer>
-            <Bloom
-              luminanceThreshold={0.2}
-              luminanceSmoothing={0.9}
-              intensity={1.5}
-            />
-          </EffectComposer> */}
           <Planet scale={30} position={[0, -19, 0]} />
           <CameraLogger />
         </Suspense>
