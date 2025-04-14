@@ -1,17 +1,21 @@
 import { useRef, useEffect } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import type { Group, Material, Bone, SkinnedMesh } from 'three';
 import type { GLTF } from 'three-stdlib';
 
-// biome-ignore lint/style/noNamespace: GLB file node names must match exactly
 type GLTFResult = GLTF & {
   nodes: {
     _rootJoint: Bone;
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Object_9: SkinnedMesh;
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     Object_10: SkinnedMesh;
   };
   materials: {
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     bake_1: Material;
+    // biome-ignore lint/style/useNamingConvention: <explanation>
     bake_2: Material;
   };
 };
@@ -44,6 +48,27 @@ export function AnimateAvatar(props: { [key: string]: any }) {
       }
     };
   }, [actions, animations]);
+
+  useFrame((state) => {
+    if (group.current) {
+      const time = state.clock.elapsedTime;
+      // 넓은 범위의 사선 움직임
+      const x = Math.sin(time * 0.3) * 5; // 좌우 5단위 범위
+      const y = Math.sin(time * 0.5) * 3 + 3; // 상하 3단위 범위 + 기본 높이 5
+      const z = Math.cos(time * 0.3) * 5; // 전후 5단위 범위
+
+      // 위치 업데이트
+      group.current.position.set(x, y, z);
+
+      // 움직임에 따른 회전 계산
+      const moveX = Math.cos(time * 0.3) * 0.3; // 좌우 움직임에 따른 회전
+      const moveY = Math.cos(time * 0.5) * 0.5; // 상하 움직임에 따른 회전
+      const moveZ = Math.sin(time * 0.3) * 0.3; // 전후 움직임에 따른 회전
+
+      // 회전 업데이트
+      group.current.rotation.set(moveY, moveX, moveZ);
+    }
+  });
 
   return (
     <group ref={group} {...props} dispose={null}>
