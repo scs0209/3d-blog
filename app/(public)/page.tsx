@@ -4,13 +4,12 @@ import { Suspense, useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import { useControls, button } from 'leva';
-import { CameraLogger } from '@/shared/ui/CameraLogger';
 import { Model } from '@/shared/ui/Scene';
 import CanvasLoader from '@/shared/ui/Loader';
 import Navbar from '@/shared/ui/Navbar';
 import { AnimateAvatar } from '@/widgets/home/ui/AnimateAvatar';
 import { Planet } from '@/widgets/home/ui/Planet';
-
+import { WalkingAvatar } from '@/widgets/home/ui/WalkingAvatar';
 const CameraController = () => {
   const { camera } = useThree();
 
@@ -96,6 +95,7 @@ const GlTFPage = () => {
           <Stars radius={100} depth={100} count={4000} factor={4} saturation={0} fade speed={0.2} />
           <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
           <AnimateAvatar scale={0.1} position={[0, 5, 0]} />
+          <WalkingAvatar scale={0.01} position={[0, 0.6, 0.5]} />
           <Model />
           <ambientLight intensity={0.5} />
           <pointLight position={[5, 5, 5]} intensity={2} />
@@ -110,7 +110,7 @@ const GlTFPage = () => {
             enableZoom
           />
           <Planet scale={30} position={[0, -19, 0]} />
-          <CameraLogger />
+          {/* <CameraLogger /> */}
         </Suspense>
       </Canvas>
     </div>
