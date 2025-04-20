@@ -1,8 +1,8 @@
 'use client';
 
 import { useFrame } from '@react-three/fiber';
-import React, { useRef, useMemo, useEffect } from 'react';
-import { AdditiveBlending, BufferGeometry, Group, Points, Vector3 } from 'three';
+import { useRef, useMemo, useEffect } from 'react';
+import { AdditiveBlending, type BufferGeometry, type Group, type Points, Vector3 } from 'three';
 
 interface ParticleData {
   velocity: Vector3;
@@ -147,7 +147,7 @@ export function NeuralNetwork() {
   });
 
   return (
-    <group ref={groupRef} dispose={null} scale={10} position={[0, -50, 300]}>
+    <group ref={groupRef} dispose={null} scale={10} position={[0, -100, 300]}>
       <points>
         <bufferGeometry ref={particlesRef}>
           <bufferAttribute attach='attributes-position' count={particleCount} array={particlePositions} itemSize={3} />

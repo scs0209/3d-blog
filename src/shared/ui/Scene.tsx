@@ -26,7 +26,7 @@ export function Model(props: React.ComponentProps<'group'>) {
           <group scale={0.01}>
             <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
               <RoomModel position={[0, 0, 20]} />
-              <CubeModel position={[0, -50, 300]} onHover={handleCubeHover} />
+              <CubeModel position={[0, -100, 300]} onHover={handleCubeHover} />
               <NeuralNetwork />
               {/* <group rotation={[10, 10.5, 10]} scale={30}>
               <fog attach="fog" args={['#202025', 0, 80]} />
