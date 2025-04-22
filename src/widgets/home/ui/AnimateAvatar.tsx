@@ -1,40 +1,25 @@
-import { useRef, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useEffect, useRef } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
-import type { Group, Material, Bone, SkinnedMesh } from 'three';
+import type { Group } from 'three';
+import { useFrame } from '@react-three/fiber';
 import type { GLTF } from 'three-stdlib';
+import type * as three from 'three';
 
 type GLTFResult = GLTF & {
-  nodes: {
-    _rootJoint: Bone;
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Object_9: SkinnedMesh;
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    Object_10: SkinnedMesh;
-  };
-  materials: {
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    bake_1: Material;
-    // biome-ignore lint/style/useNamingConvention: <explanation>
-    bake_2: Material;
-  };
+  nodes: Record<string, three.SkinnedMesh>;
+  materials: Record<string, three.Material>;
+  skeletons: Record<string, three.Skeleton>;
 };
 
-type AnimateAvatarProps = {
-  scale?: number;
-  position?: [number, number, number];
-};
-
-export function AnimateAvatar(props: AnimateAvatarProps) {
+export function AnimateAvatar(props: any) {
   const group = useRef<Group>(null);
-  const gltf = useGLTF('/astronaut_rigged_and_animated.glb');
-  const { nodes, materials, animations } = gltf as unknown as GLTFResult;
+  const { nodes, materials, animations } = useGLTF('/floating_astronaut.glb') as unknown as GLTFResult;
   const { actions } = useAnimations(animations, group);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // idle 애니메이션 실행
-    const idleAction = actions['astro_bones|idle_1'];
+    const idleAction = actions['Armature|mixamo.com|Layer0'];
     if (idleAction) {
       idleAction
         .reset()
@@ -77,37 +62,37 @@ export function AnimateAvatar(props: AnimateAvatarProps) {
 
   return (
     <group ref={group} {...props} dispose={null}>
-      <group name='Sketchfab_Scene'>
-        <group name='Sketchfab_model' rotation={[-Math.PI / 2, 0, 0]}>
-          <group name='e952fa4833e348ad9d5195d3a7080abbfbx' rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
-            <group name='Object_2'>
-              <group name='RootNode'>
-                <group name='suit_low_poly' rotation={[-Math.PI / 2, 0, 0]} scale={100} />
-                <group name='astro_bones' rotation={[-Math.PI / 2, 0, 0]} scale={100}>
-                  <group name='Object_6'>
-                    <primitive object={nodes._rootJoint} />
-                    <skinnedMesh
-                      name='Object_9'
-                      geometry={nodes.Object_9.geometry}
-                      material={materials.bake_1}
-                      skeleton={nodes.Object_9.skeleton}
-                    />
-                    <skinnedMesh
-                      name='Object_10'
-                      geometry={nodes.Object_10.geometry}
-                      material={materials.bake_2}
-                      skeleton={nodes.Object_10.skeleton}
-                    />
-                    <group name='Object_8' rotation={[-Math.PI / 2, 0, 0]} scale={100} />
-                  </group>
-                </group>
-              </group>
-            </group>
+      <pointLight position={[0, 0, 0]} intensity={50} />
+      <group name='Scene'>
+        <group name='b1260bacd7ba4ae687b919760fd504cbfbx' rotation={[-Math.PI, 0, 0]} scale={0}>
+          <group name='RootNode1'>
+            <group name='Astro' />
           </group>
+        </group>
+        <group name='Armature' rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+          <skinnedMesh
+            name='Astro_ASTRO_0'
+            geometry={nodes.Astro_ASTRO_0?.geometry}
+            material={materials.ASTRO}
+            skeleton={nodes.Astro_ASTRO_0?.skeleton}
+          />
+          <skinnedMesh
+            name='Astro_ASTRO_01'
+            geometry={nodes.Astro_ASTRO_01?.geometry}
+            material={materials.ASTRO}
+            skeleton={nodes.Astro_ASTRO_01?.skeleton}
+          />
+          <skinnedMesh
+            name='Astro_ASTRO_02'
+            geometry={nodes.Astro_ASTRO_02?.geometry}
+            material={materials.ASTRO}
+            skeleton={nodes.Astro_ASTRO_02?.skeleton}
+          />
+          <primitive object={nodes.mixamorigHips} />
         </group>
       </group>
     </group>
   );
 }
 
-useGLTF.preload('/astronaut_rigged_and_animated.glb');
+useGLTF.preload('/floating_astronaut.glb');
