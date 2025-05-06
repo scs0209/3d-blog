@@ -1,5 +1,5 @@
 import { signIn } from 'next-auth/react';
-import { LoginSchema, SignupSchema } from '../model/auth-schema';
+import type { LoginSchema, SignupSchema } from '../model/auth-schema';
 
 // 회원가입 API 호출
 export const signup = async (data: SignupSchema) => {
