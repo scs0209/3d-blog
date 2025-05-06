@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Typedoc 데이터 로드 함수
 function loadTypedocData(typedocFilePath) {
@@ -9,9 +9,8 @@ function loadTypedocData(typedocFilePath) {
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Unable to read or parse Typedoc JSON file: ${error.message}`);
-    } else {
-      throw new Error('An unknown error occurred while reading the Typedoc JSON file.');
     }
+    throw new Error('An unknown error occurred while reading the Typedoc JSON file.');
   }
 }
 
@@ -19,11 +18,11 @@ function loadTypedocData(typedocFilePath) {
 function getExistingTypes(typedocData) {
   const types = new Set();
   if (typedocData.children) {
-    typedocData.children.forEach((child) => {
+    for (const child of typedocData.children) {
       if (child.kind === 2097152) {
         types.add(child.name);
       }
-    });
+    }
   }
   console.log(types);
   return types;
