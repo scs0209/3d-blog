@@ -1,0 +1,11 @@
+import ReactThreeTestRenderer from '@react-three/test-renderer';
+
+it('renders 3D mesh', async () => {
+  const renderer = await ReactThreeTestRenderer.create(
+    <mesh>
+      <boxGeometry args={[2, 2]} />
+      <meshStandardMaterial args={[{ color: 0x0000ff }]} />
+    </mesh>,
+  );
+  console.log(renderer.toGraph());
+});

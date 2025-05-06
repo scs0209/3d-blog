@@ -18,6 +18,12 @@ const config = {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.json' }] as [string, Record<string, any>],
+  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(three|@react-three/fiber|@react-three/drei|@react-three/test-renderer)/)',
+  ],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
