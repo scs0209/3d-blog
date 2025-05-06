@@ -103,8 +103,8 @@ import { auth } from '@/shared/utils/auth';
 export async function GET(request: Request, { params }: { params: { slug: string } }) {
   try {
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10', 10);
+    const page = Number.parseInt(searchParams.get('page') || '1');
+    const limit = Number.parseInt(searchParams.get('limit') || '10');
 
     const category = await prisma.category.findUnique({
       where: {
@@ -231,7 +231,7 @@ export async function PATCH(request: Request, { params }: { params: { slug: stri
     }
 
     const { name, description } = await request.json();
-    const categoryId = parseInt(params.slug);
+    const categoryId = Number.parseInt(params.slug);
 
     if (!name?.trim()) {
       return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
@@ -310,14 +310,14 @@ export async function PATCH(request: Request, { params }: { params: { slug: stri
  *       500:
  *         description: Internal server error
  */
-export async function DELETE(request: Request, { params }: { params: { slug: string } }) {
+export async function DELETE({ params }: { params: { slug: string } }) {
   try {
     const session = await auth();
     if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const categoryId = parseInt(params.slug);
+    const categoryId = Number.parseInt(params.slug);
 
     // Check if category has any posts
     const category = await prisma.category.findUnique({

@@ -1,4 +1,3 @@
-'use client';
 import { createPost } from '@/features/post/api/post-api';
 import type { PostFormSchema } from '@/features/post/model/post-form-schema';
 import PostForm from '@/features/post/ui/post-form';
