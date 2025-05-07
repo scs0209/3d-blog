@@ -88,7 +88,7 @@ export function AnimateAvatar(props: any) {
             material={materials.ASTRO}
             skeleton={nodes.Astro_ASTRO_02?.skeleton}
           />
-          <primitive object={nodes.mixamorigHips} />
+          <primitive object={nodes.mixamorigHips as three.Object3D} />
         </group>
       </group>
     </group>

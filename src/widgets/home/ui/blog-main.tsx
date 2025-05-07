@@ -11,13 +11,13 @@ import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { EditorContent, EditorRoot } from 'novel';
 
 export function BlogMain() {
-  const [posts, setPosts] = useState<GetPostListResponse>([]);
+  const [posts, setPosts] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const fetchedPosts = await getPostList();
+        const fetchedPosts = await getPostList() as any;
         setPosts(fetchedPosts);
       } catch (error) {
         console.error('Failed to fetch blog posts:', error);
@@ -38,7 +38,7 @@ export function BlogMain() {
         <main className='w-full md:w-2/3'>
           <h1 className='mb-8 text-3xl font-bold text-gray-800'>Latest Blog Posts</h1>
           <div className='space-y-8'>
-            {posts.map((post) => (
+            {posts.map((post: any) => (
               <Card key={post.id}>
                 <CardHeader>
                   <CardTitle className='text-xl text-gray-800'>{post.title}</CardTitle>
