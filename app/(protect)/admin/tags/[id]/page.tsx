@@ -29,11 +29,11 @@ export default function TagDetailPage({
   const [name, setName] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const id = Number.parseInt(params.id);
-
   useEffect(() => {
     const fetchTag = async () => {
       try {
+        const { id: tagId } = await params;
+        const id = Number.parseInt(tagId);
         const data = await getTagDetail(id);
         setTag(data);
         setName(data.name);
@@ -43,12 +43,13 @@ export default function TagDetailPage({
     };
 
     fetchTag();
-  }, [id]);
+  }, [params]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!tag) return;
     try {
-      const updatedTag = await updateTag(id, { name });
+      const updatedTag = await updateTag(tag.id, { name });
       setTag((prevTag) => ({ ...prevTag!, ...updatedTag }));
       setIsEditing(false);
     } catch (err) {
@@ -57,8 +58,9 @@ export default function TagDetailPage({
   };
 
   const handleDelete = async () => {
+    if (!tag) return;
     try {
-      await deleteTag(id);
+      await deleteTag(tag.id);
       router.push('/tags');
     } catch (err) {
       setError('Failed to delete tag');
