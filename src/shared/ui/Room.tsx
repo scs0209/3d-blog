@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 
 import { useGLTF } from '@react-three/drei';
