@@ -72,7 +72,7 @@ export function Cloud({ count = 8, radius = 20 }) {
     for (let i = 0; i < count; i++) {
       for (let j = 0; j < count; j++) {
         const position = new three.Vector3().setFromSpherical(spherical.set(radius, phiSpan * (i + 1), thetaSpan * j));
-        temp.push([position, generate()]); // 랜덤 단어 생성 함수 호출
+        temp.push([position, generate({ exactly: 1, join: ' ' })]); // 단일 단어 생성
       }
     }
     return temp;

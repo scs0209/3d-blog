@@ -4,6 +4,7 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
 import prisma from '../lib/db';
+import { Session } from 'next-auth';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -48,7 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized: ({ token }) => !!token,
+    authorized: ({ auth }) => !!auth,
     async jwt({ token, user, account }) {
       if (user) {
         // OAuth 로그인 시 로직
@@ -66,12 +67,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         ...session,
         user: {
           ...session.user,
-          id: token.id,
+          id: token.id as string,
           name: token.name,
-          accessToken: token.accessToken ? token.accessToken : null,
+          accessToken: token.accessToken,
           role: token.role,
         },
-      };
+      } as Session;
     },
   },
   pages: {

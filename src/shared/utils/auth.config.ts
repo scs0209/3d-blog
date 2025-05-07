@@ -1,4 +1,11 @@
 import type { NextAuthConfig } from 'next-auth';
+import type { Session, User } from 'next-auth';
+
+interface CustomUser extends User {
+  id: string;
+  role: string;
+  accessToken: string | null;
+}
 
 export const authConfig = {
   session: {
@@ -26,16 +33,18 @@ export const authConfig = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }): Promise<Session> {
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.id,
+          id: token.id as string,
           name: token.name,
-          accessToken: token.accessToken ? token.accessToken : null,
-          role: token.role,
-        },
+          email: session.user.email,
+          image: session.user.image,
+          accessToken: token.accessToken as string | null,
+          role: token.role as string,
+        } as CustomUser,
       };
     },
   },

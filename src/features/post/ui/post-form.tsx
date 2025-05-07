@@ -40,7 +40,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
   useEffect(() => {
     const fetchCategories = async () => {
       const fetchedCategories = await getCategories();
-      setCategories(fetchedCategories);
+      setCategories(fetchedCategories as any);
     };
     fetchCategories();
   }, []);

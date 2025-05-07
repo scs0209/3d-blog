@@ -110,6 +110,8 @@ export const suggestionItems = createSuggestionItems([
     icon: <Youtube size={18} />,
     command: ({ editor, range }) => {
       const videoLink = prompt('Please enter Youtube Video Link');
+      if (!videoLink) return;
+      
       // From https://regexr.com/3dj5t
       const ytregex = new RegExp(
         /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
@@ -136,6 +138,8 @@ export const suggestionItems = createSuggestionItems([
     icon: <Twitter size={18} />,
     command: ({ editor, range }) => {
       const tweetLink = prompt('Please enter Twitter Link');
+      if (!tweetLink) return;
+      
       const tweetRegex = new RegExp(/^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/);
 
       if (tweetRegex.test(tweetLink)) {

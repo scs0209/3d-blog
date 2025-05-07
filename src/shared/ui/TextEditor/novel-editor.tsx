@@ -37,7 +37,7 @@ const NovelEditor = ({
               class: 'prose dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full',
             },
           }}
-          initialContent={value || ''}
+          initialContent={value ? JSON.parse(value) : ''}
           onUpdate={({ editor }) => {
             onChange(editor.getHTML());
           }}

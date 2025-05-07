@@ -2,10 +2,12 @@
 
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
+import { OrbitControls } from 'three-stdlib';
 
 // 현재 카메라 포지션 확인용
 export const CameraLogger = () => {
   const { camera, controls } = useThree();
+  const orbitControls = controls as OrbitControls;
 
   useEffect(() => {
     const logPosition = () => {
@@ -13,12 +15,12 @@ export const CameraLogger = () => {
     };
 
     logPosition();
-    controls?.addEventListener('change', logPosition); // 카메라 이동 시 로그 출력
+    orbitControls?.addEventListener('change', logPosition); // 카메라 이동 시 로그 출력
 
     return () => {
-      controls?.removeEventListener('change', logPosition);
+      orbitControls?.removeEventListener('change', logPosition);
     };
-  }, [camera, controls]);
+  }, [camera, orbitControls]);
 
   return null;
 };
