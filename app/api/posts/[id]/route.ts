@@ -50,9 +50,10 @@ import prisma from '@/shared/lib/db';
  *       500:
  *         description: 서버 에러
  */
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const postId = parseInt(params.id);
+    const { id } = await params;
+    const postId = parseInt(id);
 
     if (!postId || !Number.isInteger(postId)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
@@ -158,9 +159,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
  *       500:
  *         description: 서버 에러
  */
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const postId = parseInt(params.id);
+    const { id } = await params;
+    const postId = parseInt(id);
     const body = await req.json();
 
     if (!postId || !Number.isInteger(postId)) {
@@ -241,9 +243,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
  *       500:
  *         description: 서버 에러
  */
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const postId = parseInt(params.id);
+    const { id } = await params;
+    const postId = parseInt(id);
 
     if (!postId || !Number.isInteger(postId)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });

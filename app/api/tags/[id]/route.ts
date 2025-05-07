@@ -22,11 +22,12 @@ import prisma from '@/shared/lib/db';
  *       500:
  *         description: Server error
  */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id);
+    const { id } = await params;
+    const tagId = parseInt(id);
     const tag = await prisma.tag.findUnique({
-      where: { id },
+      where: { id: tagId },
       include: {
         posts: true,
         _count: {
@@ -79,21 +80,22 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
  *       500:
  *         description: Server error
  */
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id);
+    const { id } = await params;
+    const tagId = parseInt(id);
     const { name } = await req.json();
 
     const existingTag = await prisma.tag.findUnique({
       where: { name },
     });
 
-    if (existingTag && existingTag.id !== id) {
+    if (existingTag && existingTag.id !== tagId) {
       return NextResponse.json({ error: 'Tag name already in use' }, { status: 400 });
     }
 
     const tag = await prisma.tag.update({
-      where: { id },
+      where: { id: tagId },
       data: { name },
     });
 
@@ -127,11 +129,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
  *       500:
  *         description: Server error
  */
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id);
+    const { id } = await params;
+    const tagId = parseInt(id);
     await prisma.tag.delete({
-      where: { id },
+      where: { id: tagId },
     });
 
     return NextResponse.json({ message: 'Tag deleted successfully' });

@@ -100,15 +100,16 @@ import { auth } from '@/shared/utils/auth';
  *       500:
  *         description: Internal server error
  */
-export async function GET(request: Request, { params }: { params: { slug: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params;
     const { searchParams } = new URL(request.url);
     const page = Number.parseInt(searchParams.get('page') || '1');
     const limit = Number.parseInt(searchParams.get('limit') || '10');
 
     const category = await prisma.category.findUnique({
       where: {
-        slug: params.slug,
+        slug: slug,
       },
       include: {
         posts: {
@@ -223,15 +224,16 @@ export async function GET(request: Request, { params }: { params: { slug: string
  *       500:
  *         description: Internal server error
  */
-export async function PATCH(request: Request, { params }: { params: { slug: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params;
     const session = await auth();
     if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
     const { name, description } = await request.json();
-    const categoryId = Number.parseInt(params.slug);
+    const categoryId = Number.parseInt(slug);
 
     if (!name?.trim()) {
       return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
@@ -310,14 +312,15 @@ export async function PATCH(request: Request, { params }: { params: { slug: stri
  *       500:
  *         description: Internal server error
  */
-export async function DELETE({ params }: { params: { slug: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params;
     const session = await auth();
     if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const categoryId = Number.parseInt(params.slug);
+    const categoryId = Number.parseInt(slug);
 
     // Check if category has any posts
     const category = await prisma.category.findUnique({
