@@ -8,8 +8,9 @@ Title: Tesseract Cube
 
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import React, { useRef } from 'react';
-import * as three from 'three';
+import type React from 'react';
+import { useRef } from 'react';
+import type * as three from 'three';
 
 type CubeModelProps = {
   onHover: (isHovered: boolean) => void;
