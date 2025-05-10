@@ -46,6 +46,7 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.10.5",
     "jest-fixed-jsdom": "^0.0.9",
     "leva": "^0.10.0",
     "lowlight": "^3.3.0",
