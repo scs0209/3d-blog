@@ -69,7 +69,11 @@ const MinimalistNavbar = () => {
           </Link>
 
           {/* 모바일 메뉴 버튼 */}
-          <button className='md:hidden ml-2 text-gray-400 hover:text-white' onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button
+            type='button'
+            className='md:hidden ml-2 text-gray-400 hover:text-white'
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
             <Menu size={20} />
           </button>
         </div>
