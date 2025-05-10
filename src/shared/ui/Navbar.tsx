@@ -23,7 +23,7 @@ const MinimalistNavbar = () => {
               </span>
             </div>
           </Link>
-          <Link href='/careers' className='group relative overflow-hidden'>
+          <Link href='/blog' className='group relative overflow-hidden'>
             <div className='relative flex overflow-hidden'>
               <span className='block text-gray-300 text-sm font-normal transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-[100%]'>
                 Blog
