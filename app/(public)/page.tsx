@@ -4,7 +4,7 @@ import { Suspense, useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import { useControls, button } from 'leva';
-import { Model } from '@/shared/ui/Scene';
+import { Scene } from '@/shared/ui/index';
 import CanvasLoader from '@/shared/ui/Loader';
 import Navbar from '@/shared/ui/Navbar';
 import { AnimateAvatar } from '@/widgets/home/ui/AnimateAvatar';
@@ -96,7 +96,7 @@ const GlTFPage = () => {
           <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
           <AnimateAvatar scale={3000} position={[0, 5, 0]} />
           <WalkingAvatar scale={0.01} position={[0, 0.6, 0.5]} />
-          <Model />
+          <Scene />
           <ambientLight intensity={0.5} />
           <pointLight position={[5, 5, 5]} intensity={2} />
 

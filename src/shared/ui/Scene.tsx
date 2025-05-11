@@ -8,7 +8,7 @@ import { Atom } from './Atom';
 import { CubeModel } from './Cube';
 import { NeuralNetwork } from './NeutralNetwork';
 
-export function Model(props: React.ComponentProps<'group'>) {
+export const Scene = (props: React.ComponentProps<'group'>) => {
   const { nodes, materials } = useGLTF('/space_boi.glb');
   const [isCubeHovered, setIsCubeHovered] = useState(false);
   const floatingGroupRef = useRef<three.Group>(null);
@@ -212,6 +212,6 @@ export function Model(props: React.ComponentProps<'group'>) {
       </group>
     </>
   );
-}
+};
 
 useGLTF.preload('/space_boi.glb');
