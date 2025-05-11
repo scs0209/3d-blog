@@ -3,6 +3,7 @@
 import { Html, useGLTF } from '@react-three/drei';
 import type * as three from 'three';
 import { motion } from 'framer-motion';
+import { BlogMainPage } from './BlogMainPage';
 
 export const Macintosh = (props: any) => {
   const { nodes, materials } = useGLTF('/vintage_computer.glb');
@@ -100,12 +101,7 @@ export const Macintosh = (props: any) => {
                       </div>
                     </div>
                     <div style={{ padding: '8px', flex: 1, overflow: 'auto' }}>
-                      <p style={{ margin: '4px 0' }}>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
-                      </p>
-                      <p style={{ margin: '4px 0' }}>
-                        Welcome to the vintage Macintosh experience! This content is now properly positioned.
-                      </p>
+                      <BlogMainPage />
                     </div>
                   </div>
                 </motion.div>

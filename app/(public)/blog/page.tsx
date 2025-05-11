@@ -1,6 +1,6 @@
 'use client';
 
-import { Macintosh, BlogContent, ComputerBackground } from '@/widgets/post/ui';
+import { Macintosh, ComputerBackground, BlogMainPage } from '@/widgets/post/ui';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 import { useState, useEffect } from 'react';
@@ -61,10 +61,7 @@ export default function BlogPage() {
       )}
       {showFullPage && (
         <div className='fixed inset-0 z-50 bg-white flex items-center justify-center'>
-          <BlogContent title='Blog Title'>
-            <h1 className='text-3xl font-bold mb-4'>Blog Title</h1>
-            <p>블로그 상세 페이지 내용...</p>
-          </BlogContent>
+          <BlogMainPage />
         </div>
       )}
     </main>
