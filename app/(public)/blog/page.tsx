@@ -33,8 +33,8 @@ export default function BlogPage() {
         if (next < 1) {
           next = 1;
         }
-        if (next > 4) {
-          next = 4;
+        if (next > 8) {
+          next = 8;
         }
         return next;
       });
@@ -43,12 +43,12 @@ export default function BlogPage() {
 
   // scale에 따라 opacity도 조절 (선택)
   useEffect(() => {
-    setHtmlOpacity(1 - (htmlScale - 1) / 3); // scale 1~4 -> opacity 1~0
+    setHtmlOpacity(1 - (htmlScale - 1) / 8); // scale 1~4 -> opacity 1~0
   }, [htmlScale]);
 
   useEffect(() => {
     if (!lockedFullPage) {
-      if (htmlScale >= 3.5) {
+      if (htmlScale >= 8) {
         setShowFullPage(true);
         setLockedFullPage(true);
       } else {
@@ -66,6 +66,8 @@ export default function BlogPage() {
       setIsExitingTo3D(false);
     }, 600);
   };
+
+  console.log(htmlScale, showFullPage);
 
   return (
     <main
@@ -103,7 +105,7 @@ export default function BlogPage() {
             key='mac-canvas'
             initial={{ opacity: 0, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: htmlScale }}
+            exit={{ opacity: 0, scale: 1 }}
             transition={{ duration: 0.6, ease: 'easeInOut' }}
             className='w-full h-full'
           >
@@ -117,7 +119,13 @@ export default function BlogPage() {
                 shadow-mapSize-height={1024}
               />
               <pointLight intensity={0.5} position={[-10, 5, -10]} />
-              <Macintosh scale={0.3} htmlScale={htmlScale} htmlOpacity={htmlOpacity} position={[0, 0.1, 1]} />
+              <Macintosh
+                scale={0.3}
+                htmlScale={htmlScale}
+                htmlOpacity={htmlOpacity}
+                showFullPage={showFullPage}
+                position={[0, 0.1, 1]}
+              />
               <ComputerBackground scale={0.11} position={[0, 0.001, 0]} />
               {/* <LevaCameraController /> */}
               <AnimatedCamera cameraPos={{ x: -0.16, y: 1.4, z: 7.5 }} />
