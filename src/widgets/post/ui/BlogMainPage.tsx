@@ -90,7 +90,7 @@ export const BlogMainPage = () => {
   const recentPosts = filteredPosts.slice(0, 6);
 
   return (
-    <div className='flex flex-col lg:flex-row min-h-screen bg-white text-black font-mono relative'>
+    <div className='flex flex-col lg:flex-row w-full min-h-screen bg-white text-black font-mono relative'>
       {/* 모바일 메뉴 버튼 */}
       <button
         type='button'
@@ -129,23 +129,26 @@ export const BlogMainPage = () => {
       </main>
       {/* Sidebar (오른쪽, 클래식 맥 스타일) */}
       <aside className='hidden lg:flex w-80 p-6 border-l-4 border-black bg-white min-h-screen flex-col gap-8 shadow-[-4px_0_0_0_#000]'>
-        <div className='border-2 border-black rounded-t-lg rounded-b-none bg-gray-100 px-3 py-2 flex items-center justify-between'>
-          <span className='font-bold text-lg'>Category</span>
-          <span className='w-4 h-4 border-2 border-black rounded-full bg-white inline-block' />
-        </div>
-        <nav className='flex flex-col gap-2 border-2 border-t-0 border-black rounded-b-lg px-3 py-4 bg-white'>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              type='button'
-              className={`text-left px-2 py-1 rounded font-mono border-2 border-black transition
+        <div>
+          <div className='border-2 border-black rounded-t-lg rounded-b-none bg-gray-100 px-3 py-2 flex items-center justify-between'>
+            <span className='font-bold text-lg'>Category</span>
+            <span className='w-4 h-4 border-2 border-black rounded-full bg-white inline-block' />
+          </div>
+          <nav className='flex flex-col gap-2 border-2 border-t-0 border-black rounded-b-lg px-3 py-4 bg-white'>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type='button'
+                className={`text-left px-2 py-1 rounded font-mono border-2 border-black transition
                 ${cat === selectedCategory ? 'bg-black text-white' : 'bg-white hover:bg-gray-200'}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </nav>
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </nav>
+        </div>
+
         <div>
           <h2 className='font-bold text-base mb-2'>Tags</h2>
           <div className='flex flex-wrap gap-2'>
