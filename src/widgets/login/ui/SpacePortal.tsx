@@ -40,7 +40,7 @@ const SpacePortal = () => {
                 <MeshPortalMaterial transparent resolution={256} blur={0}>
                   <color attach='background' args={['#000033']} />
                   <ambientLight intensity={1.5} />
-                  <Environment preset='city' />
+                  {/* <Environment preset='city' /> */}
                   <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
                   <AstronautModel />
                   <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={75} />
