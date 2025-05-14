@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 // 더미 카테고리 및 포스트 데이터
 const categories = ['전체', '개발', '디자인', '일상', '리뷰', '기타'];
@@ -80,21 +81,148 @@ const posts = [
   },
 ];
 
-export const BlogMainPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-  const [menuOpen, setMenuOpen] = useState(false);
+// 우주 배경용 별똥별/별 효과 (간단한 예시)
+function SpaceBackground() {
+  // Tailwind 색상 클래스 배열
+  const colorClasses = [
+    'bg-white',
+    'bg-blue-400',
+    'bg-purple-400',
+    'bg-pink-400',
+    'bg-yellow-400',
+    'bg-cyan-400',
+    'bg-fuchsia-400',
+  ];
+  // 별 60개, 색상 랜덤
+  const stars = Array.from({ length: 100 }).map((_, i) => {
+    const color = colorClasses[i % colorClasses.length];
+    const size = `${Math.random() * 2 + 1}px`;
+    const top = `${Math.random() * 100}%`;
+    const left = `${Math.random() * 100}%`;
+    const opacity = Math.random() * 0.7 + 0.3;
+    const duration = `${2 + Math.random() * 2}s`;
+    const delay = `${Math.random() * 2}s`;
+    return (
+      <span
+        key={`star-${Math.random()}`}
+        className={`absolute block rounded-full ${color} shadow-[0_0_8px_2px_#7dd3fc88] animate-pulse`}
+        style={{
+          width: size,
+          height: size,
+          top,
+          left,
+          opacity,
+          animationDuration: duration,
+          animationDelay: delay,
+        }}
+      />
+    );
+  });
 
-  // 카테고리 필터링
-  const filteredPosts =
-    selectedCategory === categories[0] ? posts : posts.filter((post) => post.category === selectedCategory);
-  const recentPosts = filteredPosts.slice(0, 6);
+  // 행성/은하수 등 추가
+  return (
+    <div className='absolute inset-0 z-10 pointer-events-none'>
+      {/* 별 */}
+      {stars}
+      {/* 행성(큰 원) */}
+      <span className='absolute bottom-10 right-10 w-16 h-16 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 rounded-full opacity-30 blur-2xl' />
+      {/* 작은 행성 */}
+      <span className='absolute top-1/4 left-10 w-8 h-8 bg-gradient-to-br from-yellow-200 via-pink-200 to-blue-200 rounded-full opacity-40 blur-xl' />
+      {/* 타원형 행성 */}
+      <span className='absolute top-2/3 left-1/3 w-16 h-8 bg-gradient-to-br from-fuchsia-200 via-blue-200 to-white rounded-full opacity-20 blur-2xl scale-x-125' />
+      {/* 은하수 느낌의 그라데이션 */}
+      <div className='absolute inset-0 pointer-events-none -z-10'>
+        {/* 여러 개의 큰 은하수 레이어 */}
+        {Array.from({ length: 5 }).map((_, i) => {
+          // 랜덤 위치, 각도, 색상, 투명도, 크기
+          const top = `${40 + Math.random() * 20}%`;
+          const left = `${10 + Math.random() * 60}%`;
+          const width = `${320 + Math.random() * 160}px`;
+          const height = `${24 + Math.random() * 24}px`;
+          const rotate = `${-15 + Math.random() * 30}`;
+          const opacity = 0.08 + Math.random() * 0.18;
+          // Tailwind 지원 색상 조합
+          const gradients = [
+            'from-blue-200 via-white to-pink-200',
+            'from-fuchsia-200 via-white to-blue-200',
+            'from-purple-200 via-blue-100 to-pink-100',
+            'from-cyan-200 via-white to-fuchsia-200',
+            'from-blue-300 via-white to-purple-200',
+          ];
+          const gradient = gradients[i % gradients.length];
+          return (
+            <span
+              key={`milkyway-${i}-${Math.random()}`}
+              className={`absolute rounded-full blur-3xl bg-gradient-to-r ${gradient}`}
+              style={{
+                top,
+                left,
+                width,
+                height,
+                opacity,
+                transform: `rotate(${rotate}deg)`,
+              }}
+            />
+          );
+        })}
+        {/* 기존 작은 진한 은하수 레이어 */}
+        <span className='absolute top-[55%] left-1/3 w-40 h-4 bg-gradient-to-r from-blue-400 via-white to-pink-400 opacity-30 blur-lg rounded-full rotate-12' />
+      </div>
+    </div>
+  );
+}
+
+function SearchBar({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className='w-full max-w-xs flex items-center ml-auto'
+    >
+      <input
+        type='text'
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder='Search posts...'
+        className='w-full px-4 py-2 rounded-lg bg-[#232946]/80 border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-100 placeholder:text-blue-200 shadow-[0_0_8px_#7dd3fc55] transition'
+      />
+    </motion.div>
+  );
+}
+
+export const BlogMainPage = () => {
+  // 카테고리 미선택 상태(null)로 시작
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  // 카테고리 필터링 + 검색
+  const filteredPosts = (
+    selectedCategory === null ? posts : posts.filter((post) => post.category === selectedCategory)
+  ).filter(
+    (post) =>
+      post.title.toLowerCase().includes(search.toLowerCase()) ||
+      post.summary.toLowerCase().includes(search.toLowerCase()),
+  );
+  const recentPosts = posts.slice(0, 6); // 전체 포스트 기준 최근 6개
+  const restPosts = selectedCategory === null ? filteredPosts.slice(6) : filteredPosts;
+
+  // 카테고리 버튼 클릭 핸들러 (같은 카테고리 클릭 시 해제)
+  const handleCategoryClick = (cat: string) => {
+    setSelectedCategory((prev) => (prev === cat ? null : cat));
+  };
+
+  // 블로그 타이틀 클릭 시 카테고리 해제
+  const handleTitleClick = () => setSelectedCategory(null);
 
   return (
-    <div className='flex flex-col lg:flex-row w-full min-h-screen bg-white text-black font-mono relative'>
+    <div className='flex flex-col lg:flex-row w-full min-h-screen bg-gradient-to-b from-[#181c2a] via-[#232946] to-[#23234d] text-slate-100 font-mono relative overflow-hidden'>
+      <SpaceBackground />
       {/* 모바일 메뉴 버튼 */}
       <button
         type='button'
-        className='lg:hidden fixed top-4 right-4 z-30 bg-black text-white p-2 rounded shadow-md'
+        className='lg:hidden fixed top-4 right-4 z-30 bg-blue-800 text-white p-2 rounded-full border border-blue-200 active:scale-95 transition'
         onClick={() => setMenuOpen(true)}
         aria-label='메뉴 열기'
       >
@@ -106,68 +234,112 @@ export const BlogMainPage = () => {
       {/* Main Content (왼쪽) */}
       <main className='flex-1 p-4 lg:p-10 flex justify-center'>
         <div className='w-full lg:w-[800px]'>
-          <h1 className='text-2xl font-bold mb-6 font-mono border-b-4 border-black pb-2'>Recently Published</h1>
-          <div className='flex flex-col gap-6'>
-            {recentPosts.map((post) => (
-              <div
-                key={post.id}
-                className='border-2 border-black rounded-lg bg-white p-5 flex flex-col gap-2 shadow-[4px_4px_0_0_#000]'
+          <div className='flex items-center gap-4 mb-4'>
+            <button
+              type='button'
+              className='font-extrabold text-2xl text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:underline bg-transparent border-none p-0 m-0 focus:outline-none'
+              onClick={handleTitleClick}
+            >
+              🪐 Space Retro Blog
+            </button>
+            <SearchBar value={search} onChange={setSearch} />
+          </div>
+
+          {/* 진입 시(카테고리 미선택)만 최근 포스트 6개 카드 */}
+          {selectedCategory === null && recentPosts.length > 0 && (
+            <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
+              {recentPosts.map((post) => (
+                <motion.div
+                  key={`${post.id}-card`}
+                  whileHover={{ scale: 1.04, boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55' }}
+                  className='relative aspect-square bg-[#232946]/80 rounded-xl border border-blue-300 shadow-[0_0_12px_#7dd3fc55] flex flex-col items-center justify-between p-4 overflow-hidden transition'
+                >
+                  {post.thumbnail && (
+                    <img src={post.thumbnail} alt={post.title} className='w-full h-1/2 object-cover rounded-md mb-2' />
+                  )}
+                  <span className='text-xs font-bold text-blue-200 mb-1'>{post.category}</span>
+                  <h2 className='text-base font-extrabold text-blue-100 text-center line-clamp-2 mb-1'>{post.title}</h2>
+                  <span className='text-xs text-blue-300 mt-auto'>{post.date}</span>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* 나머지 포스트 리스트 (hover 효과 추가) */}
+          <div className='flex flex-col gap-8'>
+            {restPosts.map((post, idx) => (
+              <motion.div
+                key={`${post.id}-list`}
+                whileHover={{
+                  scale: 1.015,
+                  boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55',
+                  backgroundColor: '#232946cc',
+                }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                className='rounded-lg px-4 py-3 transition cursor-pointer'
               >
-                <span className='inline-block text-xs font-bold mb-1 px-2 py-0.5 rounded border border-black bg-gray-100 w-fit'>
-                  {post.category}
-                </span>
-                <h2 className='text-lg font-bold font-mono'>{post.title}</h2>
-                <p className='text-sm font-mono'>{post.summary}</p>
-                <div className='flex items-center justify-between mt-2 text-xs text-gray-700 font-mono'>
+                <span className='text-xs font-bold text-blue-200'>{post.category}</span>
+                <h2 className='text-lg font-extrabold text-blue-100 mt-1'>{post.title}</h2>
+                <p className='text-sm text-blue-100'>{post.summary}</p>
+                <div className='flex items-center justify-between mt-2 text-xs text-blue-200'>
                   <span>{post.author ? post.author : '관리자'}</span>
                   <span>{post.date}</span>
                 </div>
-              </div>
+                {idx !== restPosts.length - 1 && <hr className='my-6 border-blue-900/40' />}
+              </motion.div>
             ))}
           </div>
         </div>
       </main>
-      {/* Sidebar (오른쪽, 클래식 맥 스타일) */}
-      <aside className='hidden lg:flex w-80 p-6 border-l-4 border-black bg-white min-h-screen flex-col gap-8 shadow-[-4px_0_0_0_#000]'>
+      {/* Sidebar (오른쪽, glow border + motion) */}
+      <aside className='hidden lg:flex w-80 p-6 min-h-screen flex-col gap-8 bg-[#181c2a]/80 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm'>
         <div>
-          <div className='border-2 border-black rounded-t-lg rounded-b-none bg-gray-100 px-3 py-2 flex items-center justify-between'>
-            <span className='font-bold text-lg'>Category</span>
-            <span className='w-4 h-4 border-2 border-black rounded-full bg-white inline-block' />
+          <div className='px-3 py-2 flex items-center justify-between'>
+            <span className='font-extrabold text-lg font-mono text-blue-100'>Category</span>
           </div>
-          <nav className='flex flex-col gap-2 border-2 border-t-0 border-black rounded-b-lg px-3 py-4 bg-white'>
+          <nav className='flex flex-col gap-2 px-3 py-4'>
             {categories.map((cat) => (
-              <button
+              <motion.button
                 key={cat}
                 type='button'
-                className={`text-left px-2 py-1 rounded font-mono border-2 border-black transition
-                ${cat === selectedCategory ? 'bg-black text-white' : 'bg-white hover:bg-gray-200'}`}
-                onClick={() => setSelectedCategory(cat)}
+                whileHover={{
+                  scale: 1.06,
+                  boxShadow: selectedCategory === cat ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
+                }}
+                whileTap={{ scale: 0.97 }}
+                className={`text-left px-2 py-1 rounded-lg font-mono transition relative
+                ${selectedCategory === cat ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
+                onClick={() => handleCategoryClick(cat)}
               >
                 {cat}
-              </button>
+              </motion.button>
             ))}
           </nav>
         </div>
-
         <div>
-          <h2 className='font-bold text-base mb-2'>Tags</h2>
+          <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
           <div className='flex flex-wrap gap-2'>
-            <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#React</span>
-            <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#NextJS</span>
-            <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#CSS</span>
-            <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#Database</span>
+            {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => (
+              <motion.span
+                key={tag}
+                whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
+                className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono text-blue-100 border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition'
+              >
+                {tag}
+              </motion.span>
+            ))}
           </div>
         </div>
       </aside>
       {/* 모바일/태블릿 드로어 사이드바 */}
       {menuOpen && (
-        <div className='fixed inset-0 z-40 bg-black/40 flex justify-end lg:hidden'>
-          <div className='w-72 max-w-full h-full bg-white border-l-4 border-black flex flex-col gap-8 p-6 shadow-[-4px_0_0_0_#000] animate-slideInRight'>
+        <div className='fixed inset-0 z-40 bg-black/60 flex justify-end lg:hidden'>
+          <div className='w-72 max-w-full h-full flex flex-col gap-8 p-6 animate-slideInRight bg-[#181c2a]/90 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm'>
             <div className='flex items-center justify-between mb-4'>
-              <span className='font-bold text-lg'>Category</span>
+              <span className='font-extrabold text-lg font-mono text-blue-100'>Category</span>
               <button
                 type='button'
-                className='text-black p-1 rounded hover:bg-gray-200'
+                className='text-blue-100 p-1 rounded-full hover:bg-blue-900/40'
                 onClick={() => setMenuOpen(false)}
                 aria-label='메뉴 닫기'
               >
@@ -177,29 +349,36 @@ export const BlogMainPage = () => {
                 </svg>
               </button>
             </div>
-            <nav className='flex flex-col gap-2 border-2 border-t-0 border-black rounded-b-lg px-3 py-4 bg-white'>
+            <nav className='flex flex-col gap-2 px-3 py-4'>
               {categories.map((cat) => (
-                <button
+                <motion.button
                   key={cat}
                   type='button'
-                  className={`text-left px-2 py-1 rounded font-mono border-2 border-black transition
-                    ${cat === selectedCategory ? 'bg-black text-white' : 'bg-white hover:bg-gray-200'}`}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setMenuOpen(false);
+                  whileHover={{
+                    scale: 1.06,
+                    boxShadow: selectedCategory === cat ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
                   }}
+                  whileTap={{ scale: 0.97 }}
+                  className={`text-left px-2 py-1 rounded-lg font-mono transition relative
+                    ${selectedCategory === cat ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
+                  onClick={() => handleCategoryClick(cat)}
                 >
                   {cat}
-                </button>
+                </motion.button>
               ))}
             </nav>
             <div>
-              <h2 className='font-bold text-base mb-2'>Tags</h2>
+              <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
-                <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#React</span>
-                <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#NextJS</span>
-                <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#CSS</span>
-                <span className='bg-gray-200 border border-black px-2 py-1 rounded text-xs font-mono'>#Database</span>
+                {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => (
+                  <motion.span
+                    key={tag}
+                    whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
+                    className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono text-blue-100 border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition'
+                  >
+                    {tag}
+                  </motion.span>
+                ))}
               </div>
             </div>
           </div>
