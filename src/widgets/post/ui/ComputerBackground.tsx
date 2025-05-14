@@ -177,6 +177,7 @@ export const ComputerBackground = (props: any) => {
         rotation={[-1.236, -0.719, 0.48]}
         scale={0.5}
       />
+      {/* 바닥 */}
       <mesh
         castShadow
         receiveShadow
