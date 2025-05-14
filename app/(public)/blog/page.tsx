@@ -4,6 +4,7 @@ import { Macintosh, ComputerBackground, BlogMainPage } from '@/widgets/post/ui';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 function AnimatedCamera({ cameraPos }: { cameraPos: { x: number; y: number; z: number } }) {
   const { camera } = useThree();
@@ -67,8 +68,6 @@ export default function BlogPage() {
     }, 600);
   };
 
-  console.log(htmlScale, showFullPage);
-
   return (
     <main
       className={
@@ -109,7 +108,7 @@ export default function BlogPage() {
             transition={{ duration: 0.6, ease: 'easeInOut' }}
             className='w-full h-full'
           >
-            <Canvas camera={{ fov: 90, near: 1, zoom: 15, position: [-0.16, 1.4, 8.88] }}>
+            <Canvas dpr={[1, 1.5]} camera={{ fov: 70, near: 1, zoom: 15, position: [-0.2, 1.5, 8.88] }}>
               <ambientLight intensity={0.5} />
               <directionalLight
                 intensity={1.2}
@@ -129,6 +128,13 @@ export default function BlogPage() {
               <ComputerBackground scale={0.11} position={[0, 0.001, 0]} />
               {/* <LevaCameraController /> */}
               <AnimatedCamera cameraPos={{ x: -0.16, y: 1.4, z: 7.5 }} />
+              <EffectComposer>
+                <Bloom
+                  intensity={1.5} // 블룸 효과의 강도
+                  threshold={0.5} // 블룸 효과가 적용되는 임계치
+                  levels={10} // 블룸 효과의 레벨 수
+                />
+              </EffectComposer>
               {/* <OrbitControls /> */}
             </Canvas>
           </motion.div>
