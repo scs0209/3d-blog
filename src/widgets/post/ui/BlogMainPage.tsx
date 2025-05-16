@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
-import Link from 'next/link';
-import { Tag } from '@/features/blog/ui';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { PostCard, PostListCard, Tag } from '@/features/blog/ui';
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 export const generateRandomString = (length: number) => {
@@ -306,25 +305,6 @@ export const BlogMainPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const [randomString, setRandomString] = useState('');
-
-  useEffect(() => {
-    const str = generateRandomString(1500);
-    setRandomString(str);
-  }, []);
-
-  function onMouseMove({ currentTarget, clientX, clientY }: any) {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-
-    const str = generateRandomString(1500);
-    setRandomString(str);
-  }
-
   // 카테고리 필터링 + 검색
   const filteredPosts = (
     selectedCategory === null ? posts : posts.filter((post) => post.category === selectedCategory)
@@ -385,57 +365,15 @@ export const BlogMainPage = () => {
           {selectedCategory === null && recentPosts.length > 0 && (
             <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
               {recentPosts.map((post) => (
-                <motion.div
-                  key={`${post.id}-card`}
-                  whileHover={{ scale: 1.04, boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55' }}
-                  className='relative aspect-square  bg-transparent rounded-xl border border-blue-300 shadow-[0_0_12px_#7dd3fc55] flex flex-col items-center justify-between p-4 overflow-hidden transition'
-                >
-                  <div
-                    key={`${post.id}-card`}
-                    onMouseMove={onMouseMove}
-                    className='group/card rounded-3xl w-full relative flex flex-col items-center justify-between overflow-hidden bg-transparent  h-full'
-                  >
-                    <CardPattern mouseX={mouseX} mouseY={mouseY} />
-                    {post.thumbnail && (
-                      <img
-                        src={post.thumbnail}
-                        alt={post.title}
-                        className='w-full h-1/2 object-cover rounded-md mb-2'
-                      />
-                    )}
-                    <span className='text-xs font-bold text-blue-200 mb-1'>{post.category}</span>
-                    <h2 className='text-base font-extrabold text-blue-100 text-center line-clamp-2 mb-1'>
-                      {post.title}
-                    </h2>
-                    <span className='text-xs text-blue-300 mt-auto'>{post.date}</span>
-                  </div>
-                </motion.div>
+                <PostCard key={post.id} post={post} />
               ))}
             </div>
           )}
 
           {/* 나머지 포스트 리스트 (hover 효과 추가) */}
           <div className='flex flex-col gap-8'>
-            {restPosts.map((post, idx) => (
-              <motion.div
-                key={`${post.id}-list`}
-                whileHover={{
-                  scale: 1.015,
-                  boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55',
-                  backgroundColor: '#232946cc',
-                }}
-                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                className='rounded-lg px-4 py-3 transition cursor-pointer'
-              >
-                <span className='text-xs font-bold text-blue-200'>{post.category}</span>
-                <h2 className='text-lg font-extrabold text-blue-100 mt-1'>{post.title}</h2>
-                <p className='text-sm text-blue-100'>{post.summary}</p>
-                <div className='flex items-center justify-between mt-2 text-xs text-blue-200'>
-                  <span>{post.author ? post.author : '관리자'}</span>
-                  <span>{post.date}</span>
-                </div>
-                {idx !== restPosts.length - 1 && <hr className='my-6 border-blue-900/40' />}
-              </motion.div>
+            {restPosts.map((post) => (
+              <PostListCard key={post.id} post={post} />
             ))}
           </div>
         </div>
@@ -513,53 +451,9 @@ export const BlogMainPage = () => {
             <div>
               <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
-                {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => {
-                  // 랜덤 색상 조합 배열
-                  const colorCombos = [
-                    'bg-blue-500 border-blue-200',
-                    'bg-pink-500 border-pink-200',
-                    'bg-green-500 border-green-200',
-                    'bg-yellow-500 border-yellow-200',
-                    'bg-purple-500 border-purple-200',
-                    'bg-cyan-500 border-cyan-200',
-                    'bg-fuchsia-500 border-fuchsia-200',
-                    'bg-orange-500 border-orange-200',
-                    'bg-sky-500 border-sky-200',
-                    'bg-rose-500 border-rose-200',
-                  ];
-                  // 태그 이름을 해시로 변환해서 색상 인덱스 결정
-                  function hashString(str: string) {
-                    let hash = 0;
-                    for (let i = 0; i < str.length; i++) {
-                      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-                    }
-                    return Math.abs(hash);
-                  }
-                  const colorIdx = hashString(tag) % colorCombos.length;
-                  const colorClass = colorCombos[colorIdx];
-                  return (
-                    <motion.span
-                      key={tag}
-                      whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
-                      className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono  border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition relative'
-                    >
-                      <Link
-                        href={`/tag/${tag}`}
-                        className='inline-block px-3 py-1 back drop-blur-sm text-blue-100 text-xs font-mono'
-                      >
-                        {tag}
-                        <motion.span
-                          className={`absolute -top-1 -right-1 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full border-2 ${colorClass}`}
-                          initial={{ scale: 0 }}
-                          whileInView={{ scale: 1 }}
-                          transition={{ delay: 0.2 }}
-                        >
-                          1
-                        </motion.span>
-                      </Link>
-                    </motion.span>
-                  );
-                })}
+                {tags.map((tag) => (
+                  <Tag key={tag.id} tag={tag} />
+                ))}
               </div>
             </div>
           </div>
@@ -568,51 +462,3 @@ export const BlogMainPage = () => {
     </div>
   );
 };
-
-export function CardPattern({ mouseX, mouseY }: any) {
-  const maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`;
-  const style = { maskImage, WebkitMaskImage: maskImage };
-
-  // 별 80개 랜덤 생성 (key는 uuid)
-  const stars = Array.from({ length: 30 }).map(() => {
-    const size = Math.random() * 1.2 + 0.6; // 0.6~1.8rem
-    const top = `${Math.random() * 100}%`;
-    const left = `${Math.random() * 100}%`;
-    const opacity = 0.3 + Math.random() * 0.7;
-    const rotate = Math.random() * 360;
-    const key = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
-    return (
-      <span
-        key={key}
-        style={{
-          position: 'absolute',
-          top,
-          left,
-          fontSize: `${size}rem`,
-          opacity,
-          color: '#fff',
-          filter: 'drop-shadow(0 0 4px #7dd3fc88)',
-          transform: `rotate(${rotate}deg)`,
-        }}
-      >
-        ★
-      </span>
-    );
-  });
-
-  return (
-    <div className='pointer-events-none'>
-      <div className='absolute inset-0 z-10 rounded-2xl  [mask-image:linear-gradient(white,transparent)] group-hover/card:opacity-50' />
-      <motion.div
-        className='absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500 to-blue-700 opacity-0  group-hover/card:opacity-100 backdrop-blur-xl transition duration-500'
-        style={style}
-      />
-      <motion.div
-        className='absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay  group-hover/card:opacity-100'
-        style={style}
-      >
-        <div className='absolute inset-0 w-full h-full'>{stars}</div>
-      </motion.div>
-    </div>
-  );
-}

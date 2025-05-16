@@ -1,2 +1,3 @@
 export * from './Tag';
-export * from './PostCard';
+export * from './PostCard/PostCard';
+export * from './PostListCard/PostListCard';
