@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { PostCard, PostListCard, Tag } from '@/features/blog/ui';
+import { PostCard, PostListCard, Tag, VisitorCounter } from '@/features/blog/ui';
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 export const generateRandomString = (length: number) => {
@@ -373,7 +373,7 @@ export const BlogMainPage = () => {
           {/* 나머지 포스트 리스트 (hover 효과 추가) */}
           <div className='flex flex-col gap-8'>
             {restPosts.map((post) => (
-              <PostListCard key={post.id} post={post} />
+              <PostListCard key={post.id} post={post as any} />
             ))}
           </div>
         </div>
@@ -381,6 +381,7 @@ export const BlogMainPage = () => {
       {/* Sidebar (오른쪽, glow border + motion) */}
       <aside className='hidden lg:flex w-80 p-6 min-h-screen flex-col gap-8 bg-[#181c2a]/80 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm z-10'>
         <div>
+          <VisitorCounter today={100} total={1000} />
           <div className='px-3 py-2 flex items-center justify-between'>
             <span className='font-extrabold text-lg font-mono text-blue-100'>Category</span>
           </div>
