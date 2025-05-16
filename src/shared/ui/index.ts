@@ -13,3 +13,4 @@ export * from './NovelViewer';
 export * from './Room';
 export * from './Scene';
 export * from './SkyBox';
+export * from './Tag';

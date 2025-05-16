@@ -1,3 +1,4 @@
+import { Tag } from '@/shared/ui';
 import { motion } from 'framer-motion';
 
 type Post = {
@@ -21,7 +22,9 @@ export const PostListCard = ({ post }: { post: Post }) => {
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       className='rounded-lg px-4 py-3 transition cursor-pointer'
     >
-      <span className='text-xs font-bold text-blue-200'>{post.category}</span>
+      <Tag color='neon' spacing='tight'>
+        #{post.category}
+      </Tag>
       <h2 className='text-lg font-extrabold text-blue-100 mt-1'>{post.title}</h2>
       <p className='text-sm text-blue-100'>{post.summary}</p>
       <div className='flex items-center justify-between mt-2 text-xs text-blue-200'>
