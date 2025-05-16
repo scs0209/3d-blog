@@ -1,6 +1,6 @@
-import { motion, useMotionTemplate } from 'framer-motion';
+import { motion, useMotionTemplate, type MotionValue } from 'framer-motion';
 
-export const CardPattern = ({ mouseX, mouseY }: any) => {
+export const CardPattern = ({ mouseX, mouseY }: { mouseX: MotionValue<number>; mouseY: MotionValue<number> }) => {
   const maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`;
   const style = { maskImage, WebkitMaskImage: maskImage };
 

@@ -1,5 +1,6 @@
-import { motion, useMotionValue } from 'framer-motion';
+import { motion, useMotionValue, animate } from 'framer-motion';
 import { CardPattern } from './CardPattern';
+import { useEffect, useRef, useState } from 'react';
 
 type Post = {
   id: number;
@@ -9,26 +10,52 @@ type Post = {
   summary: string;
 };
 
+const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+export const generateRandomString = (length: number) => {
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+};
+
 export const PostCard = ({ post }: { post: Post }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [_, setRandomString] = useState('');
+  const animationRef = useRef<{ x: any; y: any } | null>(null);
+
+  useEffect(() => {
+    const str = generateRandomString(1500);
+    setRandomString(str);
+  }, []);
 
   function onMouseMove({ currentTarget, clientX, clientY }: any) {
     const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
+    const targetX = clientX - left;
+    const targetY = clientY - top;
+    if (animationRef.current) {
+      animationRef.current.x.stop();
+      animationRef.current.y.stop();
+    }
+    animationRef.current = {
+      x: animate(mouseX, targetX, { type: 'spring', stiffness: 200, damping: 30 }),
+      y: animate(mouseY, targetY, { type: 'spring', stiffness: 200, damping: 30 }),
+    };
+    const str = generateRandomString(1500);
+    setRandomString(str);
   }
 
   return (
     <motion.div
       key={`${post.id}-card`}
       whileHover={{ scale: 1.04, boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55' }}
-      className='relative aspect-square  bg-transparent rounded-xl border border-blue-300 shadow-[0_0_12px_#7dd3fc55] flex flex-col items-center justify-between p-4 overflow-hidden transition'
+      className='relative aspect-square bg-transparent rounded-xl border border-blue-300 shadow-[0_0_12px_#7dd3fc55] p-4 overflow-hidden transition'
     >
       <div
         key={`${post.id}-card`}
         onMouseMove={onMouseMove}
-        className='group/card rounded-3xl w-full relative flex flex-col items-center justify-between overflow-hidden bg-transparent  h-full'
+        className='group/card rounded-3xl w-full relative flex flex-col items-center justify-between overflow-hidden bg-transparent h-full'
       >
         <CardPattern mouseX={mouseX} mouseY={mouseY} />
         {/* {post.thumbnail && (
