@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TagCloud } from '@/features/blog/ui';
+import Link from 'next/link';
 
 // 더미 카테고리 및 포스트 데이터
 const categories = ['전체', '개발', '디자인', '일상', '리뷰', '기타'];
@@ -424,18 +424,39 @@ export const BlogMainPage = () => {
           </nav>
         </div>
         <div>
-          <TagCloud tags={tags} />
           <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
           <div className='flex flex-wrap gap-2'>
-            {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => (
-              <motion.span
-                key={tag}
-                whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
-                className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono text-blue-100 border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition'
-              >
-                {tag}
-              </motion.span>
-            ))}
+            {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => {
+              // 태그별 컬러 매핑
+              const badgeColors: Record<string, string> = {
+                '#React': 'bg-blue-500 border-blue-200',
+                '#NextJS': 'bg-neutral-700 border-neutral-300',
+                '#CSS': 'bg-sky-500 border-sky-200',
+                '#Database': 'bg-green-500 border-green-200',
+              };
+              return (
+                <motion.span
+                  key={tag}
+                  whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
+                  className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono  border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition relative'
+                >
+                  <Link
+                    href={`/tag/${tag}`}
+                    className='inline-block px-3 py-1 back drop-blur-sm text-blue-100 text-xs font-mono'
+                  >
+                    {tag}
+                    <motion.span
+                      className={`absolute -top-1 -right-1 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full border-2 ${badgeColors[tag]}`}
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      1
+                    </motion.span>
+                  </Link>
+                </motion.span>
+              );
+            })}
           </div>
         </div>
       </aside>
@@ -478,15 +499,37 @@ export const BlogMainPage = () => {
             <div>
               <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
-                {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => (
-                  <motion.span
-                    key={tag}
-                    whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
-                    className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono text-blue-100 border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition'
-                  >
-                    {tag}
-                  </motion.span>
-                ))}
+                {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => {
+                  // 태그별 컬러 매핑
+                  const badgeColors: Record<string, string> = {
+                    '#React': 'bg-blue-500 border-blue-200',
+                    '#NextJS': 'bg-neutral-700 border-neutral-300',
+                    '#CSS': 'bg-sky-500 border-sky-200',
+                    '#Database': 'bg-green-500 border-green-200',
+                  };
+                  return (
+                    <motion.span
+                      key={tag}
+                      whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
+                      className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono  border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition relative'
+                    >
+                      <Link
+                        href={`/tag/${tag}`}
+                        className='inline-block px-3 py-1 back drop-blur-sm text-blue-100 text-xs font-mono'
+                      >
+                        {tag}
+                        <motion.span
+                          className={`absolute -top-1 -right-1 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full border-2 ${badgeColors[tag]}`}
+                          initial={{ scale: 0 }}
+                          whileInView={{ scale: 1 }}
+                          transition={{ delay: 0.2 }}
+                        >
+                          1
+                        </motion.span>
+                      </Link>
+                    </motion.span>
+                  );
+                })}
               </div>
             </div>
           </div>
