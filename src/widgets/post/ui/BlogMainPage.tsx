@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import Link from 'next/link';
+import { Tag } from '@/features/blog/ui';
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 export const generateRandomString = (length: number) => {
@@ -343,6 +344,13 @@ export const BlogMainPage = () => {
   // 블로그 타이틀 클릭 시 카테고리 해제
   const handleTitleClick = () => setSelectedCategory(null);
 
+  const tags = [
+    { id: '1', name: 'React', count: 10 },
+    { id: '2', name: 'NextJS', count: 5 },
+    { id: '3', name: 'CSS', count: 3 },
+    { id: '4', name: 'Database', count: 2 },
+  ];
+
   return (
     <div className='flex flex-col lg:flex-row w-full min-h-screen bg-gradient-to-b from-[#181c2a] via-[#232946] to-[#23234d] text-slate-100 font-mono relative overflow-hidden'>
       <SpaceBackground />
@@ -460,37 +468,9 @@ export const BlogMainPage = () => {
         <div>
           <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
           <div className='flex flex-wrap gap-2'>
-            {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => {
-              // 태그별 컬러 매핑
-              const badgeColors: Record<string, string> = {
-                '#React': 'bg-blue-500 border-blue-200',
-                '#NextJS': 'bg-neutral-700 border-neutral-300',
-                '#CSS': 'bg-sky-500 border-sky-200',
-                '#Database': 'bg-green-500 border-green-200',
-              };
-              return (
-                <motion.span
-                  key={tag}
-                  whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
-                  className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono  border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition relative'
-                >
-                  <Link
-                    href={`/tag/${tag}`}
-                    className='inline-block px-3 py-1 back drop-blur-sm text-blue-100 text-xs font-mono'
-                  >
-                    {tag}
-                    <motion.span
-                      className={`absolute -top-1 -right-1 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full border-2 ${badgeColors[tag]}`}
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      1
-                    </motion.span>
-                  </Link>
-                </motion.span>
-              );
-            })}
+            {tags.map((tag) => (
+              <Tag key={tag.id} tag={tag} />
+            ))}
           </div>
         </div>
       </aside>
@@ -534,13 +514,29 @@ export const BlogMainPage = () => {
               <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
                 {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => {
-                  // 태그별 컬러 매핑
-                  const badgeColors: Record<string, string> = {
-                    '#React': 'bg-blue-500 border-blue-200',
-                    '#NextJS': 'bg-neutral-700 border-neutral-300',
-                    '#CSS': 'bg-sky-500 border-sky-200',
-                    '#Database': 'bg-green-500 border-green-200',
-                  };
+                  // 랜덤 색상 조합 배열
+                  const colorCombos = [
+                    'bg-blue-500 border-blue-200',
+                    'bg-pink-500 border-pink-200',
+                    'bg-green-500 border-green-200',
+                    'bg-yellow-500 border-yellow-200',
+                    'bg-purple-500 border-purple-200',
+                    'bg-cyan-500 border-cyan-200',
+                    'bg-fuchsia-500 border-fuchsia-200',
+                    'bg-orange-500 border-orange-200',
+                    'bg-sky-500 border-sky-200',
+                    'bg-rose-500 border-rose-200',
+                  ];
+                  // 태그 이름을 해시로 변환해서 색상 인덱스 결정
+                  function hashString(str: string) {
+                    let hash = 0;
+                    for (let i = 0; i < str.length; i++) {
+                      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+                    }
+                    return Math.abs(hash);
+                  }
+                  const colorIdx = hashString(tag) % colorCombos.length;
+                  const colorClass = colorCombos[colorIdx];
                   return (
                     <motion.span
                       key={tag}
@@ -553,7 +549,7 @@ export const BlogMainPage = () => {
                       >
                         {tag}
                         <motion.span
-                          className={`absolute -top-1 -right-1 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full border-2 ${badgeColors[tag]}`}
+                          className={`absolute -top-1 -right-1 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full border-2 ${colorClass}`}
                           initial={{ scale: 0 }}
                           whileInView={{ scale: 1 }}
                           transition={{ delay: 0.2 }}
