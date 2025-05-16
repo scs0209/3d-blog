@@ -1,6 +1,15 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import Link from 'next/link';
+
+const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+export const generateRandomString = (length: number) => {
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+};
 
 // 더미 카테고리 및 포스트 데이터
 const categories = ['전체', '개발', '디자인', '일상', '리뷰', '기타'];
@@ -296,12 +305,24 @@ export const BlogMainPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
 
-  const tags = [
-    { id: '1', name: 'React', count: 10 },
-    { id: '2', name: 'NextJS', count: 5 },
-    { id: '3', name: 'CSS', count: 3 },
-    { id: '4', name: 'Database', count: 2 },
-  ];
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const [randomString, setRandomString] = useState('');
+
+  useEffect(() => {
+    const str = generateRandomString(1500);
+    setRandomString(str);
+  }, []);
+
+  function onMouseMove({ currentTarget, clientX, clientY }: any) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+
+    const str = generateRandomString(1500);
+    setRandomString(str);
+  }
 
   // 카테고리 필터링 + 검색
   const filteredPosts = (
@@ -359,14 +380,27 @@ export const BlogMainPage = () => {
                 <motion.div
                   key={`${post.id}-card`}
                   whileHover={{ scale: 1.04, boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55' }}
-                  className='relative aspect-square bg-[#232946]/80 rounded-xl border border-blue-300 shadow-[0_0_12px_#7dd3fc55] flex flex-col items-center justify-between p-4 overflow-hidden transition'
+                  className='relative aspect-square  bg-transparent rounded-xl border border-blue-300 shadow-[0_0_12px_#7dd3fc55] flex flex-col items-center justify-between p-4 overflow-hidden transition'
                 >
-                  {post.thumbnail && (
-                    <img src={post.thumbnail} alt={post.title} className='w-full h-1/2 object-cover rounded-md mb-2' />
-                  )}
-                  <span className='text-xs font-bold text-blue-200 mb-1'>{post.category}</span>
-                  <h2 className='text-base font-extrabold text-blue-100 text-center line-clamp-2 mb-1'>{post.title}</h2>
-                  <span className='text-xs text-blue-300 mt-auto'>{post.date}</span>
+                  <div
+                    key={`${post.id}-card`}
+                    onMouseMove={onMouseMove}
+                    className='group/card rounded-3xl w-full relative flex flex-col items-center justify-between overflow-hidden bg-transparent  h-full'
+                  >
+                    <CardPattern mouseX={mouseX} mouseY={mouseY} />
+                    {post.thumbnail && (
+                      <img
+                        src={post.thumbnail}
+                        alt={post.title}
+                        className='w-full h-1/2 object-cover rounded-md mb-2'
+                      />
+                    )}
+                    <span className='text-xs font-bold text-blue-200 mb-1'>{post.category}</span>
+                    <h2 className='text-base font-extrabold text-blue-100 text-center line-clamp-2 mb-1'>
+                      {post.title}
+                    </h2>
+                    <span className='text-xs text-blue-300 mt-auto'>{post.date}</span>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -538,3 +572,51 @@ export const BlogMainPage = () => {
     </div>
   );
 };
+
+export function CardPattern({ mouseX, mouseY }: any) {
+  const maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`;
+  const style = { maskImage, WebkitMaskImage: maskImage };
+
+  // 별 80개 랜덤 생성 (key는 uuid)
+  const stars = Array.from({ length: 30 }).map(() => {
+    const size = Math.random() * 1.2 + 0.6; // 0.6~1.8rem
+    const top = `${Math.random() * 100}%`;
+    const left = `${Math.random() * 100}%`;
+    const opacity = 0.3 + Math.random() * 0.7;
+    const rotate = Math.random() * 360;
+    const key = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+    return (
+      <span
+        key={key}
+        style={{
+          position: 'absolute',
+          top,
+          left,
+          fontSize: `${size}rem`,
+          opacity,
+          color: '#fff',
+          filter: 'drop-shadow(0 0 4px #7dd3fc88)',
+          transform: `rotate(${rotate}deg)`,
+        }}
+      >
+        ★
+      </span>
+    );
+  });
+
+  return (
+    <div className='pointer-events-none'>
+      <div className='absolute inset-0 z-10 rounded-2xl  [mask-image:linear-gradient(white,transparent)] group-hover/card:opacity-50' />
+      <motion.div
+        className='absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500 to-blue-700 opacity-0  group-hover/card:opacity-100 backdrop-blur-xl transition duration-500'
+        style={style}
+      />
+      <motion.div
+        className='absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay  group-hover/card:opacity-100'
+        style={style}
+      >
+        <div className='absolute inset-0 w-full h-full'>{stars}</div>
+      </motion.div>
+    </div>
+  );
+}
