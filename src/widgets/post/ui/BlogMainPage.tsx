@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { TagCloud } from '@/features/blog/ui';
 
 // 더미 카테고리 및 포스트 데이터
 const categories = ['전체', '개발', '디자인', '일상', '리뷰', '기타'];
@@ -119,17 +120,115 @@ function SpaceBackground() {
     );
   });
 
+  // 행성 생성
+  const planets = [
+    {
+      id: 'planet-1',
+      size: 80,
+      top: '15%',
+      left: '85%',
+      color: 'from-red-500 to-orange-500',
+      ringColor: 'border-yellow-500/20',
+      ringSize: 100,
+      duration: 120,
+    },
+    {
+      id: 'planet-2',
+      size: 40,
+      top: '70%',
+      left: '10%',
+      color: 'from-blue-500 to-purple-500',
+      ringColor: 'border-indigo-500/20',
+      ringSize: 55,
+      duration: 180,
+    },
+    {
+      id: 'planet-3',
+      size: 60,
+      top: '30%',
+      left: '20%',
+      color: 'from-green-400 to-blue-400',
+      ringColor: 'border-green-300/20',
+      ringSize: 80,
+      duration: 150,
+    },
+    {
+      id: 'planet-4',
+      size: 50,
+      top: '60%',
+      left: '70%',
+      color: 'from-yellow-400 to-pink-400',
+      ringColor: 'border-pink-300/20',
+      ringSize: 65,
+      duration: 100,
+    },
+    {
+      id: 'planet-5',
+      size: 35,
+      top: '40%',
+      left: '55%',
+      color: 'from-fuchsia-400 to-purple-500',
+      ringColor: 'border-fuchsia-300/20',
+      ringSize: 50,
+      duration: 90,
+    },
+  ];
+
   // 행성/은하수 등 추가
   return (
     <div className='absolute inset-0 z-10 pointer-events-none'>
       {/* 별 */}
       {stars}
-      {/* 행성(큰 원) */}
-      <span className='absolute bottom-10 right-10 w-16 h-16 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 rounded-full opacity-30 blur-2xl' />
-      {/* 작은 행성 */}
-      <span className='absolute top-1/4 left-10 w-8 h-8 bg-gradient-to-br from-yellow-200 via-pink-200 to-blue-200 rounded-full opacity-40 blur-xl' />
-      {/* 타원형 행성 */}
-      <span className='absolute top-2/3 left-1/3 w-16 h-8 bg-gradient-to-br from-fuchsia-200 via-blue-200 to-white rounded-full opacity-20 blur-2xl scale-x-125' />
+      {/* 행성들 */}
+      {planets.map((planet) => (
+        <motion.div
+          key={planet.id}
+          className='absolute'
+          style={{
+            top: planet.top,
+            left: planet.left,
+          }}
+          initial={{ rotate: 0 }}
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: planet.duration,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: 'linear',
+          }}
+        >
+          {/* 행성 고리 */}
+          {planet.ringSize && (
+            <div
+              className={`absolute rounded-full border-4 ${planet.ringColor}`}
+              style={{
+                width: planet.ringSize,
+                height: planet.ringSize / 2,
+                top: planet.size / 2 - planet.ringSize / 4,
+                left: planet.size / 2 - planet.ringSize / 2,
+                transform: 'rotateX(75deg)',
+              }}
+            />
+          )}
+
+          {/* 행성 본체 */}
+          <motion.div
+            className={`absolute rounded-full bg-gradient-to-br ${planet.color}`}
+            style={{
+              width: planet.size,
+              height: planet.size,
+            }}
+            animate={{ rotate: -360 }}
+            transition={{
+              duration: planet.duration * 0.8,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: 'linear',
+            }}
+          >
+            {/* 행성 표면 특징 */}
+            <div className='absolute w-3/4 h-1/2 bg-white/10 rounded-full top-1/4 left-1/8' />
+          </motion.div>
+        </motion.div>
+      ))}
       {/* 은하수 느낌의 그라데이션 */}
       <div className='absolute inset-0 pointer-events-none -z-10'>
         {/* 여러 개의 큰 은하수 레이어 */}
@@ -165,8 +264,8 @@ function SpaceBackground() {
             />
           );
         })}
-        {/* 기존 작은 진한 은하수 레이어 */}
-        <span className='absolute top-[55%] left-1/3 w-40 h-4 bg-gradient-to-r from-blue-400 via-white to-pink-400 opacity-30 blur-lg rounded-full rotate-12' />
+        <div className='absolute top-1/4 left-1/4 w-1/2 h-1/2 rounded-full bg-purple-500/20 blur-3xl' />
+        <div className='absolute bottom-0 right-0 w-1/3 h-1/3 rounded-full bg-pink-500/20 blur-3xl' />
       </div>
     </div>
   );
@@ -197,6 +296,13 @@ export const BlogMainPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
 
+  const tags = [
+    { id: '1', name: 'React', count: 10 },
+    { id: '2', name: 'NextJS', count: 5 },
+    { id: '3', name: 'CSS', count: 3 },
+    { id: '4', name: 'Database', count: 2 },
+  ];
+
   // 카테고리 필터링 + 검색
   const filteredPosts = (
     selectedCategory === null ? posts : posts.filter((post) => post.category === selectedCategory)
@@ -219,6 +325,7 @@ export const BlogMainPage = () => {
   return (
     <div className='flex flex-col lg:flex-row w-full min-h-screen bg-gradient-to-b from-[#181c2a] via-[#232946] to-[#23234d] text-slate-100 font-mono relative overflow-hidden'>
       <SpaceBackground />
+      {/* <SpaceParticles /> */}
       {/* 모바일 메뉴 버튼 */}
       <button
         type='button'
@@ -292,7 +399,7 @@ export const BlogMainPage = () => {
         </div>
       </main>
       {/* Sidebar (오른쪽, glow border + motion) */}
-      <aside className='hidden lg:flex w-80 p-6 min-h-screen flex-col gap-8 bg-[#181c2a]/80 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm'>
+      <aside className='hidden lg:flex w-80 p-6 min-h-screen flex-col gap-8 bg-[#181c2a]/80 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm z-10'>
         <div>
           <div className='px-3 py-2 flex items-center justify-between'>
             <span className='font-extrabold text-lg font-mono text-blue-100'>Category</span>
@@ -317,6 +424,7 @@ export const BlogMainPage = () => {
           </nav>
         </div>
         <div>
+          <TagCloud tags={tags} />
           <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
           <div className='flex flex-wrap gap-2'>
             {['#React', '#NextJS', '#CSS', '#Database'].map((tag) => (
