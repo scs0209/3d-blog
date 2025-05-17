@@ -12,7 +12,7 @@ const MinimalistNavbar = () => {
       <div className='max-w-6xl mx-auto flex items-center justify-between gap-8'>
         {/* 네비게이션 링크 - 데스크톱 */}
         <nav className='hidden md:flex items-center gap-8'>
-          <Orbit fill='white' />
+          <Orbit fill={'white'} className='cursor-pointer' />
           <Link href='/manifesto' className='group relative overflow-hidden'>
             <div className='relative flex overflow-hidden'>
               <span className='block text-gray-300 text-sm font-normal transition-all duration-[800ms] ease-[cubic-bezier(0.165,0.84,0.44,1)] group-hover:translate-y-[100%] group-hover:opacity-0'>
