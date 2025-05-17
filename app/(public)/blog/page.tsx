@@ -2,9 +2,10 @@
 
 import { Macintosh, ComputerBackground, BlogMainPage } from '@/widgets/post/ui';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { CanvasLoader } from '@/shared/ui';
 
 function AnimatedCamera({ cameraPos }: { cameraPos: { x: number; y: number; z: number } }) {
   const { camera } = useThree();
@@ -118,23 +119,25 @@ export default function BlogPage() {
                 shadow-mapSize-height={1024}
               />
               <pointLight intensity={0.5} position={[-10, 5, -10]} />
-              <Macintosh
-                scale={0.3}
-                htmlScale={htmlScale}
-                htmlOpacity={htmlOpacity}
-                showFullPage={showFullPage}
-                position={[0, 0.1, 1]}
-              />
-              <ComputerBackground scale={0.11} position={[0, 0.001, 0]} />
-              {/* <LevaCameraController /> */}
-              <AnimatedCamera cameraPos={{ x: -0.16, y: 1.4, z: 7.5 }} />
-              <EffectComposer>
-                <Bloom
-                  intensity={1.5} // 블룸 효과의 강도
-                  threshold={0.5} // 블룸 효과가 적용되는 임계치
-                  levels={10} // 블룸 효과의 레벨 수
+              <Suspense fallback={<CanvasLoader />}>
+                <Macintosh
+                  scale={0.3}
+                  htmlScale={htmlScale}
+                  htmlOpacity={htmlOpacity}
+                  showFullPage={showFullPage}
+                  position={[0, 0.1, 1]}
                 />
-              </EffectComposer>
+                <ComputerBackground scale={0.11} position={[0, 0.001, 0]} />
+                {/* <LevaCameraController /> */}
+                <AnimatedCamera cameraPos={{ x: -0.16, y: 1.4, z: 7.5 }} />
+                <EffectComposer>
+                  <Bloom
+                    intensity={1.5} // 블룸 효과의 강도
+                    threshold={0.5} // 블룸 효과가 적용되는 임계치
+                    levels={10} // 블룸 효과의 레벨 수
+                  />
+                </EffectComposer>
+              </Suspense>
               {/* <OrbitControls /> */}
             </Canvas>
           </motion.div>
