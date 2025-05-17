@@ -5,7 +5,7 @@ import { HomeCanvas } from '@/views/home';
 
 const HomePage = () => {
   return (
-    <div className='w-screen h-screen scene-wrapper'>
+    <div className='w-screen h-screen scene-wrapper dark:bg-none'>
       <Navbar />
 
       <HomeCanvas />
