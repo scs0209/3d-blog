@@ -13,11 +13,10 @@ import { useRef } from 'react';
 import type * as three from 'three';
 
 type CubeModelProps = {
-  onHover: (isHovered: boolean) => void;
   position: [number, number, number];
 } & React.ComponentProps<'group'>;
 
-export function CubeModel({ onHover, position, ...props }: CubeModelProps) {
+export function CubeModel({ position, ...props }: CubeModelProps) {
   const { nodes, materials } = useGLTF('/tesseract_cube.glb');
   const textRef = useRef<three.Mesh | null>(null);
   const cubeRef = useRef<three.Group | null>(null);
@@ -35,14 +34,7 @@ export function CubeModel({ onHover, position, ...props }: CubeModelProps) {
   });
 
   return (
-    <group
-      {...props}
-      dispose={null}
-      scale={0.5}
-      position={position}
-      onPointerOver={() => onHover(true)}
-      onPointerOut={() => onHover(false)}
-    >
+    <group {...props} dispose={null} scale={0.5} position={position}>
       <group ref={cubeRef}>
         <mesh
           castShadow

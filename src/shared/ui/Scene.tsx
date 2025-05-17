@@ -2,21 +2,17 @@ import { Model as RoomModel } from '@/shared/ui/Room';
 import { Float, useGLTF } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type React from 'react';
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import type * as three from 'three';
 import { Atom } from './Atom';
 import { CubeModel } from './Cube';
 import { NeuralNetwork } from './NeutralNetwork';
+import { useTheme } from 'next-themes';
 
 export const Scene = (props: React.ComponentProps<'group'>) => {
   const { nodes, materials } = useGLTF('/space_boi.glb');
-  const [isCubeHovered, setIsCubeHovered] = useState(false);
   const floatingGroupRef = useRef<three.Group>(null);
-
-  // 호버 상태 변경 핸들러
-  const handleCubeHover = (hovered: boolean) => {
-    setIsCubeHovered(hovered);
-  };
+  const { theme } = useTheme();
 
   return (
     <>
@@ -26,15 +22,11 @@ export const Scene = (props: React.ComponentProps<'group'>) => {
           <group scale={0.01}>
             <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
               <RoomModel position={[0, 0, 20]} />
-              <CubeModel position={[0, -100, 300]} onHover={handleCubeHover} />
+              <CubeModel position={[0, -100, 300]} />
               <NeuralNetwork />
-              {/* <group rotation={[10, 10.5, 10]} scale={30}>
-              <fog attach="fog" args={['#202025', 0, 80]} />
+              <fog attach='fog' args={['#202025', 0, 80]} />
 
-              <Cloud />
-            </group> */}
-              {/* <TrackballControls /> */}
-              {isCubeHovered && (
+              {theme === 'light' && (
                 <>
                   <Float speed={4} rotationIntensity={1} floatIntensity={2}>
                     <Atom />
