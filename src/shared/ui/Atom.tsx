@@ -1,3 +1,5 @@
+'use client';
+
 import { Sphere, Trail } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';

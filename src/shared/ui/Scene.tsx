@@ -1,3 +1,5 @@
+'use client';
+
 import { Model as RoomModel } from '@/shared/ui/Room';
 import { Float, useGLTF } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';

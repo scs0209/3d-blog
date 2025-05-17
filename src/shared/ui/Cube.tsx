@@ -1,3 +1,5 @@
+'use client';
+
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import type React from 'react';

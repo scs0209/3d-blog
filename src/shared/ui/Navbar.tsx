@@ -4,7 +4,7 @@ import { Menu, Orbit } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-const MinimalistNavbar = () => {
+export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -106,5 +106,3 @@ const MinimalistNavbar = () => {
     </header>
   );
 };
-
-export default MinimalistNavbar;

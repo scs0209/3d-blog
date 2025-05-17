@@ -1,10 +1,11 @@
+'use client';
+
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect } from 'react';
 
-interface NovelViewerProps {
+type NovelViewerProps = {
   content: string;
-}
+};
 
 const NovelViewer = ({ content }: NovelViewerProps) => {
   const editor = useEditor({

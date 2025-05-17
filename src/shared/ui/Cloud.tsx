@@ -1,5 +1,7 @@
-import { Billboard, Text, TrackballControls } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+'use client';
+
+import { Billboard, Text } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { generate } from 'random-words';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as three from 'three';
@@ -27,12 +29,12 @@ function Word({ children, position, ...props }: WordProps) {
   };
   const out = () => setHovered(false);
 
-  // Change the mouse cursor on hover
   useEffect(() => {
-    if (hovered) document.body.style.cursor = 'pointer';
-    return () => {
+    if (hovered) {
+      document.body.style.cursor = 'pointer';
+    } else {
       document.body.style.cursor = 'auto';
-    };
+    }
   }, [hovered]);
 
   // Tie component to the render-loop
@@ -60,8 +62,6 @@ function Word({ children, position, ...props }: WordProps) {
 }
 
 export function Cloud({ count = 8, radius = 20 }) {
-  const { camera } = useThree(); // useThree 훅을 사용하여 카메라 가져오기
-
   // Create a count x count random words with spherical distribution
   const words = useMemo(() => {
     const temp: [three.Vector3, string][] = [];
@@ -80,8 +80,8 @@ export function Cloud({ count = 8, radius = 20 }) {
 
   return (
     <>
-      {words.map(([pos, word], index) => (
-        <Word key={index} position={pos}>
+      {words.map(([pos, word]) => (
+        <Word key={word} position={pos}>
           {word}
         </Word>
       ))}
