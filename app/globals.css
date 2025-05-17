@@ -211,13 +211,21 @@ pre {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-black;
+  background: rgba(20, 20, 40, 0.6);
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-purple-600 to-pink-600 rounded-full;
+  background: linear-gradient(180deg, #22d3ee 0%, #a21caf 60%, #ec4899 100%);
+  box-shadow: 0 0 8px 2px #a21caf88;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #38bdf8 0%, #c026d3 60%, #f472b6 100%);
+  box-shadow: 0 0 16px 4px #f472b688;
 }
