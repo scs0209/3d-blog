@@ -1,136 +1,39 @@
 'use client';
+
 import { useGLTF } from '@react-three/drei';
+import { ComputerScreenText } from './ComputerScreenText';
 import type * as three from 'three';
 
 export const ComputerBackground = (props: any) => {
   const { nodes, materials } = useGLTF('/old_computers.glb');
   return (
-    <group {...props} dispose={null}>
+    <group {...props} dispose={null} scale={0.085}>
       <group position={[0.27, 1.529, -2.613]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_206 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_207 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_206' panel='Object_207' />
       </group>
       <group position={[-1.43, 2.496, -1.8]} rotation={[0, 1.002, 0]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_209 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_210 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_209' panel='Object_210' x={0} y={5.5} invert />
       </group>
       <group position={[-2.731, 0.629, -0.522]} rotation={[0, 1.087, 0]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_212 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_213 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_212' panel='Object_213' x={0} y={5.3} />
       </group>
       <group position={[1.845, 0.377, -1.771]} rotation={[0, -Math.PI / 9, 0]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_215 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_216 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_215' invert panel='Object_216' />
       </group>
       <group position={[3.11, 2.145, -0.18]} rotation={[0, -0.793, 0]} scale={0.81}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_218 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_219 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_218' panel='Object_219' />
       </group>
       <group position={[-3.417, 3.056, 1.303]} rotation={[0, 1.222, 0]} scale={0.9}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_221 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_222 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_221' panel='Object_222' x={0} y={5.3} />
       </group>
       <group position={[-3.899, 4.287, -2.642]} rotation={[0, 0.539, 0]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_224 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_225 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_224' panel='Object_225' />
       </group>
       <group position={[0.992, 4.287, -4.209]} rotation={[0, 0.429, 0]} scale={[-1, 1, 1]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_227 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_228 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_227' panel='Object_228' />
       </group>
       <group position={[4.683, 4.29, -1.558]} rotation={[0, -Math.PI / 3, 0]}>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_230 as three.Mesh)?.geometry}
-          material={materials.Texture}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={(nodes?.Object_231 as three.Mesh)?.geometry}
-          material={materials.Screen}
-        />
+        <ComputerScreenText frame='Object_230' panel='Object_231' />
       </group>
       <mesh
         castShadow
@@ -178,13 +81,13 @@ export const ComputerBackground = (props: any) => {
         scale={0.5}
       />
       {/* 바닥 */}
-      <mesh
+      {/* <mesh
         castShadow
         receiveShadow
         geometry={(nodes?.Object_14 as three.Mesh)?.geometry}
         material={materials['Material.001']}
         scale={13}
-      />
+      /> */}
       <mesh
         castShadow
         receiveShadow
