@@ -4,6 +4,7 @@ import { ThemeProvider } from 'next-themes';
 import './globals.css';
 import './Prosemirror.css';
 import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
+import Providers from '@/app/Providers';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,8 +30,10 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-          {children}
-          <ThemeToggleButton />
+          <Providers>
+            {children}
+            <ThemeToggleButton />
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
