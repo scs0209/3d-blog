@@ -1,4 +1,4 @@
-import { ApiRequest, fetcher } from '@/shared/api';
+import { type ApiRequest, fetcher } from '@/shared/api';
 
 export const getAllTag = fetcher({ url: '/api/tags', method: 'get' });
 

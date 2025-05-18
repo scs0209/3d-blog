@@ -1,3 +1,4 @@
+import { useTags } from '@/features/blog/model/use-tags';
 import { VisitorCounter, Tag } from '@/features/blog/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -16,6 +17,8 @@ export const Sidebar = ({
   handleCategoryClick,
 }: { categories: string[]; selectedCategory: string | null; handleCategoryClick: (category: string) => void }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const { data: tags } = useTags();
 
   return (
     <>
@@ -69,7 +72,7 @@ export const Sidebar = ({
             <div>
               <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
-                {tags.map((tag) => (
+                {tags?.map((tag: any) => (
                   <Tag key={tag.id} tag={tag} />
                 ))}
               </div>
