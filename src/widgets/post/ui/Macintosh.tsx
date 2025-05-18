@@ -8,6 +8,7 @@ import { BlogMainPage } from './BlogMainPage';
 export const Macintosh = (props: any) => {
   const { nodes, materials } = useGLTF('/vintage_computer.glb');
   const { htmlScale = 1, htmlOpacity = 1 } = props;
+
   return (
     <group {...props} dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]} scale={0.215}>
@@ -56,7 +57,7 @@ export const Macintosh = (props: any) => {
                   style={{
                     width: '512px',
                     height: '342px',
-                    transform: `scale(${0.92 * htmlScale})`,
+                    transform: `scale(${1 * htmlScale})`,
                     opacity: htmlOpacity,
                     transformOrigin: 'center',
                     fontSize: '12px',
