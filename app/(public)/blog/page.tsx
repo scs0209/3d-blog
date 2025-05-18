@@ -18,10 +18,6 @@ function AnimatedCamera({ cameraPos }: { cameraPos: { x: number; y: number; z: n
 }
 
 export default function BlogPage() {
-  // const { scrollYProgress } = useScroll(); // 더 이상 사용하지 않음
-  // const cameraZ = useTransform(scrollYProgress, [0, 1], [10, 2]);
-  // const htmlScaleMotion = useTransform(scrollYProgress, [0.7, 1], [1, 4]);
-  // const htmlOpacityMotion = useTransform(scrollYProgress, [0.95, 1], [1, 0]);
   const [htmlScale, setHtmlScale] = useState(1);
   const [htmlOpacity, setHtmlOpacity] = useState(1);
   const [showFullPage, setShowFullPage] = useState(false);
