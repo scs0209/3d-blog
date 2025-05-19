@@ -1,28 +1,6 @@
 import type { Category } from '@/entities/category/model';
-import { baseUrl } from '@/shared/consts/baseUrl';
 import type { CategoryFormSchema } from '../model/category-schema';
 import { fetcher } from '@/shared/api';
-
-type CategoryWithPosts = Category & {
-  posts: Array<{
-    id: number;
-    title: string;
-    author: {
-      id: number;
-      name: string;
-    };
-    _count: {
-      comments: number;
-      likes: number;
-    };
-  }>;
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-};
 
 // 카테고리 목록 조회
 export const getCategories = fetcher({ url: '/api/category/all', method: 'get', query: { includePostCount: false } });
@@ -45,17 +23,13 @@ export const createCategory = async ({ name, description }: CategoryFormSchema) 
   return response.json();
 };
 
-export const getCategoryPosts = async (slug: string, page = 1, limit = 10): Promise<CategoryWithPosts> => {
-  const res = await fetch(`${baseUrl}/api/category/${slug}?page=${page}&limit=${limit}`, {
-    cache: 'no-store',
+export const getCategoryPosts = (slug: string, page = 1, limit = 10) =>
+  fetcher({
+    url: '/api/category/{slug}',
+    path: { slug },
+    method: 'get',
+    query: { page, limit },
   });
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch category posts');
-  }
-
-  return res.json();
-};
 
 type CategoryInput = {
   name: string;

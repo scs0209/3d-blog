@@ -6,7 +6,7 @@ import { Sidebar } from './Sidebar';
 import { MobileNavbar } from './MobileNavbar';
 import { SpaceBackground } from './SpaceBackground';
 import { SearchBar } from './SearchBar';
-import { useCategories } from '@/features/category/model/use-category';
+import { useCategories, useCategoryPosts } from '@/features/category/model/use-category';
 
 const posts = [
   {
@@ -85,16 +85,17 @@ const posts = [
   },
 ];
 
-const categories = ['전체', '개발', '디자인', '일상', '리뷰', '기타'];
-
 export const BlogMainPage = () => {
   const { data: categories, isLoading } = useCategories();
+  const { data: categoryPosts, isLoading: isCategoryPostsLoading } = useCategoryPosts('nextjs', 1, 10);
 
   // 카테고리 미선택 상태(null)로 시작
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  console.log(categories);
 
   // 카테고리 필터링 + 검색
   const filteredPosts = (
@@ -115,7 +116,7 @@ export const BlogMainPage = () => {
   // 블로그 타이틀 클릭 시 카테고리 해제
   const handleTitleClick = () => setSelectedCategory(null);
 
-  if (isLoading) {
+  if (isLoading || isCategoryPostsLoading) {
     return <div>Loading...</div>;
   }
 
