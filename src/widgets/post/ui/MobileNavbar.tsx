@@ -1,12 +1,7 @@
+import type { CategoryResponse } from '@/entities/category/model';
+import { useTags } from '@/features/blog/model/use-tags';
 import { Tag } from '@/features/blog/ui';
 import { AnimatePresence, motion } from 'framer-motion';
-
-const tags: { id: string; name: string; count: number }[] = [
-  { id: '1', name: 'React', count: 10 },
-  { id: '2', name: 'NextJS', count: 5 },
-  { id: '3', name: 'CSS', count: 3 },
-  { id: '4', name: 'Database', count: 2 },
-];
 
 export const MobileNavbar = ({
   categories,
@@ -15,12 +10,14 @@ export const MobileNavbar = ({
   menuOpen,
   setMenuOpen,
 }: {
-  categories: string[];
+  categories?: CategoryResponse;
   selectedCategory: string | null;
   handleCategoryClick: (category: string) => void;
   menuOpen: boolean;
   setMenuOpen: (menuOpen: boolean) => void;
 }) => {
+  const { data: tags } = useTags();
+
   return (
     <AnimatePresence>
       {menuOpen && (
@@ -54,28 +51,29 @@ export const MobileNavbar = ({
               </button>
             </div>
             <nav className='flex flex-col gap-2 px-3 py-4'>
-              {categories.map((cat) => (
+              {categories?.map((cat) => (
                 <motion.button
-                  key={cat}
+                  key={cat.id}
                   type='button'
                   whileHover={{
                     scale: 1.06,
-                    boxShadow: selectedCategory === cat ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
+                    boxShadow:
+                      selectedCategory === cat.name ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
                   }}
                   whileTap={{ scale: 0.97 }}
                   className={`text-left px-2 py-1 rounded-lg font-mono transition relative
-                      ${selectedCategory === cat ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
-                  onClick={() => handleCategoryClick(cat)}
+                      ${selectedCategory === cat.name ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
+                  onClick={() => handleCategoryClick(cat.name)}
                 >
-                  {cat}
+                  {cat.name}
                 </motion.button>
               ))}
             </nav>
             <div>
               <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
-                {tags.map((tag) => (
-                  <Tag key={tag.id} tag={tag} />
+                {tags?.map((tag) => (
+                  <Tag key={tag.id} tag={tag} count={tag.count?.posts ?? 0} />
                 ))}
               </div>
             </div>

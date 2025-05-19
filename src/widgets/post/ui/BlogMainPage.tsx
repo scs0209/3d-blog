@@ -6,6 +6,7 @@ import { Sidebar } from './Sidebar';
 import { MobileNavbar } from './MobileNavbar';
 import { SpaceBackground } from './SpaceBackground';
 import { SearchBar } from './SearchBar';
+import { useCategories } from '@/features/category/model/use-category';
 
 const posts = [
   {
@@ -87,6 +88,8 @@ const posts = [
 const categories = ['전체', '개발', '디자인', '일상', '리뷰', '기타'];
 
 export const BlogMainPage = () => {
+  const { data: categories, isLoading } = useCategories();
+
   // 카테고리 미선택 상태(null)로 시작
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -111,6 +114,10 @@ export const BlogMainPage = () => {
 
   // 블로그 타이틀 클릭 시 카테고리 해제
   const handleTitleClick = () => setSelectedCategory(null);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className='w-full h-screen overflow-hidden bg-gradient-to-b from-[#181c2a] via-[#232946] to-[#23234d] text-slate-100 font-mono relative'>
