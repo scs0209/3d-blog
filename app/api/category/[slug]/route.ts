@@ -1,4 +1,4 @@
-// app/api/categories/[id]/route.ts
+// app/api/category/[slug]/route.ts
 import { NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
 import { createSlug } from '@/shared/utils/create-slug';
@@ -6,7 +6,7 @@ import { auth } from '@/shared/utils/auth';
 
 /**
  * @swagger
- * /api/categories/{slug}:
+ * /api/category/{slug}:
  *   get:
  *     summary: Get a single category with its posts
  *     parameters:
@@ -162,7 +162,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
 
 /**
  * @swagger
- * /api/categories/{slug}:
+ * /api/category/{slug}:
  *   patch:
  *     summary: Update a category
  *     security:
@@ -273,7 +273,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
 
 /**
  * @swagger
- * /api/categories/{slug}:
+ * /api/category/{slug}:
  *   delete:
  *     summary: Delete a category
  *     security:
