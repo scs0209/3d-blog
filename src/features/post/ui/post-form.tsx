@@ -1,7 +1,6 @@
 'use client';
 
-import { Category } from '@/entities/category/model';
-import { getCategories } from '@/features/category/api/category-api';
+import type { Category } from '@/entities/category/model';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import {
   Form,
@@ -16,7 +15,7 @@ import { Input } from '@/shadcn-ui/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { type PostFormSchema, postFormSchema } from '../model/post-form-schema';
 
@@ -37,13 +36,13 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
     },
   });
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const fetchedCategories = await getCategories();
-      setCategories(fetchedCategories as any);
-    };
-    fetchCategories();
-  }, []);
+  // useEffect(() => {
+  //   const fetchCategories = async () => {
+  //     const fetchedCategories = await getCategories();
+  //     setCategories(fetchedCategories as any);
+  //   };
+  //   fetchCategories();
+  // }, []);
 
   const handleFormSubmit = async (data: PostFormSchema) => {
     setIsLoading(true);

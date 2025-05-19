@@ -1,5 +1,6 @@
 /* eslint-disable */
-import qs, { type ParsedUrlQueryInput } from 'node:querystring';
+// biome-ignore lint/style/useNodejsImportProtocol: <explanation>
+import qs, { type ParsedUrlQueryInput } from 'querystring';
 import type { paths } from './openapi-types';
 
 type Path = keyof paths;
