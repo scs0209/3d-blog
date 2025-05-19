@@ -1,14 +1,14 @@
 'use client';
 
-import { Tag } from '@/entities/tag/model';
+import type { Tag } from '@/entities/tag/model';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/shadcn-ui/components/ui/form';
 import { Input } from '@/shadcn-ui/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { createTag } from '../api/tag-api';
-import { TagSchema, tagSchema } from '../model/tag-schema';
+import { type TagSchema, tagSchema } from '../model/tag-schema';
 
 type TagInputProps = {
   onTagsChange?: (tags: Tag[]) => void;
