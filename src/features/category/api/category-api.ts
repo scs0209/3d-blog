@@ -1,24 +1,9 @@
-import { Category } from '@/entities/category/model';
+import type { Category } from '@/entities/category/model';
 import { baseUrl } from '@/shared/consts/baseUrl';
-import { CategoryFormSchema } from '../model/category-schema';
+import type { CategoryFormSchema } from '../model/category-schema';
+import { fetcher } from '@/shared/api';
 
-interface FetchCategoriesParams {
-  includePostCount?: boolean;
-  page?: number;
-  limit?: number;
-}
-
-interface CategoryResponse {
-  data: Category[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
-interface CategoryWithPosts extends Category {
+type CategoryWithPosts = Category & {
   posts: Array<{
     id: number;
     title: string;
@@ -37,28 +22,10 @@ interface CategoryWithPosts extends Category {
     total: number;
     totalPages: number;
   };
-}
+};
 
 // 카테고리 목록 조회
-export const getCategories = async ({ includePostCount = false, page = 1, limit = 10 }: FetchCategoriesParams = {}) => {
-  const params = new URLSearchParams({
-    includePostCount: String(includePostCount),
-    page: String(page),
-    limit: String(limit),
-  });
-
-  const response = await fetch(`${baseUrl}/api/category/all?${params}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Failed to fetch categories');
-  }
-
-  return response.json() as Promise<CategoryResponse>;
-};
+export const getCategories = fetcher({ url: '/api/category/all', method: 'get', query: { includePostCount: false } });
 
 // 새 카테고리 생성
 export const createCategory = async ({ name, description }: CategoryFormSchema) => {
@@ -78,11 +45,7 @@ export const createCategory = async ({ name, description }: CategoryFormSchema) 
   return response.json();
 };
 
-export const getCategoryPosts = async (
-  slug: string,
-  page: number = 1,
-  limit: number = 10,
-): Promise<CategoryWithPosts> => {
+export const getCategoryPosts = async (slug: string, page = 1, limit = 10): Promise<CategoryWithPosts> => {
   const res = await fetch(`${baseUrl}/api/category/${slug}?page=${page}&limit=${limit}`, {
     cache: 'no-store',
   });
@@ -94,10 +57,10 @@ export const getCategoryPosts = async (
   return res.json();
 };
 
-interface CategoryInput {
+type CategoryInput = {
   name: string;
   description?: string;
-}
+};
 
 // Update category
 export async function updateCategory(id: string, data: CategoryInput): Promise<Category> {
