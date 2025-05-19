@@ -1,6 +1,6 @@
 /* eslint-disable */
-import qs, { ParsedUrlQueryInput } from 'querystring';
-import { paths } from './openapi-types';
+import qs, { type ParsedUrlQueryInput } from 'node:querystring';
+import type { paths } from './openapi-types';
 
 type Path = keyof paths;
 type Method<P extends Path> = keyof paths[P];

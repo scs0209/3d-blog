@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-export const Tag = ({ tag }: { tag: { id: string; name: string; count: number } }) => {
+export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count: number }) => {
   const colorCombos = [
     'bg-blue-500 border-blue-200',
     'bg-pink-500 border-pink-200',
@@ -24,7 +24,7 @@ export const Tag = ({ tag }: { tag: { id: string; name: string; count: number } 
     return Math.abs(hash);
   }
 
-  const colorIdx = hashString(tag.name) % colorCombos.length;
+  const colorIdx = hashString(tag.name ?? '') % colorCombos.length;
   const colorClass = colorCombos[colorIdx];
 
   return (
@@ -44,7 +44,7 @@ export const Tag = ({ tag }: { tag: { id: string; name: string; count: number } 
           whileInView={{ scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          {tag.count}
+          {count}
         </motion.span>
       </Link>
     </motion.span>

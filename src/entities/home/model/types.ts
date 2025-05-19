@@ -1,4 +1,4 @@
-import { ApiRequest, ApiResponse } from '@/shared/api/types';
+import type { ApiRequest, ApiResponse } from '@/shared/api/types';
 
 /**
  * GET /api/posts 요청의 응답 타입

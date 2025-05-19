@@ -891,7 +891,7 @@ export interface paths {
               name?: string;
               /** Format: date-time */
               createdAt?: string;
-              _count?: {
+              count?: {
                 posts?: number;
               };
             }[];

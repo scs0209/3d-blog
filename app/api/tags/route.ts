@@ -26,7 +26,7 @@ import prisma from '@/shared/lib/db';
  *                   createdAt:
  *                     type: string
  *                     format: date-time
- *                   _count:
+ *                   count:
  *                     type: object
  *                     properties:
  *                       posts:
@@ -50,7 +50,11 @@ export async function GET() {
         },
       },
     });
-    return NextResponse.json(tags);
+    const result = tags.map(({ _count, ...tag }) => ({
+      ...tag,
+      count: _count.posts,
+    }));
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch tags' }, { status: 500 });
   }

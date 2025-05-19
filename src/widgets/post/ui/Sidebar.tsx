@@ -4,13 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
-const tags: { id: string; name: string; count: number }[] = [
-  { id: '1', name: 'React', count: 10 },
-  { id: '2', name: 'NextJS', count: 5 },
-  { id: '3', name: 'CSS', count: 3 },
-  { id: '4', name: 'Database', count: 2 },
-];
-
 export const Sidebar = ({
   categories,
   selectedCategory,
@@ -72,8 +65,8 @@ export const Sidebar = ({
             <div>
               <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
-                {tags?.map((tag: any) => (
-                  <Tag key={tag.id} tag={tag} />
+                {tags?.map((tag) => (
+                  <Tag key={tag.id} tag={tag} count={tag.count?.posts ?? 0} />
                 ))}
               </div>
             </div>
