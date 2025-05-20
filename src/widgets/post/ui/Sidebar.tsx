@@ -1,22 +1,25 @@
-import type { CategoryResponse } from '@/entities/category/model';
 import { useTags } from '@/features/blog/model/use-tags';
 import { VisitorCounter, Tag } from '@/features/blog/ui';
+import { useCategories } from '@/features/category/model';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 export const Sidebar = ({
-  categories,
   selectedCategory,
   handleCategoryClick,
 }: {
-  categories?: CategoryResponse;
   selectedCategory: string | null;
   handleCategoryClick: (category: string) => void;
 }) => {
+  const { data: categories, isLoading } = useCategories();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { data: tags } = useTags();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
