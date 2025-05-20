@@ -990,6 +990,8 @@ export interface components {
             name: string;
             /** @description 카테고리 설명 */
             description?: string | null;
+            /** @description 카테고리 슬러그 */
+            slug?: string;
             /**
              * Format: date-time
              * @description 생성 일시

@@ -23,6 +23,9 @@ import { createSlug } from '@/shared/utils/create-slug';
  *           type: string
  *           nullable: true
  *           description: 카테고리 설명
+ *         slug:
+ *           type: string
+ *           description: 카테고리 슬러그
  *         createdAt:
  *           type: string
  *           format: date-time
