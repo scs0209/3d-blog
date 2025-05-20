@@ -1,12 +1,9 @@
+'use client';
+
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PostCard, PostListCard } from '@/features/blog/ui';
-import { Menu } from 'lucide-react';
-import { Sidebar } from './Sidebar';
-import { MobileNavbar } from './MobileNavbar';
-import { SpaceBackground } from './SpaceBackground';
-import { SearchBar } from './SearchBar';
-import { useCategories, useCategoryPosts } from '@/features/category/model/use-category';
+import { useCategoryPosts } from '@/features/category/model/use-category';
 
 const posts = [
   {
@@ -86,141 +83,60 @@ const posts = [
 ];
 
 export const BlogMainPage = () => {
-  const { data: categories, isLoading } = useCategories();
   const { data: categoryPosts, isLoading: isCategoryPostsLoading } = useCategoryPosts('nextjs', 1, 10);
 
   // 카테고리 미선택 상태(null)로 시작
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  console.log(categories);
-
-  // 카테고리 필터링 + 검색
-  const filteredPosts = (
-    selectedCategory === null ? posts : posts.filter((post) => post.category === selectedCategory)
-  ).filter(
-    (post) =>
-      post.title.toLowerCase().includes(search.toLowerCase()) ||
-      post.summary.toLowerCase().includes(search.toLowerCase()),
-  );
   const recentPosts = posts.slice(0, 6); // 전체 포스트 기준 최근 6개
-  const restPosts = selectedCategory === null ? filteredPosts.slice(6) : filteredPosts;
+  const restPosts = posts.slice(6);
 
-  // 카테고리 버튼 클릭 핸들러 (같은 카테고리 클릭 시 해제)
-  const handleCategoryClick = (cat: string) => {
-    setSelectedCategory((prev) => (prev === cat ? null : cat));
-  };
-
-  // 블로그 타이틀 클릭 시 카테고리 해제
-  const handleTitleClick = () => setSelectedCategory(null);
-
-  if (isLoading || isCategoryPostsLoading) {
+  if (isCategoryPostsLoading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className='w-full h-screen overflow-hidden bg-gradient-to-b from-[#181c2a] via-[#232946] to-[#23234d] text-slate-100 font-mono relative'>
-      <SpaceBackground />
-      <div className='flex h-screen'>
-        {/* Main Content (왼쪽) */}
-        <main className='flex-1 h-screen overflow-y-auto p-4 lg:p-10 flex justify-center'>
-          <div className='w-full lg:w-[800px]'>
-            {/* 데스크톱: 로고+SearchBar 한 줄, 모바일: 로고만 */}
-            <div className='hidden lg:flex items-center gap-4 mb-4'>
-              <button
-                type='button'
-                className='font-extrabold text-2xl text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:underline bg-transparent border-none p-0 m-0 focus:outline-none'
-                onClick={handleTitleClick}
-              >
-                🪐 Space Retro Blog
-              </button>
-              <div className='flex-1'>
-                <SearchBar value={search} onChange={setSearch} />
-              </div>
-            </div>
-            {/* 모바일: 로고(왼쪽) + 메뉴 버튼(오른쪽) flex row */}
-            <div className='block lg:hidden'>
-              <div className='flex items-center justify-between mt-8 mb-6'>
-                <button
-                  type='button'
-                  className='font-extrabold text-2xl text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:underline bg-transparent border-none p-0 m-0 focus:outline-none ml-1'
-                  onClick={handleTitleClick}
-                >
-                  🪐 Space Retro Blog
-                </button>
-                <button
-                  type='button'
-                  className='p-0 m-0 bg-none border-none outline-none text-blue-100 hover:text-blue-400 focus:text-blue-400 transition drop-shadow-[0_0_8px_#7dd3fc55] hover:drop-shadow-[0_0_12px_#7dd3fc] focus:drop-shadow-[0_0_12px_#7dd3fc]'
-                  onClick={() => setMenuOpen(true)}
-                  aria-label='메뉴 열기'
-                  style={{ fontSize: 28, lineHeight: 1 }}
-                >
-                  <Menu size={28} />
-                </button>
-              </div>
-              <SearchBar value={search} onChange={setSearch} />
-            </div>
-
-            {/* 진입 시(카테고리 미선택)만 최근 포스트 6개 카드 */}
-            {selectedCategory === null && recentPosts.length > 0 && (
-              <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
-                {recentPosts.map((post, idx) => (
-                  <a
-                    href={`/blog/${post.id}`}
-                    key={post.id}
-                    className='relative group block p-2 h-full w-full'
-                    onMouseEnter={() => setHoveredIndex(idx)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                  >
-                    <AnimatePresence>
-                      {hoveredIndex === idx && (
-                        <motion.span
-                          className='absolute inset-0 h-full w-full bg-slate-600/60 dark:bg-[#232946]/95 backdrop-blur-md block rounded-3xl pointer-events-none z-0'
-                          layoutId='hoverBackground'
-                          initial={{ opacity: 0 }}
-                          animate={{
-                            opacity: 1,
-                            transition: { duration: 0.15 },
-                          }}
-                          exit={{
-                            opacity: 0,
-                            transition: { duration: 0.15, delay: 0.2 },
-                          }}
-                          style={{ willChange: 'opacity, background' }}
-                        />
-                      )}
-                      <PostCard key={post.id} post={post} />
-                    </AnimatePresence>
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {/* 나머지 포스트 리스트 (hover 효과 추가) */}
-            <div className='flex flex-col gap-8'>
-              {restPosts.map((post) => (
-                <PostListCard key={post.id} post={post as any} />
-              ))}
-            </div>
-          </div>
-        </main>
-        {/* 데스크톱 사이드바 */}
-        <Sidebar
-          categories={categories}
-          selectedCategory={selectedCategory}
-          handleCategoryClick={handleCategoryClick}
-        />
+    <>
+      {selectedCategory === null && recentPosts.length > 0 && (
+        <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
+          {recentPosts.map((post, idx) => (
+            <a
+              href={`/blog/${post.id}`}
+              key={post.id}
+              className='relative group block p-2 h-full w-full'
+              onMouseEnter={() => setHoveredIndex(idx)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <AnimatePresence>
+                {hoveredIndex === idx && (
+                  <motion.span
+                    className='absolute inset-0 h-full w-full bg-slate-600/60 dark:bg-[#232946]/95 backdrop-blur-md block rounded-3xl pointer-events-none z-0'
+                    layoutId='hoverBackground'
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      opacity: 1,
+                      transition: { duration: 0.15 },
+                    }}
+                    exit={{
+                      opacity: 0,
+                      transition: { duration: 0.15, delay: 0.2 },
+                    }}
+                    style={{ willChange: 'opacity, background' }}
+                  />
+                )}
+                <PostCard key={post.id} post={post} />
+              </AnimatePresence>
+            </a>
+          ))}
+        </div>
+      )}
+      {/* 나머지 포스트 리스트 (hover 효과 추가) */}
+      <div className='flex flex-col gap-8'>
+        {restPosts.map((post) => (
+          <PostListCard key={post.id} post={post as any} />
+        ))}
       </div>
-      {/* 모바일/태블릿 드로어 사이드바 */}
-      <MobileNavbar
-        categories={categories}
-        selectedCategory={selectedCategory}
-        handleCategoryClick={handleCategoryClick}
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-      />
-    </div>
+    </>
   );
 };
