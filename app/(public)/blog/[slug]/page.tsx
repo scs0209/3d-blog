@@ -1,5 +1,6 @@
 'use client';
 
+import { PostListCard } from '@/features/blog/ui';
 import { useCategoryPosts } from '@/features/category/model';
 import { useParams } from 'next/navigation';
 
@@ -10,5 +11,15 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
 
   console.log(categoryPosts);
 
-  return <div>BlogPostPage</div>;
+  if (isCategoryPostsLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className='flex flex-col gap-8'>
+      {categoryPosts?.posts?.map((post) => (
+        <PostListCard key={post.id} post={post as any} category={categoryPosts?.name ?? ''} />
+      ))}
+    </div>
+  );
 }

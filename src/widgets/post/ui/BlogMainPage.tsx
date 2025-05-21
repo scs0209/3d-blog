@@ -133,8 +133,8 @@ export const BlogMainPage = () => {
       )}
       {/* 나머지 포스트 리스트 (hover 효과 추가) */}
       <div className='flex flex-col gap-8'>
-        {restPosts.map((post) => (
-          <PostListCard key={post.id} post={post as any} />
+        {categoryPosts?.posts?.map((post) => (
+          <PostListCard key={post.id} post={post as any} category={categoryPosts?.name ?? ''} />
         ))}
       </div>
     </>
