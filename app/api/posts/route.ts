@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
 
 /**
@@ -115,8 +115,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const authorId = parseInt(body.authorId);
-    const categoryId = parseInt(body.categoryId);
+    const authorId = Number.parseInt(body.authorId);
+    const categoryId = Number.parseInt(body.categoryId);
 
     // 필수 필드 유효성 검사
     if (!body.title || typeof body.title !== 'string') {

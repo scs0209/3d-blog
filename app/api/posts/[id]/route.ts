@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
 
 /**
@@ -53,7 +53,7 @@ import prisma from '@/shared/lib/db';
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const postId = parseInt(id);
+    const postId = Number.parseInt(id);
 
     if (!postId || !Number.isInteger(postId)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
@@ -162,7 +162,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const postId = parseInt(id);
+    const postId = Number.parseInt(id);
     const body = await req.json();
 
     if (!postId || !Number.isInteger(postId)) {
@@ -179,9 +179,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const updateData: any = {};
 
-    if (body.title) updateData.title = body.title;
-    if (body.content) updateData.content = body.content;
-    if (body.categoryId) updateData.categoryId = parseInt(body.categoryId);
+    if (body.title) {
+      updateData.title = body.title;
+    }
+    if (body.content) {
+      updateData.content = body.content;
+    }
+    if (body.categoryId) {
+      updateData.categoryId = Number.parseInt(body.categoryId);
+    }
 
     if (body.tags) {
       updateData.tags = {
@@ -246,7 +252,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const postId = parseInt(id);
+    const postId = Number.parseInt(id);
 
     if (!postId || !Number.isInteger(postId)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
