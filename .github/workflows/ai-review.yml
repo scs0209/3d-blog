@@ -23,4 +23,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run AI Code Review
-        run: python3 ./script/ai-code-review/main.py
+        run: python3 scripts/main.py
