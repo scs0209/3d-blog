@@ -10,6 +10,21 @@ Next.js, TypeScript, Prisma, Tailwind CSS를 사용하여 구축된 블로깅 �
 *   **Tailwind CSS:** 유틸리티 우선 CSS 프레임워크로, 사용자 인터페이스를 빠르게 구축할 수 있습니다.
 *   **React Three Fiber:** React 애플리케이션에서 Three.js를 사용하여 3D 그래픽을 렌더링하기 위한 라이브러리입니다.
 
+## API 타입 자동 생성 (openapi-typescript)
+
+이 프로젝트는 `openapi-typescript` 도구를 사용하여 OpenAPI Specification (Swagger) 명세로부터 TypeScript 타입을 자동으로 생성합니다. 이를 통해 프론트엔드에서 API와 상호작용할 때 타입 안전성을 보장하고, API 변경 사항에 대한 빠른 대응을 가능하게 합니다.
+
+*   **타입 생성 스크립트:** 다음 명령어를 사용하여 타입을 생성할 수 있습니다.
+    ```sh
+    npm run generate-types
+    ```
+    (내부적으로 `sh scripts/generate-types.sh` 스크립트를 실행할 수 있습니다.)
+
+*   **생성된 타입 위치:** 생성된 타입 정의 파일은 다음 경로에 위치합니다.
+    `src/shared/api/openapi-types.ts`
+
+*   **목적:** API 응답 및 요청 객체에 대한 정확한 타입을 제공하여 개발 과정에서의 오류를 줄이고, 보다 안정적인 애플리케이션 개발을 지원합니다.
+
 ## 주요 기능 (Project Features)
 
 *   **블로그 관리:**
@@ -185,6 +200,7 @@ FSD 아키텍처와 Next.js App Router를 적용함에 따라, 프로젝트의 �
 *   `npm run build` 또는 `yarn build`: 프로덕션용으로 앱을 빌드합니다.
 *   `npm run start` 또는 `yarn start`: 프로덕션 서버를 시작합니다.
 *   `npm run lint` 또는 `yarn lint`: ESLint를 사용하여 코드베이스를 검사합니다.
+*   `npm run generate-types`: OpenAPI 명세로부터 API 타입을 생성합니다. (출력: `src/shared/api/openapi-types.ts`)
 *   `npx prisma migrate dev`: Prisma 마이그레이션을 실행하여 데이터베이스 스키마를 업데이트합니다.
 *   `npx prisma studio`: Prisma Studio를 열어 데이터베이스를 보고 관리합니다.
 
