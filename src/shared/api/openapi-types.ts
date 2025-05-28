@@ -318,7 +318,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/posts/{id}": {
+    "/api/posts/{slug}": {
         parameters: {
             query?: never;
             header?: never;
@@ -327,15 +327,15 @@ export interface paths {
         };
         /**
          * 특정 게시물 조회
-         * @description 게시물 ID를 기반으로 상세 정보를 조회합니다.
+         * @description 게시물 slug를 기반으로 상세 정보를 조회합니다.
          */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    /** @description 게시물 ID */
-                    id: number;
+                    /** @description 게시물 slug */
+                    slug: string;
                 };
                 cookie?: never;
             };
@@ -388,8 +388,8 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    /** @description 게시물 ID */
-                    id: number;
+                    /** @description 게시물 slug */
+                    slug: string;
                 };
                 cookie?: never;
             };
@@ -448,8 +448,8 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    /** @description 게시물 ID */
-                    id: number;
+                    /** @description 게시물 slug */
+                    slug: string;
                 };
                 cookie?: never;
             };

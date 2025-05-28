@@ -3,17 +3,17 @@ import prisma from '@/shared/lib/db';
 
 /**
  * @swagger
- * /api/posts/{id}:
+ * /api/posts/{slug}:
  *   get:
  *     summary: 특정 게시물 조회
- *     description: 게시물 ID를 기반으로 상세 정보를 조회합니다.
+ *     description: 게시물 slug를 기반으로 상세 정보를 조회합니다.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: slug
  *         required: true
  *         schema:
- *           type: integer
- *         description: 게시물 ID
+ *           type: string
+ *         description: 게시물 slug
  *     responses:
  *       200:
  *         description: 게시물 조회 성공
@@ -50,17 +50,14 @@ import prisma from '@/shared/lib/db';
  *       500:
  *         description: 서버 에러
  */
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const { id } = await params;
-    const postId = Number.parseInt(id);
-
-    if (!postId || !Number.isInteger(postId)) {
-      return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
+    const { slug } = await params;
+    if (!slug || typeof slug !== 'string') {
+      return NextResponse.json({ error: 'Invalid post slug' }, { status: 400 });
     }
-
     const post = await prisma.post.findUnique({
-      where: { id: postId },
+      where: { slug },
       include: {
         author: {
           select: {
@@ -103,11 +100,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         },
       },
     });
-
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
-
     return NextResponse.json(post, { status: 200 });
   } catch (error) {
     console.error('Error fetching post:', error);
@@ -117,17 +112,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 /**
  * @swagger
- * /api/posts/{id}:
+ * /api/posts/{slug}:
  *   put:
  *     summary: 게시물 수정
  *     description: 특정 게시물의 정보를 수정합니다.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: slug
  *         required: true
  *         schema:
- *           type: integer
- *         description: 게시물 ID
+ *           type: string
+ *         description: 게시물 slug
  *     requestBody:
  *       required: true
  *       content:
@@ -159,26 +154,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
  *       500:
  *         description: 서버 에러
  */
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const { id } = await params;
-    const postId = Number.parseInt(id);
+    const { slug } = await params;
     const body = await req.json();
-
-    if (!postId || !Number.isInteger(postId)) {
-      return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
+    if (!slug || typeof slug !== 'string') {
+      return NextResponse.json({ error: 'Invalid post slug' }, { status: 400 });
     }
-
     const existingPost = await prisma.post.findUnique({
-      where: { id: postId },
+      where: { slug },
     });
-
     if (!existingPost) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
-
     const updateData: any = {};
-
     if (body.title) {
       updateData.title = body.title;
     }
@@ -188,16 +177,14 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (body.categoryId) {
       updateData.categoryId = Number.parseInt(body.categoryId);
     }
-
     if (body.tags) {
       updateData.tags = {
         set: [],
         connect: body.tags.map((tagId: number) => ({ id: tagId })),
       };
     }
-
     const updatedPost = await prisma.post.update({
-      where: { id: postId },
+      where: { slug },
       data: updateData,
       include: {
         author: true,
@@ -210,7 +197,6 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         },
       },
     });
-
     return NextResponse.json(updatedPost, { status: 200 });
   } catch (error) {
     console.error('Error updating post:', error);
@@ -220,17 +206,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 /**
  * @swagger
- * /api/posts/{id}:
+ * /api/posts/{slug}:
  *   delete:
  *     summary: 게시물 삭제
  *     description: 특정 게시물과 관련된 모든 데이터(댓글, 좋아요)를 삭제합니다.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: slug
  *         required: true
  *         schema:
- *           type: integer
- *         description: 게시물 ID
+ *           type: string
+ *         description: 게시물 slug
  *     responses:
  *       200:
  *         description: 게시물 삭제 성공
@@ -249,35 +235,29 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
  *       500:
  *         description: 서버 에러
  */
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const { id } = await params;
-    const postId = Number.parseInt(id);
-
-    if (!postId || !Number.isInteger(postId)) {
-      return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
+    const { slug } = await params;
+    if (!slug || typeof slug !== 'string') {
+      return NextResponse.json({ error: 'Invalid post slug' }, { status: 400 });
     }
-
     const existingPost = await prisma.post.findUnique({
-      where: { id: postId },
+      where: { slug },
     });
-
     if (!existingPost) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
-
     await prisma.$transaction([
       prisma.comment.deleteMany({
-        where: { postId },
+        where: { postId: existingPost.id },
       }),
       prisma.like.deleteMany({
-        where: { postId },
+        where: { postId: existingPost.id },
       }),
       prisma.post.delete({
-        where: { id: postId },
+        where: { slug },
       }),
     ]);
-
     return NextResponse.json({ message: 'Post deleted successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting post:', error);
