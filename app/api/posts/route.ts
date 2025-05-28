@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
+import { createSlug } from '@/shared/utils/create-slug';
 
 /**
  * @swagger
@@ -135,9 +136,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Category ID is required and must be a number' }, { status: 400 });
     }
 
+    // slug 자동 생성 및 중복 방지
+    const slug = createSlug(body.title);
+    let uniqueSlug = slug;
+    let count = 1;
+    while (await prisma.post.findUnique({ where: { slug: uniqueSlug } })) {
+      uniqueSlug = `${slug}-${count++}`;
+    }
+
     const newPost = await prisma.post.create({
       data: {
         title: body.title,
+        slug: uniqueSlug,
         content: body.content,
         authorId,
         categoryId,
