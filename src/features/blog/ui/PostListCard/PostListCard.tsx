@@ -1,4 +1,5 @@
 import { Tag } from '@/shared/ui';
+import { formatDateToYMD } from '@/shared/utils';
 import { motion } from 'framer-motion';
 
 type Post = {
@@ -31,7 +32,7 @@ export const PostListCard = ({ post, category }: { post: Post; category: string 
       <p className='text-sm text-blue-100'>{post?.summary}</p>
       <div className='flex items-center justify-between mt-2 text-xs text-blue-200'>
         <span>{post?.author ? post?.author?.name : '관리자'}</span>
-        <span>{post?.updatedAt}</span>
+        <span>{formatDateToYMD(post?.updatedAt)}</span>
       </div>
       <hr className='my-6 border-blue-900/40' />
     </motion.div>
