@@ -1,7 +1,7 @@
-import { ApiRequest, fetcher } from '@/shared/api';
-import { Post } from '@prisma/client';
+import { type ApiRequest, fetcher } from '@/shared/api';
+import type { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
-import { GetPostListResponse } from '../model/post-types';
+import type { GetPostListResponse } from '../model/post-types';
 
 export const getPostList = (): GetPostListResponse => fetcher({ url: '/api/posts', method: 'get' });
 
@@ -42,14 +42,14 @@ export const createPost = async (data: CreatePostInput): Promise<Post> => {
 
 export const getPostDetail = (id: number) =>
   fetcher({
-    url: '/api/posts/{id}',
+    url: '/api/post/{id}',
     path: { id },
     method: 'get',
   });
 
-export const updatePost = (id: number, body: ApiRequest<'/api/posts/{id}', 'put'>) =>
+export const updatePost = (id: number, body: ApiRequest<'/api/post/{id}', 'put'>) =>
   fetcher({
-    url: '/api/posts/{id}',
+    url: '/api/post/{id}',
     path: { id },
     method: 'put',
     body,
@@ -57,7 +57,7 @@ export const updatePost = (id: number, body: ApiRequest<'/api/posts/{id}', 'put'
 
 export const deletePost = (id: number) =>
   fetcher({
-    url: '/api/posts/{id}',
+    url: '/api/post/{id}',
     path: { id },
     method: 'delete',
   });
