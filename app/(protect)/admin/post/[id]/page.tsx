@@ -14,7 +14,7 @@ export default function TestPage({
     categoryId: number;
   } | null>(null);
   const [loading, setLoading] = useState(false);
-  const postId = 1; // 테스트할 ID
+  const postId = 2; // 테스트할 ID
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {

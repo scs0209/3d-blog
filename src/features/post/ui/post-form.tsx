@@ -15,9 +15,10 @@ import { Input } from '@/shadcn-ui/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { type PostFormSchema, postFormSchema } from '../model/post-form-schema';
+import { getCategories } from '@/features/category/api/category-api';
 
 type PostFormProps = {
   onSubmit: (data: PostFormSchema) => Promise<void>;
@@ -36,13 +37,13 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
     },
   });
 
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     const fetchedCategories = await getCategories();
-  //     setCategories(fetchedCategories as any);
-  //   };
-  //   fetchCategories();
-  // }, []);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const fetchedCategories = await getCategories;
+      setCategories(fetchedCategories as any);
+    };
+    fetchCategories();
+  }, []);
 
   const handleFormSubmit = async (data: PostFormSchema) => {
     setIsLoading(true);
