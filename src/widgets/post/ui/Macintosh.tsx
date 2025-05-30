@@ -3,7 +3,7 @@
 import { Html, useGLTF } from '@react-three/drei';
 import type * as three from 'three';
 import { motion } from 'framer-motion';
-import { BlogMainPage } from './BlogMainPage';
+import { posts } from './BlogMainPage';
 
 export const Macintosh = (props: any) => {
   const { nodes, materials } = useGLTF('/vintage_computer.glb');
@@ -47,7 +47,6 @@ export const Macintosh = (props: any) => {
               <Html
                 position={[0, 0, 0.1]}
                 transform
-                occlude
                 distanceFactor={0.7}
                 rotation={[0, 0, 0]}
                 style={{ width: '100%', height: '100%' }}
@@ -70,39 +69,45 @@ export const Macintosh = (props: any) => {
                   }}
                   onPointerDown={(e) => e.stopPropagation()}
                 >
+                  {/* 맥OS 창 상단 바 */}
                   <div
                     style={{
-                      backgroundColor: '#fff',
-                      border: '2px solid #000',
-                      width: '100%',
-                      height: '100%',
-                      overflow: 'hidden',
-                      boxSizing: 'border-box',
-                      borderRadius: '2px',
+                      backgroundColor: '#000',
+                      color: '#fff',
+                      padding: '2px 4px',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
                       display: 'flex',
-                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}
                   >
-                    <div
-                      style={{
-                        backgroundColor: '#000',
-                        color: '#fff',
-                        padding: '2px 4px',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span>Macintosh Blog</span>
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        <span style={{ cursor: 'pointer' }}>□</span>
-                        <span style={{ cursor: 'pointer' }}>×</span>
-                      </div>
+                    <span>Macintosh Blog</span>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      <span style={{ cursor: 'pointer' }}>□</span>
+                      <span style={{ cursor: 'pointer' }}>×</span>
                     </div>
-                    <div style={{ padding: '8px', flex: 1, overflow: 'auto' }}>
-                      <BlogMainPage />
+                  </div>
+                  {/* 컨텐츠 영역 */}
+                  <div style={{ padding: '8px', flex: 1, overflow: 'auto' }}>
+                    {/* 최근 포스트 그리드 */}
+                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4'>
+                      {posts.map((post) => (
+                        <div key={post.id} className='bg-white rounded-lg shadow p-2 text-xs'>
+                          <div className='font-bold truncate'>{post.title}</div>
+                          <div className='text-gray-500'>{post.date}</div>
+                          <div className='text-gray-700'>{post.summary}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* 나머지 포스트 리스트 */}
+                    <div className='flex flex-col gap-2'>
+                      {posts.map((post) => (
+                        <div key={post.id} className='bg-white rounded p-2 text-xs border'>
+                          <div className='font-bold'>{post.title}</div>
+                          <div className='text-gray-500'>{post.date}</div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </motion.div>

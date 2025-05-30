@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PostCard, PostListCard } from '@/features/blog/ui';
 import { useCategoryPosts } from '@/features/category/model/use-category';
 
-const posts = [
+export const posts = [
   {
     id: 1,
     title: 'React로 맥OS 스타일 블로그 만들기',
