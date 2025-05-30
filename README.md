@@ -64,46 +64,46 @@ FSD의 주요 목표는 다음과 같습니다:
 
 FSD 레이어는 `src` 디렉토리 내에 구성되며, Next.js App Router 환경과의 통합은 다음과 같이 고려됩니다:
 
-1.  **`app` (Next.js App Router 디렉토리):**
-    *   Next.js의 App Router 시스템에 의해 관리되는 최상위 디렉토리입니다. (일반적으로 프로젝트 루트에 위치)
-    *   **라우팅, 레이아웃, 페이지 컴포넌트 정의**의 핵심 역할을 합니다.
-    *   각 라우트 세그먼트 (예: `app/(main)/dashboard/`)는 자체 `page.tsx` (FSD의 `views`에 해당), `layout.tsx`, `loading.tsx`, `error.tsx` 등을 가질 수 있습니다.
-    *   이 디렉토리 구조 자체가 애플리케이션의 페이지 구성과 라우팅을 담당합니다.
+1.  **루트 `app/` (Next.js App Router 디렉토리):**
+    *   Next.js의 App Router 시스템에 의해 관리되는 프로젝트 루트 레벨의 디렉토리입니다.
+    *   **라우팅, 최상위 레이아웃 (`layout.tsx`), 페이지 컴포넌트 (`page.tsx`) 정의**의 핵심 역할을 합니다.
+    *   각 라우트 세그먼트 (예: `app/(main)/dashboard/`)는 자체 `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx` 등을 가질 수 있습니다.
+    *   이 디렉토리 구조 자체가 애플리케이션의 페이지 구성과 라우팅을 담당합니다. `page.tsx` 파일들은 FSD의 `views` 레이어에 있는 컴포넌트를 주로 사용합니다.
 
-2.  **`src/app-fsd` (FSD 애플리케이션 레이어):**
-    *   FSD의 `app` 레이어에 해당하며, Next.js의 `app` 디렉토리와 구분하기 위해 `app-fsd` 또는 `src/global-config` 등으로 명명될 수 있습니다.
-    *   애플리케이션 **전역 설정, 상태 관리 프로바이더, 핵심 초기화 로직, 전역 스타일** (Next.js 레이아웃에서 처리되지 않는 부분) 등을 포함합니다.
-    *   예: `src/app-fsd/providers` (Context API 프로바이더 등), `src/app-fsd/styles` (전역 CSS), `src/app-fsd/lib` (초기화 함수)
+2.  **`src/app/` (FSD 애플리케이션 레이어):**
+    *   FSD의 `app` 레이어에 해당합니다. Next.js의 루트 `app/` 디렉토리와는 역할이 구분됩니다.
+    *   이 레이어는 애플리케이션 **전역 설정(환경 변수 등), 상태 관리 프로바이더(Context API, Zustand 스토어 등), 핵심 초기화 로직, 전역 스타일** (루트 `app/layout.tsx`에서 처리되지 않는 애플리케이션 전반의 스타일) 등을 포함합니다.
+    *   예: `src/app/providers` (Context API 프로바이더 등), `src/app/styles` (전역 CSS 변수, 기본 스타일), `src/app/lib` (초기화 함수, 전역 헬퍼)
 
-3.  **`src/views` (뷰 레이어):**
-    *   FSD의 `pages` 레이어에 해당하며, 사용자에게 보여지는 **페이지 단위의 컴포넌트**입니다.
-    *   Next.js App Router에서는 이러한 뷰 컴포넌트가 **루트 `app` 디렉토리 내의 각 라우트 폴더에 `page.tsx` (또는 `.js/.jsx`) 파일로 존재**합니다.
-    *   `views`는 `widgets`와 `features`를 조합하여 특정 페이지의 UI와 기능을 구성합니다.
-    *   별도의 `src/views` 디렉토리를 둘 수도 있지만, Next.js App Router의 컨벤션을 따라 루트 `app` 디렉토리 내에 직접 배치하는 것이 일반적입니다.
+3.  **`src/views/` (FSD 뷰 레이어):**
+    *   FSD의 전통적인 `pages` 레이어에 해당하며, 사용자에게 보여지는 **페이지 레벨의 UI 컴포넌트 또는 특정 페이지를 위한 위젯과 기능의 조합**을 나타냅니다.
+    *   `views` 컴포넌트들은 주로 **루트 `app/` 디렉토리 내의 `page.tsx` 파일에서 직접 사용**되어 해당 경로의 최종 UI를 구성합니다.
+    *   각 뷰는 특정 페이지 또는 복잡한 섹션에 대한 UI 로직과 상태를 캡슐화하며, `widgets`와 `features`를 조합하여 구성됩니다.
+    *   예: `src/views/DashboardView.tsx`, `src/views/PostDetailView.tsx`, `src/views/AdminPanelView.tsx`
 
-4.  **`src/widgets` (위젯 레이어):**
+4.  **`src/widgets/` (FSD 위젯 레이어):**
     *   독립적으로 기능하며, 여러 페이지(뷰)에서 재사용될 수 있는 더 큰 UI 블록입니다. (예: 헤더, 푸터, 게시물 목록, 사이드바)
     *   내부적으로 `features`와 `entities`를 포함할 수 있습니다.
     *   예: `src/widgets/Header`, `src/widgets/PostFeed`, `src/widgets/UserProfileCard`
 
-5.  **`src/features` (기능 레이어):**
+5.  **`src/features/` (FSD 기능 레이어):**
     *   사용자 스토리와 직접적으로 관련된 기능적 요소들입니다. (예: 게시물 작성, 사용자 로그인, 댓글 달기)
     *   상호작용 로직, UI 컴포넌트, API 호출 등을 포함할 수 있습니다.
     *   예: `src/features/auth/login`, `src/features/post/create-post-button`, `src/features/comment/add-comment-form`
 
-6.  **`src/entities` (엔티티 레이어):**
+6.  **`src/entities/` (FSD 엔티티 레이어):**
     *   애플리케이션의 핵심 비즈니스 엔티티를 나타냅니다. (예: 사용자, 게시물, 댓글)
     *   주로 데이터 구조(타입/인터페이스), 관련 UI 컴포넌트(카드, 목록 아이템), 그리고 엔티티를 다루는 간단한 로직(예: 포맷팅 함수)을 포함합니다.
     *   예: `src/entities/User/ui/UserAvatar.tsx`, `src/entities/Post/model/types.ts`, `src/entities/Comment/lib/formatComment.ts`
 
-7.  **`src/shared` (공유 레이어):**
+7.  **`src/shared/` (FSD 공유 레이어):**
     *   애플리케이션 전반에서 사용될 수 있는 재사용 가능한 로직, UI 컴포넌트, 유틸리티, 설정 등을 포함합니다.
-    *   다른 FSD 레이어(app-fsd, views, widgets, features, entities)에 대한 의존성이 없어야 합니다.
+    *   다른 FSD 레이어(`app`, `views`, `widgets`, `features`, `entities`)에 대한 의존성이 없어야 합니다.
     *   예: `src/shared/ui/Button`, `src/shared/lib/hooks`, `src/shared/api/axiosInstance.ts`, `src/shared/config/constants.ts`
 
 ### FSD 규칙
 
-*   **단방향 의존성:** 레이어는 아래 방향으로만 의존할 수 있습니다. (예: `features`는 `entities`나 `shared`를 사용할 수 있지만, `entities`는 `features`를 사용할 수 없습니다.)
+*   **단방향 의존성:** 레이어는 아래 방향으로만 의존할 수 있습니다. (예: `features`는 `entities`나 `shared`를 사용할 수 있지만, `entities`는 `features`를 사용할 수 없습니다. `views`는 `widgets`, `features`, `entities`, `shared`를 사용할 수 있습니다.)
 *   **슬라이스 간 격리:** 한 `features` (또는 `entities`, `widgets`) 슬라이스는 다른 슬라이스의 내부 구현에 직접 접근해서는 안 됩니다. 필요하다면 `shared` 레이어를 통해 통신하거나, 상위 레이어에서 조정합니다.
 
 이러한 FSD 구조를 통해 프로젝트가 성장함에 따라 복잡성을 관리하고, 팀원 간의 협업을 용이하게 하며, 코드의 예측 가능성을 높일 수 있습니다.
@@ -166,20 +166,21 @@ FSD 아키텍처와 Next.js App Router를 적용함에 따라, 프로젝트의 �
 
 ```
 .
-├── app/                   # Next.js App Router (라우팅, 페이지 컴포넌트(views), 레이아웃 등)
+├── app/                   # Next.js App Router (라우팅, 최상위 레이아웃, page.tsx 파일 등)
 │   ├── (main)/            # 예시: 메인 애플리케이션 라우트 그룹
 │   │   ├── dashboard/
-│   │   │   └── page.tsx   # 대시보드 뷰 (FSD View)
+│   │   │   └── page.tsx   # src/views/DashboardView.tsx 등을 사용하는 Next.js 페이지
 │   │   └── layout.tsx     # 메인 레이아웃
-│   └── global.css         # Next.js App Router 전역 스타일
+│   └── global.css         # Next.js App Router 전역 스타일 (또는 src/app/styles로 이동)
 ├── prisma/                # Prisma 스키마 및 마이그레이션
 ├── public/                # 정적 에셋
 ├── src/
-│   ├── app-fsd/           # FSD 애플리케이션 레이어 (전역 프로바이더, 초기 설정)
-│   ├── widgets/           # 복합 UI 블록 (예: 헤더, 사이드바)
-│   ├── features/          # 사용자 스토리 관련 기능 (예: 로그인, 게시물 작성)
-│   ├── entities/          # 핵심 비즈니스 엔티티 (예: 사용자, 게시물)
-│   └── shared/            # 공통 UI, 라이브러리, 훅, API 설정
+│   ├── app/               # FSD 애플리케이션 레이어 (전역 프로바이더, 초기 설정, 전역 스타일)
+│   ├── views/             # FSD 뷰 레이어 (페이지 레벨 UI 컴포지션)
+│   ├── widgets/           # FSD 위젯 레이어 (복합 UI 블록)
+│   ├── features/          # FSD 기능 레이어 (사용자 스토리 관련 기능)
+│   ├── entities/          # FSD 엔티티 레이어 (핵심 비즈니스 엔티티)
+│   └── shared/            # FSD 공유 레이어 (공통 UI, 라이브러리, 훅, API 설정)
 ├── .env.example           # 환경 변수 예시
 ├── .eslintrc.json         # ESLint 설정
 ├── .gitignore             # Git 무시 파일 및 폴더
@@ -190,7 +191,7 @@ FSD 아키텍처와 Next.js App Router를 적용함에 따라, 프로젝트의 �
 ├── tailwind.config.js     # Tailwind CSS 설정
 └── tsconfig.json          # TypeScript 설정
 ```
-*참고: `src/views` 디렉토리는 Next.js App Router 사용 시 루트 `app/` 디렉토리 내의 `page.tsx` 파일들로 대체되는 경우가 많습니다. 기존 `src/components`, `src/lib`, `src/styles`, `src/types`와 같은 디렉토리는 FSD의 `shared`, `entities`, `features` 등의 하위 모듈로 분산되거나 해당 레이어의 컨벤션에 맞게 재구성됩니다.*
+*참고: Next.js의 루트 `app/` 디렉토리 내의 `page.tsx` 파일들은 `src/views/`에 정의된 뷰 컴포넌트들을 가져와 사용함으로써 페이지를 구성합니다. 기존 `src/components`, `src/lib`, `src/types`와 같은 일반적인 디렉토리는 FSD의 `shared`, `entities`, `features` 등의 하위 모듈로 분산되거나 해당 레이어의 컨벤션에 맞게 재구성됩니다.*
 
 ## 사용 가능한 스크립트 (Available Scripts)
 
