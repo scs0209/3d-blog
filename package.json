@@ -11,7 +11,7 @@
     "lint:check": "eslint . --ext .ts,.tsx --max-warnings 0",
     "lint:fix:all": "eslint . --ext .ts,.tsx --fix",
     "test": "vitest",
-    "test:watch": "jest --watch",
+    "test:watch": "vitest --watch",
     "generate-types": "sh scripts/generate-types.sh",
     "docs": "typedoc --options typedoc.json --entryPointStrategy expand",
     "docs:entities": "typedoc --entryPoints src/entities --out docs/entities --entryPointStrategy expand",
@@ -114,9 +114,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "msw": {
-    "workerDirectory": [
-      "public"
-    ]
+    "workerDirectory": ["public"]
   },
   "packages": {
     "blog": "0.2.0"
