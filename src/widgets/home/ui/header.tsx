@@ -24,13 +24,13 @@ export function BlogHeader() {
             <Link href='/' className='text-gray-600 hover:text-gray-800'>
               Home
             </Link>
-            <Link href='/categories' className='text-gray-600 hover:text-gray-800'>
+            <Link href='/' className='text-gray-600 hover:text-gray-800'>
               Categories
             </Link>
-            <Link href='/about' className='text-gray-600 hover:text-gray-800'>
+            <Link href='/' className='text-gray-600 hover:text-gray-800'>
               About
             </Link>
-            <Link href='/contact' className='text-gray-600 hover:text-gray-800'>
+            <Link href='/' className='text-gray-600 hover:text-gray-800'>
               Contact
             </Link>
           </nav>
@@ -79,19 +79,19 @@ export function BlogHeader() {
               Home
             </Link>
             <Link
-              href='/categories'
+              href='/'
               className='block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50'
             >
               Categories
             </Link>
             <Link
-              href='/about'
+              href='/'
               className='block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50'
             >
               About
             </Link>
             <Link
-              href='/contact'
+              href='/'
               className='block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50'
             >
               Contact

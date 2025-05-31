@@ -34,7 +34,7 @@ export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count
       className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition relative'
     >
       <Link
-        href={`/tag/${tag.name}`}
+        href={`/blog/${tag.name}`}
         className='inline-block px-3 py-1 back drop-blur-sm text-blue-100 text-xs font-mono'
       >
         {tag.name}

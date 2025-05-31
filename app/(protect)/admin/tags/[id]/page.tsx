@@ -47,7 +47,9 @@ export default function TagDetailPage({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tag) return;
+    if (!tag) {
+      return;
+    }
     try {
       const updatedTag = await updateTag(tag.id, { name });
       setTag((prevTag) => ({ ...prevTag!, ...updatedTag }));
@@ -58,10 +60,12 @@ export default function TagDetailPage({
   };
 
   const handleDelete = async () => {
-    if (!tag) return;
+    if (!tag) {
+      return;
+    }
     try {
       await deleteTag(tag.id);
-      router.push('/tags');
+      router.push('/');
     } catch (err) {
       setError('Failed to delete tag');
     }
@@ -90,12 +94,14 @@ export default function TagDetailPage({
           <h1 className='text-2xl font-bold'>Tag Details</h1>
           <div className='space-x-2'>
             <button
+              type='button'
               onClick={() => setIsEditing(!isEditing)}
               className='px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50'
             >
               {isEditing ? 'Cancel' : 'Edit'}
             </button>
             <button
+              type='button'
               onClick={() => setIsDeleteModalOpen(true)}
               className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700'
             >
@@ -107,8 +113,11 @@ export default function TagDetailPage({
         {isEditing ? (
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div>
-              <label className='block font-medium mb-1'>Tag Name</label>
+              <label htmlFor='name' className='block font-medium mb-1'>
+                Tag Name
+              </label>
               <input
+                id='name'
                 type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -155,12 +164,17 @@ export default function TagDetailPage({
             <p className='mb-6'>Are you sure you want to delete this tag? This action cannot be undone.</p>
             <div className='flex justify-end space-x-2'>
               <button
+                type='button'
                 onClick={() => setIsDeleteModalOpen(false)}
                 className='px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50'
               >
                 Cancel
               </button>
-              <button onClick={handleDelete} className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700'>
+              <button
+                type='button'
+                onClick={handleDelete}
+                className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700'
+              >
                 Delete
               </button>
             </div>

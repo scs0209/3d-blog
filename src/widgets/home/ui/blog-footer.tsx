@@ -18,17 +18,17 @@ export function BlogFooter() {
                 </Link>
               </li>
               <li>
-                <Link href='/about' className='hover:text-gray-300'>
+                <Link href='/' className='hover:text-gray-300'>
                   About
                 </Link>
               </li>
               <li>
-                <Link href='/contact' className='hover:text-gray-300'>
+                <Link href='/' className='hover:text-gray-300'>
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href='/privacy-policy' className='hover:text-gray-300'>
+                <Link href='/' className='hover:text-gray-300'>
                   Privacy Policy
                 </Link>
               </li>

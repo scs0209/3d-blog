@@ -13,7 +13,7 @@ export const Navbar = () => {
         {/* 네비게이션 링크 - 데스크톱 */}
         <nav className='hidden md:flex items-center gap-8'>
           <Orbit fill={'white'} className='cursor-pointer' />
-          <Link href='/manifesto' className='group relative overflow-hidden'>
+          <Link href='/' className='group relative overflow-hidden'>
             <div className='relative flex overflow-hidden'>
               <span className='block text-gray-300 text-sm font-normal transition-all duration-[800ms] ease-[cubic-bezier(0.165,0.84,0.44,1)] group-hover:translate-y-[100%] group-hover:opacity-0'>
                 Portfolio
@@ -33,7 +33,7 @@ export const Navbar = () => {
               </span>
             </div>
           </Link>
-          <Link href='/discover' className='group relative overflow-hidden'>
+          <Link href='/' className='group relative overflow-hidden'>
             <div className='relative flex overflow-hidden'>
               <span className='block text-gray-300 text-sm font-normal transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-[100%]'>
                 Contact
@@ -54,7 +54,7 @@ export const Navbar = () => {
             Log In
           </Link>
           <Link
-            href='/signup'
+            href='/sign-up'
             className='group relative overflow-hidden text-sm font-semibold py-2 px-4 rounded-xl bg-[#E5E4DF]'
           >
             <div className='relative flex overflow-hidden'>
@@ -84,20 +84,20 @@ export const Navbar = () => {
         <div className='md:hidden mt-2 py-4 px-6 bg-gray-900 rounded-lg'>
           <nav className='flex flex-col gap-4'>
             <Link
-              href='/manifesto'
+              href='/'
               className='text-gray-300 hover:text-white py-2 border-b border-gray-800'
               onClick={() => setIsMenuOpen(false)}
             >
               Manifesto
             </Link>
             <Link
-              href='/careers'
+              href='/'
               className='text-gray-300 hover:text-white py-2 border-b border-gray-800'
               onClick={() => setIsMenuOpen(false)}
             >
               Careers
             </Link>
-            <Link href='/discover' className='text-gray-300 hover:text-white py-2' onClick={() => setIsMenuOpen(false)}>
+            <Link href='/' className='text-gray-300 hover:text-white py-2' onClick={() => setIsMenuOpen(false)}>
               Discover
             </Link>
           </nav>
