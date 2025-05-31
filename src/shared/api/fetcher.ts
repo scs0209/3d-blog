@@ -61,8 +61,14 @@ export const fetcher = async <P extends Path, M extends Method<P>>({
   if ('path' in restParams) {
     const pathObj = restParams.path as Record<string, string | number>;
     const replacedPathUrl = finalUrl.replace(/\{(\w+)\}/g, (match, key) => String(pathObj[key] || match));
-
     finalUrl = replacedPathUrl;
+  }
+
+  // 서버 환경에서 finalUrl이 /로 시작하면 절대경로로 변환
+  const isServer = typeof window === 'undefined';
+  if (isServer && finalUrl.startsWith('/')) {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    finalUrl = baseUrl + finalUrl;
   }
 
   const res = await fetch(finalUrl, {
