@@ -2,7 +2,7 @@
 
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
-import { OrbitControls } from 'three-stdlib';
+import type { OrbitControls } from 'three-stdlib';
 
 // 현재 카메라 포지션 확인용
 export const CameraLogger = () => {

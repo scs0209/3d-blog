@@ -249,6 +249,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.3.3))
+      three-stdlib:
+        specifier: ^2.36.0
+        version: 2.36.0(three@0.173.0)
       ts-jest:
         specifier: ^29.2.5
         version: 29.3.4(@babel/core@7.27.4)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.27.4))(jest@29.7.0(@types/node@20.17.57)(ts-node@10.9.2(@types/node@20.17.57)(typescript@5.3.3)))(typescript@5.3.3)
