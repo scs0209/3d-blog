@@ -1,4 +1,4 @@
-name: Free AI Code Review
+name: Simple AI Code Review
 on:
   pull_request:
     types: [opened, synchronize]
@@ -6,55 +6,70 @@ on:
 jobs:
   code-review:
     runs-on: ubuntu-latest
-    timeout-minutes: 10  # 시간 제한으로 비용 절약
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
-          fetch-tags: true
           
-      - name: Install Ollama
+      - name: Test Basic Setup
         run: |
+          echo "=== System Info ==="
+          uname -a
+          free -h
+          df -h
+          
+      - name: Install and Test Ollama
+        run: |
+          echo "Installing Ollama..."
           curl -fsSL https://ollama.ai/install.sh | sh
-          sudo systemctl start ollama
           
-      - name: Pull Lightweight Model
-        run: |
-          # 가벼운 모델 사용으로 시간 단축
+          echo "Starting Ollama server..."
+          ollama serve &
+          sleep 15
+          
+          echo "Testing Ollama connection..."
+          curl http://localhost:11434/api/version
+          
+          echo "Pulling tiny model..."
           ollama pull tinyllama:1.1b
-          # 또는 ollama pull phi3:mini (3.8B)
           
-      - name: Get Changed Files
-        id: changes
-        run: |
-          git fetch origin ${{ github.base_ref }} || true
-          echo "files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|java|cpp|c|go|ts|jsx|tsx)$' | head -5 | paste -sd ',' -)" >> $GITHUB_OUTPUT
-        
-      - name: Review Code
-        run: |
-          echo "files: ${{ steps.changes.outputs.files }}"
-          review_content=""
-          for file in $(echo "${{ steps.changes.outputs.files }}" | tr ',' '\n'); do
-            echo "=== Reviewing $file ===" >> review.md
-            git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -50 | \
-            ollama run tinyllama:1.1b "Please review this code change briefly in Korean. Focus on bugs, performance, and security: " | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' >> review.md
-            echo "" >> review.md
-          done
+          echo "Testing model..."
+          echo "Hello, please say hi in Korean" | ollama run tinyllama:1.1b
           
-      - name: Post Review
-        uses: actions/github-script@v6
+      - name: Simple Code Review
+        run: |
+          echo "Getting changed files..."
+          git fetch origin ${{ github.base_ref }}
+          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts)$' | head -1)
+          
+          if [ -n "$changed_files" ]; then
+            echo "Reviewing: $changed_files"
+            git diff origin/${{ github.base_ref }}..HEAD -- "$changed_files" | head -20 > diff.txt
+            
+            echo "Sending to AI..."
+            cat diff.txt | ollama run tinyllama:1.1b "Review this code change briefly:" > review.txt
+            
+            echo "Review result:"
+            cat review.txt
+          else
+            echo "No files to review"
+            echo "No code changes found" > review.txt
+          fi
+          
+      - name: Post Simple Comment
+        uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
             try {
-              const review = fs.readFileSync('review.md', 'utf8');
+              const review = fs.readFileSync('review.txt', 'utf8');
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `## 🤖 무료 AI 코드 리뷰\n\n${review}\n\n*Powered by Ollama + GitHub Actions*`
+                body: `## 🤖 Simple AI Review\n\n\`\`\`\n${review}\n\`\`\``
               });
             } catch (error) {
-              console.log('No review file found or error occurred');
+              console.log('Error:', error);
             }
