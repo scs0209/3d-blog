@@ -32,10 +32,11 @@ jobs:
           echo "files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|java|cpp|c|go)$' | head -5)" >> $GITHUB_OUTPUT
           
       - name: Review Code
-        if: steps.changes.outputs.files != ''
+        # if: steps.changes.outputs.files != ''
         run: |
+          echo "files: ${{ steps.changes.outputs.files }}"
           review_content=""
-          for file in ${{ steps.changes.outputs.files }}; do
+          for file in $(echo "${{ steps.changes.outputs.files }}"); do
             echo "=== Reviewing $file ===" >> review.md
             git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -50 | \
             ollama run tinyllama:1.1b "Please review this code change briefly in Korean. Focus on bugs, performance, and security: " >> review.md
