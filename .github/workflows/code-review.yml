@@ -25,11 +25,11 @@ jobs:
           ollama pull tinyllama:1.1b
           # 또는 ollama pull phi3:mini (3.8B)
           
-          - name: Get Changed Files
-          id: changes
-          run: |
-            git fetch origin ${{ github.base_ref }} || true
-            echo "files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|java|cpp|c|go|ts|jsx|tsx)$' | head -5 | paste -sd ',' -)" >> $GITHUB_OUTPUT
+      - name: Get Changed Files
+        id: changes
+        run: |
+          git fetch origin ${{ github.base_ref }} || true
+          echo "files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|java|cpp|c|go|ts|jsx|tsx)$' | head -5 | paste -sd ',' -)" >> $GITHUB_OUTPUT
         
       - name: Review Code
         run: |
