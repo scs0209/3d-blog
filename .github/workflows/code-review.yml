@@ -57,19 +57,30 @@ jobs:
             echo "No code changes found" > review.txt
           fi
           
-      - name: Post Simple Comment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            try {
-              const review = fs.readFileSync('review.txt', 'utf8');
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: `## 🤖 Simple AI Review\n\n\`\`\`\n${review}\n\`\`\``
-              });
-            } catch (error) {
-              console.log('Error:', error);
-            }
+          - name: Post Simple Comment
+          uses: actions/github-script@v7
+          with:
+            # 명시적으로 token 설정
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            script: |
+              const fs = require('fs');
+              try {
+                const review = fs.readFileSync('review.txt', 'utf8');
+                
+                // Pull Request 컨텍스트에서는 pull_request 번호 사용
+                const prNumber = context.payload.pull_request?.number || context.issue.number;
+                
+                await github.rest.issues.createComment({
+                  issue_number: prNumber,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: `## 🤖 Simple AI Review\n\n\`\`\`\n${review}\n\`\`\``
+                });
+                
+                console.log('Comment posted successfully');
+              } catch (error) {
+                console.log('Error posting comment:', error.message);
+                
+                // 실패해도 workflow는 계속 진행
+                core.warning(`Failed to post comment: ${error.message}`);
+              }
