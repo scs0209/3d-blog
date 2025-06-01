@@ -4,6 +4,7 @@ import { Html, useGLTF } from '@react-three/drei';
 import type * as three from 'three';
 import { motion } from 'framer-motion';
 import { posts } from './BlogMainPage';
+import { PostCard, PostListCard } from '@/features/blog/ui';
 
 export const Macintosh = (props: any) => {
   const { nodes, materials } = useGLTF('/vintage_computer.glb');
@@ -93,20 +94,15 @@ export const Macintosh = (props: any) => {
                     {/* 최근 포스트 그리드 */}
                     <div className='grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4'>
                       {posts.map((post) => (
-                        <div key={post.id} className='bg-white rounded-lg shadow p-2 text-xs'>
-                          <div className='font-bold truncate'>{post.title}</div>
-                          <div className='text-gray-500'>{post.date}</div>
-                          <div className='text-gray-700'>{post.summary}</div>
+                        <div key={post.id}>
+                          <PostCard key={post.id} post={post} />
                         </div>
                       ))}
                     </div>
                     {/* 나머지 포스트 리스트 */}
                     <div className='flex flex-col gap-2'>
                       {posts.map((post) => (
-                        <div key={post.id} className='bg-white rounded p-2 text-xs border'>
-                          <div className='font-bold'>{post.title}</div>
-                          <div className='text-gray-500'>{post.date}</div>
-                        </div>
+                        <PostListCard key={post.id} post={post as any} category={post.category ?? ''} />
                       ))}
                     </div>
                   </div>
