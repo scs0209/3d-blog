@@ -7,7 +7,7 @@ type NovelViewerProps = {
   content: string;
 };
 
-const NovelViewer = ({ content }: NovelViewerProps) => {
+export default function NovelViewer({ content }: NovelViewerProps) {
   const editor = useEditor({
     extensions: [StarterKit],
     content,
@@ -15,6 +15,4 @@ const NovelViewer = ({ content }: NovelViewerProps) => {
   });
 
   return <EditorContent editor={editor} />;
-};
-
-export default NovelViewer;
+}

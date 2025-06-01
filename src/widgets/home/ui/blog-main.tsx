@@ -4,11 +4,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { getPostList } from '@/features/post/api/post-api';
-import { GetPostListResponse } from '@/features/post/model/post-types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import NovelViewer from '@/shared/ui/NovelViewer';
-import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
-import { EditorContent, EditorRoot } from 'novel';
 
 export function BlogMain() {
   const [posts, setPosts] = useState<any>([]);
@@ -17,7 +14,7 @@ export function BlogMain() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const fetchedPosts = await getPostList() as any;
+        const fetchedPosts = (await getPostList()) as any;
         setPosts(fetchedPosts);
       } catch (error) {
         console.error('Failed to fetch blog posts:', error);

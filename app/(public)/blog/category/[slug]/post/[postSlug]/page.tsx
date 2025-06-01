@@ -1,5 +1,8 @@
 import { getPostBySlug } from '@/features/post/api/post-api';
 import { formatDateToYMD } from '@/shared/utils';
+import dynamic from 'next/dynamic';
+
+const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
 
 export default async function PostPage({
   params,
@@ -12,7 +15,7 @@ export default async function PostPage({
   return (
     <div>
       <h1>{post.title}</h1>
-      <div>{post.content}</div>
+      <NovelViewer content={post.content ?? ''} />
       <div>
         <span>{post.author?.name}</span>
         <span>{formatDateToYMD(post?.createdAt ?? '')}</span>
