@@ -1,0 +1,57 @@
+name: Free AI Code Review
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10  # 시간 제한으로 비용 절약
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Install Ollama
+        run: |
+          curl -fsSL https://ollama.ai/install.sh | sh
+          sudo systemctl start ollama
+          
+      - name: Pull Lightweight Model
+        run: |
+          # 가벼운 모델 사용으로 시간 단축
+          ollama pull tinyllama:1.1b
+          # 또는 ollama pull phi3:mini (3.8B)
+          
+      - name: Get Changed Files
+        id: changes
+        run: |
+          echo "files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|java|cpp|c|go)$' | head -5)" >> $GITHUB_OUTPUT
+          
+      - name: Review Code
+        if: steps.changes.outputs.files != ''
+        run: |
+          review_content=""
+          for file in ${{ steps.changes.outputs.files }}; do
+            echo "=== Reviewing $file ===" >> review.md
+            git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -50 | \
+            ollama run tinyllama:1.1b "Please review this code change briefly in Korean. Focus on bugs, performance, and security: " >> review.md
+            echo "" >> review.md
+          done
+          
+      - name: Post Review
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              const review = fs.readFileSync('review.md', 'utf8');
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🤖 무료 AI 코드 리뷰\n\n${review}\n\n*Powered by Ollama + GitHub Actions*`
+              });
+            } catch (error) {
+              console.log('No review file found or error occurred');
+            }
