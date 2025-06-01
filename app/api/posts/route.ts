@@ -26,6 +26,8 @@ import { createSlug } from '@/shared/utils/create-slug';
  *                   createdAt:
  *                     type: string
  *                     format: date-time
+ *                   views:
+ *                     type: integer
  */
 export async function GET() {
   const posts = await prisma.post.findMany();

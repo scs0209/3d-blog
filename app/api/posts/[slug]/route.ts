@@ -34,6 +34,8 @@ import prisma from '@/shared/lib/db';
  *                 updatedAt:
  *                   type: string
  *                   format: date-time
+ *                 views:
+ *                   type: integer
  *                 author:
  *                   type: object
  *                   properties:
