@@ -38,7 +38,7 @@ jobs:
           for file in $(echo "${{ steps.changes.outputs.files }}" | tr ',' '\n'); do
             echo "=== Reviewing $file ===" >> review.md
             git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -50 | \
-            ollama run tinyllama:1.1b "Please review this code change briefly in Korean. Focus on bugs, performance, and security: " >> review.md
+            ollama run tinyllama:1.1b "Please review this code change briefly in Korean. Focus on bugs, performance, and security: " | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' >> review.md
             echo "" >> review.md
           done
           
