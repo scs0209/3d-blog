@@ -528,6 +528,10 @@ export interface paths {
                             id?: number;
                             title?: string;
                             content?: string;
+                            /** Format: date-time */
+                            createdAt?: string;
+                            /** Format: date-time */
+                            updatedAt?: string;
                             author?: {
                                 id?: number;
                                 name?: string;

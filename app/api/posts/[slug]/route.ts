@@ -28,6 +28,12 @@ import prisma from '@/shared/lib/db';
  *                   type: string
  *                 content:
  *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *                 author:
  *                   type: object
  *                   properties:
