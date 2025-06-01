@@ -2,6 +2,12 @@ name: Simple AI Code Review
 on:
   pull_request:
     types: [opened, synchronize]
+    
+# 권한 설정 추가
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
   code-review:
