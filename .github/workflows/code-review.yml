@@ -47,15 +47,17 @@ jobs:
         run: |
           echo "Getting changed files..."
           git fetch origin ${{ github.base_ref }}
-          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|jsx|tsx)$' | head -1)
+          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|jsx|tsx)$')
           
           if [ -n "$changed_files" ]; then
             echo "Reviewing: $changed_files"
-            git diff origin/${{ github.base_ref }}..HEAD -- "$changed_files" | head -20 > diff.txt
-            
-            echo "Sending to AI..."
-            cat diff.txt | ollama run tinyllama:1.1b "Review this code change briefly:" > review.txt
-            
+            > review.txt
+            for file in $changed_files; do
+              echo "=== $file ===" >> review.txt
+              git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -20 | \
+              ollama run tinyllama:1.1b "Review this code change briefly:" >> review.txt
+              echo "" >> review.txt
+            done
             echo "Review result:"
             cat review.txt
           else
