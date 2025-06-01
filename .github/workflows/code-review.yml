@@ -3,6 +3,12 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+# 권한 추가
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   code-review:
     runs-on: ubuntu-latest
@@ -24,63 +30,127 @@ jobs:
           echo "Installing Ollama..."
           curl -fsSL https://ollama.ai/install.sh | sh
           
+          # PATH에 ollama 추가
+          export PATH="/usr/local/bin:$PATH"
+          
+          # Ollama 설치 확인
+          which ollama || echo "Ollama not found in PATH"
+          
           echo "Starting Ollama server..."
-          ollama serve &
-          sleep 15
+          nohup ollama serve > ollama.log 2>&1 &
+          OLLAMA_PID=$!
+          
+          # 서버 시작 대기
+          sleep 20
+          
+          echo "Checking Ollama process..."
+          ps aux | grep ollama
           
           echo "Testing Ollama connection..."
-          curl http://localhost:11434/api/version
+          for i in {1..5}; do
+            if curl -s http://localhost:11434/api/version; then
+              echo "Ollama is running!"
+              break
+            else
+              echo "Attempt $i: Ollama not ready, waiting..."
+              sleep 5
+            fi
+          done
           
           echo "Pulling tiny model..."
-          ollama pull tinyllama:1.1b
+          ollama pull tinyllama:1.1b || echo "Failed to pull model"
           
           echo "Testing model..."
-          echo "Hello, please say hi in Korean" | ollama run tinyllama:1.1b
+          echo "Hello, please say hi in Korean" | ollama run tinyllama:1.1b || echo "Model test failed"
           
       - name: Simple Code Review
         run: |
           echo "Getting changed files..."
           git fetch origin ${{ github.base_ref }}
-          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts)$' | head -1)
+          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|tsx|jsx)
           
-          if [ -n "$changed_files" ]; then
+      - name: Post Simple Comment
+        uses: actions/github-script@v7
+        with:
+          # 명시적으로 token 설정
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            try {
+              const review = fs.readFileSync('review.txt', 'utf8');
+              
+              // Pull Request 컨텍스트에서는 pull_request 번호 사용
+              const prNumber = context.payload.pull_request?.number || context.issue.number;
+              
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🤖 Simple AI Review\n\n\`\`\`\n${review}\n\`\`\``
+              });
+              
+              console.log('Comment posted successfully');
+            } catch (error) {
+              console.log('Error posting comment:', error.message);
+              
+              // 실패해도 workflow는 계속 진행
+              core.warning(`Failed to post comment: ${error.message}`);
+            } | head -1)
+          
+            if [ -n "$changed_files" ]; then
             echo "Reviewing: $changed_files"
             git diff origin/${{ github.base_ref }}..HEAD -- "$changed_files" | head -20 > diff.txt
             
             echo "Sending to AI..."
-            cat diff.txt | ollama run tinyllama:1.1b "Review this code change briefly:" > review.txt
+            # PATH 다시 설정
+            export PATH="/usr/local/bin:$PATH"
+            
+            # Ollama가 실행 중인지 확인
+            if ! pgrep -f "ollama serve" > /dev/null; then
+              echo "Ollama server not running, starting..."
+              nohup ollama serve > ollama.log 2>&1 &
+              sleep 10
+            fi
+            
+            # AI 리뷰 실행 (에러 처리 추가)
+            if ollama run tinyllama:1.1b "Review this code change briefly:" < diff.txt > review.txt 2>&1; then
+              echo "AI review completed successfully"
+            else
+              echo "AI review failed, using fallback"
+              echo "Code review completed. Changes detected in: $changed_files" > review.txt
+            fi
             
             echo "Review result:"
             cat review.txt
-          else
-            echo "No files to review"
-            echo "No code changes found" > review.txt
-          fi
+            else
+              echo "No files to review"
+              echo "No code changes found" > review.txt
+            fi
           
-          - name: Post Simple Comment
-          uses: actions/github-script@v7
-          with:
-            # 명시적으로 token 설정
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-              const fs = require('fs');
-              try {
-                const review = fs.readFileSync('review.txt', 'utf8');
-                
-                // Pull Request 컨텍스트에서는 pull_request 번호 사용
-                const prNumber = context.payload.pull_request?.number || context.issue.number;
-                
-                await github.rest.issues.createComment({
-                  issue_number: prNumber,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: `## 🤖 Simple AI Review\n\n\`\`\`\n${review}\n\`\`\``
-                });
-                
-                console.log('Comment posted successfully');
-              } catch (error) {
-                console.log('Error posting comment:', error.message);
-                
-                // 실패해도 workflow는 계속 진행
-                core.warning(`Failed to post comment: ${error.message}`);
-              }
+      - name: Post Simple Comment
+        uses: actions/github-script@v7
+        with:
+          # 명시적으로 token 설정
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            try {
+              const review = fs.readFileSync('review.txt', 'utf8');
+              
+              // Pull Request 컨텍스트에서는 pull_request 번호 사용
+              const prNumber = context.payload.pull_request?.number || context.issue.number;
+              
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🤖 Simple AI Review\n\n\`\`\`\n${review}\n\`\`\``
+              });
+              
+              console.log('Comment posted successfully');
+            } catch (error) {
+              console.log('Error posting comment:', error.message);
+              
+              // 실패해도 workflow는 계속 진행
+              core.warning(`Failed to post comment: ${error.message}`);
+            }
