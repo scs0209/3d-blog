@@ -8,10 +8,8 @@ import { useState } from 'react';
 
 export const Sidebar = ({
   selectedCategory,
-  handleCategoryClick,
 }: {
   selectedCategory: string | null;
-  handleCategoryClick: (category: string) => void;
 }) => {
   const router = useRouter();
   const { data: categories, isLoading } = useCategories();
@@ -66,8 +64,7 @@ export const Sidebar = ({
                     className={`text-left px-2 py-1 rounded-lg font-mono transition relative
                         ${selectedCategory === cat.name ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
                     onClick={() => {
-                      // handleCategoryClick(cat.name);
-                      router.push(`/blog/${cat.slug}`);
+                      router.push(`/blog/category/${cat.slug}`);
                     }}
                   >
                     {cat.name}

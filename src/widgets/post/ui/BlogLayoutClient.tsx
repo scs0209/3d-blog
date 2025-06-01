@@ -16,10 +16,6 @@ export default function BlogLayoutClient({ children }: { children: React.ReactNo
   const [search, setSearch] = useState('');
   const pathname = usePathname();
 
-  const handleCategoryClick = (cat: string) => {
-    setSelectedCategory((prev) => (prev === cat ? null : cat));
-  };
-
   const handleTitleClick = () => {
     setSelectedCategory(null);
   };
@@ -78,13 +74,12 @@ export default function BlogLayoutClient({ children }: { children: React.ReactNo
           </div>
         </main>
         {/* 데스크톱 사이드바 */}
-        <Sidebar selectedCategory={selectedCategory} handleCategoryClick={handleCategoryClick} />
+        <Sidebar selectedCategory={selectedCategory} />
       </div>
       {/* 모바일/태블릿 드로어 사이드바 */}
       <MobileNavbar
         categories={categories}
         selectedCategory={selectedCategory}
-        handleCategoryClick={handleCategoryClick}
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
       />

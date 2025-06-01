@@ -2,21 +2,21 @@ import type { CategoryResponse } from '@/entities/category/model';
 import { useTags } from '@/features/blog/model/use-tags';
 import { Tag } from '@/features/blog/ui';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export const MobileNavbar = ({
   categories,
   selectedCategory,
-  handleCategoryClick,
   menuOpen,
   setMenuOpen,
 }: {
   categories?: CategoryResponse;
   selectedCategory: string | null;
-  handleCategoryClick: (category: string) => void;
   menuOpen: boolean;
   setMenuOpen: (menuOpen: boolean) => void;
 }) => {
   const { data: tags } = useTags();
+  const router = useRouter();
 
   return (
     <AnimatePresence>
@@ -63,7 +63,9 @@ export const MobileNavbar = ({
                   whileTap={{ scale: 0.97 }}
                   className={`text-left px-2 py-1 rounded-lg font-mono transition relative
                       ${selectedCategory === cat.name ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
-                  onClick={() => handleCategoryClick(cat.name)}
+                  onClick={() => {
+                    router.push(`/blog/category/${cat.slug}`);
+                  }}
                 >
                   {cat.name}
                 </motion.button>
