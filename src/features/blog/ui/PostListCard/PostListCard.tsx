@@ -1,19 +1,15 @@
+import type { PostResponse } from '@/entities/post/model/post';
 import { Tag } from '@/shared/ui';
 import { formatDateToYMD } from '@/shared/utils';
 import { motion } from 'framer-motion';
+import { Eye } from 'lucide-react';
 
-type Post = {
-  id: number;
-  title: string;
+type PostListCardProps = {
+  post: PostResponse;
   category: string;
-  updatedAt: string;
-  summary: string;
-  author: {
-    name: string;
-  };
 };
 
-export const PostListCard = ({ post, category }: { post: Post; category: string }) => {
+export const PostListCard = ({ post, category }: PostListCardProps) => {
   return (
     <motion.div
       key={`${post.id}-list`}
@@ -25,14 +21,19 @@ export const PostListCard = ({ post, category }: { post: Post; category: string 
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       className='rounded-lg px-4 py-3 transition cursor-pointer'
     >
-      <Tag color='neon' spacing='tight'>
-        #{category}
-      </Tag>
+      <div className='flex items-center justify-between'>
+        <Tag color='neon' spacing='tight'>
+          #{category}
+        </Tag>
+        <span className='flex items-center justify-center gap-1 text-blue-300 text-xs'>
+          <Eye size={15} className='inline-block' />
+          {post?.views ?? 0}
+        </span>
+      </div>
       <h2 className='text-lg font-extrabold text-blue-100 mt-1'>{post?.title}</h2>
-      <p className='text-sm text-blue-100'>{post?.summary}</p>
       <div className='flex items-center justify-between mt-2 text-xs text-blue-200'>
         <span>{post?.author ? post?.author?.name : '관리자'}</span>
-        <span>{formatDateToYMD(post?.updatedAt)}</span>
+        <span>{formatDateToYMD(post?.updatedAt ?? '')}</span>
       </div>
       <hr className='my-6 border-blue-900/40' />
     </motion.div>

@@ -1,3 +1,5 @@
+import type { ApiResponse } from '@/shared/api';
+
 export type BlogPost = {
   id: string;
   title: string;
@@ -6,3 +8,5 @@ export type BlogPost = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type PostResponse = ApiResponse<'/api/posts/{slug}', 'get'>;

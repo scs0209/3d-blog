@@ -532,6 +532,7 @@ export interface paths {
                             createdAt?: string;
                             /** Format: date-time */
                             updatedAt?: string;
+                            views?: number;
                             author?: {
                                 id?: number;
                                 name?: string;
@@ -676,6 +677,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/posts/{slug}/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 게시글 조회수 증가
+         * @description 게시글 조회수를 증가시킵니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 조회수 증가 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            ok?: boolean;
+                            views?: number;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/posts": {
         parameters: {
             query?: never;
@@ -705,6 +750,7 @@ export interface paths {
                             content?: string;
                             /** Format: date-time */
                             createdAt?: string;
+                            views?: number;
                         }[];
                     };
                 };
@@ -1151,6 +1197,89 @@ export interface paths {
                             error?: string;
                         };
                     };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/visitor": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 오늘 방문자 수와 총 방문자 수 조회
+         * @description VisitorLog를 기반으로 오늘 방문자 수와 전체 방문자 수를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 방문자 통계 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            today?: number;
+                            total?: number;
+                        };
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * 방문자 기록 추가
+         * @description 방문자의 ip, userAgent, path를 VisitorLog에 기록합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        path?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description 기록 성공 */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
             };
         };
