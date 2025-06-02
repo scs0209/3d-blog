@@ -10,8 +10,9 @@ export default async function PostPage({
   params: Promise<{ postSlug: string }>;
 }) {
   const { postSlug } = await params;
-  const post = await getPostBySlug(postSlug);
-  console.log(post);
+  const decodedSlug = decodeURIComponent(postSlug);
+  const post = await getPostBySlug(decodedSlug);
+
   return (
     <div>
       <h1>{post.title}</h1>
