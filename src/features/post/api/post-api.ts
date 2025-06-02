@@ -1,9 +1,9 @@
 import { type ApiRequest, fetcher } from '@/shared/api';
 import type { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
-import type { GetPostBySlugResponse, GetPostListResponse } from '../model/post-types';
+import type { GetPostBySlugResponse } from '../model/post-types';
 
-export const getPostList = (): GetPostListResponse => fetcher({ url: '/api/posts', method: 'get' });
+export const getPostList = () => fetcher({ url: '/api/posts', method: 'get' });
 
 type CreatePostInput = {
   title: string;
