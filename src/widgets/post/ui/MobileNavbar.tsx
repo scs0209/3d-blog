@@ -1,6 +1,6 @@
 import type { CategoryResponse } from '@/entities/category/model';
-import { useTags } from '@/features/blog/model/use-tags';
-import { Tag } from '@/features/blog/ui';
+import { useTags } from '@/features/tag/model/use-tags';
+import { Tag } from '@/features/tag/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
