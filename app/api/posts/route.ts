@@ -28,9 +28,25 @@ import { createSlug } from '@/shared/utils/create-slug';
  *                     format: date-time
  *                   views:
  *                     type: integer
+ *                   category:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       slug:
+ *                         type: string
  */
 export async function GET() {
-  const posts = await prisma.post.findMany();
+  const posts = await prisma.post.findMany({
+    include: {
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
   return NextResponse.json(posts, { status: 200 });
 }
 

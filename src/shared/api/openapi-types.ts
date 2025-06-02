@@ -785,6 +785,10 @@ export interface paths {
                             /** Format: date-time */
                             createdAt?: string;
                             views?: number;
+                            category?: {
+                                name?: string;
+                                slug?: string;
+                            };
                         }[];
                     };
                 };
