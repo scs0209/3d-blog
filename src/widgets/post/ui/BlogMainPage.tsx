@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PostCard, PostListCard } from '@/features/blog/ui';
-import { useCategoryPosts } from '@/features/category/model/use-category';
+import { usePost } from '@/features/post/model';
 
-export const posts = [
+export const post = [
   {
     id: 1,
     title: 'React로 맥OS 스타일 블로그 만들기',
@@ -83,13 +83,13 @@ export const posts = [
 ];
 
 export const BlogMainPage = () => {
-  const { data: categoryPosts, isLoading: isCategoryPostsLoading } = useCategoryPosts('nextjs', 1, 10);
+  const { posts, isLoading } = usePost();
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const recentPosts = posts.slice(0, 6); // 전체 포스트 기준 최근 6개
+  const recentPosts = post?.slice(0, 6) ?? []; // 전체 포스트 기준 최근 6개
 
-  if (isCategoryPostsLoading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -130,8 +130,8 @@ export const BlogMainPage = () => {
       )}
       {/* 나머지 포스트 리스트 (hover 효과 추가) */}
       <div className='flex flex-col gap-8'>
-        {categoryPosts?.posts?.map((post) => (
-          <PostListCard key={post.id} post={post as any} category={categoryPosts?.name ?? ''} />
+        {posts?.map((post) => (
+          <PostListCard key={post.id} post={post} />
         ))}
       </div>
     </>

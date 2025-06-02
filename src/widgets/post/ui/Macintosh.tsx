@@ -3,7 +3,7 @@
 import { Html, useGLTF } from '@react-three/drei';
 import type * as three from 'three';
 import { motion } from 'framer-motion';
-import { posts } from './BlogMainPage';
+import { post } from './BlogMainPage';
 import { PostCard, PostListCard } from '@/features/blog/ui';
 
 export const Macintosh = (props: any) => {
@@ -93,7 +93,7 @@ export const Macintosh = (props: any) => {
                   <div style={{ padding: '8px', flex: 1, overflow: 'auto' }}>
                     {/* 최근 포스트 그리드 */}
                     <div className='grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4'>
-                      {posts.map((post) => (
+                      {post.map((post) => (
                         <div key={post.id}>
                           <PostCard key={post.id} post={post} />
                         </div>
@@ -101,8 +101,8 @@ export const Macintosh = (props: any) => {
                     </div>
                     {/* 나머지 포스트 리스트 */}
                     <div className='flex flex-col gap-2'>
-                      {posts.map((post) => (
-                        <PostListCard key={post.id} post={post as any} category={post.category ?? ''} />
+                      {post.map((post) => (
+                        <PostListCard key={post.id} post={post as any} />
                       ))}
                     </div>
                   </div>

@@ -15,7 +15,7 @@ export default function BlogPostPage() {
   return (
     <div className='flex flex-col gap-8'>
       {categoryPosts?.posts?.map((post) => (
-        <PostListCard key={post.id} post={post} category={categoryPosts?.name ?? ''} />
+        <PostListCard key={post.id} post={post} />
       ))}
     </div>
   );

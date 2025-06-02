@@ -7,10 +7,9 @@ import { useRouter } from 'next/navigation';
 
 type PostListCardProps = {
   post: PostResponse;
-  category: string;
 };
 
-export const PostListCard = ({ post, category }: PostListCardProps) => {
+export const PostListCard = ({ post }: PostListCardProps) => {
   const router = useRouter();
 
   return (
@@ -27,7 +26,7 @@ export const PostListCard = ({ post, category }: PostListCardProps) => {
     >
       <div className='flex items-center justify-between'>
         <Tag color='neon' spacing='tight'>
-          #{category}
+          #{post.category?.name}
         </Tag>
         <span className='flex items-center justify-center gap-1 text-blue-300 text-xs'>
           <Eye size={15} className='inline-block' />
