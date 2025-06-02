@@ -3,6 +3,7 @@ import { Tag } from '@/shared/ui';
 import { formatDateToYMD } from '@/shared/utils';
 import { motion } from 'framer-motion';
 import { Eye } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type PostListCardProps = {
   post: PostResponse;
@@ -10,6 +11,8 @@ type PostListCardProps = {
 };
 
 export const PostListCard = ({ post, category }: PostListCardProps) => {
+  const router = useRouter();
+
   return (
     <motion.div
       key={`${post.id}-list`}
@@ -20,6 +23,7 @@ export const PostListCard = ({ post, category }: PostListCardProps) => {
       }}
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       className='rounded-lg px-4 py-3 transition cursor-pointer'
+      onClick={() => router.push(`/blog/category/${post.category?.slug}/post/${post?.slug}`)}
     >
       <div className='flex items-center justify-between'>
         <Tag color='neon' spacing='tight'>

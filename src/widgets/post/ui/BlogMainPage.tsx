@@ -85,12 +85,9 @@ export const posts = [
 export const BlogMainPage = () => {
   const { data: categoryPosts, isLoading: isCategoryPostsLoading } = useCategoryPosts('nextjs', 1, 10);
 
-  // 카테고리 미선택 상태(null)로 시작
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const recentPosts = posts.slice(0, 6); // 전체 포스트 기준 최근 6개
-  const restPosts = posts.slice(6);
 
   if (isCategoryPostsLoading) {
     return <div>Loading...</div>;
@@ -98,7 +95,7 @@ export const BlogMainPage = () => {
 
   return (
     <>
-      {selectedCategory === null && recentPosts.length > 0 && (
+      {recentPosts.length > 0 && (
         <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
           {recentPosts.map((post, idx) => (
             <a
