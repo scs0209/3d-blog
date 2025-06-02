@@ -7,9 +7,11 @@ import { useRouter } from 'next/navigation';
 
 type PostListCardProps = {
   post: PostResponse;
+  categoryName?: string;
+  categorySlug?: string;
 };
 
-export const PostListCard = ({ post }: PostListCardProps) => {
+export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardProps) => {
   const router = useRouter();
 
   return (
@@ -22,11 +24,11 @@ export const PostListCard = ({ post }: PostListCardProps) => {
       }}
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       className='rounded-lg px-4 py-3 transition cursor-pointer'
-      onClick={() => router.push(`/blog/category/${post.category?.slug}/post/${post?.slug}`)}
+      onClick={() => router.push(`/blog/category/${categorySlug ?? post.category?.slug}/post/${post?.slug}`)}
     >
       <div className='flex items-center justify-between'>
         <Tag color='neon' spacing='tight'>
-          #{post.category?.name}
+          #{categoryName ?? post.category?.name}
         </Tag>
         <span className='flex items-center justify-center gap-1 text-blue-300 text-xs'>
           <Eye size={15} className='inline-block' />
