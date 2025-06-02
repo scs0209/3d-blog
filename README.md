@@ -1,6 +1,22 @@
-# 블로깅 플랫폼 (Blogging Platform)
+# 3D Blog
 
-Next.js, TypeScript, Prisma, Tailwind CSS를 사용하여 구축된 블로깅 플랫폼입니다.
+This is a 3D blog built with Next.js, React Three Fiber, and more.
+
+## Features
+
+- 3D Scene with interactive planets
+- Visitor counter with animations
+- Comment system
+- **New: AI Code Review with GitHub Actions** 🤖
+
+## Tech Stack
+
+- Next.js 14
+- React 18
+- TypeScript
+- Three.js
+- Framer Motion
+- Tailwind CSS
 
 ## 주요 기술 (Key Technologies)
 
