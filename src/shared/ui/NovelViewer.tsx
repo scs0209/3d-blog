@@ -1,18 +1,21 @@
 'use client';
-
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { defaultExtensions } from './TextEditor/extensions';
+import { EditorContent } from 'novel';
 
 type NovelViewerProps = {
   content: string;
 };
 
-export default function NovelViewer({ content }: NovelViewerProps) {
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content,
-    editable: false,
-  });
+const extensions = [...defaultExtensions];
 
-  return <EditorContent editor={editor} />;
+export default function NovelViewer({ content }: NovelViewerProps) {
+  return (
+    <EditorContent
+      className='h-[500px]'
+      extensions={extensions}
+      immediatelyRender={false}
+      editable={false}
+      initialContent={content as any}
+    />
+  );
 }
