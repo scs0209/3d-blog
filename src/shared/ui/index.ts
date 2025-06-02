@@ -14,3 +14,4 @@ export * from './Room';
 export * from './Scene';
 export * from './SkyBox';
 export * from './Tag';
+export * from './VisitorLogger';

@@ -46,7 +46,7 @@ export const Sidebar = ({
             </button>
             {/* 사이드바 내용 */}
             <div>
-              <VisitorCounter today={100} total={1000} />
+              <VisitorCounter />
               <div className='px-3 py-2 flex items-center justify-between'>
                 <span className='font-extrabold text-lg font-mono text-blue-100'>Category</span>
               </div>
