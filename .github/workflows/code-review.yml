@@ -1,306 +1,93 @@
-
-name: AI 코드 리뷰
+name: Simple AI Code Review
 on:
   pull_request:
     types: [opened, synchronize]
     
+# 권한 설정 추가
 permissions:
   contents: read
   pull-requests: write
   issues: write
 
 jobs:
-  ai-code-review:
+  code-review:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           
-      - name: 시스템 정보 확인
+      - name: Test Basic Setup
         run: |
-          echo "=== 시스템 정보 ==="
+          echo "=== System Info ==="
           uname -a
           free -h
           df -h
           
-      - name: Ollama 설치 및 설정
+      - name: Install and Test Ollama
         run: |
-          echo "Ollama 설치 중..."
+          echo "Installing Ollama..."
           curl -fsSL https://ollama.ai/install.sh | sh
           
-          echo "Ollama 서버 시작..."
+          echo "Starting Ollama server..."
           ollama serve &
+          sleep 15
           
-          # 서버 시작 대기 (더 안정적인 방법)
-          echo "서버 시작 대기 중..."
-          for i in {1..30}; do
-            if curl -s http://localhost:11434/api/version >/dev/null 2>&1; then
-              echo "Ollama 서버가 준비되었습니다."
-              break
-            fi
-            echo "대기 중... ($i/30)"
-            sleep 2
-          done
+          echo "Testing Ollama connection..."
+          curl http://localhost:11434/api/version
           
-          # 연결 확인
-          echo "Ollama 연결 테스트..."
-          curl -s http://localhost:11434/api/version || exit 1
+          echo "Pulling tiny model..."
+          ollama pull tinyllama:1.1b
           
-          # 한국어 지원이 더 나은 모델 사용
-          echo "모델 다운로드 중..."
-          ollama pull qwen2:1.5b  # 또는 gemma2:2b, llama3.2:1b
+          echo "Testing model..."
+          echo "Hello, please say hi in Korean" | ollama run tinyllama:1.1b
           
-          # 한국어 테스트
-          echo "한국어 테스트..."
-          echo "안녕하세요. 한국어로 인사해주세요." | ollama run qwen2:1.5b
-          
-      - name: 변경된 파일 분석 및 리뷰
+      - name: Simple Code Review
         run: |
-          echo "변경된 파일 확인..."
+          echo "Getting changed files..."
           git fetch origin ${{ github.base_ref }}
-          
-          # 더 많은 파일 형식 지원
-          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala)$' || true)
+          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|jsx|tsx)$')
           
           if [ -n "$changed_files" ]; then
-            echo "리뷰할 파일들: $changed_files"
+            echo "Reviewing: $changed_files"
             > review.txt
-            
             for file in $changed_files; do
-              echo "=== $file 리뷰 ===" >> review.txt
+              echo "=== $file ===" >> review.txt
+              git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -20 | \
+              ollama run tinyllama:1.1b "Review this code change briefly:" >> review.txt
               echo "" >> review.txt
-              
-              # 파일 변경 내용 가져오기
-              diff_content=$(git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -50)
-              
-              if [ -n "$diff_content" ]; then
-                # 구조화된 한국어 리뷰 프롬프트
-                review_prompt="다음 코드 변경사항을 분석하고 아래 형식에 맞춰 한국어로 리뷰해주세요.
-
-          코드 변경 내용:
-          $diff_content
-
-          다음 형식으로 응답해주세요:
-
-          ## 위험도 평가
-          [낮음/보통/높음/긴급] - 간단한 이유
-
-          ## 주요 발견사항
-          - 발견된 이슈들을 나열
-
-          ## 코드 품질
-          - 가독성, 유지보수성 평가
-
-          ## 보안 및 안정성
-          - 보안 이슈나 잠재적 버그
-
-          ## 성능 영향
-          - 성능에 미치는 영향 분석
-
-          ## 권장사항
-          - 구체적인 개선 제안
-
-          반드시 한국어로만 답변하고, 위 형식을 정확히 따라주세요."
-
-                          echo "$review_prompt" | ollama run qwen2:1.5b >> review.txt
-                        else
-                          echo "변경 내용을 찾을 수 없습니다." >> review.txt
-                        fi
-                        
-                        echo "" >> review.txt
-                        echo "---" >> review.txt
-                        echo "" >> review.txt
-                      done
-                      
-                      echo "리뷰 결과:"
-                      cat review.txt
-                    else
-                      echo "리뷰할 코드 파일이 없습니다."
-                      echo "## 📝 리뷰 결과
-
-          이번 Pull Request에서는 리뷰할 코드 파일 변경사항이 없습니다.
-
-          검토 대상 파일 형식: Python, JavaScript, TypeScript, Java, C/C++, PHP, Ruby, Go, Rust, Kotlin, Swift, Dart, Scala" > review.txt
+            done
+            echo "Review result:"
+            cat review.txt
+          else
+            echo "No files to review"
+            echo "No code changes found" > review.txt
           fi
           
-      - name: 리뷰 결과 댓글 작성
+      - name: Post Simple Comment
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            
             try {
               const review = fs.readFileSync('review.txt', 'utf8');
+              
+              // Pull Request 컨텍스트에서는 pull_request 번호 사용
               const prNumber = context.payload.pull_request?.number || context.issue.number;
               
-              // 리뷰 내용에서 위험도 추출
-              const riskMatch = review.match(/위험도[^:]*:\s*\[([^\]]+)\]/i);
-              const riskLevel = riskMatch ? riskMatch[1].trim() : '보통';
-              
-              // 위험도에 따른 이모지와 색상
-              const getRiskEmoji = (risk) => {
-                const lowerRisk = risk.toLowerCase();
-                if (lowerRisk.includes('긴급')) return '🚨';
-                if (lowerRisk.includes('높음')) return '⚠️';
-                if (lowerRisk.includes('보통')) return '⚡';
-                return '✅';
-              };
-              
-              const getRiskColor = (risk) => {
-                const lowerRisk = risk.toLowerCase();
-                if (lowerRisk.includes('긴급')) return '#FF0000';
-                if (lowerRisk.includes('높음')) return '#FF6B35';
-                if (lowerRisk.includes('보통')) return '#F6D55C';
-                return '#20BF55';
-              };
-              
-              // 파일 변경 통계
-              const changedFiles = review.match(/=== .+ 리뷰 ===/g) || [];
-              const fileCount = changedFiles.length;
-              
-              // 기존 AI 리뷰 댓글이 있는지 확인
-              const { data: comments } = await github.rest.issues.listComments({
+              await github.rest.issues.createComment({
                 issue_number: prNumber,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
+                body: `## 🤖 Simple AI Review\n\n\`\`\`\n${review}\n\`\`\``
               });
               
-              const botComment = comments.find(comment => 
-                comment.user.login === 'github-actions[bot]' && 
-                comment.body.includes('🤖 AI 코드 리뷰')
-              );
+              console.log('Comment posted successfully');
+            } catch (error) {
+              console.log('Error posting comment:', error.message);
               
-              const reviewDate = new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
-              const riskEmoji = getRiskEmoji(riskLevel);
-              
-              const commentBody = `## 🤖 AI 코드 리뷰 보고서
-
-              <table>
-              <tr>
-              <td><strong>📊 리뷰 개요</strong></td>
-              <td><strong>상세 정보</strong></td>
-              </tr>
-              <tr>
-              <td>위험도</td>
-              <td>${riskEmoji} <strong>${riskLevel}</strong></td>
-              </tr>
-              <tr>
-              <td>분석된 파일 수</td>
-              <td>${fileCount}개</td>
-              </tr>
-              <tr>
-              <td>리뷰 시간</td>
-              <td>${reviewDate}</td>
-              </tr>
-              <tr>
-              <td>AI 모델</td>
-              <td>qwen2:1.5b</td>
-              </tr>
-              </table>
-
-              ---
-
-              ## 📋 상세 리뷰 결과
-
-              ${review}
-
-              ---
-
-              <details>
-              <summary>📖 리뷰 가이드라인</summary>
-
-              **위험도 기준:**
-              - 🚨 **긴급**: 보안 취약점, 심각한 버그, 프로덕션 장애 가능성
-              - ⚠️ **높음**: 성능 이슈, 데이터 손실 위험, 중요 로직 오류
-              - ⚡ **보통**: 코드 품질 이슈, 가독성 문제, 경미한 버그
-              - ✅ **낮음**: 스타일 이슈, 최적화 제안, 베스트 프랙티스
-
-              **검토 항목:**
-              - ✅ 코드 품질 및 가독성
-              - 🔒 보안 및 안정성 검사
-              - ⚡ 성능 영향 분석
-              - 🛠️ 베스트 프랙티스 준수
-              - 💡 개선 제안사항
-
-              </details>
-
-            > ⚠️ **주의사항**: 이는 AI 자동 리뷰입니다. 최종 코드 검토는 반드시 사람이 수행해주세요.
-
-            ---
-            *Generated by GitHub Actions • ${reviewDate}*`;         
-                        if (botComment) {
-                          // 기존 댓글 업데이트
-                          await github.rest.issues.updateComment({
-                            comment_id: botComment.id,
-                            owner: context.repo.owner,
-                            repo: context.repo.repo,
-                            body: commentBody
-                          });
-                          console.log('기존 리뷰 댓글을 업데이트했습니다.');
-                        } else {
-                          // 새 댓글 작성
-                          await github.rest.issues.createComment({
-                            issue_number: prNumber,
-                            owner: context.repo.owner,
-                            repo: context.repo.repo,
-                            body: commentBody
-                          });
-                          console.log('새 리뷰 댓글을 작성했습니다.');
-                        }
-                        
-                        // 높은 위험도의 경우 추가 알림
-                        if (riskLevel.includes('긴급') || riskLevel.includes('높음')) {
-                          core.warning(`⚠️ 높은 위험도 감지: ${riskLevel}`);
-                          
-                          // 리뷰어 자동 요청 (옵션)
-                          try {
-                            await github.rest.pulls.requestReviewers({
-                              pull_number: prNumber,
-                              owner: context.repo.owner,
-                              repo: context.repo.repo,
-                              reviewers: [], // 여기에 리뷰어 추가 가능
-                              team_reviewers: [] // 여기에 팀 리뷰어 추가 가능
-                            });
-                          } catch (reviewError) {
-                            console.log('리뷰어 자동 요청 실패 (권한 부족 또는 설정 필요)');
-                          }
-                        }
-                        
-                      } catch (error) {
-                        console.error('댓글 작성 실패:', error.message);
-                        core.setFailed(`댓글 작성에 실패했습니다: ${error.message}`);
-                      }
-
-                - name: 리뷰 결과 및 위험도 분석
-                  run: |
-                    if [ -f "review.txt" ]; then
-                      echo "=== 리뷰 결과 분석 ==="
-                      
-                      # 위험도 추출 및 출력
-                      if grep -q "긴급" review.txt; then
-                        echo "::error title=긴급 위험도 감지::코드에서 긴급 수정이 필요한 이슈가 발견되었습니다."
-                        echo "RISK_LEVEL=긴급" >> $GITHUB_ENV
-                      elif grep -q "높음" review.txt; then
-                        echo "::warning title=높은 위험도 감지::코드에서 주의가 필요한 이슈가 발견되었습니다."
-                        echo "RISK_LEVEL=높음" >> $GITHUB_ENV
-                      elif grep -q "보통" review.txt; then
-                        echo "::notice title=보통 위험도::일반적인 개선사항이 발견되었습니다."
-                        echo "RISK_LEVEL=보통" >> $GITHUB_ENV
-                      else
-                        echo "::notice title=낮은 위험도::코드 품질이 양호합니다."
-                        echo "RISK_LEVEL=낮음" >> $GITHUB_ENV
-                      fi
-                      
-                      # 리뷰 통계
-                      file_count=$(grep -c "=== .* 리뷰 ===" review.txt || echo "0")
-                      echo "분석된 파일 수: $file_count"
-                      echo "FILE_COUNT=$file_count" >> $GITHUB_ENV
-                      
-                      cat review.txt
-                    else
-                      echo "리뷰 파일이 생성되지 않았습니다."
-                      exit 1
-                    fi
+              // 실패해도 workflow는 계속 진행
+              core.warning(`Failed to post comment: ${error.message}`);
+            }
