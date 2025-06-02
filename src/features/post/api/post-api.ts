@@ -1,7 +1,6 @@
 import { type ApiRequest, fetcher } from '@/shared/api';
 import type { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
-import type { GetPostBySlugResponse } from '../model/post-types';
 
 export const getPostList = () => fetcher({ url: '/api/posts', method: 'get' });
 
@@ -62,7 +61,7 @@ export const deletePost = (id: number) =>
     method: 'delete',
   });
 
-export const getPostBySlug = (slug: string): GetPostBySlugResponse =>
+export const getPostBySlug = (slug: string) =>
   fetcher({
     url: '/api/posts/{slug}',
     path: { slug },
