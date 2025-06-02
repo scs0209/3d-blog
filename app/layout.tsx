@@ -5,6 +5,9 @@ import './globals.css';
 import './Prosemirror.css';
 import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
 import Providers from '@/app/Providers';
+import dynamic from 'next/dynamic';
+
+const VisitorLogger = dynamic(() => import('@/shared/ui/VisitorLogger'));
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,6 +34,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <Providers>
+            <VisitorLogger />
             {children}
             <ThemeToggleButton />
           </Providers>
