@@ -14,6 +14,7 @@ export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count
     'bg-sky-500 border-sky-200',
     'bg-rose-500 border-rose-200',
     'bg-red-500 border-red-200',
+    'bg-lime-500 border-lime-200',
   ];
 
   // 태그 이름을 해시로 변환해서 색상 인덱스 결정
