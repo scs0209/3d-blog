@@ -24,6 +24,8 @@ import prisma from '@/shared/lib/db';
  *               properties:
  *                 id:
  *                   type: integer
+ *                 slug:
+ *                   type: string
  *                 title:
  *                   type: string
  *                 content:
@@ -47,12 +49,76 @@ import prisma from '@/shared/lib/db';
  *                       type: string
  *                 category:
  *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     slug:
+ *                       type: string
  *                 tags:
  *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       name:
+ *                         type: string
+ *                       slug:
+ *                         type: string
  *                 comments:
  *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       content:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       author:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           name:
+ *                             type: string
+ *                       replies:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: integer
+ *                             content:
+ *                               type: string
+ *                             createdAt:
+ *                               type: string
+ *                               format: date-time
+ *                             author:
+ *                               type: object
+ *                               properties:
+ *                                 id:
+ *                                   type: integer
+ *                                 name:
+ *                                   type: string
  *                 likes:
  *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       user:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           name:
+ *                             type: string
  *       404:
  *         description: 게시물을 찾을 수 없음
  *       500:

@@ -526,6 +526,7 @@ export interface paths {
                     content: {
                         "application/json": {
                             id?: number;
+                            slug?: string;
                             title?: string;
                             content?: string;
                             /** Format: date-time */
@@ -538,10 +539,43 @@ export interface paths {
                                 name?: string;
                                 email?: string;
                             };
-                            category?: Record<string, never>;
-                            tags?: unknown[];
-                            comments?: unknown[];
-                            likes?: unknown[];
+                            category?: {
+                                id?: number;
+                                name?: string;
+                                slug?: string;
+                            };
+                            tags?: {
+                                id?: number;
+                                name?: string;
+                                slug?: string;
+                            }[];
+                            comments?: {
+                                id?: number;
+                                content?: string;
+                                /** Format: date-time */
+                                createdAt?: string;
+                                author?: {
+                                    id?: number;
+                                    name?: string;
+                                };
+                                replies?: {
+                                    id?: number;
+                                    content?: string;
+                                    /** Format: date-time */
+                                    createdAt?: string;
+                                    author?: {
+                                        id?: number;
+                                        name?: string;
+                                    };
+                                }[];
+                            }[];
+                            likes?: {
+                                id?: number;
+                                user?: {
+                                    id?: number;
+                                    name?: string;
+                                };
+                            }[];
                         };
                     };
                 };
