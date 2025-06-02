@@ -1,20 +1,20 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count: number }) => {
-  const colorCombos = [
-    'bg-blue-500 border-blue-200',
-    'bg-pink-500 border-pink-200',
-    'bg-green-500 border-green-200',
-    'bg-yellow-500 border-yellow-200',
-    'bg-purple-500 border-purple-200',
-    'bg-cyan-500 border-cyan-200',
-    'bg-fuchsia-500 border-fuchsia-200',
-    'bg-orange-500 border-orange-200',
-    'bg-sky-500 border-sky-200',
-    'bg-rose-500 border-rose-200',
-  ];
+const colorCombos = [
+  'bg-blue-500 border-blue-200',
+  'bg-pink-500 border-pink-200',
+  'bg-green-500 border-green-200',
+  'bg-yellow-500 border-yellow-200',
+  'bg-purple-500 border-purple-200',
+  'bg-cyan-500 border-cyan-200',
+  'bg-fuchsia-500 border-fuchsia-200',
+  'bg-orange-500 border-orange-200',
+  'bg-sky-500 border-sky-200',
+  'bg-rose-500 border-rose-200',
+];
 
+export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count: number }) => {
   // 태그 이름을 해시로 변환해서 색상 인덱스 결정
   function hashString(str: string) {
     let hash = 0;

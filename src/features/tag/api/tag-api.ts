@@ -1,6 +1,6 @@
 import { type ApiRequest, fetcher } from '@/shared/api';
 
-export const getAllTag = fetcher({ url: '/api/tags', method: 'get' });
+export const getAllTag = () => fetcher({ url: '/api/tags', method: 'get' });
 
 export const createTag = (name: string) =>
   fetcher({
