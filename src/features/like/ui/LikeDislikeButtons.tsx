@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 
 type LikeDislikeButtonsProps = {
-  initialLikes: number;
-  initialDislikes: number;
+  initialLikes?: number;
+  initialDislikes?: number;
   size?: number;
 };
 
@@ -16,13 +16,13 @@ export const LikeDislikeButtons = ({ initialLikes, initialDislikes, size = 16 }:
   const [dislikeAnimation, setDislikeAnimation] = useState(false);
 
   const handleLike = () => {
-    setLikes((prev) => prev + 1);
+    setLikes((prev) => (prev ? prev + 1 : 1));
     setLikeAnimation(true);
     setTimeout(() => setLikeAnimation(false), 600);
   };
 
   const handleDislike = () => {
-    setDislikes((prev) => prev + 1);
+    setDislikes((prev) => (prev ? prev + 1 : 1));
     setDislikeAnimation(true);
     setTimeout(() => setDislikeAnimation(false), 600);
   };
