@@ -318,6 +318,266 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/comments/{postId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 게시물의 댓글 목록 조회
+         * @description 게시물 ID에 해당하는 모든 댓글과 대댓글을 계층 구조로 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 ID */
+                    postId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 댓글 목록 반환 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            content?: string;
+                            createdAt?: string;
+                            author?: {
+                                name?: string;
+                            };
+                            likes?: number;
+                            dislikes?: number;
+                            replies?: {
+                                id?: number;
+                                content?: string;
+                                createdAt?: string;
+                                author?: {
+                                    name?: string;
+                                };
+                                likes?: number;
+                                dislikes?: number;
+                            }[];
+                        }[];
+                    };
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/comments/individual/{commentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * 댓글 수정
+         * @description 특정 댓글의 내용을 수정합니다.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    commentId: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 수정할 댓글 내용 */
+                        content: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description 댓글 수정 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            content?: string;
+                            updatedAt?: string;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        /**
+         * 댓글 삭제
+         * @description 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    commentId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 댓글 삭제 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 댓글 또는 대댓글 생성
+         * @description 새로운 댓글을 생성합니다. parentId가 있으면 대댓글, 없으면 댓글입니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 댓글 내용 */
+                        content: string;
+                        /** @description 게시물 ID */
+                        postId: number;
+                        /** @description 작성자 ID */
+                        authorId: number;
+                        /** @description 부모 댓글 ID (대댓글인 경우) */
+                        parentId?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description 댓글 생성 성공 */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            content?: string;
+                            createdAt?: string;
+                            author?: {
+                                name?: string;
+                            };
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/post/{id}": {
         parameters: {
             query?: never;

@@ -9,15 +9,16 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  name      String
-  role      Role      @default(USER)
-  createdAt DateTime  @default(now())
-  comments  Comment[]
-  likes     Like[]
-  posts     Post[]
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  name         String
+  role         Role          @default(USER)
+  createdAt    DateTime      @default(now())
+  comments     Comment[]
+  likes        Like[]
+  commentLikes CommentLike[]
+  posts        Post[]
 }
 
 model Category {
@@ -28,7 +29,6 @@ model Category {
   posts       Post[]
   createdAt   DateTime @default(now())
 }
-
 
 model Tag {
   id        Int       @id @default(autoincrement())
@@ -55,16 +55,29 @@ model Post {
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
-  content   String
-  postId    Int
-  authorId  Int
-  parentId  Int?
-  createdAt DateTime  @default(now())
-  author    User      @relation(fields: [authorId], references: [id])
-  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentToComment")
-  post      Post      @relation(fields: [postId], references: [id])
+  id           Int           @id @default(autoincrement())
+  content      String
+  postId       Int
+  authorId     Int
+  parentId     Int?
+  createdAt    DateTime      @default(now())
+  author       User          @relation(fields: [authorId], references: [id])
+  parent       Comment?      @relation("CommentToComment", fields: [parentId], references: [id])
+  replies      Comment[]     @relation("CommentToComment")
+  post         Post          @relation(fields: [postId], references: [id])
+  commentLikes CommentLike[]
+}
+
+model CommentLike {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  type      LikeType
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
 }
 
 model Like {
@@ -87,4 +100,9 @@ model VisitorLog {
 enum Role {
   ADMIN
   USER
+}
+
+enum LikeType {
+  LIKE
+  DISLIKE
 }
