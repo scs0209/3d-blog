@@ -18,3 +18,12 @@ export const getComments = (params: GetCommentsParams): Promise<GetCommentsRespo
     path: { postId: params.postId },
     method: 'get',
   });
+
+type DeleteCommentParams = ApiRequestParams<'/api/comments/individual/{commentId}', 'delete'>;
+
+export const deleteComment = (params: DeleteCommentParams) =>
+  fetcher({
+    url: '/api/comments/individual/{commentId}',
+    path: { commentId: params.commentId },
+    method: 'delete',
+  });
