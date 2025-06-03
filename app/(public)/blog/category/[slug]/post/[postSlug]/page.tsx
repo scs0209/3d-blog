@@ -1,7 +1,7 @@
 import { getPostBySlug } from '@/features/post/api/post-api';
 import { formatDateToYMD } from '@/shared/utils';
 import dynamic from 'next/dynamic';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { LikeDislikeButtons } from '@/features/like/ui';
 
 const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
 
@@ -17,11 +17,11 @@ export default async function PostPage({
   return (
     <div>
       {/* 본문 영역 꾸밈 */}
-      <section className='relative bg-gradient-to-br from-[#181c2a]/90 via-[#232946]/90 to-[#232946]/80 border border-blue-400/30 rounded-2xl shadow-[0_0_24px_4px_#7dd3fc22] px-4 sm:px-6 md:px-8 py-8 mb-12 mt-4 max-w-3xl mx-auto overflow-hidden'>
-        <div className='absolute inset-0 pointer-events-none z-0'>
+      <section className='relative md:bg-gradient-to-br md:from-[#181c2a]/90 md:via-[#232946]/90 md:to-[#232946]/80 md:border md:border-blue-400/30 md:rounded-2xl md:shadow-[0_0_24px_4px_#7dd3fc22] px-4 sm:px-6 md:px-8 py-8 mb-12 mt-4 max-w-3xl mx-auto md:overflow-hidden'>
+        <div className='absolute inset-0 pointer-events-none z-0 hidden md:block'>
           <div className='w-full h-full bg-gradient-to-tr from-blue-900/20 via-fuchsia-900/10 to-blue-800/10 blur-[2px]' />
         </div>
-        <h1 className='relative z-10 text-3xl font-extrabold text-blue-100 mb-4 drop-shadow-[0_2px_8px_#7dd3fc55]'>
+        <h1 className='relative z-10 text-3xl font-extrabold text-blue-100 mb-4 md:drop-shadow-[0_2px_8px_#7dd3fc55]'>
           {post.title}
         </h1>
         <div className='relative z-10 flex items-center gap-3 mb-6 text-xs text-blue-200'>
@@ -34,8 +34,8 @@ export default async function PostPage({
         </div>
       </section>
       {/* 댓글 */}
-      <section className='mt-10 relative bg-gradient-to-br from-[#181c2a]/90 via-[#232946]/90 to-[#232946]/80 border border-blue-400/30 rounded-2xl shadow-[0_0_24px_4px_#7dd3fc22] px-4 sm:px-6 md:px-8 py-8 max-w-3xl mx-auto overflow-hidden'>
-        <div className='absolute inset-0 pointer-events-none z-0'>
+      <section className='mt-10 relative md:bg-gradient-to-br md:backdrop-blur-sm md:border md:from-[#181c2a]/90 md:via-[#232946]/90 md:to-[#232946]/80 md:border-blue-400/30 rounded-2xl md:shadow-[0_0_24px_4px_#7dd3fc22] px-4 sm:px-6 md:px-8 py-8 max-w-3xl mx-auto md:overflow-hidden'>
+        <div className='absolute inset-0 pointer-events-none z-0 hidden md:block'>
           <div className='w-full h-full bg-gradient-to-tr from-blue-900/20 via-fuchsia-900/10 to-blue-800/10 blur-[2px]' />
         </div>
         <div className='relative z-10'>
@@ -47,7 +47,7 @@ export default async function PostPage({
               </label>
               <textarea
                 id='comment-input'
-                className='w-full bg-[#232946] border border-blue-400/40 rounded-lg p-3 pr-16 text-slate-100 font-mono resize-none focus:outline-none focus:ring-2 focus:ring-blue-400/60 shadow-[0_0_8px_#7dd3fc33]'
+                className='w-full bg-[#232946] border border-blue-400/40 rounded-lg p-3 pr-16 text-slate-100 font-mono resize-none focus:outline-none focus:ring-2 focus:ring-blue-400/60 md:shadow-[0_0_8px_#7dd3fc33]'
                 rows={3}
                 placeholder='댓글을 입력하세요...'
                 aria-label='댓글 입력'
@@ -55,7 +55,7 @@ export default async function PostPage({
               />
               <button
                 type='button'
-                className='absolute bottom-2.5 right-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold px-3 py-1.5 rounded-lg shadow-[0_0_8px_#7dd3fc55] transition disabled:opacity-60 text-xs'
+                className='absolute bottom-2.5 right-2.5 bg-blue-700 hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg md:shadow-[0_0_8px_#7dd3fc55] transition-all duration-300 disabled:opacity-60 text-xs transform hover:scale-110 hover:rotate-1 active:scale-95 active:rotate-0'
                 style={{ fontSize: '0.85rem', marginBottom: '6px', marginRight: '6px' }}
                 aria-label='댓글 등록'
                 disabled
@@ -67,7 +67,7 @@ export default async function PostPage({
           {/* 대댓글 */}
           <ul className='space-y-6'>
             <li>
-              <article className='bg-[#181c2a]/80 border border-blue-400/20 rounded-xl p-4 shadow-[0_0_8px_#7dd3fc22] relative'>
+              <article className='bg-gradient-to-br from-slate-800/60 to-slate-700/40 backdrop-blur-sm border border-slate-600/50 md:from-[#181c2a]/80 md:to-[#232946]/60 md:border-blue-400/20 rounded-xl p-4 md:shadow-[0_0_8px_#7dd3fc22] relative'>
                 <header className='flex items-center gap-2 mb-1'>
                   <address className='not-italic font-bold text-blue-200'>user1</address>
                   <time className='text-xs text-blue-300' dateTime='2024-06-01'>
@@ -82,37 +82,26 @@ export default async function PostPage({
                       aria-label='답글 입력창 열기'
                       aria-expanded='false'
                       aria-controls='reply-1'
-                      className='text-xs text-blue-400 hover:underline flex items-center gap-1'
+                      className='text-xs text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1'
                     >
                       <span>답글</span>
                       <span aria-hidden>▼</span>
                     </button>
-                    <button className='text-xs text-fuchsia-400 hover:underline' type='button' aria-label='댓글 삭제'>
+                    <button
+                      className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
+                      type='button'
+                      aria-label='댓글 삭제'
+                    >
                       삭제
                     </button>
                   </div>
                   <div className='flex items-center gap-1'>
-                    <button
-                      type='button'
-                      aria-label='좋아요'
-                      className='text-blue-300 hover:text-blue-400 transition p-1 rounded-full hover:bg-blue-900/30'
-                    >
-                      <ThumbsUp size={16} />
-                    </button>
-                    <span className='text-blue-300 text-xs'>3</span>
-                    <button
-                      type='button'
-                      aria-label='싫어요'
-                      className='text-fuchsia-300 hover:text-fuchsia-400 transition p-1 rounded-full hover:bg-fuchsia-900/30'
-                    >
-                      <ThumbsDown size={16} />
-                    </button>
-                    <span className='text-blue-300 text-xs'>0</span>
+                    <LikeDislikeButtons initialLikes={3} initialDislikes={0} />
                   </div>
                 </div>
-                <ul className='mt-4 space-y-3 pl-4 border-l-2 border-blue-900/40'>
+                <ul className='mt-4 space-y-3 pl-4 border-l-2 border-slate-600/60 md:border-blue-900/40'>
                   <li>
-                    <article className='bg-[#232946]/80 border border-fuchsia-400/20 rounded-lg p-3 relative'>
+                    <article className='bg-gradient-to-br from-slate-700/50 to-slate-600/30 backdrop-blur-sm border border-slate-600/40 md:from-[#232946]/80 md:to-[#181c2a]/40 md:border-fuchsia-400/20 rounded-lg p-3 relative'>
                       <header className='flex items-center gap-2 mb-1'>
                         <address className='not-italic font-bold text-fuchsia-200'>user2</address>
                         <time className='text-xs text-fuchsia-300' dateTime='2024-06-01'>
@@ -123,7 +112,7 @@ export default async function PostPage({
                       <div className='flex gap-2 items-center justify-between mt-2'>
                         <div className='flex gap-2 items-center'>
                           <button
-                            className='text-xs text-fuchsia-400 hover:underline'
+                            className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
                             type='button'
                             aria-label='대댓글 삭제'
                           >
@@ -131,22 +120,7 @@ export default async function PostPage({
                           </button>
                         </div>
                         <div className='flex items-center gap-1'>
-                          <button
-                            type='button'
-                            aria-label='좋아요'
-                            className='text-blue-300 hover:text-blue-400 transition p-1 rounded-full hover:bg-blue-900/30'
-                          >
-                            <ThumbsUp size={15} />
-                          </button>
-                          <span className='text-fuchsia-300 text-xs'>1</span>
-                          <button
-                            type='button'
-                            aria-label='싫어요'
-                            className='text-fuchsia-300 hover:text-fuchsia-400 transition p-1 rounded-full hover:bg-fuchsia-900/30'
-                          >
-                            <ThumbsDown size={15} />
-                          </button>
-                          <span className='text-fuchsia-300 text-xs'>0</span>
+                          <LikeDislikeButtons initialLikes={1} initialDislikes={0} size={15} />
                         </div>
                       </div>
                     </article>
@@ -166,7 +140,7 @@ export default async function PostPage({
                       />
                       <button
                         type='button'
-                        className='absolute bottom-2.5 right-2.5 bg-fuchsia-700 hover:bg-fuchsia-800 text-white font-bold px-2.5 py-1 rounded-lg shadow-[0_0_8px_#f472b655] transition disabled:opacity-60 text-xs'
+                        className='absolute bottom-2.5 right-2.5 bg-fuchsia-700 hover:bg-fuchsia-600 text-white font-bold px-2.5 py-1 rounded-lg md:shadow-[0_0_8px_#f472b655] transition-all duration-300 disabled:opacity-60 text-xs transform hover:scale-110 hover:rotate-1 active:scale-95'
                         style={{ fontSize: '0.8rem', marginBottom: '6px', marginRight: '6px' }}
                         aria-label='대댓글 등록'
                         disabled
@@ -179,7 +153,7 @@ export default async function PostPage({
               </article>
             </li>
             <li>
-              <article className='bg-[#181c2a]/80 border border-blue-400/20 rounded-xl p-4 shadow-[0_0_8px_#7dd3fc22] relative'>
+              <article className='bg-gradient-to-br from-slate-800/60 to-slate-700/40 backdrop-blur-sm border border-slate-600/50 md:from-[#181c2a]/80 md:to-[#232946]/60 md:border-blue-400/20 rounded-xl p-4 md:shadow-[0_0_8px_#7dd3fc22] relative'>
                 <header className='flex items-center gap-2 mb-1'>
                   <address className='not-italic font-bold text-blue-200'>user3</address>
                   <time className='text-xs text-blue-300' dateTime='2024-06-02'>
@@ -194,32 +168,21 @@ export default async function PostPage({
                       aria-label='답글 입력창 열기'
                       aria-expanded='false'
                       aria-controls='reply-2'
-                      className='text-xs text-blue-400 hover:underline flex items-center gap-1'
+                      className='text-xs text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1'
                     >
                       <span>답글</span>
                       <span aria-hidden>▼</span>
                     </button>
-                    <button className='text-xs text-fuchsia-400 hover:underline' type='button' aria-label='댓글 삭제'>
+                    <button
+                      className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
+                      type='button'
+                      aria-label='댓글 삭제'
+                    >
                       삭제
                     </button>
                   </div>
                   <div className='flex items-center gap-1'>
-                    <button
-                      type='button'
-                      aria-label='좋아요'
-                      className='text-blue-300 hover:text-blue-400 transition p-1 rounded-full hover:bg-blue-900/30'
-                    >
-                      <ThumbsUp size={16} />
-                    </button>
-                    <span className='text-blue-300 text-xs'>2</span>
-                    <button
-                      type='button'
-                      aria-label='싫어요'
-                      className='text-fuchsia-300 hover:text-fuchsia-400 transition p-1 rounded-full hover:bg-fuchsia-900/30'
-                    >
-                      <ThumbsDown size={16} />
-                    </button>
-                    <span className='text-blue-300 text-xs'>1</span>
+                    <LikeDislikeButtons initialLikes={2} initialDislikes={1} />
                   </div>
                 </div>
               </article>
