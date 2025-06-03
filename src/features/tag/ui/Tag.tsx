@@ -12,6 +12,12 @@ const colorCombos = [
   'bg-orange-500 border-orange-200',
   'bg-sky-500 border-sky-200',
   'bg-rose-500 border-rose-200',
+  'bg-lime-500 border-lime-200',
+  'bg-teal-500 border-teal-200',
+  'bg-indigo-500 border-indigo-200',
+  'bg-violet-500 border-violet-200',
+  'bg-red-500 border-red-200',
+  'bg-gray-500 border-gray-200',
 ];
 
 export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count: number }) => {
