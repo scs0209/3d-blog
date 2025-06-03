@@ -14,9 +14,6 @@ export const createCommentSchema = z.object({
   postId: z.number().positive({
     message: '유효한 게시글 ID가 필요합니다.',
   }),
-  authorId: z.number().positive({
-    message: '유효한 작성자 ID가 필요합니다.',
-  }),
   parentId: z.number().positive().optional(),
 });
 

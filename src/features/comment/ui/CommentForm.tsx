@@ -3,7 +3,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateComment, commentFormSchema, type CommentFormSchema } from '../model';
-import { useSession } from 'next-auth/react';
 
 type CommentFormProps = {
   postId: number;
@@ -11,7 +10,6 @@ type CommentFormProps = {
 };
 
 export function CommentForm({ postId, disabled = false }: CommentFormProps) {
-  const { data: session } = useSession();
   const { createComment, isPending } = useCreateComment();
   const {
     register,
@@ -31,7 +29,6 @@ export function CommentForm({ postId, disabled = false }: CommentFormProps) {
       {
         postId,
         content: data.content.trim(),
-        authorId: Number(session?.user?.id),
       },
       {
         onSuccess: () => {

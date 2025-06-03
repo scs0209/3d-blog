@@ -3,13 +3,19 @@
 import type { ReplyType } from '@/entities/comment/model/types';
 import { LikeDislikeButtons } from '@/features/like/ui';
 import { formatDateToYMD } from '@/shared/utils';
+import { useDeleteComment } from '../model';
 
 type ReplyProps = {
   reply: ReplyType;
-  onDelete?: (replyId: string | number) => void;
 };
 
-export function Reply({ reply, onDelete }: ReplyProps) {
+export function Reply({ reply }: ReplyProps) {
+  const { deleteComment } = useDeleteComment();
+
+  const handleDelete = () => {
+    deleteComment({ commentId: reply.id ?? 0 });
+  };
+
   return (
     <li>
       <article className='bg-gradient-to-br from-slate-700/50 to-slate-600/30 backdrop-blur-sm border border-slate-600/40 md:from-[#232946]/80 md:to-[#181c2a]/40 md:border-fuchsia-400/20 rounded-lg p-3 relative'>
@@ -26,7 +32,7 @@ export function Reply({ reply, onDelete }: ReplyProps) {
               className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
               type='button'
               aria-label='대댓글 삭제'
-              onClick={() => onDelete?.(reply.id ?? '')}
+              onClick={handleDelete}
             >
               삭제
             </button>
