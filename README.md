@@ -16,7 +16,7 @@ Next.js, TypeScript, Prisma, Tailwind CSS를 사용하여 구축된 블로깅 �
 
 *   **타입 생성 스크립트:** 다음 명령어를 사용하여 타입을 생성할 수 있습니다.
     ```sh
-    npm run generate-types
+    pnpm generate-types
     ```
     (내부적으로 `sh scripts/generate-types.sh` 스크립트를 실행할 수 있습니다.)
 
@@ -125,7 +125,7 @@ FSD 레이어는 `src` 디렉토리 내에 구성되며, Next.js App Router 환�
 ### 사전 요구 사항 (Prerequisites)
 
 *   Node.js (v16 이상)
-*   npm 또는 yarn
+*   pnpm
 
 ### 설치 (Installation)
 
@@ -133,11 +133,9 @@ FSD 레이어는 `src` 디렉토리 내에 구성되며, Next.js App Router 환�
     ```sh
     git clone https://github.com/your_username/blogging-platform.git
     ```
-2.  NPM 패키지 설치:
+2.  pnpm 패키지 설치:
     ```sh
-    npm install
-    # 또는
-    yarn install
+    pnpm install
     ```
 3.  데이터베이스 설정:
     *   프로젝트 루트에 `.env` 파일을 생성합니다.
@@ -147,15 +145,13 @@ FSD 레이어는 `src` 디렉토리 내에 구성되며, Next.js App Router 환�
         ```
     *   Prisma 마이그레이션 실행:
         ```sh
-        npx prisma migrate dev
+        pnpm exec prisma migrate dev
         ```
 
 ### 프로젝트 실행 (Running the Project)
 
 ```sh
-npm run dev
-# 또는
-yarn dev
+pnpm dev
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)으로 접속하여 결과를 확인하세요.
@@ -197,13 +193,13 @@ FSD 아키텍처와 Next.js App Router를 적용함에 따라, 프로젝트의 �
 
 프로젝트 디렉토리에서 다음 스크립트를 실행할 수 있습니다:
 
-*   `npm run dev` 또는 `yarn dev`: 개발 모드로 앱을 실행합니다.
-*   `npm run build` 또는 `yarn build`: 프로덕션용으로 앱을 빌드합니다.
-*   `npm run start` 또는 `yarn start`: 프로덕션 서버를 시작합니다.
-*   `npm run lint` 또는 `yarn lint`: ESLint를 사용하여 코드베이스를 검사합니다.
-*   `npm run generate-types`: OpenAPI 명세로부터 API 타입을 생성합니다. (출력: `src/shared/api/openapi-types.ts`)
-*   `npx prisma migrate dev`: Prisma 마이그레이션을 실행하여 데이터베이스 스키마를 업데이트합니다.
-*   `npx prisma studio`: Prisma Studio를 열어 데이터베이스를 보고 관리합니다.
+*   `pnpm dev`: 개발 모드로 앱을 실행합니다.
+*   `pnpm build`: 프로덕션용으로 앱을 빌드합니다.
+*   `pnpm start`: 프로덕션 서버를 시작합니다.
+*   `pnpm lint`: ESLint를 사용하여 코드베이스를 검사합니다.
+*   `pnpm generate-types`: OpenAPI 명세로부터 API 타입을 생성합니다. (출력: `src/shared/api/openapi-types.ts`)
+*   `pnpm exec prisma migrate dev`: Prisma 마이그레이션을 실행하여 데이터베이스 스키마를 업데이트합니다.
+*   `pnpm exec prisma studio`: Prisma Studio를 열어 데이터베이스를 보고 관리합니다.
 
 ## 개인 프로젝트 노트 (Personal Project Note)
 
