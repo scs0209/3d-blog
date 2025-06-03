@@ -11,3 +11,9 @@ export type ApiRequest<T extends keyof paths, M extends keyof paths[T]> = paths[
 }
   ? R
   : never;
+
+export type ApiRequestParams<T extends keyof paths, M extends keyof paths[T]> = paths[T][M] extends {
+  parameters: { path: infer R };
+}
+  ? R
+  : never;
