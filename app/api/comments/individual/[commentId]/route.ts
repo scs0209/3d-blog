@@ -3,7 +3,7 @@ import prisma from '@/shared/lib/db';
 
 /**
  * @swagger
- * /api/comments/{commentId}:
+ * /api/comments/individual/{commentId}:
  *   delete:
  *     summary: 댓글 삭제
  *     description: 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다.
@@ -66,7 +66,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ comme
 
 /**
  * @swagger
- * /api/comments/{commentId}:
+ * /api/comments/individual/{commentId}:
  *   put:
  *     summary: 댓글 수정
  *     description: 특정 댓글의 내용을 수정합니다.
