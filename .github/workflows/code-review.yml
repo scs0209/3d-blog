@@ -115,7 +115,7 @@ jobs:
 
           반드시 한국어로만 답변하고, 위 형식을 정확히 따라주세요. 코드 예시는 실제 변경사항과 관련된 구체적인 예시를 제공해주세요."
 
-                echo "$review_prompt" | ollama run qwen2.5-coder.5-coder:1.5b >> review.txt
+                echo "$review_prompt" | ollama run qwen2.5-coder:1.5b >> review.txt
               else
                 echo "변경 내용을 찾을 수 없습니다." >> review.txt
               fi
