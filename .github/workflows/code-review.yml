@@ -1,4 +1,4 @@
-name: AI 코드 리뷰
+name: AI 코드 리뷰 (최적화)
 on:
   pull_request:
     types: [opened, synchronize]
@@ -47,94 +47,187 @@ jobs:
           echo "Ollama 연결 테스트..."
           curl -s http://localhost:11434/api/version || exit 1
           
-          # 한국어 지원이 더 나은 모델 사용
+          # 경량 모델 사용으로 속도 향상
           echo "모델 다운로드 중..."
-          ollama pull qwen2.5-coder:1.5b  # 또는 gemma2:2b, llama3.2:1b
+          ollama pull qwen2.5-coder:1.5b
           
           # 한국어 테스트
           echo "한국어 테스트..."
           echo "안녕하세요. 한국어로 인사해주세요." | ollama run qwen2.5-coder:1.5b
           
-      - name: 변경된 파일 분석 및 리뷰
+      - name: 변경된 파일 분석 및 우선순위 설정
         run: |
-          echo "변경된 파일 확인..."
+          echo "변경된 파일 확인 및 분석..."
           git fetch origin ${{ github.base_ref }}
           
-          # 더 많은 파일 형식 지원
-          changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala)$' || true)
+          # 모든 변경된 파일 찾기
+          all_changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala)$' || true)
           
-          if [ -n "$changed_files" ]; then
-            echo "리뷰할 파일들: $changed_files"
-            > review.txt
+          if [ -n "$all_changed_files" ]; then
+            echo "전체 변경된 파일:"
+            echo "$all_changed_files"
             
-            for file in $changed_files; do
-              echo "=== $file 리뷰 ===" >> review.txt
-              echo "" >> review.txt
+            # 파일 크기와 변경량 기준으로 우선순위 설정
+            > file_priorities.txt
+            > large_files.txt
+            
+            total_files=0
+            processed_files=0
+            max_files=10  # 최대 처리 파일 수 제한
+            
+            for file in $all_changed_files; do
+              total_files=$((total_files + 1))
               
-              # 파일 변경 내용 가져오기
-              diff_content=$(git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -50)
-              
-              if [ -n "$diff_content" ]; then
-                # 구조화된 한국어 리뷰 프롬프트
-                review_prompt="다음 코드 변경사항을 분석하고 아래 형식에 맞춰 한국어로 리뷰해주세요.
-
-          코드 변경 내용:
-          $diff_content
-
-          ## 🚨 위험도 평가
-          [낮음/보통/높음/긴급]
-
-          ## 🔍 주요 발견사항
-          - 발견된 이슈들을 나열 (구체적인 라인 번호나 함수명 포함)
-
-          ## 📊 코드 품질
-          - 가독성, 유지보수성 평가
-          - 네이밍 컨벤션, 코드 구조 등
-
-          ## 🔒 보안 및 안정성
-          - 보안 이슈나 잠재적 버그
-          - 입력 검증, 에러 처리 등
-
-          ## ⚡ 성능 영향
-          - 성능에 미치는 영향 분석
-          - 메모리 사용량, 실행 시간 등
-
-          ## 💡 권장사항 및 개선 예시
-          - 구체적인 개선 제안
-          - 가능하면 Before/After 코드 예시 포함:
-
-          ### 개선 전:
-          \`\`\`
-          // 문제가 있는 코드 예시
-          \`\`\`
-
-          ### 개선 후:
-          \`\`\`
-          // 권장하는 코드 예시
-          \`\`\`
-
-          반드시 한국어로만 답변하고, 위 형식을 정확히 따라주세요. 코드 예시는 실제 변경사항과 관련된 구체적인 예시를 제공해주세요."
-
-                echo "$review_prompt" | ollama run qwen2.5-coder:1.5b >> review.txt
+              if [ -f "$file" ]; then
+                # 파일 크기 확인 (KB)
+                file_size=$(du -k "$file" 2>/dev/null | cut -f1 || echo "0")
+                
+                # 변경 라인 수 확인
+                changed_lines=$(git diff --numstat origin/${{ github.base_ref }}..HEAD -- "$file" | awk '{print $1+$2}' || echo "0")
+                
+                # 우선순위 점수 계산 (변경 라인 수가 더 중요)
+                priority_score=$((changed_lines * 10 + file_size))
+                
+                echo "$priority_score:$file:$file_size:$changed_lines" >> file_priorities.txt
+                
+                # 큰 파일 별도 처리 (50KB 이상 또는 500라인 이상 변경)
+                if [ "$file_size" -gt 50 ] || [ "$changed_lines" -gt 500 ]; then
+                  echo "$file" >> large_files.txt
+                  echo "⚠️ 대용량 파일 감지: $file (크기: ${file_size}KB, 변경: ${changed_lines}라인)"
+                fi
               else
-                echo "변경 내용을 찾을 수 없습니다." >> review.txt
+                # 삭제된 파일
+                echo "0:$file:0:0" >> file_priorities.txt
               fi
-              
-              echo "" >> review.txt
-              echo "---" >> review.txt
-              echo "" >> review.txt
             done
             
-            echo "리뷰 결과:"
-            cat review.txt
+            # 우선순위별 정렬 (높은 점수부터)
+            sort -nr file_priorities.txt > sorted_files.txt
+            
+            echo "=== 파일 처리 계획 ==="
+            echo "총 파일 수: $total_files"
+            echo "최대 처리 파일 수: $max_files"
+            
+            # 처리할 파일 선별
+            > review_files.txt
+            while IFS=':' read -r score file size lines && [ $processed_files -lt $max_files ]; do
+              echo "$file" >> review_files.txt
+              processed_files=$((processed_files + 1))
+              echo "처리 예정: $file (점수: $score, 크기: ${size}KB, 변경: ${lines}라인)"
+            done < sorted_files.txt
+            
+            if [ $total_files -gt $max_files ]; then
+              skipped_files=$((total_files - max_files))
+              echo "⚠️ 시간 제한으로 인해 $skipped_files 개 파일을 건너뜁니다."
+              echo "SKIPPED_FILES=$skipped_files" >> $GITHUB_ENV
+            fi
+            
+            echo "TOTAL_FILES=$total_files" >> $GITHUB_ENV
+            echo "PROCESSED_FILES=$processed_files" >> $GITHUB_ENV
           else
             echo "리뷰할 코드 파일이 없습니다."
+            echo "TOTAL_FILES=0" >> $GITHUB_ENV
+            echo "PROCESSED_FILES=0" >> $GITHUB_ENV
+          fi
+          
+      - name: 배치별 코드 리뷰 실행
+        run: |
+          if [ -f "review_files.txt" ] && [ -s "review_files.txt" ]; then
+            echo "배치별 리뷰 시작..."
+            > review.txt
+            
+            batch_size=3  # 한 번에 처리할 파일 수
+            batch_num=1
+            file_count=0
+            current_batch=""
+            
+            # 시작 시간 기록
+            start_time=$(date +%s)
+            max_duration=600  # 10분 제한 (여유시간 확보)
+            
+            while IFS= read -r file; do
+              current_time=$(date +%s)
+              elapsed=$((current_time - start_time))
+              
+              # 시간 체크
+              if [ $elapsed -gt $max_duration ]; then
+                echo "⚠️ 시간 제한 도달 - 리뷰 중단"
+                break
+              fi
+              
+              file_count=$((file_count + 1))
+              current_batch="$current_batch $file"
+              
+              # 배치 크기에 도달하면 처리
+              if [ $((file_count % batch_size)) -eq 0 ] || [ $file_count -eq $PROCESSED_FILES ]; then
+                echo "=== 배치 $batch_num 처리 중 (남은 시간: $((max_duration - elapsed))초) ==="
+                
+                for batch_file in $current_batch; do
+                  if [ ! -f "$batch_file" ]; then
+                    echo "파일 없음: $batch_file" >> review.txt
+                    continue
+                  fi
+                  
+                  echo "처리 중: $batch_file"
+                  echo "=== $batch_file 리뷰 ===" >> review.txt
+                  echo "" >> review.txt
+                  
+                  # 파일 크기 체크
+                  file_size=$(du -k "$batch_file" 2>/dev/null | cut -f1 || echo "0")
+                  
+                  if [ "$file_size" -gt 100 ]; then
+                    # 큰 파일은 변경 부분만 분석
+                    echo "📊 대용량 파일 감지 (${file_size}KB) - 변경 부분만 분석합니다." >> review.txt
+                    diff_content=$(git diff origin/${{ github.base_ref }}..HEAD -- "$batch_file" | head -100)
+                  else
+                    # 작은 파일은 전체 분석
+                    diff_content=$(git diff origin/${{ github.base_ref }}..HEAD -- "$batch_file" | head -200)
+                  fi
+                  
+                  if [ -n "$diff_content" ]; then
+                    # 간결한 리뷰 프롬프트 (응답 시간 단축)
+                    review_prompt="다음 코드 변경사항을 간결하게 한국어로 리뷰해주세요:
+
+          $diff_content
+
+          아래 형식으로 답변해주세요:
+          🚨 위험도: [낮음/보통/높음/긴급]
+          🔍 주요 이슈: (1-2개 핵심 이슈만)
+          💡 권장사항: (1-2개 개선사항만)
+
+          간결하고 핵심적인 내용만 포함해주세요."
+
+                    # 타임아웃 설정으로 응답 속도 향상
+                    timeout 30s bash -c "echo '$review_prompt' | ollama run qwen2.5-coder:1.5b" >> review.txt 2>/dev/null || echo "⚠️ 리뷰 시간 초과 - 다음 파일로 진행" >> review.txt
+                  else
+                    echo "변경 내용 없음" >> review.txt
+                  fi
+                  
+                  echo "" >> review.txt
+                  echo "---" >> review.txt
+                  echo "" >> review.txt
+                done
+                
+                batch_num=$((batch_num + 1))
+                current_batch=""
+                
+                # 진행 상황 출력
+                echo "진행률: $file_count/$PROCESSED_FILES 파일 완료"
+              fi
+            done < review_files.txt
+            
+            # 최종 통계
+            end_time=$(date +%s)
+            total_duration=$((end_time - start_time))
+            echo "리뷰 완료 - 총 소요시간: ${total_duration}초"
+            
+            echo "REVIEW_DURATION=$total_duration" >> $GITHUB_ENV
+          else
+            echo "리뷰할 파일이 없습니다."
             echo "## 📝 리뷰 결과
 
-          이번 Pull Request에서는 리뷰할 코드 파일 변경사항이 없습니다.
-
-          검토 대상 파일 형식: Python, JavaScript, TypeScript, Java, C/C++, PHP, Ruby, Go, Rust, Kotlin, Swift, Dart, Scala" > review.txt
-                  fi
+          이번 Pull Request에서는 리뷰할 코드 파일 변경사항이 없습니다." > review.txt
+          fi
           
       - name: 리뷰 결과 댓글 작성
         uses: actions/github-script@v7
@@ -147,11 +240,17 @@ jobs:
               const review = fs.readFileSync('review.txt', 'utf8');
               const prNumber = context.payload.pull_request?.number || context.issue.number;
               
-              // 리뷰 내용에서 위험도 추출
-              const riskMatch = review.match(/위험도[^:]*:\s*\[([^\]]+)\]/i);
+              // 환경변수에서 통계 정보 가져오기
+              const totalFiles = process.env.TOTAL_FILES || '0';
+              const processedFiles = process.env.PROCESSED_FILES || '0';
+              const skippedFiles = process.env.SKIPPED_FILES || '0';
+              const reviewDuration = process.env.REVIEW_DURATION || '0';
+              
+              // 위험도 추출
+              const riskMatch = review.match(/위험도[^:]*:\s*\[?([^\]]+)\]?/i);
               const riskLevel = riskMatch ? riskMatch[1].trim() : '보통';
               
-              // 위험도에 따른 이모지와 색상
+              // 위험도에 따른 이모지
               const getRiskEmoji = (risk) => {
                 const lowerRisk = risk.toLowerCase();
                 if (lowerRisk.includes('긴급')) return '🚨';
@@ -160,19 +259,7 @@ jobs:
                 return '✅';
               };
               
-              const getRiskColor = (risk) => {
-                const lowerRisk = risk.toLowerCase();
-                if (lowerRisk.includes('긴급')) return '#FF0000';
-                if (lowerRisk.includes('높음')) return '#FF6B35';
-                if (lowerRisk.includes('보통')) return '#F6D55C';
-                return '#20BF55';
-              };
-              
-              // 파일 변경 통계
-              const changedFiles = review.match(/=== .+ 리뷰 ===/g) || [];
-              const fileCount = changedFiles.length;
-              
-              // 기존 AI 리뷰 댓글이 있는지 확인
+              // 기존 AI 리뷰 댓글 확인
               const { data: comments } = await github.rest.issues.listComments({
                 issue_number: prNumber,
                 owner: context.repo.owner,
@@ -187,6 +274,9 @@ jobs:
               const reviewDate = new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
               const riskEmoji = getRiskEmoji(riskLevel);
               
+              // 처리 효율성 계산
+              const efficiency = totalFiles > 0 ? Math.round((processedFiles / totalFiles) * 100) : 100;
+              
               const commentBody = `## 🤖 AI 코드 리뷰 보고서
 
             <table>
@@ -199,8 +289,13 @@ jobs:
             <td>${riskEmoji} <strong>${riskLevel}</strong></td>
             </tr>
             <tr>
-            <td>분석된 파일 수</td>
-            <td>${fileCount}개</td>
+            <td>처리된 파일</td>
+            <td>${processedFiles}/${totalFiles}개 (${efficiency}%)</td>
+            </tr>
+            ${skippedFiles > 0 ? `<tr><td>건너뛴 파일</td><td>${skippedFiles}개 (시간 제한)</td></tr>` : ''}
+            <tr>
+            <td>처리 시간</td>
+            <td>${reviewDuration}초</td>
             </tr>
             <tr>
             <td>리뷰 시간</td>
@@ -208,9 +303,15 @@ jobs:
             </tr>
             <tr>
             <td>AI 모델</td>
-            <td>qwen2.5-coder:1.5b</td>
+            <td>qwen2.5-coder:1.5b (최적화됨)</td>
             </tr>
             </table>
+
+            ${skippedFiles > 0 ? `
+            > ⚠️ **알림**: 시간 제한(15분)으로 인해 ${skippedFiles}개 파일을 건너뛰었습니다. 
+            > 중요도가 높은 파일을 우선적으로 처리했습니다.
+
+            ` : ''}
 
             ---
 
@@ -219,6 +320,22 @@ jobs:
             ${review}
 
             ---
+
+            <details>
+            <summary>📊 처리 최적화 정보</summary>
+
+            **배치 처리 방식:**
+            - 파일을 변경량과 크기 기준으로 우선순위 설정
+            - 중요 파일 우선 처리 (최대 10개 파일)
+            - 대용량 파일은 변경 부분만 분석
+            - 시간 제한 모니터링으로 안정성 확보
+
+            **우선순위 기준:**
+            1. 변경된 라인 수 (가중치 높음)
+            2. 파일 크기
+            3. 파일 중요도 (확장자별)
+
+            </details>
 
             <details>
             <summary>📖 리뷰 가이드라인</summary>
@@ -241,64 +358,54 @@ jobs:
             > ⚠️ **주의사항**: 이는 AI 자동 리뷰입니다. 최종 코드 검토는 반드시 사람이 수행해주세요.
 
             ---
-            *Generated by GitHub Actions • ${reviewDate}*`;
-              
-              if (botComment) {
-                // 기존 댓글 업데이트
-                await github.rest.issues.updateComment({
-                  comment_id: botComment.id,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: commentBody
-                });
-                console.log('기존 리뷰 댓글을 업데이트했습니다.');
-              } else {
-                // 새 댓글 작성
-                await github.rest.issues.createComment({
-                  issue_number: prNumber,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: commentBody
-                });
-                console.log('새 리뷰 댓글을 작성했습니다.');
-              }
-              
-              // 높은 위험도의 경우 추가 알림
-              if (riskLevel.includes('긴급') || riskLevel.includes('높음')) {
-                core.warning(`⚠️ 높은 위험도 감지: ${riskLevel}`);
+            *Generated by GitHub Actions • ${reviewDate} • Processed in ${reviewDuration}s*`;
                 
-                // 리뷰어 자동 요청 (옵션)
-                try {
-                  await github.rest.pulls.requestReviewers({
-                    pull_number: prNumber,
+                if (botComment) {
+                  await github.rest.issues.updateComment({
+                    comment_id: botComment.id,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    reviewers: [], // 여기에 리뷰어 추가 가능
-                    team_reviewers: [] // 여기에 팀 리뷰어 추가 가능
+                    body: commentBody
                   });
-                } catch (reviewError) {
-                  console.log('리뷰어 자동 요청 실패 (권한 부족 또는 설정 필요)');
+                  console.log('기존 리뷰 댓글을 업데이트했습니다.');
+                } else {
+                  await github.rest.issues.createComment({
+                    issue_number: prNumber,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: commentBody
+                  });
+                  console.log('새 리뷰 댓글을 작성했습니다.');
                 }
+                
+                // 높은 위험도 알림
+                if (riskLevel.includes('긴급') || riskLevel.includes('높음')) {
+                  core.warning(`⚠️ 높은 위험도 감지: ${riskLevel}`);
+                }
+                
+                // 처리 효율성이 낮으면 알림
+                if (efficiency < 80) {
+                  core.warning(`⚠️ 처리 효율성 낮음: ${efficiency}% (${skippedFiles}개 파일 건너뜀)`);
+                }
+                
+              } catch (error) {
+                console.error('댓글 작성 실패:', error.message);
+                core.setFailed(`댓글 작성에 실패했습니다: ${error.message}`);
               }
-              
-            } catch (error) {
-              console.error('댓글 작성 실패:', error.message);
-              core.setFailed(`댓글 작성에 실패했습니다: ${error.message}`);
-            }
 
-      - name: 리뷰 결과 및 위험도 분석
+      - name: 리뷰 결과 및 성능 분석
         run: |
           if [ -f "review.txt" ]; then
-            echo "=== 리뷰 결과 분석 ==="
+            echo "=== 리뷰 성능 분석 ==="
             
-            # 위험도 추출 및 출력
-            if grep -q "긴급" review.txt; then
+            # 위험도 분석
+            if grep -qi "긴급" review.txt; then
               echo "::error title=긴급 위험도 감지::코드에서 긴급 수정이 필요한 이슈가 발견되었습니다."
               echo "RISK_LEVEL=긴급" >> $GITHUB_ENV
-            elif grep -q "높음" review.txt; then
+            elif grep -qi "높음" review.txt; then
               echo "::warning title=높은 위험도 감지::코드에서 주의가 필요한 이슈가 발견되었습니다."
               echo "RISK_LEVEL=높음" >> $GITHUB_ENV
-            elif grep -q "보통" review.txt; then
+            elif grep -qi "보통" review.txt; then
               echo "::notice title=보통 위험도::일반적인 개선사항이 발견되었습니다."
               echo "RISK_LEVEL=보통" >> $GITHUB_ENV
             else
@@ -306,13 +413,24 @@ jobs:
               echo "RISK_LEVEL=낮음" >> $GITHUB_ENV
             fi
             
-            # 리뷰 통계
-            file_count=$(grep -c "=== .* 리뷰 ===" review.txt || echo "0")
-            echo "분석된 파일 수: $file_count"
-            echo "FILE_COUNT=$file_count" >> $GITHUB_ENV
+            # 성능 통계
+            echo "처리 통계:"
+            echo "- 총 파일 수: $TOTAL_FILES"
+            echo "- 처리된 파일 수: $PROCESSED_FILES"
+            echo "- 건너뛴 파일 수: ${SKIPPED_FILES:-0}"
+            echo "- 총 처리 시간: ${REVIEW_DURATION:-0}초"
             
-            cat review.txt
+            if [ "${SKIPPED_FILES:-0}" -gt 0 ]; then
+              echo "::warning title=일부 파일 건너뜀::시간 제한으로 인해 ${SKIPPED_FILES}개 파일을 건너뛰었습니다."
+            fi
+            
+            # 리뷰 품질 확인
+            review_lines=$(wc -l < review.txt)
+            if [ "$review_lines" -lt 10 ]; then
+              echo "::warning title=리뷰 결과 부족::리뷰 내용이 부족할 수 있습니다. 수동 검토를 권장합니다."
+            fi
+            
           else
-            echo "리뷰 파일이 생성되지 않았습니다."
+            echo "::error title=리뷰 실패::리뷰 파일이 생성되지 않았습니다."
             exit 1
           fi

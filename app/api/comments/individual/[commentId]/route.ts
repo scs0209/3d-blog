@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
+import { auth } from '@/shared/utils/auth';
 
 /**
  * @swagger
  * /api/comments/individual/{commentId}:
  *   delete:
  *     summary: 댓글 삭제
- *     description: 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다.
+ *     description: 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다. 작성자 또는 관리자만 삭제할 수 있습니다.
  *     tags:
  *       - Comments
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: commentId
  *         in: path
@@ -19,6 +22,10 @@ import prisma from '@/shared/lib/db';
  *     responses:
  *       200:
  *         description: 댓글 삭제 성공
+ *       401:
+ *         description: 인증되지 않은 사용자
+ *       403:
+ *         description: 권한 없음 (작성자가 아님)
  *       404:
  *         description: 댓글을 찾을 수 없음
  *       500:
@@ -26,6 +33,12 @@ import prisma from '@/shared/lib/db';
  */
 export async function DELETE(req: Request, { params }: { params: Promise<{ commentId: string }> }) {
   try {
+    // 인증 확인
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { commentId } = await params;
     const commentIdNum = Number(commentId);
 
@@ -33,7 +46,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ comme
       return NextResponse.json({ error: 'Invalid commentId' }, { status: 400 });
     }
 
-    // 댓글 존재 확인
+    // 댓글 존재 확인 및 작성자 검증
     const comment = await prisma.comment.findUnique({
       where: { id: commentIdNum },
       include: {
@@ -43,6 +56,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ comme
 
     if (!comment) {
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
+
+    // 작성자 또는 관리자만 삭제 가능
+    if (comment.authorId !== Number.parseInt(session.user.id) && session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: You can only delete your own comments' }, { status: 403 });
     }
 
     // 대댓글이 있는 경우 먼저 대댓글들을 삭제
@@ -69,9 +87,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ comme
  * /api/comments/individual/{commentId}:
  *   put:
  *     summary: 댓글 수정
- *     description: 특정 댓글의 내용을 수정합니다.
+ *     description: 특정 댓글의 내용을 수정합니다. 작성자 또는 관리자만 수정할 수 있습니다.
  *     tags:
  *       - Comments
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: commentId
  *         in: path
@@ -107,6 +127,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ comme
  *                   type: string
  *       400:
  *         description: 잘못된 요청
+ *       401:
+ *         description: 인증되지 않은 사용자
+ *       403:
+ *         description: 권한 없음 (작성자가 아님)
  *       404:
  *         description: 댓글을 찾을 수 없음
  *       500:
@@ -114,6 +138,12 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ comme
  */
 export async function PUT(req: Request, { params }: { params: Promise<{ commentId: string }> }) {
   try {
+    // 인증 확인
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { commentId } = await params;
     const { content } = await req.json();
     const commentIdNum = Number(commentId);
@@ -126,13 +156,18 @@ export async function PUT(req: Request, { params }: { params: Promise<{ commentI
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });
     }
 
-    // 댓글 존재 확인
+    // 댓글 존재 확인 및 작성자 검증
     const existingComment = await prisma.comment.findUnique({
       where: { id: commentIdNum },
     });
 
     if (!existingComment) {
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
+
+    // 작성자 또는 관리자만 수정 가능
+    if (existingComment.authorId !== Number.parseInt(session.user.id) && session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: You can only edit your own comments' }, { status: 403 });
     }
 
     // 댓글 수정
