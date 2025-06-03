@@ -340,7 +340,7 @@ jobs:
                   fi
                   
                   # 다양한 언어 지원 확인
-                  languages_found=$(grep -o '```[a-zA-Z]*' review.txt | sort -u | wc -l || echo "0")
+                  languages_found=$(grep -o '\`\`\`[a-zA-Z]*' review.txt | sort -u | wc -l || echo "0")
                   if [ "$languages_found" -gt 0 ]; then
                     quality_score=$((quality_score + 10))
                     echo "✅ 언어별 코드 예시 포함 (+10점)"
