@@ -37,10 +37,30 @@ import prisma from '@/shared/lib/db';
  *                     properties:
  *                       name:
  *                         type: string
+ *                   likes:
+ *                     type: integer
+ *                   dislikes:
+ *                     type: integer
  *                   replies:
  *                     type: array
  *                     items:
  *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         content:
+ *                           type: string
+ *                         createdAt:
+ *                           type: string
+ *                         author:
+ *                           type: object
+ *                           properties:
+ *                             name:
+ *                               type: string
+ *                         likes:
+ *                           type: integer
+ *                         dislikes:
+ *                           type: integer
  *       404:
  *         description: 게시물을 찾을 수 없음
  *       500:
@@ -64,7 +84,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 
-    // 댓글과 대댓글을 계층 구조로 조회
+    // 댓글과 대댓글을 계층 구조로 조회 (좋아요 정보 포함)
     const comments = await prisma.comment.findMany({
       where: {
         postId: postIdNum,
@@ -76,11 +96,21 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
             name: true,
           },
         },
+        commentLikes: {
+          select: {
+            type: true,
+          },
+        },
         replies: {
           include: {
             author: {
               select: {
                 name: true,
+              },
+            },
+            commentLikes: {
+              select: {
+                type: true,
               },
             },
           },
@@ -94,7 +124,24 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
       },
     });
 
-    return NextResponse.json(comments);
+    return NextResponse.json(
+      comments.map((comment) => ({
+        id: comment.id,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        author: comment.author,
+        likes: comment.commentLikes.filter((like) => like.type === 'LIKE').length,
+        dislikes: comment.commentLikes.filter((like) => like.type === 'DISLIKE').length,
+        replies: comment.replies.map((reply) => ({
+          id: reply.id,
+          content: reply.content,
+          createdAt: reply.createdAt,
+          author: reply.author,
+          likes: reply.commentLikes.filter((like) => like.type === 'LIKE').length,
+          dislikes: reply.commentLikes.filter((like) => like.type === 'DISLIKE').length,
+        })),
+      })),
+    );
   } catch (error) {
     console.error('Failed to fetch comments:', error);
     return NextResponse.json({ error: 'Failed to fetch comments' }, { status: 500 });
