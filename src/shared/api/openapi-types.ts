@@ -403,7 +403,7 @@ export interface paths {
         get?: never;
         /**
          * 댓글 수정
-         * @description 특정 댓글의 내용을 수정합니다.
+         * @description 특정 댓글의 내용을 수정합니다. 작성자 또는 관리자만 수정할 수 있습니다.
          */
         put: {
             parameters: {
@@ -444,6 +444,20 @@ export interface paths {
                     };
                     content?: never;
                 };
+                /** @description 인증되지 않은 사용자 */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 권한 없음 (작성자가 아님) */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
                 /** @description 댓글을 찾을 수 없음 */
                 404: {
                     headers: {
@@ -463,7 +477,7 @@ export interface paths {
         post?: never;
         /**
          * 댓글 삭제
-         * @description 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다.
+         * @description 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다. 작성자 또는 관리자만 삭제할 수 있습니다.
          */
         delete: {
             parameters: {
@@ -479,6 +493,20 @@ export interface paths {
             responses: {
                 /** @description 댓글 삭제 성공 */
                 200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 인증되지 않은 사용자 */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 권한 없음 (작성자가 아님) */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -516,7 +544,7 @@ export interface paths {
         put?: never;
         /**
          * 댓글 또는 대댓글 생성
-         * @description 새로운 댓글을 생성합니다. parentId가 있으면 대댓글, 없으면 댓글입니다.
+         * @description 새로운 댓글을 생성합니다. parentId가 있으면 대댓글, 없으면 댓글입니다. 인증된 사용자만 사용 가능합니다.
          */
         post: {
             parameters: {
@@ -532,8 +560,6 @@ export interface paths {
                         content: string;
                         /** @description 게시물 ID */
                         postId: number;
-                        /** @description 작성자 ID */
-                        authorId: number;
                         /** @description 부모 댓글 ID (대댓글인 경우) */
                         parentId?: number;
                     };
@@ -558,6 +584,13 @@ export interface paths {
                 };
                 /** @description 잘못된 요청 */
                 400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 인증되지 않은 사용자 */
+                401: {
                     headers: {
                         [name: string]: unknown;
                     };
