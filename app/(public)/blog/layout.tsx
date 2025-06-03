@@ -8,6 +8,7 @@ import { MeshReflectorMaterial } from '@react-three/drei';
 import { Macintosh, ComputerBackground } from '@/widgets/post/ui';
 import { CanvasLoader } from '@/shared/ui';
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 
 const BlogLayoutClient = dynamic(() => import('@/widgets/post/ui/BlogLayoutClient'), {
   ssr: false,
@@ -27,6 +28,7 @@ export default function BlogLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const [htmlScale, setHtmlScale] = useState(1);
   const [htmlOpacity, setHtmlOpacity] = useState(1);
   const [showFullPage, setShowFullPage] = useState(false);
@@ -77,35 +79,39 @@ export default function BlogLayout({
   return (
     <main
       className={
-        showFullPage
+        showFullPage || pathname !== '/blog'
           ? 'flex flex-col items-center row-start-2 gap-8 sm:items-start bg-white min-h-screen'
           : 'fixed inset-0 z-10 w-full h-full bg-gray-700'
       }
-      onWheel={handleWheel}
-      style={showFullPage ? {} : { overflow: 'hidden' }}
+      onWheel={pathname === '/blog' ? handleWheel : undefined}
+      style={showFullPage || pathname !== '/blog' ? {} : { overflow: 'hidden' }}
     >
-      {showFullPage && (
+      {showFullPage && pathname === '/blog' && (
         <button
           type='button'
           onClick={handleBackTo3D}
           className='fixed top-4 left-4 z-50 bg-black text-white px-4 py-2 rounded shadow'
         >
-          3D로 돌아가기
+          메인으로 돌아가기
         </button>
       )}
       <AnimatePresence>
-        {showFullPage ? (
+        {showFullPage || pathname !== '/blog' ? (
           <motion.div
             key='blog-content'
-            initial={{ opacity: 0, scale: htmlScale }}
+            initial={{ opacity: 0, scale: pathname === '/blog' ? htmlScale : 1 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: isExitingTo3D ? 0 : htmlScale, y: isExitingTo3D ? 700 : 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
+            exit={{
+              opacity: 0,
+              scale: isExitingTo3D ? 0 : pathname === '/blog' ? htmlScale : 1,
+              y: isExitingTo3D ? 700 : 0,
+            }}
+            transition={{ duration: pathname === '/blog' ? 0.6 : 0.3, ease: 'easeInOut' }}
             className='w-full bg-white flex justify-center items-start min-h-screen origin-top'
           >
             <BlogLayoutClient>{children}</BlogLayoutClient>
           </motion.div>
-        ) : (
+        ) : pathname === '/blog' && !showFullPage ? (
           <motion.div
             key='mac-canvas'
             initial={{ opacity: 0, scale: 1 }}
@@ -162,7 +168,7 @@ export default function BlogLayout({
               </Suspense>
             </Canvas>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </main>
   );
