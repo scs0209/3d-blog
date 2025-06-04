@@ -9,7 +9,7 @@ export function FallingAstronaut(props: any) {
 
   useEffect(() => {
     if (actions && Object.keys(actions).length > 0) {
-      const firstAction = actions[Object.keys(actions)[0]];
+      const firstAction = actions[Object.keys(actions)[0] as keyof typeof actions];
       if (firstAction) {
         firstAction.reset().fadeIn(0.5).play();
       }
@@ -42,53 +42,53 @@ export function FallingAstronaut(props: any) {
         <group name='Armature' rotation={[-Math.PI / 2 + Math.PI / 4, 0, 0]}>
           <skinnedMesh
             name='broche_nino_cremayera_t_0'
-            geometry={nodes.broche_nino_cremayera_t_0?.geometry}
-            material={materials.cremayera_t}
-            skeleton={nodes.broche_nino_cremayera_t_0?.skeleton}
+            geometry={(nodes as any).broche_nino_cremayera_t_0?.geometry}
+            material={(materials as any).cremayera_t}
+            skeleton={(nodes as any).broche_nino_cremayera_t_0?.skeleton}
           />
           <skinnedMesh
             name='Casco_nino_casco_nino_m_0'
-            geometry={nodes.Casco_nino_casco_nino_m_0.geometry}
-            material={materials.casco_nino_m}
-            skeleton={nodes.Casco_nino_casco_nino_m_0.skeleton}
+            geometry={(nodes as any).Casco_nino_casco_nino_m_0?.geometry}
+            material={(materials as any).casco_nino_m}
+            skeleton={(nodes as any).Casco_nino_casco_nino_m_0?.skeleton}
           />
           <skinnedMesh
             name='pasted__Lente_nino_pasted__vidrio_astr_nina_0'
-            geometry={nodes.pasted__Lente_nino_pasted__vidrio_astr_nina_0.geometry}
-            material={materials.pasted__vidrio_astr_nina}
-            skeleton={nodes.pasted__Lente_nino_pasted__vidrio_astr_nina_0.skeleton}
+            geometry={(nodes as any).pasted__Lente_nino_pasted__vidrio_astr_nina_0?.geometry}
+            material={(materials as any).pasted__vidrio_astr_nina}
+            skeleton={(nodes as any).pasted__Lente_nino_pasted__vidrio_astr_nina_0?.skeleton}
           />
           <skinnedMesh
             name='pie_n_der_botas_nino_m_0'
-            geometry={nodes.pie_n_der_botas_nino_m_0.geometry}
-            material={materials.botas_nino_m}
-            skeleton={nodes.pie_n_der_botas_nino_m_0.skeleton}
+            geometry={(nodes as any).pie_n_der_botas_nino_m_0?.geometry}
+            material={(materials as any).botas_nino_m}
+            skeleton={(nodes as any).pie_n_der_botas_nino_m_0?.skeleton}
           />
           <skinnedMesh
             name='pie_n_izq_botas_nino_m_0'
-            geometry={nodes.pie_n_izq_botas_nino_m_0.geometry}
-            material={materials.botas_nino_m}
-            skeleton={nodes.pie_n_izq_botas_nino_m_0.skeleton}
+            geometry={(nodes as any).pie_n_izq_botas_nino_m_0?.geometry}
+            material={(materials as any).botas_nino_m}
+            skeleton={(nodes as any).pie_n_izq_botas_nino_m_0?.skeleton}
           />
           <skinnedMesh
             name='polySurface3_pasted__logonino_0'
-            geometry={nodes.polySurface3_pasted__logonino_0.geometry}
-            material={materials.pasted__logonino}
-            skeleton={nodes.polySurface3_pasted__logonino_0.skeleton}
+            geometry={(nodes as any).polySurface3_pasted__logonino_0?.geometry}
+            material={(materials as any).pasted__logonino}
+            skeleton={(nodes as any).polySurface3_pasted__logonino_0?.skeleton}
           />
           <skinnedMesh
             name='polySurface3_pasted__trajechico_0'
-            geometry={nodes.polySurface3_pasted__trajechico_0.geometry}
-            material={materials.pasted__trajechico}
-            skeleton={nodes.polySurface3_pasted__trajechico_0.skeleton}
+            geometry={(nodes as any).polySurface3_pasted__trajechico_0?.geometry}
+            material={(materials as any).pasted__trajechico}
+            skeleton={(nodes as any).polySurface3_pasted__trajechico_0?.skeleton}
           />
           <skinnedMesh
             name='polySurface4_pasted__trajechico_0'
-            geometry={nodes.polySurface4_pasted__trajechico_0.geometry}
-            material={materials.pasted__trajechico}
-            skeleton={nodes.polySurface4_pasted__trajechico_0.skeleton}
+            geometry={(nodes as any).polySurface4_pasted__trajechico_0?.geometry}
+            material={(materials as any).pasted__trajechico}
+            skeleton={(nodes as any).polySurface4_pasted__trajechico_0?.skeleton}
           />
-          <primitive object={nodes.mixamorigHips} />
+          <primitive object={(nodes as any).mixamorigHips} />
         </group>
       </group>
     </group>
