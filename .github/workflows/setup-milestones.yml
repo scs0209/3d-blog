@@ -64,13 +64,15 @@ jobs:
             const addDays = (date, days) => {
               const result = new Date(date);
               result.setDate(result.getDate() + days);
-              return result.toISOString().split('T')[0];
+              // GitHub API는 완전한 ISO datetime을 요구함
+              return result.toISOString();
             };
             
             const addMonths = (date, months) => {
               const result = new Date(date);
               result.setMonth(result.getMonth() + months);
-              return result.toISOString().split('T')[0];
+              // GitHub API는 완전한 ISO datetime을 요구함
+              return result.toISOString();
             };
 
             // 모든 마일스톤 정의
