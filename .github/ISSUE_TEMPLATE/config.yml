@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Discussion
+    url: https://github.com/scs0209/3d-blog/discussions
+    about: 질문이나 아이디어가 있으시면 Discussion에서 이야기해보세요!
+  - name: 📚 Documentation
+    url: https://github.com/scs0209/3d-blog#readme
+    about: 프로젝트 문서와 사용법을 확인해보세요
+  - name: 🚀 Deployed Site
+    url: https://3d-blog.vercel.app
+    about: 실제 배포된 사이트를 확인해보세요 

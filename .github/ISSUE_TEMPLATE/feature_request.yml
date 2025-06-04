@@ -1,0 +1,115 @@
+name: ✨ 기능 요청
+description: 새로운 기능이나 개선사항을 제안해주세요
+title: "[FEATURE] "
+labels: ["✨ enhancement", "needs-discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        새로운 기능을 제안해주셔서 감사합니다! 🚀
+        자세한 설명을 통해 더 나은 3D 블로그를 만들어 나가겠습니다.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🤔 해결하고자 하는 문제
+      description: 현재 어떤 불편함이나 제한사항이 있나요?
+      placeholder: |
+        예: 현재 3D 모델 로딩 시간이 너무 오래 걸려서 사용자 경험이 좋지 않습니다.
+        예: 다크/라이트 모드 전환 시 사용자가 어떤 일이 일어나는지 알기 어렵습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 제안하는 해결책
+      description: 어떤 기능이나 개선사항을 원하시나요?
+      placeholder: |
+        예: 3D 모델 로딩 중에는 스켈레톤 UI나 프로그레스 바를 표시했으면 좋겠습니다.
+        예: 테마 전환 시 부드러운 애니메이션과 함께 사용자에게 피드백을 제공했으면 좋겠습니다.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 📂 카테고리
+      description: 어떤 영역의 기능인가요?
+      options:
+        - 🎨 UI/UX 개선
+        - 🌐 3D 그래픽/애니메이션
+        - ⚡ 성능 최적화
+        - 📱 반응형 디자인
+        - 🔧 개발자 경험 (DX)
+        - 📊 데이터/API
+        - 🔐 보안
+        - ♿ 접근성
+        - 📖 문서화
+        - 🧪 테스팅
+        - 기타 (댓글에 명시)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 📈 우선순위
+      description: 이 기능의 중요도는 어느 정도인가요?
+      options:
+        - 🔥 높음 (핵심 기능/중요한 버그 수정)
+        - 📝 보통 (사용자 경험 개선)
+        - 💡 낮음 (좋으면 좋은 기능)
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 대안 방법
+      description: 이 문제를 해결할 수 있는 다른 방법들을 고려해보셨나요?
+      placeholder: |
+        예: A 방법도 있지만 B 방법이 더 좋을 것 같습니다.
+        예: 기존 라이브러리 X를 사용할 수도 있지만, 성능상 Y가 더 적합할 것 같습니다.
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: 🎨 목업/와이어프레임
+      description: 시각적 자료가 있다면 첨부해주세요 (스케치, 목업, 참고 사이트 등)
+      placeholder: 이미지를 드래그 앤 드롭하거나 링크를 붙여넣어 주세요.
+
+  - type: textarea
+    id: technical
+    attributes:
+      label: 🔧 기술적 고려사항
+      description: 구현 시 고려해야 할 기술적 측면이 있나요?
+      placeholder: |
+        예: React Three Fiber의 Suspense와 함께 동작해야 합니다.
+        예: Next.js SSR과 호환되어야 합니다.
+        예: 모바일 성능을 고려해야 합니다.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: ✅ 완료 기준
+      description: 이 기능이 완료되었다고 판단할 수 있는 기준은 무엇인가요?
+      placeholder: |
+        예: 3D 모델 로딩 시간이 2초 이내로 단축됩니다.
+        예: 모든 브라우저에서 부드러운 전환 애니메이션이 동작합니다.
+        예: 접근성 가이드라인을 준수합니다.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: ✅ 체크리스트
+      description: 기능 요청 전에 확인해주세요.
+      options:
+        - label: 기존 이슈를 검색해보았고, 중복된 요청이 없음을 확인했습니다.
+          required: true
+        - label: 이 기능이 프로젝트의 목적과 부합한다고 생각합니다.
+          required: true
+        - label: 구체적이고 실행 가능한 제안을 포함했습니다.
+          required: true 

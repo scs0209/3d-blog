@@ -1,0 +1,133 @@
+name: 📋 작업/태스크
+description: 개발 작업, 리팩토링, 문서화 등의 태스크를 관리합니다
+title: "[TASK] "
+labels: ["📋 task"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        작업 태스크를 등록해주셔서 감사합니다! 📝
+        프로젝트 개선을 위한 체계적인 작업 관리를 도와드리겠습니다.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 작업 설명
+      description: 수행해야 할 작업에 대해 구체적으로 설명해주세요.
+      placeholder: |
+        예: HomeCanvas 컴포넌트의 TypeScript 타입 안정성 개선
+        예: GitHub Actions 워크플로우 성능 최적화
+        예: 3D 모델 로딩 성능 분석 및 개선
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 🏷️ 작업 유형
+      description: 어떤 종류의 작업인가요?
+      options:
+        - 🔧 리팩토링
+        - 📚 문서화
+        - 🧪 테스트 코드 작성
+        - ⚡ 성능 최적화
+        - 🎨 UI/UX 개선
+        - 🔍 코드 분석/리뷰
+        - 🚀 배포/인프라
+        - 🐛 버그 수정
+        - ✨ 새 기능 개발
+        - 🧹 코드 정리
+        - 기타 (댓글에 명시)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 📈 우선순위
+      description: 이 작업의 우선순위는?
+      options:
+        - 🔥 긴급 (즉시 처리 필요)
+        - ⭐ 높음 (이번 주 내)
+        - 📝 보통 (다음 주 내)
+        - 💡 낮음 (여유 있을 때)
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 🎯 작업 범위
+      description: 어떤 파일, 컴포넌트, 기능이 영향을 받나요?
+      placeholder: |
+        예: 
+        - src/views/home/HomeCanvas.tsx
+        - src/widgets/home/ui/FallingAstronaut.tsx
+        - .github/workflows/code-review.yml
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: ✅ 완료 기준
+      description: 이 작업이 완료되었다고 판단할 수 있는 기준
+      placeholder: |
+        예:
+        - [ ] TypeScript 에러 0개
+        - [ ] ESLint 경고 0개
+        - [ ] 모든 테스트 통과
+        - [ ] 성능 개선 측정 결과 문서화
+        - [ ] 코드 리뷰 완료
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: 🔧 기술적 노트
+      description: 구현 시 고려해야 할 기술적 사항들
+      placeholder: |
+        예:
+        - React Three Fiber의 useFrame 훅 사용 시 성능 고려
+        - Next.js SSR 호환성 유지
+        - 모바일 디바이스에서의 3D 렌더링 성능
+        - 기존 Feature-Sliced Design 아키텍처 준수
+
+  - type: textarea
+    id: related-issues
+    attributes:
+      label: 🔗 관련 이슈/PR
+      description: 이 작업과 관련된 다른 이슈나 PR이 있나요?
+      placeholder: |
+        예:
+        - Related to #123
+        - Depends on #456
+        - Blocks #789
+
+  - type: dropdown
+    id: estimated-time
+    attributes:
+      label: ⏱️ 예상 소요 시간
+      description: 이 작업에 얼마나 시간이 걸릴 것 같나요?
+      options:
+        - 🏃 1-2시간
+        - 🚶 반나절 (3-4시간)
+        - 📅 하루 (8시간)
+        - 📆 2-3일
+        - 🗓️ 1주일 이상
+        - ❓ 예측하기 어려움
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ 작업 체크리스트
+      description: 작업 진행 중 확인해야 할 항목들
+      options:
+        - label: 작업 브랜치를 생성했습니다.
+        - label: 기존 코드 스타일과 일관성을 유지합니다.
+        - label: 변경사항에 대한 테스트를 추가/수정했습니다.
+        - label: 필요시 문서를 업데이트했습니다.
+        - label: PR 생성 전 self-review를 완료했습니다. 
