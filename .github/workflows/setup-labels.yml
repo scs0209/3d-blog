@@ -1,0 +1,152 @@
+name: 📋 GitHub 레이블 설정
+
+on:
+  workflow_dispatch: # 수동 실행
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/setup-labels.yml'
+
+jobs:
+  setup-labels:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    
+    steps:
+      - name: 📋 레이블 설정
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const labels = [
+              // 🚨 우선순위 레이블
+              { name: '🚨 긴급', color: 'B60205', description: '즉시 수정이 필요한 중요한 이슈' },
+              { name: '⚠️ 높음', color: 'D93F0B', description: '높은 우선순위로 처리가 필요한 이슈' },
+              { name: '⚡ 보통', color: 'FBCA04', description: '일반적인 우선순위의 이슈' },
+              { name: '✅ 낮음', color: '0E8A16', description: '낮은 우선순위의 이슈' },
+              
+              // 🏷️ 카테고리 레이블
+              { name: '🐛 버그', color: 'D73A4A', description: '버그 리포트' },
+              { name: '✨ 새기능', color: '7057FF', description: '새로운 기능 요청' },
+              { name: '📝 문서', color: '0075CA', description: '문서 관련' },
+              { name: '🎨 디자인', color: 'E99695', description: 'UI/UX 디자인 관련' },
+              { name: '♻️ 리팩토링', color: '5EBEFF', description: '코드 리팩토링' },
+              { name: '⚡ 성능', color: 'F9D0C4', description: '성능 개선' },
+              { name: '🔒 보안', color: '8B0000', description: '보안 관련 이슈' },
+              { name: '🧪 테스트', color: 'C2E0C6', description: '테스트 관련' },
+              
+              // 🎯 3D/개발 특화 레이블
+              { name: '🎲 3D', color: '6F42C1', description: 'Three.js, 3D 관련' },
+              { name: '⚛️ React', color: '61DAFB', description: 'React 관련' },
+              { name: '🎬 애니메이션', color: 'FF6B9D', description: '애니메이션 관련' },
+              { name: '🌐 웹', color: '0366D6', description: '웹 개발 관련' },
+              { name: '📱 반응형', color: '28A745', description: '반응형 디자인' },
+              { name: '🎮 인터랙션', color: 'FF8C00', description: '사용자 인터랙션' },
+              
+              // 🔧 기술적 레이블
+              { name: '📦 의존성', color: '0052CC', description: '의존성 관련' },
+              { name: '🔧 설정', color: '8B4513', description: '설정 파일 관련' },
+              { name: '🚀 배포', color: '2ECC71', description: '배포 관련' },
+              { name: '📊 모니터링', color: '9C27B0', description: '모니터링/분석' },
+              
+              // 📋 상태 레이블
+              { name: '🤔 검토중', color: 'FEF2C0', description: '검토가 필요한 상태' },
+              { name: '🚧 진행중', color: 'FBCA04', description: '작업 진행 중' },
+              { name: '✋ 대기', color: 'D4EDDA', description: '다른 작업 완료 대기' },
+              { name: '❌ 중단', color: '6C757D', description: '작업 중단됨' },
+              { name: '✅ 완료', color: '28A745', description: '작업 완료' },
+              { name: '🔄 재작업', color: 'FD7E14', description: '재작업 필요' },
+              
+              // 🎯 특별 레이블
+              { name: '💡 아이디어', color: 'E1F5FE', description: '새로운 아이디어나 제안' },
+              { name: '❓ 질문', color: 'CC317C', description: '질문이나 토론' },
+              { name: '📚 학습', color: '7B68EE', description: '학습 목적' },
+              { name: '🎉 이벤트', color: 'FF69B4', description: '특별 이벤트나 마일스톤' },
+              { name: '🔥 핫픽스', color: 'DC143C', description: '긴급 핫픽스' },
+              { name: '🌟 개선', color: 'FFD700', description: '기존 기능 개선' },
+              
+              // 🏷️ 크기/복잡도 레이블
+              { name: '🐭 작음', color: 'C2E0C6', description: '작은 작업 (1-2시간)' },
+              { name: '🐰 보통', color: 'FEF2C0', description: '보통 작업 (0.5-1일)' },
+              { name: '🐘 큼', color: 'F9D0C4', description: '큰 작업 (1-3일)' },
+              { name: '🦣 매우큼', color: 'D73A4A', description: '매우 큰 작업 (1주 이상)' }
+            ];
+
+            // 기존 레이블 가져오기
+            const { data: existingLabels } = await github.rest.issues.listLabelsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existingLabelNames = existingLabels.map(label => label.name);
+
+            let created = 0;
+            let updated = 0;
+            let skipped = 0;
+
+            for (const label of labels) {
+              try {
+                if (existingLabelNames.includes(label.name)) {
+                  // 기존 레이블 업데이트
+                  await github.rest.issues.updateLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    name: label.name,
+                    color: label.color,
+                    description: label.description
+                  });
+                  updated++;
+                  console.log(`✅ 업데이트: ${label.name}`);
+                } else {
+                  // 새 레이블 생성
+                  await github.rest.issues.createLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    name: label.name,
+                    color: label.color,
+                    description: label.description
+                  });
+                  created++;
+                  console.log(`🆕 생성: ${label.name}`);
+                }
+              } catch (error) {
+                console.log(`❌ 실패: ${label.name} - ${error.message}`);
+                skipped++;
+              }
+            }
+
+            // 결과 요약
+            console.log(`
+            📋 레이블 설정 완료!
+            🆕 생성: ${created}개
+            ✅ 업데이트: ${updated}개
+            ❌ 실패: ${skipped}개
+            📊 총 처리: ${labels.length}개
+            `);
+
+            // GitHub Action summary에 결과 출력
+            const summary = `## 📋 레이블 설정 결과
+            
+            | 상태 | 개수 |
+            |------|------|
+            | 🆕 생성 | ${created} |
+            | ✅ 업데이트 | ${updated} |
+            | ❌ 실패 | ${skipped} |
+            | 📊 총 처리 | ${labels.length} |
+
+            ### 📋 설정된 레이블 카테고리
+            - 🚨 **우선순위**: 긴급, 높음, 보통, 낮음
+            - 🏷️ **카테고리**: 버그, 새기능, 문서, 디자인, 리팩토링, 성능, 보안, 테스트
+            - 🎯 **3D/개발**: 3D, React, 애니메이션, 웹, 반응형, 인터랙션
+            - 🔧 **기술**: 의존성, 설정, 배포, 모니터링
+            - 📋 **상태**: 검토중, 진행중, 대기, 중단, 완료, 재작업
+            - 🎯 **특별**: 아이디어, 질문, 학습, 이벤트, 핫픽스, 개선
+            - 🏷️ **크기**: 작음, 보통, 큼, 매우큼
+
+            > 💡 이제 이슈나 PR 생성 시 적절한 레이블을 선택하여 사용하세요!
+            `;
+            
+            await core.summary.addRaw(summary).write(); 
