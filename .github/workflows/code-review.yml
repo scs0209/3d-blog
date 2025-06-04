@@ -61,7 +61,7 @@ jobs:
             git fetch origin ${{ github.base_ref }}
             
             # 모든 변경된 파일 찾기
-            all_changed_files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala)$' || true)
+            all_changed_files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala)$' || true)
             
             if [ -n "$all_changed_files" ]; then
               echo "전체 변경된 파일:"
@@ -81,7 +81,7 @@ jobs:
                   file_size=$(du -k "$file" 2>/dev/null | cut -f1 || echo "0")
                   
                   # 변경 라인 수 확인
-                  changed_lines=$(git diff --numstat origin/${{ github.base_ref }}..HEAD -- "$file" | awk '{print $1+$2}' || echo "0")
+                  changed_lines=$(git diff --numstat ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | awk '{print $1+$2}' || echo "0")
                   
                   # 우선순위 점수 계산 (변경 라인 수 * 10 + 파일 크기)
                   priority_score=$((changed_lines * 10 + file_size))
@@ -198,11 +198,11 @@ jobs:
                   if [ "$size" -gt 50 ] || [ "$lines" -gt 500 ]; then
                     # 대용량 파일: 변경 부분만
                     echo "📊 대용량 파일 (${size}KB, ${lines}라인 변경) - 핵심 변경사항 분석" >> review.txt
-                    diff_content=$(git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -80)
+                    diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -80)
                     review_type="summary"
                   else
                     # 일반 파일: 상세 분석
-                    diff_content=$(git diff origin/${{ github.base_ref }}..HEAD -- "$file" | head -150)
+                    diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -150)
                     review_type="detailed"
                   fi
                   

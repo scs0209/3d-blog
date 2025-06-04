@@ -71,7 +71,6 @@ export const Scene = (props: React.ComponentProps<'group'>) => {
 
   const handlePlanetClick = (event: any) => {
     event.stopPropagation(); // 이벤트 버블링 방지
-    console.log('Planet clicked!'); // 디버깅용
     setIsSpinning((prev) => !prev); // useState로 토글
   };
 
