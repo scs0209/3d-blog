@@ -44,7 +44,7 @@ export const HomeCanvas = () => {
 
   // motion value로 radius를 관리
   const radius = useMotionValue(displayTheme === 'dark' ? darkRadius : lightRadius);
-  const spring = useSpring(radius, { stiffness: 40, damping: 25 });
+  const spring = useSpring(radius, { stiffness: 80, damping: 20 });
 
   // theme 변경 시 전환 로직
   useEffect(() => {
@@ -59,14 +59,14 @@ export const HomeCanvas = () => {
         setTimeout(() => {
           setDisplayTheme('dark');
           setIsTransitioning(false);
-        }, 800); // 오버레이 애니메이션 시간과 맞춤
+        }, 500); // 오버레이 애니메이션 시간과 맞춤 (더 빠르게)
       } else {
         // 다크 → 라이트: Canvas 먼저 전환 후 오버레이 열림
         setDisplayTheme('light');
         setTimeout(() => {
           radius.set(lightRadius);
           setIsTransitioning(false);
-        }, 100); // Canvas 전환 직후
+        }, 50); // Canvas 전환 직후 (더 빠르게)
       }
     }
   }, [theme, displayTheme, radius]);
@@ -97,7 +97,7 @@ export const HomeCanvas = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
             <Canvas camera={{ fov: 75, near: 0.1, zoom: 0.9, position: [-5.3, 3.1, -6.7] }}>
               <ambientLight intensity={2} color='white' />
@@ -115,7 +115,7 @@ export const HomeCanvas = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
             <Canvas camera={{ fov: 75, near: 0.1, zoom: 0.9, position: [-5.3, 3.1, -6.7] }}>
               <ambientLight intensity={2} color='white' />
@@ -146,7 +146,7 @@ export const HomeCanvas = () => {
           style={{
             opacity: overlayOpacity,
             background: `radial-gradient(circle at 50% 50%, transparent ${currentRadius}%, #000 ${currentRadius + 10}%)`,
-            transition: 'background 0.8s ease-in-out, opacity 0.6s ease-in-out',
+            transition: 'background 0.5s ease-in-out, opacity 0.4s ease-in-out',
           }}
         >
           {/* 검정색 부분에만 나타나는 작은 별들 */}
