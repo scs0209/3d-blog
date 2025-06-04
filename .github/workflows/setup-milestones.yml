@@ -33,6 +33,87 @@ on:
         required: false
         default: false
         type: boolean
+      # 기간 설정 옵션들
+      v1_0_duration:
+        description: '🚀 v1.0.0 릴리스까지 기간 (개월)'
+        required: false
+        default: '1'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '6'
+      v1_1_duration:
+        description: '🎨 v1.1.0 릴리스까지 기간 (개월)'
+        required: false
+        default: '2'
+        type: choice
+        options:
+          - '2'
+          - '3'
+          - '4'
+          - '6'
+      v1_2_duration:
+        description: '⚡ v1.2.0 릴리스까지 기간 (개월)'
+        required: false
+        default: '3'
+        type: choice
+        options:
+          - '3'
+          - '4'
+          - '6'
+          - '12'
+      feature_duration:
+        description: '🎲 기능 완성까지 기간 (일)'
+        required: false
+        default: '45'
+        type: choice
+        options:
+          - '30'
+          - '45'
+          - '60'
+          - '90'
+      animation_duration:
+        description: '🎬 애니메이션 시스템까지 기간 (일)'
+        required: false
+        default: '60'
+        type: choice
+        options:
+          - '45'
+          - '60'
+          - '75'
+          - '90'
+      technical_duration:
+        description: '🔧 기술적 마일스톤까지 기간 (일)'
+        required: false
+        default: '60'
+        type: choice
+        options:
+          - '30'
+          - '45'
+          - '60'
+          - '90'
+      quarterly_duration:
+        description: '📅 분기 목표까지 기간 (일)'
+        required: false
+        default: '90'
+        type: choice
+        options:
+          - '60'
+          - '90'
+          - '120'
+          - '180'
+      monitoring_duration:
+        description: '📊 성능 모니터링까지 기간 (일)'
+        required: false
+        default: '40'
+        type: choice
+        options:
+          - '30'
+          - '40'
+          - '60'
+          - '90'
 
 jobs:
   setup-milestones:
@@ -54,7 +135,15 @@ jobs:
               timeBasedMilestones: ${{ github.event.inputs.time_based_milestones || 'false' }},
               technicalMilestones: ${{ github.event.inputs.technical_milestones || 'false' }},
               monitoringMilestones: ${{ github.event.inputs.monitoring_milestones || 'false' }},
-              forceUpdate: ${{ github.event.inputs.force_update || 'false' }}
+              forceUpdate: ${{ github.event.inputs.force_update || 'false' }},
+              v1_0_duration: parseInt('${{ github.event.inputs.v1_0_duration }}' || '1'),
+              v1_1_duration: parseInt('${{ github.event.inputs.v1_1_duration }}' || '2'),
+              v1_2_duration: parseInt('${{ github.event.inputs.v1_2_duration }}' || '3'),
+              feature_duration: parseInt('${{ github.event.inputs.feature_duration }}' || '45'),
+              animation_duration: parseInt('${{ github.event.inputs.animation_duration }}' || '60'),
+              technical_duration: parseInt('${{ github.event.inputs.technical_duration }}' || '60'),
+              quarterly_duration: parseInt('${{ github.event.inputs.quarterly_duration }}' || '90'),
+              monitoring_duration: parseInt('${{ github.event.inputs.monitoring_duration }}' || '40')
             };
 
             console.log('🎯 선택된 옵션:', inputs);
@@ -81,17 +170,17 @@ jobs:
                 {
                   title: '🚀 v1.0.0 - 첫 번째 공식 릴리스',
                   description: '첫 번째 정식 버전 릴리스\n\n**주요 목표:**\n- ✅ 기본 3D 씬 구현 완료\n- ✅ 테마 전환 기능 완성\n- ✅ 반응형 디자인 적용\n- ✅ 기본 애니메이션 구현\n- ✅ 성능 최적화 기본 작업\n\n**기능 요구사항:**\n- 3D 모델 렌더링\n- 다크/라이트 테마 전환\n- 모바일 호환성\n- 기본 사용자 인터랙션',
-                  due_on: addMonths(now, 1)
+                  due_on: addMonths(now, inputs.v1_0_duration)
                 },
                 {
                   title: '🎨 v1.1.0 - UI/UX 개선',
                   description: '사용자 경험 향상 업데이트\n\n**주요 목표:**\n- 🎨 디자인 시스템 구축\n- 🔄 애니메이션 품질 향상\n- 📱 모바일 최적화\n- ♿ 접근성 개선\n\n**세부 작업:**\n- 컴포넌트 스타일 통일\n- 로딩 애니메이션 개선\n- 터치 제스처 지원\n- 키보드 네비게이션',
-                  due_on: addMonths(now, 2)
+                  due_on: addMonths(now, inputs.v1_1_duration)
                 },
                 {
                   title: '⚡ v1.2.0 - 성능 최적화',
                   description: '성능 및 안정성 개선\n\n**주요 목표:**\n- ⚡ 렌더링 성능 최적화\n- 📦 번들 크기 최적화\n- 🔧 메모리 사용량 개선\n- 🚀 로딩 속도 향상\n\n**기술적 개선:**\n- Three.js 최적화\n- 코드 스플리팅\n- 이미지 최적화\n- 캐싱 전략',
-                  due_on: addMonths(now, 3)
+                  due_on: addMonths(now, inputs.v1_2_duration)
                 }
               ],
               
@@ -99,12 +188,12 @@ jobs:
                 {
                   title: '🎲 3D 기능 완성',
                   description: '3D 관련 핵심 기능 구현\n\n**포함 기능:**\n- 🏠 3D 룸 모델 구현\n- 👨‍🚀 우주비행사 애니메이션\n- 🌟 파티클 시스템\n- 🎮 인터랙티브 요소\n- 🌍 행성 모델링\n\n**기술 요구사항:**\n- Three.js 최적화\n- 물리 엔진 적용\n- 조명 시스템\n- 재질 시스템',
-                  due_on: addDays(now, 45)
+                  due_on: addDays(now, inputs.feature_duration)
                 },
                 {
                   title: '🎬 애니메이션 시스템',
                   description: '고품질 애니메이션 구현\n\n**애니메이션 목표:**\n- 🔄 테마 전환 애니메이션\n- ✨ 파티클 효과\n- 🌊 유체 애니메이션\n- 🎭 캐릭터 애니메이션\n\n**기술 스택:**\n- Framer Motion\n- GSAP (필요시)\n- CSS 애니메이션\n- WebGL 셰이더',
-                  due_on: addDays(now, 60)
+                  due_on: addDays(now, inputs.animation_duration)
                 }
               ],
               
@@ -117,7 +206,7 @@ jobs:
                 {
                   title: `📅 Q${Math.ceil((new Date().getMonth() + 1) / 3)} ${new Date().getFullYear()} 분기 목표`,
                   description: '분기별 주요 개발 목표\n\n**분기 목표:**\n- 🚀 주요 기능 릴리스\n- 📊 성능 지표 달성\n- 👥 사용자 피드백 반영\n- 🔧 기술 부채 해결\n\n**성과 지표:**\n- 기능 완성도 90% 이상\n- 버그 발생률 5% 이하\n- 페이지 로딩 속도 3초 이내\n- 모바일 호환성 100%',
-                  due_on: addDays(now, 90)
+                  due_on: addDays(now, inputs.quarterly_duration)
                 }
               ],
               
@@ -125,12 +214,12 @@ jobs:
                 {
                   title: '🔧 기술 부채 해결',
                   description: '코드 품질 및 구조 개선\n\n**개선 영역:**\n- ♻️ 코드 리팩토링\n- 📚 타입 안정성 향상\n- 🧪 테스트 커버리지 증가\n- 📖 API 문서화\n\n**목표 지표:**\n- 코드 복잡도 감소\n- 테스트 커버리지 80%+\n- ESLint 오류 0개\n- TypeScript 엄격 모드',
-                  due_on: addDays(now, 75)
+                  due_on: addDays(now, inputs.technical_duration)
                 },
                 {
                   title: '📱 모바일 최적화',
                   description: '모바일 환경 완벽 지원\n\n**최적화 목표:**\n- 📐 반응형 디자인 완성\n- 👆 터치 인터페이스 개선\n- ⚡ 모바일 성능 최적화\n- 🔋 배터리 사용량 최소화\n\n**지원 기기:**\n- iOS Safari\n- Android Chrome\n- 태블릿 환경\n- 다양한 화면 크기',
-                  due_on: addDays(now, 50)
+                  due_on: addDays(now, inputs.technical_duration)
                 }
               ],
               
@@ -138,7 +227,7 @@ jobs:
                 {
                   title: '📊 성능 모니터링 구축',
                   description: '성능 분석 및 모니터링 시스템\n\n**모니터링 요소:**\n- 🚀 페이지 로딩 속도\n- 🎮 FPS 측정\n- 💾 메모리 사용량\n- 📡 네트워크 사용량\n\n**도구 및 지표:**\n- Google Analytics\n- Web Vitals\n- 사용자 행동 분석\n- 오류 추적 시스템',
-                  due_on: addDays(now, 40)
+                  due_on: addDays(now, inputs.monitoring_duration)
                 }
               ]
             };
