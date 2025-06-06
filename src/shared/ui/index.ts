@@ -21,3 +21,4 @@ export * from './AnimatedText';
 export * from './WatchRobot';
 export * from './HelloBot';
 export * from './MoveBot';
+export * from './FloatingActionButton';
