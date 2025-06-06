@@ -12,14 +12,18 @@ import {
   FallingAstronaut,
   RoomModel,
 } from '@/widgets/home';
-import { CanvasLoader, Scene } from '@/shared/ui';
+import { CanvasLoader, Earth, Scene, Sun } from '@/shared/ui';
 import { OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import { useTheme } from 'next-themes';
 import { motion, useMotionValue, useSpring, useAnimationFrame, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-export const HomeCanvas = () => {
+export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) => void }) => {
   const { theme } = useTheme();
+
+  // CubeModel 클릭 트리거 관리
+  const [triggerSnp, setTriggerSnp] = useState<number>(0);
+  const [isCubeActive, setIsCubeActive] = useState<boolean>(false);
 
   // 전환 상태 관리
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -127,8 +131,18 @@ export const HomeCanvas = () => {
                 <Stars radius={100} depth={100} count={4000} factor={4} saturation={0} fade speed={0.2} />
                 <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
                 <AnimateAvatar scale={3000} position={[0, 5, 0]} />
-                <WalkingAvatar scale={0.01} position={[0, 0.6, 0.5]} />
-                <Scene />
+                <WalkingAvatar position={[0, 0.6, 0.5]} triggerSnp={triggerSnp} />
+                <Sun scale={15} position={[70, 0, 30]} isCubeActive={isCubeActive} />
+                <Earth scale={10} position={[-18, 0, 50]} />
+                <Scene
+                  isCubeActive={isCubeActive}
+                  onCubeClick={() => {
+                    setTriggerSnp(Date.now());
+                    const newState = !isCubeActive;
+                    setIsCubeActive(newState);
+                    onCubeClick?.(newState);
+                  }}
+                />
                 <ambientLight intensity={0.5} />
                 <pointLight position={[5, 5, 5]} intensity={2} />
                 <OrbitControls makeDefault enableDamping dampingFactor={0.05} enablePan enableZoom />

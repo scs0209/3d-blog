@@ -8,9 +8,10 @@ import type * as three from 'three';
 
 type CubeModelProps = {
   position: [number, number, number];
+  onClick?: () => void;
 } & React.ComponentProps<'group'>;
 
-export function CubeModel({ position, ...props }: CubeModelProps) {
+export function CubeModel({ position, onClick, ...props }: CubeModelProps) {
   const { nodes, materials } = useGLTF('/tesseract_cube.glb');
   const textRef = useRef<three.Mesh | null>(null);
   const cubeRef = useRef<three.Group | null>(null);
@@ -29,7 +30,22 @@ export function CubeModel({ position, ...props }: CubeModelProps) {
 
   return (
     <group {...props} dispose={null} scale={0.5} position={position}>
-      <group ref={cubeRef}>
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+      <group
+        ref={cubeRef}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick?.();
+        }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = 'auto';
+        }}
+      >
         <mesh
           castShadow
           receiveShadow
