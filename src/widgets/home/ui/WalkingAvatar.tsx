@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, useFBX } from '@react-three/drei';
 import type { Group } from 'three';
@@ -11,11 +11,16 @@ type GLTFResult = GLTF & {
   skeletons: Record<string, three.Skeleton>;
 };
 
-export function WalkingAvatar(props: any) {
+export function WalkingAvatar(props: any & { triggerSnp?: number }) {
+  const { triggerSnp, ...restProps } = props;
   const group = useRef<Group>(null);
   const mixer = useRef<three.AnimationMixer | null>(null);
   const { nodes, materials, animations: gltfAnimations } = useGLTF('/WalkingAstro.glb') as unknown as GLTFResult;
-  const fbxModel = useFBX('/snp.fbx');
+  const snpModel = useFBX('/snp.fbx');
+  const typingModel = useFBX('/Typing.fbx');
+
+  // 애니메이션 상태 관리
+  const [animationState, setAnimationState] = useState<'typing' | 'snp' | 'walking'>('typing');
 
   // 애니메이션 mixer 업데이트 (필수!)
   useFrame((_, delta) => {
@@ -31,7 +36,7 @@ export function WalkingAvatar(props: any) {
 
       mixer.current = new three.AnimationMixer(group.current);
 
-      // GLTF 애니메이션 설정
+      // GLTF 애니메이션 설정 (걷기 애니메이션)
       if (gltfAnimations && gltfAnimations.length > 0) {
         for (const clip of gltfAnimations) {
           if (clip) {
@@ -45,14 +50,31 @@ export function WalkingAvatar(props: any) {
         }
       }
 
-      // FBX 애니메이션 설정
-      if (fbxModel.animations && fbxModel.animations.length > 0 && fbxModel.animations[0]) {
-        const fbxAnimation = fbxModel.animations[0];
-        const action = mixer.current.clipAction(fbxAnimation);
+      // Typing 애니메이션 설정 및 기본 재생
+      if (typingModel.animations && typingModel.animations.length > 0 && typingModel.animations[0]) {
+        const typingAnimation = typingModel.animations[0];
+        const action = mixer.current.clipAction(typingAnimation);
         action.setEffectiveTimeScale(1);
         action.setEffectiveWeight(1);
         action.setLoop(three.LoopRepeat, Number.POSITIVE_INFINITY);
-        action.play();
+        action.play(); // 기본적으로 타이핑 애니메이션 재생
+      }
+
+      // SNP 애니메이션 설정 (재생하지 않음)
+      if (snpModel.animations && snpModel.animations.length > 0 && snpModel.animations[0]) {
+        const snpAnimation = snpModel.animations[0];
+        const action = mixer.current.clipAction(snpAnimation);
+        action.setEffectiveTimeScale(1);
+        action.setEffectiveWeight(1);
+        action.setLoop(three.LoopOnce, 1); // 한 번만 재생
+        action.clampWhenFinished = true; // 애니메이션 완료 시 마지막 프레임에서 정지
+
+        // SNP 애니메이션 완료 시 이벤트 리스너
+        mixer.current.addEventListener('finished', (e) => {
+          if (e.action === action) {
+            setAnimationState('typing'); // 타이핑으로 돌아감
+          }
+        });
       }
     }
 
@@ -61,7 +83,44 @@ export function WalkingAvatar(props: any) {
         mixer.current.stopAllAction();
       }
     };
-  }, [gltfAnimations, fbxModel]);
+  }, [gltfAnimations, snpModel, typingModel]);
+
+  // triggerSnp에 따른 SNP 애니메이션 트리거
+  useEffect(() => {
+    if (!mixer.current || !snpModel.animations?.[0] || !triggerSnp) {
+      return;
+    }
+
+    const snpAction = mixer.current.clipAction(snpModel.animations[0]);
+    const typingAction = typingModel.animations?.[0] ? mixer.current.clipAction(typingModel.animations[0]) : null;
+
+    // 타이핑 애니메이션 정지하고 SNP 애니메이션 재생
+    if (typingAction) {
+      typingAction.stop();
+    }
+    snpAction.reset();
+    snpAction.play();
+    setAnimationState('snp');
+  }, [triggerSnp, snpModel, typingModel]);
+
+  // 애니메이션 상태에 따른 애니메이션 제어
+  useEffect(() => {
+    if (!mixer.current) {
+      return;
+    }
+
+    const typingAction = typingModel.animations?.[0] ? mixer.current.clipAction(typingModel.animations[0]) : null;
+    const snpAction = snpModel.animations?.[0] ? mixer.current.clipAction(snpModel.animations[0]) : null;
+
+    if (animationState === 'typing' && typingAction) {
+      // 다른 애니메이션 정지하고 타이핑 시작
+      if (snpAction) {
+        snpAction.stop();
+      }
+      typingAction.reset();
+      typingAction.play();
+    }
+  }, [animationState, typingModel, snpModel]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -72,20 +131,25 @@ export function WalkingAvatar(props: any) {
       const speed = 0.08;
       const key = e.key.toLowerCase();
 
+      // 걷기 상태로 변경
+      setAnimationState('walking');
+
       // 걷기 애니메이션 재생
       const walkingClip = gltfAnimations?.find((clip) => clip && clip.name === 'Armature|mixamo.com|Layer0');
       if (walkingClip) {
         const walkAction = mixer.current.clipAction(walkingClip);
         if (walkAction && !walkAction.isRunning()) {
-          walkAction.play();
-        }
-      }
+          // 다른 애니메이션 정지
+          const typingAction = typingModel.animations?.[0] ? mixer.current.clipAction(typingModel.animations[0]) : null;
+          const snpAction = snpModel.animations?.[0] ? mixer.current.clipAction(snpModel.animations[0]) : null;
+          if (typingAction) {
+            typingAction.stop();
+          }
+          if (snpAction) {
+            snpAction.stop();
+          }
 
-      // FBX 애니메이션 정지
-      if (fbxModel.animations && fbxModel.animations.length > 0 && fbxModel.animations[0]) {
-        const fbxAction = mixer.current.clipAction(fbxModel.animations[0]);
-        if (fbxAction) {
-          fbxAction.stop();
+          walkAction.play();
         }
       }
 
@@ -128,13 +192,8 @@ export function WalkingAvatar(props: any) {
         }
       }
 
-      // FBX 애니메이션 재생
-      if (fbxModel.animations && fbxModel.animations.length > 0 && fbxModel.animations[0]) {
-        const fbxAction = mixer.current.clipAction(fbxModel.animations[0]);
-        if (fbxAction) {
-          fbxAction.play();
-        }
-      }
+      // 타이핑 상태로 복귀
+      setAnimationState('typing');
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -144,10 +203,10 @@ export function WalkingAvatar(props: any) {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [gltfAnimations, fbxModel]);
+  }, [gltfAnimations, typingModel, snpModel]);
 
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...restProps} dispose={null}>
       <group>
         <group name='RootNode'>
           <group name='67359760e8bd414fac2378ecfb5ba5c5fbx' rotation={[0, 0, 0]}>
