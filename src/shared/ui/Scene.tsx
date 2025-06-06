@@ -48,7 +48,7 @@ const glowingMaterialLine = new three.MeshStandardMaterial({
 const glowingMaterialMint = new three.MeshStandardMaterial({
   color: '#00ffd0', // 민트
   emissive: '#00e6b8',
-  emissiveIntensity: 0.7,
+  emissiveIntensity: 2.5, // 매우 높은 발광 강도
   transparent: true,
   opacity: 0.95,
 });
@@ -61,7 +61,8 @@ const glowingMaterialMintLine = new three.MeshStandardMaterial({
   opacity: 0.95,
 });
 
-export const Scene = (props: React.ComponentProps<'group'>) => {
+export const Scene = (props: React.ComponentProps<'group'> & { onCubeClick?: () => void; isCubeActive?: boolean }) => {
+  const { onCubeClick, isCubeActive, ...groupProps } = props;
   const { nodes, materials } = useGLTF('/space_boi.glb');
   const floatingGroupRef = useRef<three.Group>(null);
   const { theme } = useTheme();
@@ -166,21 +167,21 @@ export const Scene = (props: React.ComponentProps<'group'>) => {
     <>
       <fog attach='fog' args={['#000022', 0, 3000]} />
       <group ref={floatingGroupRef}>
-        <group {...props} dispose={null}>
+        <group {...groupProps} dispose={null}>
           <group scale={0.01}>
             <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
               <RoomModel position={[0, 0, 20]} />
-              <CubeModel position={[0, -100, 300]} />
+              <CubeModel position={[0, -100, 300]} onClick={onCubeClick} />
               <NeuralNetwork />
               <fog attach='fog' args={['#202025', 0, 80]} />
 
-              {theme === 'light' && (
+              {theme === 'light' && !isCubeActive && (
                 <>
                   <Float speed={4} rotationIntensity={1} floatIntensity={2}>
                     <Atom />
                   </Float>
                   <EffectComposer>
-                    <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} />
+                    <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} intensity={0.5} />
                   </EffectComposer>
                 </>
               )}

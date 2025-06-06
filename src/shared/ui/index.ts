@@ -15,3 +15,5 @@ export * from './Scene';
 export * from './SkyBox';
 export * from './Tag';
 export * from './VisitorLogger';
+export * from './Sun';
+export * from './Earth';
