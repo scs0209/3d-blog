@@ -1,0 +1,248 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 3D 개발 컨벤션 및 베스트 프랙티스
+
+## TypeScript 타입 정의
+
+### Three.js 타입 사용
+```typescript
+import type * as three from 'three';
+import type { GLTF } from 'three-stdlib';
+
+// 올바른 타입 정의
+const meshRef = useRef<three.Mesh>(null);
+const groupRef = useRef<three.Group>(null);
+```
+
+### GLTF 결과 타입 확장
+```typescript
+type GLTFResult = GLTF & {
+  nodes: Record<string, three.SkinnedMesh>;
+  materials: Record<string, three.Material>;
+  skeletons: Record<string, three.Skeleton>;
+};
+```
+
+## 발광 재질(Emissive Material) 패턴
+
+### 재질 생성 규칙
+```typescript
+// 컴포넌트 외부에서 재질 생성 (리렌더링 방지)
+const glowingMaterial = new three.MeshStandardMaterial({
+  color: '#ffff00',
+  emissive: '#ffaa00',
+  emissiveIntensity: 2.0,
+  transparent: true,
+  opacity: 0.95,
+});
+```
+
+### 조건부 재질 적용
+```typescript
+material={isActive ? glowingMaterial : materials.default}
+```
+
+## 이벤트 핸들링 패턴
+
+### 3D 객체 클릭 이벤트
+```typescript
+const handleClick = (event: any) => {
+  event.stopPropagation(); // 필수: 이벤트 버블링 방지
+  setState(prev => !prev);
+};
+
+const handlePointerOver = (e: any) => {
+  e.stopPropagation();
+  document.body.style.cursor = 'pointer';
+};
+
+const handlePointerOut = (e: any) => {
+  e.stopPropagation();
+  document.body.style.cursor = 'auto';
+};
+```
+
+## 애니메이션 상태 관리
+
+### 상태 기반 애니메이션 제어
+```typescript
+const [animationState, setAnimationState] = useState<'idle' | 'active' | 'walking'>('idle');
+
+useEffect(() => {
+  if (!mixer.current) return;
+  
+  const action = mixer.current.clipAction(animation);
+  
+  if (animationState === 'active') {
+    action.reset().play();
+  } else {
+    action.stop();
+  }
+}, [animationState]);
+```
+
+### 애니메이션 완료 이벤트 처리
+```typescript
+useEffect(() => {
+  if (!mixer.current) return;
+  
+  const onFinished = (e: any) => {
+    if (e.action === targetAction) {
+      setAnimationState('idle');
+    }
+  };
+  
+  mixer.current.addEventListener('finished', onFinished);
+  return () => mixer.current?.removeEventListener('finished', onFinished);
+}, []);
+```
+
+## 성능 최적화 규칙
+
+### 조건부 렌더링
+```typescript
+// EffectComposer 조건부 렌더링
+{theme === 'light' && !isCubeActive && (
+  <EffectComposer>
+    <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} intensity={0.5} />
+  </EffectComposer>
+)}
+```
+
+### 메모이제이션 활용
+```typescript
+const stars = useMemo(() => {
+  return Array.from({ length: 30 }).map((_, i) => ({
+    id: `star-${i}`,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    // ...
+  }));
+}, []);
+```
+
+## 린터 규칙 준수
+
+### Biome 린터 무시 패턴
+```typescript
+// 키 이벤트가 필요 없는 3D 클릭 이벤트
+{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+<mesh onClick={handleClick}>
+
+// 수치 근사값 사용 시
+// biome-ignore lint/suspicious/noApproximativeNumericConstant: Math.PI 사용
+rotation={[-3.11, -0.434, -3.05]}
+```
+
+### For 루프 사용 규칙
+```typescript
+// forEach 대신 for...of 사용
+for (const action of Object.values(actions)) {
+  if (action) {
+    action.play();
+  }
+}
+```
+
+## 컴포넌트 구조 패턴
+
+### Props 인터페이스 확장
+```typescript
+export function MyComponent(
+  props: React.ComponentProps<'group'> & { 
+    isActive?: boolean;
+    onStateChange?: (state: boolean) => void;
+  }
+) {
+  const { isActive, onStateChange, ...groupProps } = props;
+  // ...
+}
+```
+
+### useFrame 사용 규칙
+```typescript
+useFrame((_, delta) => {
+  if (mixer.current) {
+    mixer.current.update(delta); // 필수: mixer 업데이트
+  }
+  
+  if (isSpinning && meshRef.current) {
+    meshRef.current.rotation.z += delta * 3;
+  }
+});
+```
+
+## 디버깅 및 테스팅
+
+### 콘솔 로깅 패턴
+```typescript
+// 개발 환경에서만 로깅
+if (process.env.NODE_ENV === 'development') {
+  console.log('Animation actions:', actions);
+  console.log('Mixer state:', mixer.current);
+}
+```
+
+### 애니메이션 디버깅
+```typescript
+// 애니메이션 상태 확인
+useEffect(() => {
+  console.log('Available animations:', animations.map(a => a.name));
+  console.log('Actions:', Object.keys(actions));
+}, [animations, actions]);
+```
+
+## 파일 구조 규칙
+
+### 3D 컴포넌트 파일 구조
+```typescript
+// 1. imports
+import { useRef, useEffect, useState } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { useGLTF, useAnimations } from '@react-three/drei';
+
+// 2. 타입 정의
+type ComponentProps = {
+  // ...
+};
+
+// 3. 외부 재질/상수 정의
+const materials = {
+  // ...
+};
+
+// 4. 컴포넌트 정의
+export function Component(props: ComponentProps) {
+  // ...
+}
+
+// 5. 사전 로딩
+useGLTF.preload('/model.glb');
+```
+
+## 에러 핸들링
+
+### 안전한 옵셔널 체이닝
+```typescript
+// 노드 접근 시 안전성 확보
+geometry={(nodes.ObjectName as three.Mesh)?.geometry}
+skeleton={(nodes.ObjectName as three.SkinnedMesh)?.skeleton}
+
+// 애니메이션 체크
+if (animations && animations.length > 0 && animations[0]) {
+  // 애니메이션 로직
+}
+```
+
+### 조건부 렌더링으로 에러 방지
+```typescript
+{nodes.ObjectName && (
+  <mesh geometry={nodes.ObjectName.geometry}>
+    {/* ... */}
+  </mesh>
+)}
+```
+

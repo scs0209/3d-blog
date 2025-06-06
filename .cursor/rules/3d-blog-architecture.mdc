@@ -1,0 +1,112 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 3D Blog Project Architecture Guide
+
+## 프로젝트 구조
+
+이 프로젝트는 Next.js와 React Three Fiber를 사용한 3D 블로그입니다. FSD (Feature-Sliced Design) 아키텍처를 따릅니다.
+
+### 주요 디렉토리 구조
+
+```
+src/
+├── app/              # Next.js App Router
+├── views/            # 페이지별 뷰 컴포넌트
+├── widgets/          # 복합 UI 위젯
+├── shared/           # 공용 컴포넌트 및 유틸리티
+└── features/         # 기능별 모듈
+```
+
+## 핵심 3D 컴포넌트들
+
+### Canvas 및 Scene 관리
+- **HomeCanvas** [src/views/home/HomeCanvas.tsx](mdc:src/views/home/HomeCanvas.tsx): 메인 3D 캔버스, 테마별 전환 효과
+- **Scene** [src/shared/ui/Scene.tsx](mdc:src/shared/ui/Scene.tsx): 3D 씬 구성, 행성 인터랙션, EffectComposer 관리
+
+### 인터랙티브 3D 모델들
+- **WalkingAvatar** [src/widgets/home/ui/WalkingAvatar.tsx](mdc:src/widgets/home/ui/WalkingAvatar.tsx): 아바타 애니메이션 시스템
+- **CubeModel** [src/shared/ui/Cube.tsx](mdc:src/shared/ui/Cube.tsx): 클릭 가능한 큐브
+- **Sun** [src/shared/ui/Sun.tsx](mdc:src/shared/ui/Sun.tsx): 발광 구 시스템
+- **Earth** [src/shared/ui/Earth.tsx](mdc:src/shared/ui/Earth.tsx): 지구 모델 및 자동 애니메이션
+
+## 애니메이션 시스템 규칙
+
+### WalkingAvatar 애니메이션 우선순위
+1. **키보드 입력 (WASD)**: 걷기 애니메이션 최우선
+2. **Cube 클릭**: snp.fbx 애니메이션 (한 번 실행 후 typing으로 복귀)
+3. **기본 상태**: Typing.fbx 애니메이션 (루프)
+
+### EffectComposer 관리
+- **Scene**: `theme === 'light' && !isCubeActive` 조건부 활성화
+- **Sun**: 항상 자체 EffectComposer 유지
+- **민트 구**: 클릭 시에만 별도 EffectComposer 적용
+
+## 상태 관리 패턴
+
+### Props 전달 체계
+```typescript
+HomeCanvas -> Scene: { onCubeClick, isCubeActive }
+HomeCanvas -> WalkingAvatar: { triggerSnp }
+Scene -> CubeModel: { onClick }
+```
+
+### 상태 타입 정의
+- `triggerSnp`: timestamp 기반 애니메이션 트리거
+- `isCubeActive`: boolean, 큐브 활성화 상태
+- `isSpinning`: 행성별 회전 상태
+
+## 개발 규칙
+
+### 3D 컴포넌트 작성 시
+1. **useRef**로 mesh/group 참조 관리
+2. **useFrame**으로 애니메이션 업데이트
+3. **stopPropagation()** 사용으로 이벤트 버블링 방지
+4. **커서 스타일** 변경 (pointer ↔ auto)
+
+### 애니메이션 구현 시
+1. **AnimationMixer** 사용 (GLTF/FBX)
+2. **LoopOnce vs LoopRepeat** 적절히 선택
+3. **이벤트 리스너**로 애니메이션 완료 감지
+4. **cleanup** 함수에서 mixer 정리
+
+### 파일 명명 규칙
+- 3D 모델: PascalCase (Earth.tsx, Sun.tsx)
+- 애니메이션 파일: camelCase.fbx (snp.fbx, Typing.fbx)
+- GLB 모델: snake_case.glb (earth_cartoon.glb, space_boi.glb)
+
+## 성능 최적화
+
+### 사전 로딩
+```typescript
+useGLTF.preload('/model.glb');
+useFBX.preload('/animation.fbx');
+```
+
+### 메모리 관리
+- `dispose={null}` 사용
+- cleanup 함수에서 mixer 정리
+- 불필요한 re-render 방지
+
+## 테마 시스템
+
+### 다크/라이트 모드 전환
+- **Canvas 전환**: AnimatePresence로 부드러운 전환
+- **오버레이 효과**: radial-gradient 애니메이션
+- **조건부 렌더링**: theme에 따른 컴포넌트 분기
+
+## 디버깅 가이드
+
+### 애니메이션 문제 해결
+1. mixer 업데이트 확인 (useFrame)
+2. animation clip 존재 여부 확인
+3. action.play() 호출 시점 확인
+4. 브라우저 콘솔에서 actions 객체 확인
+
+### 3D 모델 로딩 문제
+1. 파일 경로 확인 (public 폴더 기준)
+2. 모델 파일 형식 확인 (GLB/GLTF)
+3. 네트워크 탭에서 로딩 상태 확인
+
