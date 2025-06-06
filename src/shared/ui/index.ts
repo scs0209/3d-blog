@@ -17,3 +17,7 @@ export * from './Tag';
 export * from './VisitorLogger';
 export * from './Sun';
 export * from './Earth';
+export * from './AnimatedText';
+export * from './WatchRobot';
+export * from './HelloBot';
+export * from './MoveBot';

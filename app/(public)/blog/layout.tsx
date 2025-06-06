@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Bloom, DepthOfField, EffectComposer } from '@react-three/postprocessing';
 import { MeshReflectorMaterial } from '@react-three/drei';
 import { Macintosh, ComputerBackground } from '@/widgets/post/ui';
-import { CanvasLoader } from '@/shared/ui';
+import { CanvasLoader, AnimatedText, WatchRobot, HelloBot, MoveBot } from '@/shared/ui';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 
@@ -138,13 +138,18 @@ export default function BlogLayout({
               />
               <Suspense fallback={<CanvasLoader />}>
                 <Macintosh
-                  scale={0.3}
+                  scale={0.25}
                   htmlScale={htmlScale}
                   htmlOpacity={htmlOpacity}
                   showFullPage={showFullPage}
-                  position={[0, 0.1, 0.8]}
+                  position={[-0.08, 0.08, 0]}
+                  rotation={[0, Math.PI / 6, 0]}
                 />
                 <ComputerBackground scale={0.11} position={[0, 0.001, 0]} />
+                <AnimatedText />
+                <WatchRobot scale={0.002} position={[0.1, 0.12, 0.3]} rotation={[0, -Math.PI / 1.5, 0]} />
+                <HelloBot scale={0.06} position={[0.18, 0.18, -0.16]} rotation={[0, -Math.PI / 4, 0]} />
+                <MoveBot scale={0.05} position={[0.4, 0, 0.7]} rotation={[0, -Math.PI / 4, 0]} />
                 <AnimatedCamera cameraPos={{ x: -0.16, y: 1.4, z: 7.5 }} />
                 <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
                   <planeGeometry args={[50, 50]} />
