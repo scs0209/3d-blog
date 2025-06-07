@@ -22,4 +22,3 @@ export * from './WatchRobot';
 export * from './HelloBot';
 export * from './MoveBot';
 export * from './FloatingActionButton';
-export { default as BackToMainButton } from './BackToMainButton';
