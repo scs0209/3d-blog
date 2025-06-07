@@ -20,7 +20,6 @@ export default function Sidebar() {
 
   // pathname에서 category slug 추출 (/blog/category/react -> react)
   const currentCategorySlug = pathname.startsWith('/blog/category/') ? pathname.split('/blog/category/')[1] : null;
-  console.log(currentCategorySlug);
   const isAllPage = pathname === '/blog/all';
 
   if (isLoading) {
@@ -73,16 +72,19 @@ export default function Sidebar() {
                 {/* 전체 메뉴 */}
                 <motion.button
                   type='button'
+                  animate={{
+                    boxShadow: isAllPage ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : 'none',
+                  }}
                   whileHover={{
                     scale: 1.06,
                     boxShadow: isAllPage ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
                   }}
                   whileTap={{ scale: 0.97 }}
-                  className={`text-left px-2 py-1 rounded-lg font-mono transition relative border
+                  className={`text-left px-2 py-1 rounded-lg font-mono transition relative
                       ${
                         isAllPage
-                          ? 'bg-blue-100 text-[#232946] border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
-                          : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-transparent hover:border-transparent'
+                          ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
+                          : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-0'
                       }`}
                   onClick={() => {
                     router.push('/blog/all');
@@ -95,17 +97,20 @@ export default function Sidebar() {
                   <motion.button
                     key={cat.id}
                     type='button'
+                    animate={{
+                      boxShadow: currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : 'none',
+                    }}
                     whileHover={{
                       scale: 1.06,
                       boxShadow:
                         currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
                     }}
                     whileTap={{ scale: 0.97 }}
-                    className={`text-left px-2 py-1 rounded-lg font-mono transition relative border
+                    className={`text-left px-2 py-1 rounded-lg font-mono transition relative
                         ${
                           currentCategorySlug === cat.slug
-                            ? 'bg-blue-100 text-[#232946] border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
-                            : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-transparent hover:border-transparent'
+                            ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
+                            : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-0'
                         }`}
                     onClick={() => {
                       router.push(`/blog/category/${cat.slug}`);

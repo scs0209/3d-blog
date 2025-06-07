@@ -1,24 +1,24 @@
 'use client';
-
-import type { CategoryResponse } from '@/entities/category/model';
+import { useCategories } from '@/features/category/model';
 import { useTags } from '@/features/tag/model/use-tags';
 import { Tag } from '@/features/tag/ui';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export const MobileNavbar = ({
-  categories,
-  selectedCategory,
   menuOpen,
   setMenuOpen,
 }: {
-  categories?: CategoryResponse;
-  selectedCategory: string | null;
   menuOpen: boolean;
   setMenuOpen: (menuOpen: boolean) => void;
 }) => {
+  const { data: categories } = useCategories();
   const { data: tags } = useTags();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const currentCategorySlug = pathname.startsWith('/blog/category/') ? pathname.split('/blog/category/')[1] : null;
+  const isAllPage = pathname === '/blog/all';
 
   return (
     <AnimatePresence>
@@ -53,18 +53,48 @@ export const MobileNavbar = ({
               </button>
             </div>
             <nav className='flex flex-col gap-2 px-3 py-4'>
+              <motion.button
+                type='button'
+                animate={{
+                  boxShadow: isAllPage ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : 'none',
+                }}
+                whileHover={{
+                  scale: 1.06,
+                  boxShadow: isAllPage ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
+                }}
+                whileTap={{ scale: 0.97 }}
+                className={`text-left px-2 py-1 rounded-lg font-mono transition relative
+                  ${
+                    isAllPage
+                      ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
+                      : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-0'
+                  }`}
+                onClick={() => {
+                  router.push('/blog/all');
+                }}
+              >
+                전체
+              </motion.button>
+
               {categories?.map((cat) => (
                 <motion.button
                   key={cat.id}
                   type='button'
+                  animate={{
+                    boxShadow: currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : 'none',
+                  }}
                   whileHover={{
                     scale: 1.06,
                     boxShadow:
-                      selectedCategory === cat.name ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
+                      currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
                   }}
                   whileTap={{ scale: 0.97 }}
                   className={`text-left px-2 py-1 rounded-lg font-mono transition relative
-                      ${selectedCategory === cat.name ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
+                    ${
+                      currentCategorySlug === cat.slug
+                        ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
+                        : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-0'
+                    }`}
                   onClick={() => {
                     router.push(`/blog/category/${cat.slug}`);
                   }}

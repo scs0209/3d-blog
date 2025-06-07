@@ -1,6 +1,4 @@
 'use client';
-
-import { useCategories } from '@/features/category/model/use-category';
 import { MobileNavbar } from './MobileNavbar';
 import { SearchBar } from './SearchBar';
 import { usePathname } from 'next/navigation';
@@ -8,15 +6,9 @@ import { Menu } from 'lucide-react';
 import { useState } from 'react';
 
 export default function BlogHeader() {
-  const { data: categories } = useCategories();
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
   const pathname = usePathname();
-
-  const handleTitleClick = () => {
-    setSelectedCategory(null);
-  };
 
   return (
     <>
@@ -25,7 +17,6 @@ export default function BlogHeader() {
         <button
           type='button'
           className='font-extrabold text-2xl text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:underline bg-transparent border-none p-0 m-0 focus:outline-none'
-          onClick={handleTitleClick}
         >
           🪐 Space Retro Blog
         </button>
@@ -42,7 +33,6 @@ export default function BlogHeader() {
           <button
             type='button'
             className='font-extrabold text-2xl text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:underline bg-transparent border-none p-0 m-0 focus:outline-none ml-1'
-            onClick={handleTitleClick}
           >
             🪐 Space Retro Blog
           </button>
@@ -60,12 +50,7 @@ export default function BlogHeader() {
       </div>
 
       {/* 모바일/태블릿 드로어 사이드바 */}
-      <MobileNavbar
-        categories={categories}
-        selectedCategory={selectedCategory}
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-      />
+      <MobileNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
     </>
   );
 }
