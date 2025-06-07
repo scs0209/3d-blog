@@ -2,7 +2,7 @@ import { SpaceBackground } from '@/widgets/post/ui';
 import dynamic from 'next/dynamic';
 
 const BlogHeader = dynamic(() => import('@/widgets/post/ui/BlogHeader'));
-const BlogSidebarClient = dynamic(() => import('@/widgets/post/ui/BlogSidebarClient'));
+const Sidebar = dynamic(() => import('@/widgets/post/ui/Sidebar'));
 const BackToMainButton = dynamic(() => import('@/shared/ui/BackToMainButton'));
 
 export default function PostsLayout({
@@ -27,7 +27,7 @@ export default function PostsLayout({
           </main>
 
           {/* 데스크톱 사이드바 */}
-          <BlogSidebarClient />
+          <Sidebar />
         </div>
       </div>
     </main>

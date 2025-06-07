@@ -6,20 +6,22 @@ import { VisitorCounter } from '@/features/blog/ui';
 import { useCategories } from '@/features/category/model';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { SparklesCore } from '@/shared/ui/sparkles';
 
-export const Sidebar = ({
-  selectedCategory,
-}: {
-  selectedCategory: string | null;
-}) => {
+export default function Sidebar() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: categories, isLoading } = useCategories();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { data: tags } = useTags();
+
+  // pathname에서 category slug 추출 (/blog/category/react -> react)
+  const currentCategorySlug = pathname.startsWith('/blog/category/') ? pathname.split('/blog/category/')[1] : null;
+  console.log(currentCategorySlug);
+  const isAllPage = pathname === '/blog/all';
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -68,6 +70,27 @@ export const Sidebar = ({
                 <span className='font-extrabold text-lg font-mono text-blue-100'>Category</span>
               </div>
               <nav className='flex flex-col gap-2 px-3 py-4'>
+                {/* 전체 메뉴 */}
+                <motion.button
+                  type='button'
+                  whileHover={{
+                    scale: 1.06,
+                    boxShadow: isAllPage ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
+                  }}
+                  whileTap={{ scale: 0.97 }}
+                  className={`text-left px-2 py-1 rounded-lg font-mono transition relative border
+                      ${
+                        isAllPage
+                          ? 'bg-blue-100 text-[#232946] border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
+                          : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-transparent hover:border-transparent'
+                      }`}
+                  onClick={() => {
+                    router.push('/blog/all');
+                  }}
+                >
+                  전체
+                </motion.button>
+
                 {categories?.map((cat) => (
                   <motion.button
                     key={cat.id}
@@ -75,11 +98,15 @@ export const Sidebar = ({
                     whileHover={{
                       scale: 1.06,
                       boxShadow:
-                        selectedCategory === cat.name ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
+                        currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
                     }}
                     whileTap={{ scale: 0.97 }}
-                    className={`text-left px-2 py-1 rounded-lg font-mono transition relative
-                        ${selectedCategory === cat.name ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]' : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border border-transparent'}`}
+                    className={`text-left px-2 py-1 rounded-lg font-mono transition relative border
+                        ${
+                          currentCategorySlug === cat.slug
+                            ? 'bg-blue-100 text-[#232946] border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
+                            : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-transparent hover:border-transparent'
+                        }`}
                     onClick={() => {
                       router.push(`/blog/category/${cat.slug}`);
                     }}
@@ -113,4 +140,4 @@ export const Sidebar = ({
       )}
     </>
   );
-};
+}
