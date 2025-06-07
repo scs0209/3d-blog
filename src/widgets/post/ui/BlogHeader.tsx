@@ -1,11 +1,15 @@
 'use client';
 import { MobileNavbar } from './MobileNavbar';
-import { SearchBar } from './SearchBar';
+import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Search, X, Home, Globe, Navigation } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dropdown } from '@/shared/ui';
+
+const SearchBar = dynamic(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), {
+  ssr: false,
+});
 
 export default function BlogHeader() {
   const [menuOpen, setMenuOpen] = useState(false);

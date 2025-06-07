@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 
 export const SearchBar = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
