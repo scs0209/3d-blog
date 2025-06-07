@@ -122,7 +122,7 @@ export default function Sidebar() {
               </nav>
             </div>
             <div>
-              <h2 className='font-extrabold text-base mb-2 font-mono text-blue-100'>Tags</h2>
+              <h2 className='font-extrabold text-base px-3 mb-2 font-mono text-blue-100'>Tags</h2>
               <div className='flex flex-wrap gap-2'>
                 {tags?.map((tag) => (
                   <Tag key={tag.id} tag={tag} count={tag.count?.posts ?? 0} />
