@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 
 const BlogHeader = dynamic(() => import('@/widgets/post/ui/BlogHeader'));
 const Sidebar = dynamic(() => import('@/widgets/post/ui/Sidebar'));
-const BackToMainButton = dynamic(() => import('@/shared/ui/BackToMainButton'));
 
 export default function PostsLayout({
   children,
@@ -12,8 +11,6 @@ export default function PostsLayout({
 }) {
   return (
     <main className='flex flex-col items-center row-start-2 gap-8 sm:items-start bg-white min-h-screen'>
-      <BackToMainButton />
-
       <div className='w-full h-screen overflow-hidden bg-gradient-to-b from-[#181c2a] via-[#232946] to-[#23234d] text-slate-100 font-mono relative'>
         <SpaceBackground />
 
