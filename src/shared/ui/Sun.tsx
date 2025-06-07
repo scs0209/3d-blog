@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef } from 'react';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as three from 'three';

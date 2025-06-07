@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 
 // Tailwind 색상 클래스 배열

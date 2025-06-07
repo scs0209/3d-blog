@@ -1,3 +1,5 @@
+'use client';
+
 import { useTags } from '@/features/tag/model/use-tags';
 import { Tag } from '@/features/tag/ui';
 import { VisitorCounter } from '@/features/blog/ui';
@@ -27,17 +29,17 @@ export const Sidebar = ({
     <>
       {/* SparklesCore - 사이드바와 독립적으로 항상 표시 */}
       <SparklesCore
-        background="transparent"
+        background='transparent'
         minSize={0.3}
         maxSize={0.8}
         particleDensity={300}
         className={`fixed top-0 w-8 h-full pointer-events-none z-5 transition-all duration-300 ${
           sidebarOpen ? 'right-80' : 'right-0'
         }`}
-        particleColor="#7dd3fc"
+        particleColor='#7dd3fc'
         speed={2}
       />
-      
+
       <AnimatePresence>
         {sidebarOpen && (
           <motion.aside
@@ -49,7 +51,6 @@ export const Sidebar = ({
             className='hidden lg:flex h-screen flex-shrink-0 flex-col gap-8 w-80 p-6 bg-[#181c2a]/80 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm z-10 relative'
             style={{ minWidth: 320 }}
           >
-            
             {/* 접기 버튼 (사이드바 내부 오른쪽 상단) */}
             <button
               type='button'

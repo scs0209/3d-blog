@@ -1,3 +1,5 @@
+'use client';
+
 import type { PostResponse } from '@/entities/post/model/post';
 import { Tag } from '@/shared/ui';
 import { formatDateToYMD } from '@/shared/utils';

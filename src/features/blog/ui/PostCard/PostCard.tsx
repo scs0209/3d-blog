@@ -1,3 +1,5 @@
+'use client';
+
 import { motion, useMotionValue, animate } from 'framer-motion';
 import { CardPattern } from './CardPattern';
 import { useEffect, useRef, useState } from 'react';

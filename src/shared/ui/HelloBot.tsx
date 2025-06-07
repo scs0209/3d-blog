@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import type * as three from 'three';

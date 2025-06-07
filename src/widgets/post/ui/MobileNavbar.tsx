@@ -1,3 +1,5 @@
+'use client';
+
 import type { CategoryResponse } from '@/entities/category/model';
 import { useTags } from '@/features/tag/model/use-tags';
 import { Tag } from '@/features/tag/ui';
