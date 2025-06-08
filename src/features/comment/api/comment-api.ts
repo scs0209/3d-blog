@@ -27,3 +27,14 @@ export const deleteComment = (params: DeleteCommentParams) =>
     path: { commentId: params.commentId },
     method: 'delete',
   });
+
+export type UpdateCommentParams = ApiRequestParams<'/api/comments/individual/{commentId}', 'put'>;
+export type UpdateCommentRequest = ApiRequest<'/api/comments/individual/{commentId}', 'put'>;
+
+export const updateComment = (params: UpdateCommentParams, body: UpdateCommentRequest) =>
+  fetcher({
+    url: '/api/comments/individual/{commentId}',
+    path: { commentId: params.commentId },
+    method: 'put',
+    body,
+  });
