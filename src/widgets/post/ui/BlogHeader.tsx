@@ -1,4 +1,5 @@
 'use client';
+
 import { MobileNavbar } from './MobileNavbar';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
