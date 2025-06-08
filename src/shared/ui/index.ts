@@ -24,3 +24,4 @@ export * from './MoveBot';
 export * from './FloatingActionButton';
 export { Dropdown } from './Dropdown';
 export { Button } from './Button';
+export { BaseModal } from './BaseModal';

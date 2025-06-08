@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Home, HelpCircle, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { BaseModal } from './BaseModal';
 
 interface MenuItemProps {
   icon: React.ReactNode;
@@ -119,56 +120,35 @@ export function FloatingActionButton() {
       </div>
 
       {/* 도움말 모달 */}
-      <AnimatePresence>
-        {showHelpModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className='fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm'
-            onClick={() => setShowHelpModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className='max-w-md mx-4 p-6 rounded-2xl bg-black/80 backdrop-blur-xl border border-cyan-500/40'
-              style={{
-                boxShadow: '0 0 40px rgba(0, 255, 208, 0.3)',
-                zIndex: 1000,
-              }}
-            >
-              <div className='flex items-center gap-3 mb-4'>
-                <HelpCircle className='w-6 h-6 text-cyan-400' />
-                <h3 className='text-xl font-bold text-white'>블로그 가이드</h3>
-              </div>
+      <BaseModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+        title='블로그 가이드'
+        size='md'
+        variant='cyberpunk'
+      >
+        <div className='space-y-3 text-gray-300'>
+          <p className='text-sm leading-relaxed'>
+            <span className='text-cyan-400 font-medium'>스크롤</span>을 내리면 블로그 페이지로 이동할 수 있습니다.
+          </p>
+          <p className='text-sm leading-relaxed'>
+            3D 환경에서 마우스를 드래그하여 시점을 변경하고, 휠을 사용하여 줌인/줌아웃할 수 있습니다.
+          </p>
+          <p className='text-sm leading-relaxed'>
+            화면의 다양한 <span className='text-cyan-400 font-medium'>3D 오브젝트들</span>을 클릭하여 인터랙션을
+            즐겨보세요!
+          </p>
+        </div>
 
-              <div className='space-y-3 text-gray-300'>
-                <p className='text-sm leading-relaxed'>
-                  <span className='text-cyan-400 font-medium'>스크롤</span>을 내리면 블로그 페이지로 이동할 수 있습니다.
-                </p>
-                <p className='text-sm leading-relaxed'>
-                  3D 환경에서 마우스를 드래그하여 시점을 변경하고, 휠을 사용하여 줌인/줌아웃할 수 있습니다.
-                </p>
-                <p className='text-sm leading-relaxed'>
-                  화면의 다양한 <span className='text-cyan-400 font-medium'>3D 오브젝트들</span>을 클릭하여 인터랙션을
-                  즐겨보세요!
-                </p>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowHelpModal(false)}
-                className='mt-6 w-full py-2 px-4 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-200'
-              >
-                확인
-              </motion.button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setShowHelpModal(false)}
+          className='mt-6 w-full py-2 px-4 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-200'
+        >
+          확인
+        </motion.button>
+      </BaseModal>
     </>
   );
 }
