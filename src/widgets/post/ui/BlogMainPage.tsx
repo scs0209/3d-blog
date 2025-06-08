@@ -62,24 +62,6 @@ export const post = [
     date: '2024-04-25',
     summary: '일상에서 느낀 소소한 행복을 기록합니다.',
   },
-  {
-    id: 1,
-    title: 'Text Tags: Blocks, Headings And Inlines A Quick Start',
-    category: 'ReactJs',
-    date: '2024-04-08',
-    summary: 'Markdown is a lightweight markup language with plain-text formatting syntax. Its design allows it to...',
-    author: 'vbm coder',
-    thumbnail: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: 2,
-    title: 'Unveiling The Web Browser: Gateway To The World Wide Web',
-    category: 'Css',
-    date: '2024-04-01',
-    summary: 'Markdown is a lightweight markup language with plain-text formatting syntax. Its design allows it to...',
-    author: 'vbm coder',
-    thumbnail: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80',
-  },
 ];
 
 export const BlogMainPage = () => {

@@ -121,10 +121,13 @@ export default function BlogPage() {
 
           {/* 스크롤 힌트 */}
           <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white text-center'>
-            <div className='animate-bounce'>
-              <p className='text-sm mb-2'>스크롤하여 블로그 보기</p>
-              <div className='w-6 h-10 border-2 border-white rounded-full mx-auto'>
-                <div className='w-1 h-3 bg-white rounded-full mx-auto mt-2 animate-pulse' />
+            <div className='animate-pulse duration-[3000ms]'>
+              <p className='text-sm mb-2 opacity-80'>스크롤하여 블로그 보기</p>
+              <div className='w-6 h-10 border-2 border-white/70 rounded-full mx-auto relative'>
+                <div
+                  className='w-1 h-3 bg-white rounded-full mx-auto mt-2 transform translate-y-0 animate-bounce duration-[2500ms]'
+                  style={{ animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)' }}
+                />
               </div>
             </div>
           </div>

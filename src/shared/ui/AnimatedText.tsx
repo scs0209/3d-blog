@@ -1,13 +1,11 @@
 'use client';
 import { Environment, Lightformer, MeshTransmissionMaterial, Text3D } from '@react-three/drei';
-import { useLoader } from '@react-three/fiber';
-import { RGBELoader } from 'three-stdlib';
 
 export function AnimatedText() {
-  const texture = useLoader(
-    RGBELoader,
-    'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
-  );
+  // const texture = useLoader(
+  //   RGBELoader,
+  //   'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
+  // );
 
   return (
     <group scale={0.02} position={[-0.5, 0, 1]} rotation={[0, Math.PI / 4, 0]}>
@@ -42,7 +40,7 @@ export function AnimatedText() {
           temporalDistortion={0}
           ior={1.25}
           color='white'
-          background={texture}
+          // background={texture}
         />
       </Text3D>
 
