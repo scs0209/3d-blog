@@ -39,9 +39,10 @@ import prisma from '@/shared/lib/db';
  *       500:
  *         description: 서버 에러
  */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const postId = Number.parseInt(params.id);
+    const { id } = await params;
+    const postId = Number.parseInt(id);
     const url = new URL(req.url);
     const userId = url.searchParams.get('userId');
 
@@ -127,9 +128,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
  *       500:
  *         description: 서버 에러
  */
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const postId = Number.parseInt(params.id);
+    const { id } = await params;
+    const postId = Number.parseInt(id);
     const { userId } = await req.json();
 
     if (!userId) {
