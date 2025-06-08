@@ -38,7 +38,7 @@ export function Reply({ reply }: ReplyProps) {
             </button>
           </div>
           <div className='flex items-center gap-1'>
-            <LikeDislikeButtons initialLikes={reply.likes} initialDislikes={reply.dislikes} size={15} />
+            <LikeDislikeButtons id={reply.id ?? 0} size={15} />
           </div>
         </div>
       </article>

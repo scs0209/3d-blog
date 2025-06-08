@@ -52,7 +52,7 @@ export function Comment({ comment, replies = [], postId }: CommentProps) {
             </button>
           </div>
           <div className='flex items-center gap-1'>
-            <LikeDislikeButtons initialLikes={comment?.likes} initialDislikes={comment?.dislikes} />
+            <LikeDislikeButtons id={comment?.id ?? 0} />
           </div>
         </div>
 
