@@ -2,6 +2,8 @@ import { CommentForm } from './CommentForm';
 import { Comment } from './Comment';
 import { getComments } from '../api';
 
+export const dynamic = 'force-dynamic';
+
 type CommentSectionProps = {
   postId: number;
 };

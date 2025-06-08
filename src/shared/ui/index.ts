@@ -22,4 +22,5 @@ export * from './WatchRobot';
 export * from './HelloBot';
 export * from './MoveBot';
 export * from './FloatingActionButton';
-export * from './Dropdown';
+export { Dropdown } from './Dropdown';
+export { Button } from './Button';

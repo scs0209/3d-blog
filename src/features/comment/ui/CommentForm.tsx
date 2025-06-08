@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateComment, commentFormSchema, type CommentFormSchema } from '../model';
+import { Button } from '@/shared/ui';
 
 type CommentFormProps = {
   postId: number;
@@ -57,15 +58,7 @@ export function CommentForm({ postId, disabled = false }: CommentFormProps) {
             aria-label='댓글 입력'
             disabled={disabled || isPending}
           />
-          <button
-            type='submit'
-            className='absolute bottom-2.5 right-2.5 bg-blue-700 hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg md:shadow-[0_0_8px_#7dd3fc55] transition-all duration-300 disabled:opacity-60 text-xs transform hover:scale-110 hover:rotate-1 active:scale-95 active:rotate-0'
-            style={{ fontSize: '0.85rem', marginBottom: '6px', marginRight: '6px' }}
-            aria-label='댓글 등록'
-            disabled={disabled || isPending}
-          >
-            {isPending ? '등록중...' : '등록'}
-          </button>
+          <Button type='submit' isPending={isPending} disabled={disabled} size='sm' submitType='comment' />
         </div>
       </div>
       {errors.content && <p className='text-red-400 text-xs mt-1 mb-2'>{errors.content.message}</p>}

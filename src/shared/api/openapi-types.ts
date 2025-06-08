@@ -533,6 +533,130 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/comments/like/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 댓글 좋아요/싫어요 수 조회
+         * @description 특정 댓글의 좋아요/싫어요 수와 사용자의 반응 상태를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 사용자 ID (반응 상태 확인용) */
+                    userId?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 댓글 반응 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            likes?: number;
+                            dislikes?: number;
+                            /** @enum {string} */
+                            userReaction?: "LIKE" | "DISLIKE" | null;
+                        };
+                    };
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * 댓글 좋아요/싫어요 토글
+         * @description 댓글에 좋아요/싫어요를 추가하거나 제거합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        userId: number;
+                        /** @enum {string} */
+                        type: "LIKE" | "DISLIKE";
+                    };
+                };
+            };
+            responses: {
+                /** @description 댓글 반응 토글 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {string} */
+                            userReaction?: "LIKE" | "DISLIKE" | null;
+                            likes?: number;
+                            dislikes?: number;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/comments": {
         parameters: {
             query?: never;
@@ -1039,6 +1163,124 @@ export interface paths {
                             views?: number;
                         };
                     };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/posts/like/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 포스트 좋아요 수 조회
+         * @description 특정 포스트의 좋아요 수와 사용자의 좋아요 여부를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 사용자 ID (좋아요 여부 확인용) */
+                    userId?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description 포스트 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 좋아요 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            count?: number;
+                            isLiked?: boolean;
+                        };
+                    };
+                };
+                /** @description 포스트를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * 포스트 좋아요 토글
+         * @description 포스트에 좋아요를 추가하거나 제거합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 포스트 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        userId: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description 좋아요 토글 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            isLiked?: boolean;
+                            count?: number;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 포스트를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
             };
         };
