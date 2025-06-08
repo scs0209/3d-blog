@@ -132,7 +132,7 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
                 <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
                 <AnimateAvatar scale={3000} position={[0, 5, 0]} />
                 <WalkingAvatar position={[0, 0.6, 0.5]} triggerSnp={triggerSnp} />
-                <Sun scale={15} position={[70, 0, 30]} isCubeActive={isCubeActive} />
+                <Sun scale={15} position={[70, 15, 30]} isCubeActive={isCubeActive} />
                 <Earth scale={10} position={[-18, 0, 50]} />
                 <Scene
                   isCubeActive={isCubeActive}

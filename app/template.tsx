@@ -20,29 +20,32 @@ export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
+      {/* 첫 번째 레이어 */}
       <motion.div
-        className='fixed top-0 bottom-0 right-full w-screen h-screen z-30 bg-[#2e2257]'
+        className='fixed top-0 bottom-0 right-full w-screen h-screen z-30 bg-gradient-to-br from-slate-800 to-slate-900'
         variants={transitionVariants}
         initial='initial'
         animate='animate'
         exit='exit'
-        transition={{ delay: 0.2, duration: 0.6, ease: 'easeInOut' }}
+        transition={{ delay: 0, duration: 0.7, ease: 'easeInOut' }}
       />
+      {/* 두 번째 레이어 */}
       <motion.div
-        className='fixed top-0 bottom-0 right-full w-screen h-screen z-30 bg-[#3b2d71]'
+        className='fixed top-0 bottom-0 right-full w-screen h-screen z-31 bg-gradient-to-br from-gray-800 to-blue-900'
         variants={transitionVariants}
         initial='initial'
         animate='animate'
         exit='exit'
-        transition={{ delay: 0.4, duration: 0.6, ease: 'easeInOut' }}
+        transition={{ delay: 0.1, duration: 0.7, ease: 'easeInOut' }}
       />
+      {/* 세 번째 레이어 */}
       <motion.div
-        className='fixed top-0 bottom-0 right-full w-screen h-screen z-30 bg-[#4b3792]'
+        className='fixed top-0 bottom-0 right-full w-screen h-screen z-32 bg-gradient-to-br from-blue-900 to-indigo-900'
         variants={transitionVariants}
         initial='initial'
         animate='animate'
         exit='exit'
-        transition={{ delay: 0.6, duration: 0.6, ease: 'easeInOut' }}
+        transition={{ delay: 0.2, duration: 0.7, ease: 'easeInOut' }}
       />
     </>
   );
