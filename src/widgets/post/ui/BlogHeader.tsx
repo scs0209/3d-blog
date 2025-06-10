@@ -43,7 +43,7 @@ export default function BlogHeader() {
     <>
       {/* 데스크톱 헤더 */}
       <motion.div
-        className='hidden lg:flex items-center justify-between mb-8 p-4 rounded-xl bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-2xl shadow-blue-500/10 h-16'
+        className='hidden lg:flex items-center justify-between mb-8 p-4 rounded-xl bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-2xl shadow-blue-500/10 h-16 max-w-3xl mx-auto'
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -153,7 +153,7 @@ export default function BlogHeader() {
       </motion.div>
 
       {/* 모바일 헤더 */}
-      <div className='block lg:hidden'>
+      <div className='block lg:hidden max-w-3xl mx-auto'>
         <motion.div
           className='mt-4 mb-6 p-3 rounded-xl bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-xl shadow-blue-500/10 relative'
           initial={{ y: -20, opacity: 0 }}
