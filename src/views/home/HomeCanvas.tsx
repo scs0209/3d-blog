@@ -2,16 +2,7 @@
 
 import { Suspense, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import {
-  CameraController,
-  SceneController,
-  SceneClickHandler,
-  AnimateAvatar,
-  WalkingAvatar,
-  Planet,
-  FallingAstronaut,
-  RoomModel,
-} from '@/widgets/home';
+import { SceneClickHandler, AnimateAvatar, WalkingAvatar, Planet, FallingAstronaut, RoomModel } from '@/widgets/home';
 import { CanvasLoader, Earth, Scene, Sun } from '@/shared/ui';
 import { OrbitControls, Sparkles, Stars } from '@react-three/drei';
 import { useTheme } from 'next-themes';
@@ -125,8 +116,8 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
               <ambientLight intensity={2} color='white' />
               <directionalLight position={[5, 10, 5]} intensity={2} castShadow />
               <Suspense fallback={<CanvasLoader />}>
-                <CameraController />
-                <SceneController />
+                {/* <CameraController /> */}
+                {/* <SceneController /> */}
                 <SceneClickHandler />
                 <Stars radius={100} depth={100} count={4000} factor={4} saturation={0} fade speed={0.2} />
                 <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
