@@ -28,18 +28,20 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* SparklesCore - 사이드바와 독립적으로 항상 표시 */}
-      <SparklesCore
-        background='transparent'
-        minSize={0.3}
-        maxSize={0.8}
-        particleDensity={300}
-        className={`fixed top-0 w-8 h-full pointer-events-none z-5 transition-all duration-300 ${
-          sidebarOpen ? 'right-80' : 'right-0'
-        }`}
-        particleColor='#7dd3fc'
-        speed={2}
-      />
+      {/* SparklesCore - 데스크톱에서만 표시 */}
+      <div className='hidden lg:block'>
+        <SparklesCore
+          background='transparent'
+          minSize={0.3}
+          maxSize={0.8}
+          particleDensity={300}
+          className={`fixed top-0 w-8 h-full pointer-events-none z-5 transition-all duration-300 ${
+            sidebarOpen ? 'right-80' : 'right-0'
+          }`}
+          particleColor='#7dd3fc'
+          speed={2}
+        />
+      </div>
 
       <AnimatePresence>
         {sidebarOpen && (
