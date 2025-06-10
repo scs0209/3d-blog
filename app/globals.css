@@ -99,9 +99,23 @@ body {
 @layer base {
   * {
     @apply border-border;
+    cursor: none !important; /* 모든 요소의 기본 커서 숨김 */
   }
   body {
     @apply bg-background text-foreground;
+    cursor: none !important; /* 기본 커서 숨김 */
+  }
+
+  /* 모든 인터랙티브 요소의 커서도 숨김 */
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  [onclick],
+  .cursor-pointer {
+    cursor: none !important;
   }
 }
 
