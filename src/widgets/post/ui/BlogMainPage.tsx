@@ -76,7 +76,7 @@ export const BlogMainPage = () => {
   }
 
   return (
-    <>
+    <div className='max-w-4xl mx-auto w-full'>
       {recentPosts.length > 0 && (
         <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
           {recentPosts.map((post, idx) => (
@@ -116,6 +116,6 @@ export const BlogMainPage = () => {
           <PostListCard key={post.id} post={post} />
         ))}
       </div>
-    </>
+    </div>
   );
 };

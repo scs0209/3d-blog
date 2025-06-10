@@ -43,10 +43,16 @@ export default function BlogHeader() {
     <>
       {/* 데스크톱 헤더 */}
       <motion.div
-        className='hidden lg:flex items-center justify-between mb-8 p-4 rounded-xl bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-2xl shadow-blue-500/10 h-16 max-w-3xl mx-auto'
+        className='hidden lg:flex items-center justify-between mb-8 p-4 rounded-full bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-2xl h-16 max-w-4xl mx-auto w-full'
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
+        style={{
+          boxShadow: `
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            0 0 20px rgba(59, 130, 246, 0.2)
+          `,
+        }}
       >
         {/* 좌측: 로고 */}
         <div className='flex items-center'>
@@ -73,10 +79,10 @@ export default function BlogHeader() {
                 onClick={onClick}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className='flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-blue-400/30 text-blue-100 hover:from-purple-400/30 hover:to-blue-400/30 hover:border-blue-300/50 transition-all duration-300 group'
+                className='flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-blue-400/30 text-blue-100 hover:from-purple-400/30 hover:to-blue-400/30 hover:border-blue-300/50 transition-all duration-300 group'
                 title='페이지 이동'
               >
-                <Navigation size={16} />
+                <Navigation size={16} className='group-hover:rotate-12 transition-transform duration-300' />
                 <span className='text-sm font-mono font-medium'>이동</span>
               </motion.button>
             )}
@@ -153,12 +159,20 @@ export default function BlogHeader() {
       </motion.div>
 
       {/* 모바일 헤더 */}
-      <div className='block lg:hidden max-w-3xl mx-auto'>
+      <div className='block lg:hidden w-full max-w-4xl mx-auto'>
         <motion.div
-          className='mt-4 mb-6 p-3 rounded-xl bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-xl shadow-blue-500/10 relative'
+          className={`mt-4 mb-6 mx-4 p-3 bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-xl relative transition-all duration-300 ${
+            searchExpanded ? 'rounded-2xl' : 'rounded-full'
+          }`}
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
+          style={{
+            boxShadow: `
+              0 8px 32px rgba(0, 0, 0, 0.3),
+              0 0 20px rgba(59, 130, 246, 0.2)
+            `,
+          }}
         >
           {/* 네비게이션 버튼 - 좌측 상단 */}
           <div className='absolute top-4 left-3'>
@@ -172,10 +186,10 @@ export default function BlogHeader() {
                   onClick={onClick}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className='p-2 rounded-full bg-gradient-to-r from-purple-500/30 to-blue-500/30 border border-blue-400/40 text-blue-100 hover:from-purple-400/40 hover:to-blue-400/40 transition-all duration-300'
+                  className='p-2 rounded-full bg-gradient-to-r from-purple-500/30 to-blue-500/30 border border-blue-400/40 text-blue-100 hover:from-purple-400/40 hover:to-blue-400/40 transition-all duration-300 group'
                   title='페이지 이동'
                 >
-                  <Navigation size={14} />
+                  <Navigation size={14} className='group-hover:rotate-12 transition-transform duration-300' />
                 </motion.button>
               )}
             >
@@ -211,7 +225,7 @@ export default function BlogHeader() {
             </motion.button>
 
             {/* 우측 버튼들 */}
-            <div className='absolute top-3 right-3 flex gap-2'>
+            <div className='absolute top-4 right-3 flex gap-2'>
               {/* 검색 버튼 */}
               {shouldShowSearch && (
                 <motion.button
@@ -253,7 +267,7 @@ export default function BlogHeader() {
                 }}
                 className='mt-3 pt-3 border-t border-blue-400/20'
               >
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2 bg-black/10 rounded-lg px-3 py-2'>
                   <div className='flex-1'>
                     <SearchBar value={search} onChange={setSearch} />
                   </div>
@@ -262,9 +276,9 @@ export default function BlogHeader() {
                     onClick={toggleSearch}
                     whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
-                    className='p-2 text-blue-100 hover:text-white transition-all duration-200 rounded-full hover:bg-white/10 flex-shrink-0'
+                    className='p-1 text-blue-100 hover:text-white transition-all duration-200 rounded-full hover:bg-white/10 flex-shrink-0'
                   >
-                    <X size={18} />
+                    <X size={16} />
                   </motion.button>
                 </div>
               </motion.div>

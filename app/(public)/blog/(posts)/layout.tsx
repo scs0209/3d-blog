@@ -17,7 +17,7 @@ export default function PostsLayout({
         <div className='flex h-screen'>
           {/* Main Content (왼쪽) */}
           <main className='flex-1 h-screen overflow-y-auto p-4 lg:p-10 flex justify-center'>
-            <div className='w-full lg:w-[800px]'>
+            <div className='w-full'>
               <BlogHeader />
               {children}
             </div>
