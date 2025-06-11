@@ -65,8 +65,9 @@ export function GridBackground() {
       const distanceFromCenter = Math.abs(x) / halfSize;
       const fadeOpacity = Math.max(0.1, 1 - distanceFromCenter * 0.8);
 
-      // 각 점에 대한 색상 (RGB)
-      colors.push(0.4, 0.4, 0.4, 0.4, 0.4, 0.4); // 회색
+      // 실제 fadeOpacity 적용
+      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
+      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
     }
 
     // 수평선들
@@ -79,7 +80,9 @@ export function GridBackground() {
       const distanceFromCenter = Math.abs(z) / halfSize;
       const fadeOpacity = Math.max(0.1, 1 - distanceFromCenter * 0.8);
 
-      colors.push(0.4, 0.4, 0.4, 0.4, 0.4, 0.4); // 회색
+      // 실제 fadeOpacity 적용
+      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
+      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
     }
 
     const geometry = new three.BufferGeometry().setFromPoints(points);
@@ -90,6 +93,7 @@ export function GridBackground() {
       transparent: true,
       opacity: opacity,
       linewidth: 1,
+      vertexColors: true,
     });
 
     return new three.LineSegments(geometry, material);
@@ -139,7 +143,7 @@ export function GridBackground() {
   return (
     <group ref={gridRef} position={[0, -2, 0]}>
       {/* 메인 그리드 라인 - 촘촘한 옅은 회색 */}
-      <primitive object={createGrid(100, 100, '#666666', 0.15)} />
+      <primitive object={createGrid(100, 100, '#747272', 0.15)} />
       {/* 메인 그리드 교차점 - 원형 흰색 */}
       <primitive object={createGridPoints(100, 100, '#ffffff', 3, 0.8)} />
 
