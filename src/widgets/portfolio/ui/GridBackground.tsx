@@ -99,6 +99,33 @@ export function GridBackground() {
     return new three.LineSegments(geometry, material);
   };
 
+  // 네온 경로 라인 생성 함수
+  const createNeonPath = (start: three.Vector3, end: three.Vector3, color: string) => {
+    const points = [start, end];
+    const geometry = new three.BufferGeometry().setFromPoints(points);
+
+    const material = new three.LineBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.8,
+      linewidth: 3,
+    });
+
+    // 네온 효과를 위한 두 번째 라인 (더 밝고 얇은)
+    const glowMaterial = new three.LineBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.4,
+      linewidth: 1,
+    });
+
+    const group = new three.Group();
+    group.add(new three.Line(geometry.clone(), material));
+    group.add(new three.Line(geometry.clone(), glowMaterial));
+
+    return group;
+  };
+
   // 교차점 생성 함수 (거리에 따른 opacity 조절)
   const createGridPoints = (size: number, divisions: number, color: string, pointSize = 4, opacity = 0.8) => {
     const intersectionPoints: three.Vector3[] = [];
@@ -146,6 +173,13 @@ export function GridBackground() {
       <primitive object={createGrid(100, 100, '#747272', 0.15)} />
       {/* 메인 그리드 교차점 - 원형 흰색 */}
       <primitive object={createGridPoints(100, 100, '#ffffff', 3, 0.8)} />
+
+      {/* 네온 보라색 경로들 - HoloTable(중심)에서 각 모델로 */}
+      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(4.4, 2, 0), '#8b5cf6')} />
+      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(-4, 2, 0), '#8b5cf6')} />
+      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -4), '#8b5cf6')} />
+      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -5), '#8b5cf6')} />
+      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -6), '#8b5cf6')} />
 
       {/* 포그 효과 */}
       <fog attach='fog' args={['#1e293b', 20, 80]} />
