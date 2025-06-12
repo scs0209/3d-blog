@@ -8,7 +8,7 @@ import type * as three from 'three';
 function Corner({
   x,
   y,
-  color = '#fff',
+  color = '#a78bfa',
   length = 0.13,
   thickness = 0.035,
   animate = true,
@@ -30,7 +30,7 @@ function Corner({
       const offset = Math.sin(time * 3 + x + y) * 0.005;
       groupRef.current.position.z = 0.03 + offset;
       // 밝기 깜빡임
-      materialRef.current.emissiveIntensity = 0.5 + Math.sin(time * 5 + x * y) * 0.2;
+      materialRef.current.emissiveIntensity = 1.5 + Math.sin(time * 5 + x * y) * 0.3;
     }
   });
 
@@ -39,12 +39,12 @@ function Corner({
       {/* 가로선 */}
       <mesh position={[x > 0 ? -length / 2 : length / 2, 0, 0]}>
         <boxGeometry args={[length, thickness, thickness]} />
-        <meshStandardMaterial ref={materialRef} color={color} emissive={color} />
+        <meshStandardMaterial ref={materialRef} color={color} emissive={color} emissiveIntensity={1.5} />
       </mesh>
       {/* 세로선 */}
       <mesh position={[0, y > 0 ? -length / 2 : length / 2, 0]}>
         <boxGeometry args={[thickness, length, thickness]} />
-        <meshStandardMaterial color={color} emissive={color} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1.5} />
       </mesh>
     </group>
   );
@@ -58,7 +58,7 @@ type HoloTextProps = {
   color?: string;
 };
 
-export function HoloText({ text, position, rotation = [0, 0, 0], scale = 1, color = '#8b5cf6' }: HoloTextProps) {
+export function HoloText({ text, position, rotation = [0, 0, 0], scale = 1, color = '#a78bfa' }: HoloTextProps) {
   const textRef = useRef<three.Mesh>(null);
   const [bounds, setBounds] = useState<three.Box3 | null>(null);
 
@@ -80,11 +80,12 @@ export function HoloText({ text, position, rotation = [0, 0, 0], scale = 1, colo
       const material = textRef.current.material as three.MeshStandardMaterial;
       if (material) {
         material.opacity = 0.8 + Math.sin(time * 3) * 0.1;
+        material.emissiveIntensity = 1.5;
       }
     }
   });
 
-  const padding = 0.15 * scale; // 텍스트와 코너 간격 넓힘
+  const padding = 0.15 * scale;
   const corners = [];
 
   if (bounds) {
@@ -126,7 +127,7 @@ export function HoloText({ text, position, rotation = [0, 0, 0], scale = 1, colo
           transparent
           opacity={0.8}
           emissive={color}
-          emissiveIntensity={0.3}
+          emissiveIntensity={1.5}
           wireframe={false}
         />
       </Text3D>
