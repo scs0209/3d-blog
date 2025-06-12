@@ -6,3 +6,5 @@ export * from './ContactMe';
 export * from './TypingMan';
 export * from './Server';
 export * from './HoloText';
+export * from './ExperiencePerson';
+export * from './ExperienceDesk';
