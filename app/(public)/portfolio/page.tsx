@@ -17,6 +17,8 @@ import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { useState, useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as three from 'three';
+import { AboutMePage } from '@/widgets/portfolio/ui/AboutMePage';
+import { NeonToggle } from '@/widgets/portfolio/ui/NeonToggle';
 
 export default function PortfolioPage() {
   // 그룹 집중 상태: null이면 전체, 아니면 해당 그룹만 보여줌
@@ -26,18 +28,10 @@ export default function PortfolioPage() {
   // pulse 효과 상태
   const [pulseActive, setPulseActive] = useState(false);
   const [pulseCenter, setPulseCenter] = useState<[number, number, number] | null>(null);
-  // 카메라 애니메이션 타이머
-  const cameraAnimRef = useRef<{
-    start: number | null;
-    duration: number;
-    fromPos?: [number, number, number];
-    toPos?: [number, number, number];
-    fromLook?: [number, number, number];
-    toLook?: [number, number, number];
-  }>({ start: null, duration: 3 });
   // 카메라 이동 목표 상태 추가
   const [targetPos, setTargetPos] = useState<[number, number, number] | null>(null);
   const [targetLook, setTargetLook] = useState<[number, number, number] | null>(null);
+  const [showAboutMeOverlay, setShowAboutMeOverlay] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -130,6 +124,9 @@ export default function PortfolioPage() {
           setTargetPos(groupCameraTargets[groupName].position);
           setTargetLook(groupCameraTargets[groupName].lookAt);
         }
+        if (groupName === 'work') {
+          setShowAboutMeOverlay(true);
+        }
       }, 1000);
     }
   };
@@ -153,8 +150,45 @@ export default function PortfolioPage() {
     return true;
   };
 
+  const [quality, setQuality] = useState(false);
+  const [sound, setSound] = useState(false);
+
   return (
     <div className='h-screen w-screen bg-gray-900'>
+      {/* 오버레이 UI: 상단좌측 타이틀/직함 */}
+      <div className='absolute top-8 left-8 z-30 flex flex-col gap-1'>
+        <span className='text-cyan-300 font-bold text-2xl neon-glow'>홍길동</span>
+        <span className='text-cyan-500 text-xs font-mono neon-glow'>FULL STACK WEB DEVELOPER</span>
+      </div>
+      {/* 오버레이 UI: 상단우측 EXIT/FPS */}
+      <div className='absolute top-8 right-8 z-30 flex gap-4 items-center'>
+        <span className='text-cyan-400 font-mono text-sm'>FPS 76</span>
+        <button
+          type='button'
+          className='px-4 py-2 bg-cyan-700 text-white rounded-lg neon-glow font-bold text-lg hover:bg-cyan-500 transition'
+        >
+          EXIT
+        </button>
+      </div>
+      {/* 오버레이 UI: 하단좌측 퀄리티/사운드/라이트모드 */}
+      <div className='absolute bottom-8 left-8 z-30 flex flex-col gap-3'>
+        <NeonToggle checked={quality} onChange={setQuality} label='HIGH QUALITY' />
+        <NeonToggle checked={sound} onChange={setSound} label='SOUND EFFECTS' />
+      </div>
+      {/* 오버레이 UI: 하단우측 저작권/소셜 */}
+      <div className='absolute bottom-8 right-8 z-30 flex gap-4 items-center text-cyan-300 font-mono text-xs'>
+        <span>© 2025</span>
+        <a href='https://github.com/yourid' target='_blank' rel='noopener noreferrer'>
+          GITHUB
+        </a>
+        <a href='mailto:your@email.com'>EMAIL</a>
+      </div>
+      {/* 오버레이 AboutMePage */}
+      {showAboutMeOverlay && (
+        <div className='fixed inset-0 z-50 bg-black/80 flex items-center justify-center'>
+          <AboutMePage />
+        </div>
+      )}
       {/* 뒤로가기 버튼 */}
       {focusedGroup && (
         <button
