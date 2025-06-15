@@ -1,11 +1,27 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as three from 'three';
+import { useState } from 'react';
 
-export function GridBackground() {
+export function GridBackground({
+  showNeonPaths = true,
+  pulseActive = false,
+  pulseCenter = null,
+}: {
+  showNeonPaths?: boolean;
+  pulseActive?: boolean;
+  pulseCenter?: [number, number, number] | null;
+}) {
   const gridRef = useRef<three.Group>(null);
+  const [pulse, setPulse] = useState({ scale: 1, opacity: 0, running: false });
+  const pulseDuration = 0.8; // 초
+  const pulseMaxScale = 3.5;
+  const pulseInnerStart = 0.7;
+  const pulseOuterStart = 1.1;
+  const pulseInnerEnd = 2.2;
+  const pulseOuterEnd = 3.5;
 
   // 원형 텍스처 생성
   const circleTexture = useMemo(() => {
@@ -35,9 +51,27 @@ export function GridBackground() {
     return texture;
   }, []);
 
-  useFrame((state) => {
+  // pulseActive가 true로 바뀔 때마다 1회 애니메이션 트리거
+  useEffect(() => {
+    if (pulseActive && pulseCenter) {
+      setPulse({ scale: 1, opacity: 0.5, running: true });
+    }
+  }, [pulseActive, pulseCenter]);
+
+  useFrame((state, delta) => {
+    // 퍼짐 파동 애니메이션 (한 번만)
+    if (pulse.running) {
+      setPulse((prev) => {
+        const nextScale = prev.scale + (pulseMaxScale - 1) * (delta / pulseDuration);
+        const nextOpacity = Math.max(0, 0.5 - (nextScale - 1) * 0.4);
+        if (nextScale > pulseMaxScale) {
+          return { scale: 1, opacity: 0, running: false };
+        }
+        return { scale: nextScale, opacity: nextOpacity, running: true };
+      });
+    }
+    // 기존 교차점 펄스 효과
     if (gridRef.current) {
-      // 교차점만 펄스 효과 (선은 제외)
       const time = state.clock.getElapsedTime();
       gridRef.current.children.forEach((child, index) => {
         if (child instanceof three.Points) {
@@ -173,17 +207,31 @@ export function GridBackground() {
       <primitive object={createGrid(100, 100, '#747272', 0.15)} />
       {/* 메인 그리드 교차점 - 원형 흰색 */}
       <primitive object={createGridPoints(100, 100, '#ffffff', 3, 0.8)} />
-
       {/* 네온 보라색 경로들 - HoloTable(중심)에서 각 모델로 */}
-      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(4.4, 2, 0), '#8b5cf6')} />
-      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(-4, 2, 0), '#8b5cf6')} />
-      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -4), '#8b5cf6')} />
-      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -5), '#8b5cf6')} />
-      <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -6), '#8b5cf6')} />
-
+      {showNeonPaths && (
+        <>
+          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(4.4, 2, 0), '#8b5cf6')} />
+          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(-4, 2, 0), '#8b5cf6')} />
+          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -4), '#8b5cf6')} />
+          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -5), '#8b5cf6')} />
+          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -6), '#8b5cf6')} />
+        </>
+      )}
+      {/* 퍼짐 파동 효과 (링) */}
+      {pulse.running && pulseCenter && pulse.opacity > 0 && (
+        <mesh position={pulseCenter} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry
+            args={[
+              pulseInnerStart + ((pulseInnerEnd - pulseInnerStart) * (pulse.scale - 1)) / (pulseMaxScale - 1),
+              pulseOuterStart + ((pulseOuterEnd - pulseOuterStart) * (pulse.scale - 1)) / (pulseMaxScale - 1),
+              96,
+            ]}
+          />
+          <meshBasicMaterial color={'#8b5cf6'} transparent opacity={pulse.opacity} depthWrite={false} />
+        </mesh>
+      )}
       {/* 포그 효과 */}
       <fog attach='fog' args={['#1e293b', 20, 80]} />
-
       {/* 주변 조명 효과 - 어둡게 조정 */}
       <ambientLight intensity={0.05} color='#001122' />
     </group>
