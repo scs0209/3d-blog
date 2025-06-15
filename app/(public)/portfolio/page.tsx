@@ -163,12 +163,6 @@ export default function PortfolioPage() {
       {/* 오버레이 UI: 상단우측 EXIT/FPS */}
       <div className='absolute top-8 right-8 z-30 flex gap-4 items-center'>
         <span className='text-cyan-400 font-mono text-sm'>FPS 76</span>
-        <button
-          type='button'
-          className='px-4 py-2 bg-cyan-700 text-white rounded-lg neon-glow font-bold text-lg hover:bg-cyan-500 transition'
-        >
-          EXIT
-        </button>
       </div>
       {/* 오버레이 UI: 하단좌측 퀄리티/사운드/라이트모드 */}
       <div className='absolute bottom-8 left-8 z-30 flex flex-col gap-3'>
@@ -185,9 +179,25 @@ export default function PortfolioPage() {
       </div>
       {/* 오버레이 AboutMePage */}
       {showAboutMeOverlay && (
-        <div className='fixed inset-0 z-50 bg-black/80 flex items-center justify-center'>
-          <AboutMePage />
-        </div>
+        <>
+          {/* 왼쪽 1/2 패널 (최대폭 제한, 중앙정렬) */}
+          <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
+            <AboutMePage />
+          </div>
+          {/* 오른쪽 1/2 투명 오버레이 */}
+          <div
+            className='fixed right-0 top-0 h-full w-1/2 z-40 hidden sm:block'
+            onClick={() => setShowAboutMeOverlay(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                setShowAboutMeOverlay(false);
+              }
+            }}
+            tabIndex={0}
+            aria-label='오버레이 닫기'
+            role='button'
+          />
+        </>
       )}
       {/* 뒤로가기 버튼 */}
       {focusedGroup && (
