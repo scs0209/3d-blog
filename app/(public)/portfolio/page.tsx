@@ -55,7 +55,7 @@ export default function PortfolioPage() {
   }
 
   // 카메라 애니메이션 처리
-  function CameraController() {
+  function CameraController({ onAnimationEnd }: { onAnimationEnd: () => void }) {
     const { camera, clock } = useThree();
     const animRef = useRef({
       start: 0,
@@ -106,6 +106,7 @@ export default function PortfolioPage() {
 
         if (t === 1) {
           animRef.current.running = false;
+          onAnimationEnd();
         }
       }
     });
@@ -124,9 +125,6 @@ export default function PortfolioPage() {
           setTargetPos(groupCameraTargets[groupName].position);
           setTargetLook(groupCameraTargets[groupName].lookAt);
         }
-        if (groupName === 'work') {
-          setShowAboutMeOverlay(true);
-        }
       }, 1000);
     }
   };
@@ -135,6 +133,7 @@ export default function PortfolioPage() {
   const handleBack = () => {
     setTargetPos(initialCameraPos);
     setTargetLook(initialCameraLook);
+    setShowAboutMeOverlay(false);
     setTimeout(() => {
       setFocusedGroup(null);
       setTargetPos(null);
@@ -224,7 +223,7 @@ export default function PortfolioPage() {
         </button>
       )}
       <Canvas camera={{ position: [2, 5, 2], fov: 90, near: 0.1, far: 10000 }}>
-        <CameraController />
+        <CameraController onAnimationEnd={() => setShowAboutMeOverlay(true)} />
         {/* GridBackground는 항상 표시, 네온 경로/퍼짐 효과 prop 전달 */}
         <GridBackground showNeonPaths={!focusedGroup} pulseActive={pulseActive} pulseCenter={pulseCenter} />
         {/* 메인 3D 모델 */}
