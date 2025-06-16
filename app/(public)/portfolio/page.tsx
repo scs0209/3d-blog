@@ -117,7 +117,7 @@ export default function PortfolioPage() {
   const handleGroupClick = (groupName: typeof focusedGroup) => {
     setFocusedGroup(groupName);
     if (groupName && groupCameraTargets[groupName]) {
-      setPulseCenter(groupCameraTargets[groupName].pulse);
+      setPulseCenter(groupCameraTargets[groupName]?.pulse);
       setPulseActive(true);
       setTimeout(() => {
         setPulseActive(false);
@@ -183,19 +183,6 @@ export default function PortfolioPage() {
           <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
             <AboutMePage />
           </div>
-          {/* 오른쪽 1/2 투명 오버레이 */}
-          <div
-            className='fixed right-0 top-0 h-full w-1/2 z-40 hidden sm:block'
-            onClick={() => setShowAboutMeOverlay(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setShowAboutMeOverlay(false);
-              }
-            }}
-            tabIndex={0}
-            aria-label='오버레이 닫기'
-            role='button'
-          />
         </>
       )}
       {/* 뒤로가기 버튼 */}

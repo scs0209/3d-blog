@@ -1,7 +1,7 @@
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-export function AboutMePage() {
+export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolean; onClose?: () => void }) {
   const [slideDone, setSlideDone] = useState(false);
 
   const aboutMeData = {
@@ -25,6 +25,10 @@ export function AboutMePage() {
   const sectionCount = aboutMeData.sections.length;
   const contentBorderControls = useAnimation();
   const contentFadeControls = useAnimation();
+  const slideDuration = 0.5;
+  const dropDuration = 0.7;
+  const borderDelay = sectionCount * 0.5 + 0.2;
+  const dropDelay = borderDelay + slideDuration;
 
   useEffect(() => {
     // 섹션 border 애니메이션이 모두 끝난 후 컨텐츠 border 애니메이션 시작
@@ -47,6 +51,19 @@ export function AboutMePage() {
     );
     return () => clearTimeout(timer);
   }, [sectionCount, contentFadeControls]);
+
+  // 애니메이션 완료 후 콜백
+  useEffect(() => {
+    if (isClosing) {
+      const totalDuration = 1.2; // dropDuration + slideDuration
+      const timer = setTimeout(() => {
+        if (onClose) {
+          onClose();
+        }
+      }, totalDuration * 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isClosing, onClose]);
 
   return (
     <div
@@ -126,16 +143,10 @@ export function AboutMePage() {
         </div>
         {/* 본문: 좌측 텍스트, 우측 프로필 - border-bottom 슬라이드 → height 애니메이션 */}
         {(() => {
-          const borderDelay = sectionCount * 0.5 + 0.2;
-          const slideDuration = 0.5;
-          const dropDuration = 0.7;
-          const dropDelay = borderDelay + slideDuration;
-
           // 1. border-bottom 슬라이드(왼→오)
-
           return (
             <>
-              {!slideDone && (
+              {!slideDone && !isClosing && (
                 <motion.div
                   className='w-full h-[3px] overflow-hidden'
                   initial={{ width: 0 }}
@@ -146,17 +157,22 @@ export function AboutMePage() {
                   <div className='h-[3px] bg-cyan-400 shadow-[0_0_8px_#67e8f9] rounded-t w-full' />
                 </motion.div>
               )}
-              {slideDone && (
+              {(slideDone || isClosing) && (
                 <motion.div
                   className='w-full flex flex-col gap-0 overflow-hidden'
-                  initial={{ height: 3 }}
-                  animate={{ height: 272 }}
+                  initial={{ height: isClosing ? 272 : 3 }}
+                  animate={{ height: isClosing ? 3 : 272 }}
                   transition={{ duration: dropDuration, ease: 'easeInOut' }}
                   style={{
                     minHeight: 0,
                     boxSizing: 'border-box',
                     background: 'rgba(0,0,0,0.25)',
                     borderBottom: '2px solid #22d3ee',
+                  }}
+                  onAnimationComplete={() => {
+                    if (isClosing) {
+                      setSlideDone(false);
+                    }
                   }}
                 >
                   <div className='flex flex-row gap-8 items-start w-full pt-4 h-full'>
@@ -175,6 +191,17 @@ export function AboutMePage() {
                       </div>
                     </div>
                   </div>
+                </motion.div>
+              )}
+              {/* border-bottom 슬라이드 아웃 (닫힐 때) */}
+              {isClosing && (
+                <motion.div
+                  className='w-full h-[3px] overflow-hidden'
+                  initial={{ width: '100%' }}
+                  animate={{ width: 0 }}
+                  transition={{ duration: slideDuration, delay: dropDuration, ease: 'easeInOut' }}
+                >
+                  <div className='h-[3px] bg-cyan-400 shadow-[0_0_8px_#67e8f9] rounded-t w-full' />
                 </motion.div>
               )}
             </>
