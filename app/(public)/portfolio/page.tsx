@@ -32,6 +32,7 @@ export default function PortfolioPage() {
   const [targetPos, setTargetPos] = useState<[number, number, number] | null>(null);
   const [targetLook, setTargetLook] = useState<[number, number, number] | null>(null);
   const [showAboutMeOverlay, setShowAboutMeOverlay] = useState(false);
+  const [aboutMeClosing, setAboutMeClosing] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -117,7 +118,8 @@ export default function PortfolioPage() {
   const handleGroupClick = (groupName: typeof focusedGroup) => {
     setFocusedGroup(groupName);
     if (groupName && groupCameraTargets[groupName]) {
-      setPulseCenter(groupCameraTargets[groupName]?.pulse);
+      -setPulseCenter(groupCameraTargets[groupName]?.pulse);
+      +setPulseCenter(groupCameraTargets[groupName]?.pulse ?? null);
       setPulseActive(true);
       setTimeout(() => {
         setPulseActive(false);
@@ -131,9 +133,15 @@ export default function PortfolioPage() {
 
   // 뒤로가기
   const handleBack = () => {
+    setAboutMeClosing(true);
+  };
+
+  // AboutMePage 닫힘 애니메이션 완료 후 처리
+  const handleAboutMeClose = () => {
+    setShowAboutMeOverlay(false);
+    setAboutMeClosing(false);
     setTargetPos(initialCameraPos);
     setTargetLook(initialCameraLook);
-    setShowAboutMeOverlay(false);
     setTimeout(() => {
       setFocusedGroup(null);
       setTargetPos(null);
@@ -181,7 +189,7 @@ export default function PortfolioPage() {
         <>
           {/* 왼쪽 1/2 패널 (최대폭 제한, 중앙정렬) */}
           <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
-            <AboutMePage />
+            <AboutMePage isClosing={aboutMeClosing} onClose={handleAboutMeClose} />
           </div>
         </>
       )}

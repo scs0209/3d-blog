@@ -160,8 +160,8 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
               {(slideDone || isClosing) && (
                 <motion.div
                   className='w-full flex flex-col gap-0 overflow-hidden'
-                  initial={{ height: isClosing ? 272 : 3 }}
-                  animate={{ height: isClosing ? 3 : 272 }}
+                  initial={{ height: isClosing ? '100%' : 3 }}
+                  animate={{ height: isClosing ? 3 : '100%' }}
                   transition={{ duration: dropDuration, ease: 'easeInOut' }}
                   style={{
                     minHeight: 0,
