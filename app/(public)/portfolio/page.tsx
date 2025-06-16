@@ -123,8 +123,8 @@ export default function PortfolioPage() {
       setTimeout(() => {
         setPulseActive(false);
         if (groupCameraTargets[groupName]) {
-          setTargetPos(groupCameraTargets[groupName].position);
-          setTargetLook(groupCameraTargets[groupName].lookAt);
+          setTargetPos(groupCameraTargets[groupName]?.position ?? null);
+          setTargetLook(groupCameraTargets[groupName]?.lookAt ?? null);
         }
       }, 1000);
     }
