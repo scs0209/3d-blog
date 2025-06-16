@@ -118,8 +118,7 @@ export default function PortfolioPage() {
   const handleGroupClick = (groupName: typeof focusedGroup) => {
     setFocusedGroup(groupName);
     if (groupName && groupCameraTargets[groupName]) {
-      -setPulseCenter(groupCameraTargets[groupName]?.pulse);
-      +setPulseCenter(groupCameraTargets[groupName]?.pulse ?? null);
+      setPulseCenter(groupCameraTargets[groupName]?.pulse ?? null);
       setPulseActive(true);
       setTimeout(() => {
         setPulseActive(false);
