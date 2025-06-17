@@ -1,4 +1,4 @@
-import { motion, useAnimation } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 interface Experience {
@@ -60,11 +60,33 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
   const [selectedExp, setSelectedExp] = useState<string>('XP_03');
   const [slideDone, setSlideDone] = useState(false);
   const [contentKey, setContentKey] = useState(0);
+  const [cardsAnimationDone, setCardsAnimationDone] = useState(false);
+  const [currentCardIndex, setCurrentCardIndex] = useState(-1);
+  const [contentClosing, setContentClosing] = useState(false);
 
-  const contentBorderControls = useAnimation();
-  const contentFadeControls = useAnimation();
   const slideDuration = 0.5;
   const dropDuration = 0.7;
+  const staggerDuration = 0.15; // 카드 간격 줄임
+  const cardAnimationDuration = 0.3; // 각 카드 애니메이션 시간
+
+  // 초기화 및 닫기 처리
+  useEffect(() => {
+    if (isClosing) {
+      setContentClosing(true);
+    } else {
+      setCurrentCardIndex(-1);
+      setTimeout(() => {
+        setCurrentCardIndex(0);
+      }, 50);
+    }
+  }, [isClosing]);
+
+  // 컨텐츠 닫힘 애니메이션 완료 후 카드 애니메이션 시작
+  useEffect(() => {
+    if (contentClosing && !slideDone) {
+      setCurrentCardIndex(experiences.length - 1);
+    }
+  }, [contentClosing, slideDone]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -72,82 +94,104 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
     setContentKey((prev) => prev + 1);
   }, [selectedExp]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      contentBorderControls.start({ height: '100%' });
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [contentBorderControls]);
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      x: -320,
+      transition: {
+        duration: cardAnimationDuration,
+        ease: 'easeOut',
+      },
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: cardAnimationDuration,
+        ease: 'easeOut',
+      },
+    },
+  };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      contentFadeControls.start({ opacity: 1 });
-    }, 700);
-    return () => clearTimeout(timer);
-  }, [contentFadeControls]);
-
-  useEffect(() => {
-    if (isClosing) {
-      const totalDuration = 1.2;
-      const timer = setTimeout(() => {
+  // 카드 애니메이션 완료 핸들러
+  const handleCardAnimationComplete = (index: number) => {
+    if (!isClosing) {
+      if (index < experiences.length - 1) {
+        setTimeout(() => {
+          setCurrentCardIndex(index + 1);
+        }, staggerDuration * 1000);
+      } else {
+        setCardsAnimationDone(true);
+      }
+    } else {
+      if (index > 0) {
+        setTimeout(() => {
+          setCurrentCardIndex(index - 1);
+        }, staggerDuration * 1000);
+      } else {
         if (onClose) {
           onClose();
         }
-      }, totalDuration * 1000);
-      return () => clearTimeout(timer);
+      }
     }
-  }, [isClosing, onClose]);
+  };
 
   return (
     <div className='fixed top-14 left-0 h-screen w-screen backdrop-blur-[2px] bg-transparent'>
       <div
-        className='fixed pl-4 mt-16 h-screen w-full flex flex-row gap-6 overflow-hidden'
+        className='fixed pl-4 mt-16 h-screen w-full flex flex-row gap-6'
         style={{
           top: '48px',
           maxHeight: 'calc(-128px - 8rem + 100vh)',
         }}
       >
         {/* 왼쪽: 경험 카드들 */}
-        <div className='w-[280px] flex-shrink-0 flex flex-col gap-4'>
-          {experiences.map((exp) => (
-            <div
-              key={exp.id}
-              className={`relative px-6 py-5 bg-black/20 text-white font-bold tracking-widest flex flex-col items-start justify-end cursor-pointer transition-all duration-300 ${
-                selectedExp === exp.id
-                  ? 'shadow-[0_0_20px_#8b5cf6,0_0_10px_#a78bfa] border-violet-300'
-                  : 'shadow-[0_0_12px_#8b5cf6,0_0_4px_#a78bfa] border-violet-400/50'
-              }`}
-              style={{
-                clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px)',
-                borderWidth: '1px',
-              }}
-              onClick={() => setSelectedExp(exp.id)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  setSelectedExp(exp.id);
-                }
-              }}
-            >
-              <span className='text-xs font-mono text-violet-300 drop-shadow-[0_0_6px_#a78bfa] mb-2'>{exp.id}</span>
-              <span className='text-violet-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_#a78bfa]'>
-                {exp.company}
-              </span>
-              <span className='text-violet-200 text-sm font-mono mt-2'>{exp.role}</span>
-              <div className='flex flex-col gap-1 w-full mt-4 text-xs font-mono text-violet-300'>
-                <span>{exp.period}</span>
-                <span>{exp.location}</span>
-              </div>
-
-              {/* 하단 강조선 */}
+        <div className='relative w-[280px] flex-shrink-0'>
+          <div className='absolute w-full flex flex-col gap-4'>
+            {experiences.map((exp, index) => (
               <motion.div
-                className='absolute left-0 bottom-0 h-[2px] bg-violet-400 rounded shadow-[0_0_8px_#a78bfa]'
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ duration: 0.28 }}
-                style={{ zIndex: 2 }}
-              />
-            </div>
-          ))}
+                key={exp.id}
+                variants={cardVariants}
+                initial='hidden'
+                animate={index <= currentCardIndex ? 'visible' : 'hidden'}
+                onAnimationComplete={() => handleCardAnimationComplete(index)}
+                className={`relative px-6 py-5 bg-black/20 text-white font-bold tracking-widest flex flex-col items-start justify-end cursor-pointer transition-all duration-300 ${
+                  selectedExp === exp.id
+                    ? 'shadow-[0_0_20px_#8b5cf6,0_0_10px_#a78bfa] border-violet-300'
+                    : 'shadow-[0_0_12px_#8b5cf6,0_0_4px_#a78bfa] border-violet-400/50'
+                }`}
+                style={{
+                  clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px)',
+                  borderWidth: '1px',
+                }}
+                onClick={() => setSelectedExp(exp.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSelectedExp(exp.id);
+                  }
+                }}
+              >
+                <span className='text-xs font-mono text-violet-300 drop-shadow-[0_0_6px_#a78bfa] mb-2'>{exp.id}</span>
+                <span className='text-violet-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_#a78bfa]'>
+                  {exp.company}
+                </span>
+                <span className='text-violet-200 text-sm font-mono mt-2'>{exp.role}</span>
+                <div className='flex flex-col gap-1 w-full mt-4 text-xs font-mono text-violet-300'>
+                  <span>{exp.period}</span>
+                  <span>{exp.location}</span>
+                </div>
+
+                {/* 하단 강조선 */}
+                <motion.div
+                  className='absolute left-0 bottom-0 h-[2px] bg-violet-400 rounded shadow-[0_0_8px_#a78bfa]'
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 0.28 }}
+                  style={{ zIndex: 2 }}
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* 오른쪽: 선택된 경험 상세 내용 */}
@@ -160,7 +204,7 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
 
             return (
               <>
-                {!slideDone && !isClosing && (
+                {!slideDone && !isClosing && cardsAnimationDone && (
                   <motion.div
                     className='w-full h-[3px] overflow-hidden'
                     initial={{ width: 0 }}
@@ -171,16 +215,23 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
                     <div className='h-[3px] bg-violet-400 shadow-[0_0_8px_#a78bfa] rounded-t w-full' />
                   </motion.div>
                 )}
-                {(slideDone || isClosing) && (
+                {((slideDone && cardsAnimationDone) || contentClosing) && (
                   <div className='w-full bg-black/25' style={{ borderBottom: '2px solid #8b5cf6' }}>
                     <motion.div
                       key={contentKey}
                       className='w-full flex flex-col gap-4'
-                      initial={{ height: isClosing ? '100%' : 0, opacity: isClosing ? 1 : 0 }}
-                      animate={{ height: isClosing ? 0 : 'auto', opacity: isClosing ? 0 : 1 }}
+                      initial={{ height: contentClosing ? '100%' : 0, opacity: contentClosing ? 1 : 0 }}
+                      animate={{ height: contentClosing ? 0 : 'auto', opacity: contentClosing ? 0 : 1 }}
                       transition={{
                         height: { duration: dropDuration, ease: 'easeInOut' },
                         opacity: { duration: 0.3, delay: dropDuration * 0.5 },
+                      }}
+                      onAnimationComplete={() => {
+                        if (contentClosing) {
+                          if (onClose) {
+                            onClose();
+                          }
+                        }
                       }}
                     >
                       {/* 설명 */}
