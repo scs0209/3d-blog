@@ -219,7 +219,7 @@ export default function PortfolioPage() {
 
     if (groupName && groupCameraTargets[groupName]) {
       const target = groupCameraTargets[groupName];
-      setPulseCenter(target.pulse ?? null);
+      setPulseCenter(target?.pulse ?? null);
       setPulseActive(true);
       setTimeout(() => {
         setPulseActive(false);
