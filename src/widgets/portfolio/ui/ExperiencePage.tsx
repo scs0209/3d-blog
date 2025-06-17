@@ -66,10 +66,11 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
   const slideDuration = 0.5;
   const dropDuration = 0.7;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setSlideDone(false);
     setContentKey((prev) => prev + 1);
-  }, []);
+  }, [selectedExp]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
