@@ -5,16 +5,37 @@ import { useFrame } from '@react-three/fiber';
 import * as three from 'three';
 import { useState } from 'react';
 
+// groupCameraTargets의 타입 정의
+type GroupCameraTargets = Record<
+  string,
+  {
+    offset: [number, number, number];
+    lookAt: [number, number, number];
+    pulse: [number, number, number];
+    modelPosition: [number, number, number];
+    secondaryOffset?: [number, number, number];
+    secondaryLookAt?: [number, number, number];
+  }
+>;
+
 export function GridBackground({
   showNeonPaths = true,
   pulseActive = false,
   pulseCenter = null,
+  hoveredPosition = null,
 }: {
   showNeonPaths?: boolean;
   pulseActive?: boolean;
   pulseCenter?: [number, number, number] | null;
+  hoveredPosition?: [number, number, number] | null;
 }) {
   const gridRef = useRef<three.Group>(null);
+  const pointsRef = useRef<three.Points>(null);
+  const originalColors = useRef<Float32Array | null>(null);
+  const highlightRef = useRef<three.Mesh>(null);
+  const targetOpacity = useRef(0);
+  const [highlightPosition, setHighlightPosition] = useState<three.Vector3 | null>(null);
+
   const [pulse, setPulse] = useState({ scale: 1, opacity: 0, running: false });
   const pulseDuration = 0.8; // 초
   const pulseMaxScale = 3.5;
@@ -51,6 +72,31 @@ export function GridBackground({
     return texture;
   }, []);
 
+  useEffect(() => {
+    if (pointsRef.current) {
+      const geometry = pointsRef.current.geometry as three.BufferGeometry;
+      if (geometry.attributes.color && !originalColors.current) {
+        // 원래 색상 데이터를 한 번만 저장
+        originalColors.current = geometry.attributes.color.array.slice() as Float32Array;
+      }
+    }
+  }, []);
+
+  // hoveredGroup 변경 시 하이라이트 위치 및 투명도 목표 설정
+  useEffect(() => {
+    if (hoveredPosition) {
+      const pos = hoveredPosition;
+      // 가장 가까운 그리드 셀의 중앙으로 위치를 보정합니다.
+      const snappedX = Math.round(pos[0]);
+      const snappedZ = Math.round(pos[2]);
+
+      setHighlightPosition(new three.Vector3(snappedX, 0.01, snappedZ));
+      targetOpacity.current = 0.4; // 나타날 때의 최종 투명도
+    } else {
+      targetOpacity.current = 0; // 사라질 때의 최종 투명도
+    }
+  }, [hoveredPosition]);
+
   // pulseActive가 true로 바뀔 때마다 1회 애니메이션 트리거
   useEffect(() => {
     if (pulseActive && pulseCenter) {
@@ -59,6 +105,17 @@ export function GridBackground({
   }, [pulseActive, pulseCenter]);
 
   useFrame((state, delta) => {
+    // 하이라이트 원 투명도 애니메이션
+    if (highlightRef.current) {
+      const material = highlightRef.current.material as three.MeshBasicMaterial;
+      material.opacity = three.MathUtils.lerp(material.opacity, targetOpacity.current, delta * 5);
+
+      // 투명도가 거의 0이고, 목표도 0이면 위치 초기화 (불필요한 렌더링 방지)
+      if (material.opacity < 0.01 && targetOpacity.current === 0) {
+        setHighlightPosition(null);
+      }
+    }
+
     // 퍼짐 파동 애니메이션 (한 번만)
     if (pulse.running) {
       setPulse((prev) => {
@@ -203,10 +260,24 @@ export function GridBackground({
 
   return (
     <group ref={gridRef} position={[0, -2, 0]}>
+      {/* 호버 하이라이트 원 */}
+      {highlightPosition && (
+        <mesh ref={highlightRef} position={highlightPosition} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[3, 3]} />
+          <meshBasicMaterial
+            color='#8b5cf6'
+            transparent
+            opacity={0}
+            depthWrite={false}
+            blending={three.AdditiveBlending}
+          />
+        </mesh>
+      )}
+
       {/* 메인 그리드 라인 - 촘촘한 옅은 회색 */}
       <primitive object={createGrid(100, 100, '#747272', 0.15)} />
       {/* 메인 그리드 교차점 - 원형 흰색 */}
-      <primitive object={createGridPoints(100, 100, '#ffffff', 3, 0.8)} />
+      <primitive ref={pointsRef} object={createGridPoints(100, 100, '#ffffff', 3, 0.8)} />
       {/* 네온 보라색 경로들 - HoloTable(중심)에서 각 모델로 */}
       {showNeonPaths && (
         <>

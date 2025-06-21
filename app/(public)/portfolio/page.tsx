@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Computer,
   ContactMe,
   ExperienceDesk,
   ExperiencePerson,
@@ -29,6 +30,7 @@ export default function PortfolioPage() {
   // pulse 효과 상태
   const [pulseActive, setPulseActive] = useState(false);
   const [pulseCenter, setPulseCenter] = useState<[number, number, number] | null>(null);
+  const [hoveredPosition, setHoveredPosition] = useState<[number, number, number] | null>(null);
   // 카메라 이동 목표 상태 추가
   const [targetPos, setTargetPos] = useState<[number, number, number] | null>(null);
   const [targetLook, setTargetLook] = useState<[number, number, number] | null>(null);
@@ -243,6 +245,14 @@ export default function PortfolioPage() {
       setAboutMeClosing(true);
     } else if (showExperienceOverlay) {
       setExperienceClosing(true);
+    } else {
+      // 오버레이가 없는 그룹(ContactMe, Server 등)에서 돌아갈 때
+      setTargetPos(initialCameraPos);
+      setTargetLook(initialCameraLook);
+      // 카메라 애니메이션 시간(3초) 후 포커스 해제
+      setTimeout(() => {
+        setFocusedGroup(null);
+      }, 3000);
     }
     setAboutMeAnimationDone(false);
     setCameraAnimationDone(false);
@@ -373,10 +383,25 @@ export default function PortfolioPage() {
       <Canvas camera={{ position: [2, 5, 2], fov: 90, near: 0.1, far: 10000 }}>
         <CameraController />
         {/* GridBackground는 항상 표시, 네온 경로/퍼짐 효과 prop 전달 */}
-        <GridBackground showNeonPaths={!focusedGroup} pulseActive={pulseActive} pulseCenter={pulseCenter} />
+        <GridBackground
+          showNeonPaths={!focusedGroup}
+          pulseActive={pulseActive}
+          pulseCenter={pulseCenter}
+          hoveredPosition={hoveredPosition}
+        />
         {/* 메인 3D 모델 */}
         {/* 홀로테이블 단독 */}
-        {isShow('holoTable') && <HoloTable scale={0.5} onClick={() => handleGroupClick('holoTable')} />}
+        {isShow('holoTable') && (
+          <HoloTable
+            scale={0.5}
+            onClick={() => handleGroupClick('holoTable')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([0, 0, 0]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
+          />
+        )}
         {/* work 그룹: workTable + typingMan */}
         {isShow('work') && [
           <WorkTable
@@ -385,6 +410,11 @@ export default function PortfolioPage() {
             rotation={[0, Math.PI / 2, 0]}
             position={[4, 0, 0]}
             onClick={() => handleGroupClick('work')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([4, 0, 0]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
           />,
           <TypingMan
             key='typingMan'
@@ -392,6 +422,11 @@ export default function PortfolioPage() {
             rotation={[0, -Math.PI / 2, 0]}
             position={[4.4, 0, 0]}
             onClick={() => handleGroupClick('work')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([4.2, 0, 0]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
           />,
         ]}
         {/* contactMe 단독 */}
@@ -401,19 +436,34 @@ export default function PortfolioPage() {
             rotation={[0, Math.PI / 2, 0]}
             position={[-4, 0, 0]}
             onClick={() => handleGroupClick('contactMe')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([-4, 0, 0]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
           />
         )}
         {/* server 그룹: server0,1,2 */}
-        {isShow('server') &&
-          [0, 1, 2].map((index) => (
-            <Server
-              key={index}
-              scale={0.005}
-              rotation={[0, Math.PI / 2, 0]}
-              position={[0, 0, -4 - index * 1]}
-              onClick={() => handleGroupClick('server')}
-            />
-          ))}
+        {isShow('server') && [
+          <Computer key='computer' scale={1} position={[0, 1, -4]} />,
+          [0, 1, 2].map((index) => {
+            const position: [number, number, number] = [0, 0, -4 - index * 1];
+            return (
+              <Server
+                key={index}
+                scale={0.005}
+                rotation={[0, Math.PI / 2, 0]}
+                position={position}
+                onClick={() => handleGroupClick('server')}
+                onPointerOver={(e: any) => {
+                  e.stopPropagation();
+                  setHoveredPosition(position);
+                }}
+                onPointerOut={() => setHoveredPosition(null)}
+              />
+            );
+          }),
+        ]}
         {/* experience 그룹: experiencePerson + experienceDesk */}
         {isShow('experience') && [
           <ExperiencePerson
@@ -422,6 +472,11 @@ export default function PortfolioPage() {
             rotation={[0, Math.PI, 0]}
             position={[0, -1, 3]}
             onClick={() => handleGroupClick('experience')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([0, 0, 3]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
           />,
           <ExperienceDesk
             key='experienceDesk'
@@ -429,6 +484,11 @@ export default function PortfolioPage() {
             rotation={[0, 0, 0]}
             position={[4, 0, 5.3]}
             onClick={() => handleGroupClick('experience')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([4, 0, 5.3]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
           />,
         ]}
         {/* 홀로그램 이름표들 */}
@@ -458,7 +518,8 @@ export default function PortfolioPage() {
         {/* 분위기 조명 */}
         <pointLight position={[0, 5, 0]} intensity={0.3} color='#00ffff' />
         {/* OrbitControls는 전체 뷰에서만 허용 */}
-        {!focusedGroup && !pulseActive && <OrbitControls />}
+        {/* {!focusedGroup && !pulseActive && <OrbitControls />} */}
+        <OrbitControls />
       </Canvas>
     </div>
   );

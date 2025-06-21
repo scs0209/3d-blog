@@ -3,6 +3,7 @@ import type * as three from 'three';
 
 export function ContactMe(props: any) {
   const { nodes, materials } = useGLTF('/cyberpunk_city_-_1.glb');
+
   return (
     <group {...props} dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]} scale={0.449}>
