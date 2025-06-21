@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
 # GitHub Issue Convention
 
 ## 📋 이슈 제목 형식
