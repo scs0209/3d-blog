@@ -9,6 +9,7 @@ import {
   HoloText,
   Server,
   TypingMan,
+  WorkPerson,
   WorkTable,
 } from '@/widgets/portfolio/ui';
 import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
@@ -445,6 +446,19 @@ export default function PortfolioPage() {
         )}
         {/* server 그룹: server0,1,2 */}
         {isShow('server') && [
+          <WorkPerson
+            key='serverPerson'
+            scale={0.4}
+            rotation={[0, Math.PI, 0]}
+            position={[0, 0, -3.2]}
+            onClick={() => handleGroupClick('server')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([0, 0, -3.2]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
+            animationType='touch'
+          />,
           <Computer key='computer' scale={1} position={[0, 1, -4]} />,
           [0, 1, 2].map((index) => {
             const position: [number, number, number] = [0, 0, -4 - index * 1];

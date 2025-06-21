@@ -16,6 +16,7 @@ export function ExperiencePerson(props: any) {
       }
     }
   }, [actions]);
+
   return (
     <group ref={group} {...props} dispose={null}>
       <group name='Scene'>
