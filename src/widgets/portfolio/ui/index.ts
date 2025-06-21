@@ -9,3 +9,4 @@ export * from './HoloText';
 export * from './ExperiencePerson';
 export * from './ExperienceDesk';
 export * from './Computer';
+export * from './WorkPerson';
