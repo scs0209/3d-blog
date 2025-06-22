@@ -75,7 +75,7 @@ export default function PortfolioPage() {
       secondaryLookAt: [0, 0, 0],
     },
     server: {
-      offset: [0, 1, 2.5],
+      offset: [0, 2.5, 1.5],
       lookAt: [0, 1, -4],
       pulse: [0, 0, -4],
       modelPosition: [0, 1, -4],
