@@ -79,6 +79,8 @@ export default function PortfolioPage() {
       lookAt: [0, 1, -4],
       pulse: [0, 0, -4],
       modelPosition: [0, 1, -4],
+      secondaryOffset: [0, 0.2, 0.5],
+      secondaryLookAt: [0, 1, -4],
     },
     experience: {
       offset: [0, 1, 2],
@@ -163,9 +165,13 @@ export default function PortfolioPage() {
           animRef.current.running = false;
           setCameraAnimationDone(true);
 
-          if (!animRef.current.isSecondary && focusedGroup === 'work' && !aboutMeClosing) {
-            // 들어갈 때: work 그룹에 대해서만 보조 애니메이션 실행
-            const target = groupCameraTargets.work;
+          if (
+            !animRef.current.isSecondary &&
+            (focusedGroup === 'work' || focusedGroup === 'server') &&
+            !aboutMeClosing
+          ) {
+            // 들어갈 때: work와 server 그룹에 대해서 보조 애니메이션 실행
+            const target = groupCameraTargets[focusedGroup];
             if (target?.secondaryOffset && target?.secondaryLookAt) {
               setSecondaryAnimation(true);
               const newPos: [number, number, number] = [
