@@ -99,11 +99,11 @@ body {
 @layer base {
   * {
     @apply border-border;
-    cursor: none !important; /* 모든 요소의 기본 커서 숨김 */
+    /* cursor: none !important; 모든 요소의 기본 커서 숨김 */
   }
   body {
     @apply bg-background text-foreground;
-    cursor: none !important; /* 기본 커서 숨김 */
+    /* cursor: none !important; 기본 커서 숨김 */
   }
 
   /* 모든 인터랙티브 요소의 커서도 숨김 */
@@ -241,4 +241,47 @@ pre {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(125, 211, 252, 0.5);
+}
+
+/* Works 로딩 화면 애니메이션 */
+@keyframes loadingProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* 네온 글로우 효과 */
+.neon-glow {
+  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
 }
