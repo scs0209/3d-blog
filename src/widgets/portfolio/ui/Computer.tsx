@@ -61,30 +61,33 @@ export function Computer({ showLoading = false, ...props }: ComputerProps) {
           position={[-0.056, 0.066, 0.301]}
           transform
           occlude
+          scale={0.1}
           style={{
-            width: '200px',
-            height: '140px',
-            background: 'rgba(0, 0, 0, 0.9)',
-            border: '1px solid #00ffff',
-            borderRadius: '4px',
+            width: '320px',
+            height: '240px',
+            background: 'rgba(0, 0, 0, 0.95)',
+            border: '2px solid #00ffff',
+            borderRadius: '8px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '10px',
+            gap: '15px',
             fontFamily: 'monospace',
-            fontSize: '12px',
+            fontSize: '24px',
             color: '#00ffff',
-            textShadow: '0 0 5px #00ffff',
+            textShadow: '0 0 10px #00ffff',
             pointerEvents: 'none',
+            boxShadow: '0 0 20px rgba(0, 255, 255, 0.3)',
           }}
         >
           <div
             style={{
-              fontSize: '16px',
+              fontSize: '32px',
               fontWeight: 'bold',
-              letterSpacing: '2px',
-              textShadow: '0 0 10px #00ffff',
+              letterSpacing: '4px',
+              textShadow: '0 0 15px #00ffff',
+              marginBottom: '10px',
             }}
           >
             WORKS
@@ -92,12 +95,13 @@ export function Computer({ showLoading = false, ...props }: ComputerProps) {
 
           <div
             style={{
-              width: '160px',
-              height: '4px',
-              background: '#333',
-              borderRadius: '2px',
+              width: '240px',
+              height: '8px',
+              background: '#222',
+              borderRadius: '4px',
               overflow: 'hidden',
-              border: '1px solid #00ffff',
+              border: '2px solid #00ffff',
+              boxShadow: '0 0 10px rgba(0, 255, 255, 0.5)',
             }}
           >
             <div
@@ -106,7 +110,7 @@ export function Computer({ showLoading = false, ...props }: ComputerProps) {
                 height: '100%',
                 background: 'linear-gradient(90deg, #00ffff, #0088ff)',
                 borderRadius: '2px',
-                boxShadow: '0 0 10px #00ffff',
+                boxShadow: '0 0 15px #00ffff',
                 transition: 'width 0.1s ease-out',
               }}
             />
@@ -114,12 +118,13 @@ export function Computer({ showLoading = false, ...props }: ComputerProps) {
 
           <div
             style={{
-              fontSize: '10px',
-              opacity: 0.8,
+              fontSize: '18px',
+              opacity: 0.9,
               animation: 'pulse 2s infinite',
+              textAlign: 'center',
             }}
           >
-            Loading projects... {loadingProgress}%
+            Loading projects...
           </div>
         </Html>
       )}
@@ -130,26 +135,30 @@ export function Computer({ showLoading = false, ...props }: ComputerProps) {
           position={[0.15, -0.078, 0.384]}
           transform
           occlude
+          scale={0.08}
           style={{
-            width: '150px',
-            height: '100px',
-            background: 'rgba(0, 0, 0, 0.8)',
-            border: '1px solid #00ffff',
-            borderRadius: '2px',
+            width: '300px',
+            height: '200px',
+            background: 'rgba(0, 0, 0, 0.9)',
+            border: '2px solid #00ffff',
+            borderRadius: '6px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: 'monospace',
-            fontSize: '8px',
+            fontSize: '20px',
             color: '#00ffff',
-            textShadow: '0 0 3px #00ffff',
+            textShadow: '0 0 8px #00ffff',
             pointerEvents: 'none',
+            boxShadow: '0 0 15px rgba(0, 255, 255, 0.2)',
           }}
         >
           <div
             style={{
               textAlign: 'center',
               animation: 'pulse 1.5s infinite',
+              fontWeight: 'bold',
+              letterSpacing: '2px',
             }}
           >
             SYSTEM
