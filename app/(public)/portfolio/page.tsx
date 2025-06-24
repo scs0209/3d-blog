@@ -330,12 +330,12 @@ export default function PortfolioPage() {
   const [quality, setQuality] = useState(false);
   const [sound, setSound] = useState(false);
 
-  // Works 로딩 완료 후 자동 닫기 (Computer 화면에서 3초 후)
+  // Works 로딩 완료 후 자동 닫기 (Computer 화면에서 포트폴리오 표시 후)
   useEffect(() => {
     if (showWorksLoading) {
       const timer = setTimeout(() => {
         setShowWorksLoading(false);
-      }, 3500); // 3.5초 후 로딩 종료
+      }, 8000); // 8초 후 로딩 종료 (포트폴리오 갤러리 표시 시간 포함)
 
       return () => clearTimeout(timer);
     }

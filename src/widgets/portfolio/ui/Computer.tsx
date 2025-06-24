@@ -62,18 +62,21 @@ export function Computer({ showLoading = false, ...props }: ComputerProps) {
         setLoadingProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
+            console.log('로딩 완료!');
             // 로딩 완료 후 로딩바 확장 애니메이션
             setTimeout(() => {
+              console.log('로딩바 확장!');
               setLoadingBarExpanded(true);
               setTimeout(() => {
+                console.log('포트폴리오 갤러리 표시!');
                 setShowPortfolio(true);
-              }, 500);
-            }, 500);
+              }, 300);
+            }, 300);
             return 100;
           }
-          return prev + 2; // 2%씩 증가
+          return prev + 4; // 4%씩 증가
         });
-      }, 60); // 60ms마다 업데이트 (3초 동안)
+      }, 80); // 80ms마다 업데이트 (2초 동안)
 
       return () => clearInterval(interval);
     }
