@@ -58,7 +58,6 @@ export default function PortfolioPage() {
   const [exitLoadingProgress, setExitLoadingProgress] = useState(100);
   const [portfolioShrinking, setPortfolioShrinking] = useState(false);
   const [showPortfolioContent, setShowPortfolioContent] = useState(true);
-  const [portfolioExiting, setPortfolioExiting] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -655,10 +654,7 @@ export default function PortfolioPage() {
           {showPortfolioContent && (
             <>
               {/* 헤더 */}
-              <div
-                className={`flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header ${portfolioExiting ? 'exit-card' : ''}`}
-                style={{ animationDelay: portfolioExiting ? '1.0s' : '0s' }}
-              >
+              <div className='flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header'>
                 <div>
                   <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
                   <p className='text-cyan-300 text-sm mt-2'>Portfolio Projects</p>
@@ -666,53 +662,44 @@ export default function PortfolioPage() {
                 <button
                   type='button'
                   onClick={() => {
-                    // 1단계: 카드 사라지는 애니메이션 시작
-                    setPortfolioExiting(true);
+                    // 역순 진행: 포트폴리오 숨김 → 축소 → 로딩바 역진행 → 3D 씬
 
-                    // 2단계: 카드 애니메이션 완료 후 콘텐츠 숨기기
+                    // 1단계: 포트폴리오 콘텐츠 숨김
+                    setShowPortfolioOverlay(false);
+
+                    // 2단계: 화면 축소 (전체 화면 → 로딩바 크기)
+                    setLoadingBarFullExpand(false);
+
+                    // 3단계: EXIT 로딩 시작
                     setTimeout(() => {
-                      setShowPortfolioContent(false);
+                      setShowExitLoading(true);
+                      setExitLoadingProgress(100);
 
-                      // 3단계: 창 축소 시작
-                      setTimeout(() => {
-                        setPortfolioShrinking(true);
-
-                        // 4단계: 창 축소 완료 후 EXIT 로딩 시작
-                        setTimeout(() => {
-                          setShowPortfolioOverlay(false);
-                          setShowExitLoading(true);
-                          setExitLoadingProgress(100);
-                          setPortfolioShrinking(false);
-
-                          // 5단계: EXIT 로딩바 역순 진행 (100% → 0%)
-                          const exitInterval = setInterval(() => {
-                            setExitLoadingProgress((prev) => {
-                              if (prev <= 0) {
-                                clearInterval(exitInterval);
-                                // 6단계: 모든 상태 초기화 및 3D 씬 복귀
-                                setTimeout(() => {
-                                  setShowExitLoading(false);
-                                  setShowWorksLoading(false);
-                                  setLoadingProgress(0);
-                                  setLoadingBarExpanded(false);
-                                  setLoadingBarFullExpand(false);
-                                  setShowPortfolioContent(true);
-                                  setPortfolioExiting(false);
-                                  setExitLoadingProgress(100);
-                                  setTargetPos(initialCameraPos);
-                                  setTargetLook(initialCameraLook);
-                                  setTimeout(() => {
-                                    setFocusedGroup(null);
-                                  }, 3000);
-                                }, 500);
-                                return 0;
-                              }
-                              return prev - 4; // 4%씩 감소
-                            });
-                          }, 50); // 50ms마다 업데이트
-                        }, 1000); // 창 축소 애니메이션 시간
-                      }, 100); // 콘텐츠 숨긴 후 잠깐 대기
-                    }, 2000); // 카드 모두 사라질 때까지 기다림 (마지막 카드: 1.0s + 애니메이션 0.8s + 여유 0.2s)
+                      // 4단계: 로딩바 역진행 (100% → 0%)
+                      const exitInterval = setInterval(() => {
+                        setExitLoadingProgress((prev) => {
+                          if (prev <= 0) {
+                            clearInterval(exitInterval);
+                            // 5단계: 모든 상태 초기화 및 3D 씬 복귀
+                            setTimeout(() => {
+                              setShowExitLoading(false);
+                              setShowWorksLoading(false);
+                              setLoadingProgress(0);
+                              setLoadingBarExpanded(false);
+                              setShowPortfolioContent(true);
+                              setExitLoadingProgress(100);
+                              setTargetPos(initialCameraPos);
+                              setTargetLook(initialCameraLook);
+                              setTimeout(() => {
+                                setFocusedGroup(null);
+                              }, 3000);
+                            }, 300);
+                            return 0;
+                          }
+                          return prev - 4; // 4%씩 감소
+                        });
+                      }, 50); // 50ms마다 업데이트
+                    }, 500); // 축소 애니메이션 시간
                   }}
                   className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
                 >
@@ -721,19 +708,14 @@ export default function PortfolioPage() {
               </div>
 
               {/* 프로젝트 그리드 */}
-              <div
-                className={`p-8 portfolio-content ${portfolioExiting ? 'exit-card' : ''}`}
-                style={{ animationDelay: portfolioExiting ? '0.6s' : '0s' }}
-              >
+              <div className='p-8 portfolio-content'>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
                   {portfolioProjects.map((project, index) => (
                     <div
                       key={project.id}
-                      className={`border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card ${portfolioExiting ? 'exit-card' : ''}`}
+                      className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card'
                       style={{
-                        animationDelay: portfolioExiting
-                          ? `${0.2 * (portfolioProjects.length - 1 - index)}s`
-                          : `${index * 0.2}s`, // 나타날 때는 첫 번째부터, 사라질 때는 마지막부터
+                        animationDelay: `${index * 0.2}s`,
                       }}
                     >
                       {/* 프로젝트 이미지 */}
@@ -773,10 +755,7 @@ export default function PortfolioPage() {
               </div>
 
               {/* 푸터 */}
-              <div
-                className={`border-t border-cyan-400 p-8 text-center portfolio-footer ${portfolioExiting ? 'exit-card' : ''}`}
-                style={{ animationDelay: portfolioExiting ? '0.2s' : '0s' }}
-              >
+              <div className='border-t border-cyan-400 p-8 text-center portfolio-footer'>
                 <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
                   <span>© 2025</span>
                   <a
