@@ -655,8 +655,8 @@ export default function PortfolioPage() {
             <>
               {/* 헤더 */}
               <div
-                className='flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header exit-card'
-                style={{ animationDelay: '1.0s' }}
+                className={`flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header ${!showPortfolioContent ? 'exit-card' : ''}`}
+                style={{ animationDelay: !showPortfolioContent ? '1.0s' : '0s' }}
               >
                 <div>
                   <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
@@ -714,14 +714,19 @@ export default function PortfolioPage() {
               </div>
 
               {/* 프로젝트 그리드 */}
-              <div className='p-8 portfolio-content exit-card' style={{ animationDelay: '0.6s' }}>
+              <div
+                className={`p-8 portfolio-content ${!showPortfolioContent ? 'exit-card' : ''}`}
+                style={{ animationDelay: !showPortfolioContent ? '0.6s' : '0s' }}
+              >
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
                   {portfolioProjects.map((project, index) => (
                     <div
                       key={project.id}
-                      className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card exit-card'
+                      className={`border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card ${!showPortfolioContent ? 'exit-card' : ''}`}
                       style={{
-                        animationDelay: `${0.2 * (portfolioProjects.length - 1 - index)}s`, // 마지막부터 사라짐
+                        animationDelay: !showPortfolioContent
+                          ? `${0.2 * (portfolioProjects.length - 1 - index)}s`
+                          : `${index * 0.2}s`, // 나타날 때는 첫 번째부터, 사라질 때는 마지막부터
                       }}
                     >
                       {/* 프로젝트 이미지 */}
@@ -762,8 +767,8 @@ export default function PortfolioPage() {
 
               {/* 푸터 */}
               <div
-                className='border-t border-cyan-400 p-8 text-center portfolio-footer exit-card'
-                style={{ animationDelay: '0.2s' }}
+                className={`border-t border-cyan-400 p-8 text-center portfolio-footer ${!showPortfolioContent ? 'exit-card' : ''}`}
+                style={{ animationDelay: !showPortfolioContent ? '0.2s' : '0s' }}
               >
                 <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
                   <span>© 2025</span>

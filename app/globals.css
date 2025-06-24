@@ -464,6 +464,5 @@ pre {
 
 /* EXIT 애니메이션 클래스 */
 .exit-card {
-  opacity: 1;
   animation: slideOutToTop 0.8s ease-out forwards;
 }
