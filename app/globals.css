@@ -373,77 +373,43 @@ pre {
   text-shadow: 0 0 10px currentColor;
 }
 
+/* 포트폴리오 카드 기본 스타일 */
 .portfolio-card {
   opacity: 0;
   animation: slideInFromTop 0.6s ease-out forwards;
 }
 
-.portfolio-card:nth-child(1) {
-  animation-delay: 0.2s;
-}
-
-.portfolio-card:nth-child(2) {
-  animation-delay: 0.4s;
-}
-
-.portfolio-card:nth-child(3) {
-  animation-delay: 0.6s;
-}
-
-/* EXIT 애니메이션 (마지막 카드부터 차례대로) */
-.portfolio-card.closing {
-  opacity: 1;
-  animation: slideOutToTop 0.8s ease-out forwards;
-}
-
-.portfolio-card.closing:nth-child(3) {
-  animation-delay: 0.2s;
-}
-
-.portfolio-card.closing:nth-child(2) {
-  animation-delay: 0.6s;
-}
-
-.portfolio-card.closing:nth-child(1) {
-  animation-delay: 1.0s;
-}
-
+/* 포트폴리오 헤더 기본 스타일 */
 .portfolio-header {
   opacity: 0;
   animation: portfolioFadeIn 0.8s ease-out forwards;
   animation-delay: 0s;
 }
 
-.portfolio-header.closing {
-  opacity: 1;
-  animation: portfolioFadeOut 0.8s ease-out forwards;
-  animation-delay: 1.6s;
-}
-
+/* 포트폴리오 콘텐츠 기본 스타일 */
 .portfolio-content {
   opacity: 0;
   animation: portfolioFadeIn 0.8s ease-out forwards;
   animation-delay: 0.1s;
 }
 
-.portfolio-content.closing {
-  opacity: 1;
-  animation: portfolioFadeOut 0.8s ease-out forwards;
-  animation-delay: 0.4s;
-}
-
+/* 포트폴리오 푸터 기본 스타일 */
 .portfolio-footer {
   opacity: 0;
   animation: portfolioFadeIn 0.8s ease-out forwards;
   animation-delay: 0.8s;
 }
 
-.portfolio-footer.closing {
-  opacity: 1;
-  animation: portfolioFadeOut 0.8s ease-out forwards;
-  animation-delay: 0s;
+/* EXIT 애니메이션 - 우선순위 높음 !important */
+.portfolio-card.exit-card,
+.portfolio-header.exit-card,
+.portfolio-content.exit-card,
+.portfolio-footer.exit-card {
+  opacity: 1 !important;
+  animation: slideOutToTop 0.8s ease-out forwards !important;
 }
 
+/* 기타 애니메이션 */
 .animate-fade-in {
   opacity: 0;
   animation: fadeInOverlay 0.6s ease-out forwards;
@@ -460,9 +426,4 @@ pre {
 
 .loading-bar-expand {
   animation: loadingBarExpand 1.5s ease-out forwards;
-}
-
-/* EXIT 애니메이션 클래스 */
-.exit-card {
-  animation: slideOutToTop 0.8s ease-out forwards;
 }
