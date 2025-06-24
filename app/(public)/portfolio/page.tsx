@@ -560,8 +560,7 @@ export default function PortfolioPage() {
         {/* 분위기 조명 */}
         <pointLight position={[0, 5, 0]} intensity={0.3} color='#00ffff' />
         {/* OrbitControls는 전체 뷰에서만 허용 */}
-        {/* {!focusedGroup && !pulseActive && <OrbitControls />} */}
-        <OrbitControls />
+        {!focusedGroup && !pulseActive && <OrbitControls />}
       </Canvas>
     </div>
   );
