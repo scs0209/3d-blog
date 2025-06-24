@@ -49,7 +49,6 @@ export default function PortfolioPage() {
   const [hasClickedBack, setHasClickedBack] = useState(false);
   // Works 로딩 화면 상태 추가
   const [showWorksLoading, setShowWorksLoading] = useState(false);
-  const [worksLoadingClosing, setWorksLoadingClosing] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -258,7 +257,12 @@ export default function PortfolioPage() {
     } else if (showExperienceOverlay) {
       setExperienceClosing(true);
     } else if (showWorksLoading) {
-      setWorksLoadingClosing(true);
+      setShowWorksLoading(false);
+      setTargetPos(initialCameraPos);
+      setTargetLook(initialCameraLook);
+      setTimeout(() => {
+        setFocusedGroup(null);
+      }, 3000);
     } else {
       // 오버레이가 없는 그룹(ContactMe 등)에서 돌아갈 때
       setTargetPos(initialCameraPos);
@@ -315,18 +319,6 @@ export default function PortfolioPage() {
     }, 3000);
   };
 
-  // Works 로딩 화면 닫힘 애니메이션 완료 후 처리
-  const handleWorksLoadingClose = () => {
-    setShowWorksLoading(false);
-    setTargetPos(initialCameraPos);
-    setTargetLook(initialCameraLook);
-    setTimeout(() => {
-      setFocusedGroup(null);
-      setWorksLoadingClosing(false);
-      setCameraAnimationDone(false);
-    }, 3000);
-  };
-
   // 렌더링 분기 함수
   const isShow = (group: typeof focusedGroup) => {
     if (focusedGroup) {
@@ -338,20 +330,16 @@ export default function PortfolioPage() {
   const [quality, setQuality] = useState(false);
   const [sound, setSound] = useState(false);
 
-  // Works 로딩 완료 후 자동 닫기
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // Works 로딩 완료 후 자동 닫기 (Computer 화면에서 3초 후)
   useEffect(() => {
-    if (showWorksLoading && !worksLoadingClosing) {
+    if (showWorksLoading) {
       const timer = setTimeout(() => {
-        setWorksLoadingClosing(true);
-        setTimeout(() => {
-          handleWorksLoadingClose();
-        }, 500); // 페이드아웃 시간
-      }, 4000); // 4초 후 닫기 시작
+        setShowWorksLoading(false);
+      }, 3500); // 3.5초 후 로딩 종료
 
       return () => clearTimeout(timer);
     }
-  }, [showWorksLoading, worksLoadingClosing]);
+  }, [showWorksLoading]);
 
   return (
     <div className='h-screen w-screen bg-gray-900'>
@@ -395,55 +383,6 @@ export default function PortfolioPage() {
             <ExperiencePage isClosing={experienceClosing} onClose={handleExperienceClose} />
           </div>
         </>
-      )}
-
-      {/* 오버레이 Works Loading */}
-      {showWorksLoading && (
-        <div
-          className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 transition-opacity duration-500 ${
-            worksLoadingClosing ? 'opacity-0' : 'opacity-100'
-          }`}
-          style={{
-            animation: worksLoadingClosing ? 'fadeOut 0.5s ease-out forwards' : 'fadeIn 0.5s ease-out forwards',
-          }}
-        >
-          <div className='flex flex-col items-center justify-center space-y-8 text-center'>
-            {/* WORKS 타이틀 */}
-            <h1
-              className='text-6xl font-bold text-cyan-400 mb-8'
-              style={{
-                textShadow: '0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff',
-                fontFamily: 'monospace',
-                letterSpacing: '0.2em',
-              }}
-            >
-              WORKS
-            </h1>
-
-            {/* 로딩 바 */}
-            <div className='w-96 h-2 bg-gray-800 rounded-full overflow-hidden border border-cyan-400'>
-              <div
-                className='h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full'
-                style={{
-                  width: '0%',
-                  animation: 'loadingProgress 3s ease-out forwards',
-                  boxShadow: '0 0 20px #00ffff',
-                }}
-              />
-            </div>
-
-            {/* 로딩 텍스트 */}
-            <p
-              className='text-cyan-300 text-lg font-mono'
-              style={{
-                textShadow: '0 0 10px #00ffff',
-                animation: 'pulse 2s infinite',
-              }}
-            >
-              Loading projects...
-            </p>
-          </div>
-        </div>
       )}
 
       {/* 뒤로가기 버튼 */}
@@ -548,7 +487,7 @@ export default function PortfolioPage() {
             onPointerOut={() => setHoveredPosition(null)}
             animationType='touch'
           />,
-          <Computer key='computer' scale={1} position={[0, 1, -4]} />,
+          <Computer key='computer' scale={1} position={[0, 1, -4]} showLoading={showWorksLoading} />,
           [0, 1, 2].map((index) => {
             const position: [number, number, number] = [0, 0, -4 - index * 1];
             return (
