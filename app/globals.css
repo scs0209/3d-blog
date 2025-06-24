@@ -315,6 +315,57 @@ pre {
   }
 }
 
+@keyframes fadeOutOverlay {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+@keyframes slideOutToTop {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes portfolioFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes loadingBarExpand {
+  0% {
+    width: 100%;
+    height: 12px;
+    border-radius: 6px;
+  }
+  50% {
+    width: 100vw;
+    height: 12px;
+    border-radius: 6px;
+  }
+  100% {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
 /* 네온 글로우 효과 */
 .neon-glow {
   text-shadow: 0 0 10px currentColor;
@@ -337,15 +388,45 @@ pre {
   animation-delay: 0.5s;
 }
 
+/* EXIT 애니메이션 (역순) */
+.portfolio-card.closing {
+  opacity: 1;
+  animation: slideOutToTop 0.6s ease-out forwards;
+}
+
+.portfolio-card.closing:nth-child(1) {
+  animation-delay: 0.5s;
+}
+
+.portfolio-card.closing:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.portfolio-card.closing:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
 .portfolio-header {
   opacity: 0;
   animation: portfolioFadeIn 0.8s ease-out forwards;
   animation-delay: 0s;
 }
 
+.portfolio-header.closing {
+  opacity: 1;
+  animation: portfolioFadeOut 0.8s ease-out forwards;
+  animation-delay: 0.7s;
+}
+
 .portfolio-content {
   opacity: 0;
   animation: portfolioFadeIn 0.8s ease-out forwards;
+  animation-delay: 0.2s;
+}
+
+.portfolio-content.closing {
+  opacity: 1;
+  animation: portfolioFadeOut 0.8s ease-out forwards;
   animation-delay: 0.2s;
 }
 
@@ -355,7 +436,22 @@ pre {
   animation-delay: 0.7s;
 }
 
+.portfolio-footer.closing {
+  opacity: 1;
+  animation: portfolioFadeOut 0.8s ease-out forwards;
+  animation-delay: 0s;
+}
+
 .animate-fade-in {
   opacity: 0;
   animation: fadeInOverlay 0.6s ease-out forwards;
+}
+
+.animate-fade-out {
+  opacity: 1;
+  animation: fadeOutOverlay 0.6s ease-out forwards;
+}
+
+.loading-bar-expand {
+  animation: loadingBarExpand 1s ease-out forwards;
 }

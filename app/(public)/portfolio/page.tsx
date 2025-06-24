@@ -52,6 +52,8 @@ export default function PortfolioPage() {
   const [showPortfolioOverlay, setShowPortfolioOverlay] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingBarExpanded, setLoadingBarExpanded] = useState(false);
+  const [portfolioClosing, setPortfolioClosing] = useState(false);
+  const [loadingBarFullExpand, setLoadingBarFullExpand] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -260,15 +262,23 @@ export default function PortfolioPage() {
     } else if (showExperienceOverlay) {
       setExperienceClosing(true);
     } else if (showPortfolioOverlay || showWorksLoading) {
-      setShowPortfolioOverlay(false);
-      setShowWorksLoading(false);
-      setLoadingProgress(0);
-      setLoadingBarExpanded(false);
-      setTargetPos(initialCameraPos);
-      setTargetLook(initialCameraLook);
+      // 포트폴리오 종료 애니메이션 시작
+      setPortfolioClosing(true);
+
+      // 역순 애니메이션 완료 후 상태 초기화
       setTimeout(() => {
-        setFocusedGroup(null);
-      }, 3000);
+        setShowPortfolioOverlay(false);
+        setShowWorksLoading(false);
+        setLoadingProgress(0);
+        setLoadingBarExpanded(false);
+        setLoadingBarFullExpand(false);
+        setPortfolioClosing(false);
+        setTargetPos(initialCameraPos);
+        setTargetLook(initialCameraLook);
+        setTimeout(() => {
+          setFocusedGroup(null);
+        }, 3000);
+      }, 1500); // 모든 EXIT 애니메이션 완료 시간
     } else {
       // 오버레이가 없는 그룹(ContactMe 등)에서 돌아갈 때
       setTargetPos(initialCameraPos);
@@ -341,21 +351,24 @@ export default function PortfolioPage() {
     if (showWorksLoading && !showPortfolioOverlay) {
       setLoadingProgress(0);
       setLoadingBarExpanded(false);
+      setLoadingBarFullExpand(false);
+      setPortfolioClosing(false);
 
       const interval = setInterval(() => {
         setLoadingProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
             console.log('로딩 완료!');
-            // 로딩 완료 후 로딩바 확장 애니메이션
+            // 로딩 완료 후 로딩바를 전체 화면으로 확장
             setTimeout(() => {
-              console.log('로딩바 확장!');
-              setLoadingBarExpanded(true);
+              console.log('로딩바 전체 화면 확장!');
+              setLoadingBarFullExpand(true);
               setTimeout(() => {
                 console.log('포트폴리오 갤러리 표시!');
                 setShowPortfolioOverlay(true);
-              }, 500);
-            }, 500);
+                setShowWorksLoading(false);
+              }, 1000); // 전체 화면 확장 애니메이션 시간
+            }, 300);
             return 100;
           }
           return prev + 4; // 4%씩 증가
@@ -482,17 +495,18 @@ export default function PortfolioPage() {
 
             <div
               style={{
-                width: loadingBarExpanded ? '100%' : '320px',
-                height: loadingBarExpanded ? '100%' : '12px',
-                background: '#222',
-                borderRadius: '6px',
+                width: loadingBarFullExpand ? '100vw' : '320px',
+                height: loadingBarFullExpand ? '100vh' : '12px',
+                background: loadingBarFullExpand ? 'linear-gradient(135deg, #00ffff, #0088ff)' : '#222',
+                borderRadius: loadingBarFullExpand ? '0' : '6px',
                 overflow: 'hidden',
-                border: '2px solid #00ffff',
-                boxShadow: '0 0 20px rgba(0, 255, 255, 0.5)',
-                transition: 'all 0.5s ease-out',
-                position: loadingBarExpanded ? 'absolute' : 'relative',
-                top: loadingBarExpanded ? '0' : 'auto',
-                left: loadingBarExpanded ? '0' : 'auto',
+                border: loadingBarFullExpand ? 'none' : '2px solid #00ffff',
+                boxShadow: loadingBarFullExpand ? 'none' : '0 0 20px rgba(0, 255, 255, 0.5)',
+                transition: 'all 1s ease-out',
+                position: loadingBarFullExpand ? 'fixed' : 'relative',
+                top: loadingBarFullExpand ? '0' : 'auto',
+                left: loadingBarFullExpand ? '0' : 'auto',
+                zIndex: loadingBarFullExpand ? 9998 : 'auto',
               }}
             >
               <div
@@ -507,7 +521,7 @@ export default function PortfolioPage() {
               />
             </div>
 
-            {!loadingBarExpanded && (
+            {!loadingBarFullExpand && loadingProgress < 100 && (
               <div
                 style={{
                   fontSize: '18px',
@@ -525,9 +539,13 @@ export default function PortfolioPage() {
 
       {/* 오버레이 Portfolio */}
       {showPortfolioOverlay && (
-        <div className='fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto animate-fade-in'>
+        <div
+          className={`fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto ${portfolioClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+        >
           {/* 헤더 */}
-          <div className='flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header'>
+          <div
+            className={`flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header ${portfolioClosing ? 'closing' : ''}`}
+          >
             <div>
               <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
               <p className='text-cyan-300 text-sm mt-2'>Portfolio Projects</p>
@@ -535,15 +553,23 @@ export default function PortfolioPage() {
             <button
               type='button'
               onClick={() => {
-                setShowPortfolioOverlay(false);
-                setShowWorksLoading(false);
-                setLoadingProgress(0);
-                setLoadingBarExpanded(false);
-                setTargetPos(initialCameraPos);
-                setTargetLook(initialCameraLook);
+                // 포트폴리오 종료 애니메이션 시작
+                setPortfolioClosing(true);
+
+                // 역순 애니메이션 완료 후 상태 초기화
                 setTimeout(() => {
-                  setFocusedGroup(null);
-                }, 3000);
+                  setShowPortfolioOverlay(false);
+                  setShowWorksLoading(false);
+                  setLoadingProgress(0);
+                  setLoadingBarExpanded(false);
+                  setLoadingBarFullExpand(false);
+                  setPortfolioClosing(false);
+                  setTargetPos(initialCameraPos);
+                  setTargetLook(initialCameraLook);
+                  setTimeout(() => {
+                    setFocusedGroup(null);
+                  }, 3000);
+                }, 1500); // 모든 EXIT 애니메이션 완료 시간
               }}
               className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
             >
@@ -552,12 +578,12 @@ export default function PortfolioPage() {
           </div>
 
           {/* 프로젝트 그리드 */}
-          <div className='p-8 portfolio-content'>
+          <div className={`p-8 portfolio-content ${portfolioClosing ? 'closing' : ''}`}>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
               {portfolioProjects.map((project, index) => (
                 <div
                   key={project.id}
-                  className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card'
+                  className={`border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card ${portfolioClosing ? 'closing' : ''}`}
                 >
                   {/* 프로젝트 이미지 */}
                   <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
@@ -596,7 +622,9 @@ export default function PortfolioPage() {
           </div>
 
           {/* 푸터 */}
-          <div className='border-t border-cyan-400 p-8 text-center portfolio-footer'>
+          <div
+            className={`border-t border-cyan-400 p-8 text-center portfolio-footer ${portfolioClosing ? 'closing' : ''}`}
+          >
             <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
               <span>© 2025</span>
               <a
