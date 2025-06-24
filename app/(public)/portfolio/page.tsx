@@ -56,6 +56,7 @@ export default function PortfolioPage() {
   const [loadingBarFullExpand, setLoadingBarFullExpand] = useState(false);
   const [showExitLoading, setShowExitLoading] = useState(false);
   const [exitLoadingProgress, setExitLoadingProgress] = useState(100);
+  const [portfolioShrinking, setPortfolioShrinking] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -264,41 +265,47 @@ export default function PortfolioPage() {
     } else if (showExperienceOverlay) {
       setExperienceClosing(true);
     } else if (showPortfolioOverlay || showWorksLoading) {
-      // 1단계: 포트폴리오 카드들 먼저 사라짐
+      // 1단계: 포트폴리오 카드들 하나씩 차례대로 사라짐
       setPortfolioClosing(true);
 
       setTimeout(() => {
-        // 2단계: 포트폴리오 오버레이 숨기고 EXIT 로딩 표시
-        setShowPortfolioOverlay(false);
-        setShowExitLoading(true);
-        setExitLoadingProgress(100);
+        // 2단계: 창 축소 애니메이션 시작
+        setPortfolioShrinking(true);
 
-        // 3단계: EXIT 로딩바 역순 진행 (100% → 0%)
-        const exitInterval = setInterval(() => {
-          setExitLoadingProgress((prev) => {
-            if (prev <= 0) {
-              clearInterval(exitInterval);
-              // 4단계: 모든 상태 초기화 및 3D 씬 복귀
-              setTimeout(() => {
-                setShowExitLoading(false);
-                setShowWorksLoading(false);
-                setLoadingProgress(0);
-                setLoadingBarExpanded(false);
-                setLoadingBarFullExpand(false);
-                setPortfolioClosing(false);
-                setExitLoadingProgress(100);
-                setTargetPos(initialCameraPos);
-                setTargetLook(initialCameraLook);
+        setTimeout(() => {
+          // 3단계: 포트폴리오 오버레이 숨기고 EXIT 로딩 표시
+          setShowPortfolioOverlay(false);
+          setShowExitLoading(true);
+          setExitLoadingProgress(100);
+          setPortfolioShrinking(false);
+
+          // 4단계: EXIT 로딩바 역순 진행 (100% → 0%)
+          const exitInterval = setInterval(() => {
+            setExitLoadingProgress((prev) => {
+              if (prev <= 0) {
+                clearInterval(exitInterval);
+                // 5단계: 모든 상태 초기화 및 3D 씬 복귀
                 setTimeout(() => {
-                  setFocusedGroup(null);
-                }, 3000);
-              }, 500);
-              return 0;
-            }
-            return prev - 4; // 4%씩 감소
-          });
-        }, 50); // 50ms마다 업데이트
-      }, 1000); // 카드 사라짐 애니메이션 후
+                  setShowExitLoading(false);
+                  setShowWorksLoading(false);
+                  setLoadingProgress(0);
+                  setLoadingBarExpanded(false);
+                  setLoadingBarFullExpand(false);
+                  setPortfolioClosing(false);
+                  setExitLoadingProgress(100);
+                  setTargetPos(initialCameraPos);
+                  setTargetLook(initialCameraLook);
+                  setTimeout(() => {
+                    setFocusedGroup(null);
+                  }, 3000);
+                }, 500);
+                return 0;
+              }
+              return prev - 4; // 4%씩 감소
+            });
+          }, 50); // 50ms마다 업데이트
+        }, 1000); // 창 축소 애니메이션 시간
+      }, 2500); // 카드 모두 사라질 때까지 기다림
     } else {
       // 오버레이가 없는 그룹(ContactMe 등)에서 돌아갈 때
       setTargetPos(initialCameraPos);
@@ -599,11 +606,12 @@ export default function PortfolioPage() {
                 overflow: 'hidden',
                 border: loadingBarFullExpand ? 'none' : '2px solid #00ffff',
                 boxShadow: loadingBarFullExpand ? 'none' : '0 0 20px rgba(0, 255, 255, 0.5)',
-                transition: 'all 1s ease-out',
+                transition: 'all 1.5s ease-out',
                 position: loadingBarFullExpand ? 'fixed' : 'relative',
                 top: loadingBarFullExpand ? '0' : 'auto',
                 left: loadingBarFullExpand ? '0' : 'auto',
                 zIndex: loadingBarFullExpand ? 9998 : 'auto',
+                transformOrigin: 'center center',
               }}
             >
               {!loadingBarFullExpand && (
@@ -639,7 +647,7 @@ export default function PortfolioPage() {
       {/* 오버레이 Portfolio */}
       {showPortfolioOverlay && (
         <div
-          className={`fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto ${portfolioClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+          className={`fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto ${portfolioClosing ? 'animate-fade-out' : 'animate-fade-in'} ${portfolioShrinking ? 'animate-shrink' : ''}`}
         >
           {/* 헤더 */}
           <div
@@ -652,41 +660,47 @@ export default function PortfolioPage() {
             <button
               type='button'
               onClick={() => {
-                // 1단계: 포트폴리오 카드들 먼저 사라짐
+                // 1단계: 포트폴리오 카드들 하나씩 차례대로 사라짐
                 setPortfolioClosing(true);
 
                 setTimeout(() => {
-                  // 2단계: 포트폴리오 오버레이 숨기고 EXIT 로딩 표시
-                  setShowPortfolioOverlay(false);
-                  setShowExitLoading(true);
-                  setExitLoadingProgress(100);
+                  // 2단계: 창 축소 애니메이션 시작
+                  setPortfolioShrinking(true);
 
-                  // 3단계: EXIT 로딩바 역순 진행 (100% → 0%)
-                  const exitInterval = setInterval(() => {
-                    setExitLoadingProgress((prev) => {
-                      if (prev <= 0) {
-                        clearInterval(exitInterval);
-                        // 4단계: 모든 상태 초기화 및 3D 씬 복귀
-                        setTimeout(() => {
-                          setShowExitLoading(false);
-                          setShowWorksLoading(false);
-                          setLoadingProgress(0);
-                          setLoadingBarExpanded(false);
-                          setLoadingBarFullExpand(false);
-                          setPortfolioClosing(false);
-                          setExitLoadingProgress(100);
-                          setTargetPos(initialCameraPos);
-                          setTargetLook(initialCameraLook);
+                  setTimeout(() => {
+                    // 3단계: 포트폴리오 오버레이 숨기고 EXIT 로딩 표시
+                    setShowPortfolioOverlay(false);
+                    setShowExitLoading(true);
+                    setExitLoadingProgress(100);
+                    setPortfolioShrinking(false);
+
+                    // 4단계: EXIT 로딩바 역순 진행 (100% → 0%)
+                    const exitInterval = setInterval(() => {
+                      setExitLoadingProgress((prev) => {
+                        if (prev <= 0) {
+                          clearInterval(exitInterval);
+                          // 5단계: 모든 상태 초기화 및 3D 씬 복귀
                           setTimeout(() => {
-                            setFocusedGroup(null);
-                          }, 3000);
-                        }, 500);
-                        return 0;
-                      }
-                      return prev - 4; // 4%씩 감소
-                    });
-                  }, 50); // 50ms마다 업데이트
-                }, 1000); // 카드 사라짐 애니메이션 후
+                            setShowExitLoading(false);
+                            setShowWorksLoading(false);
+                            setLoadingProgress(0);
+                            setLoadingBarExpanded(false);
+                            setLoadingBarFullExpand(false);
+                            setPortfolioClosing(false);
+                            setExitLoadingProgress(100);
+                            setTargetPos(initialCameraPos);
+                            setTargetLook(initialCameraLook);
+                            setTimeout(() => {
+                              setFocusedGroup(null);
+                            }, 3000);
+                          }, 500);
+                          return 0;
+                        }
+                        return prev - 4; // 4%씩 감소
+                      });
+                    }, 50); // 50ms마다 업데이트
+                  }, 1000); // 창 축소 애니메이션 시간
+                }, 2500); // 카드 모두 사라질 때까지 기다림 (가장 늦은 카드 1.2s + 애니메이션 0.8s + 여유 0.5s)
               }}
               className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
             >
