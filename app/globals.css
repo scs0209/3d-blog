@@ -271,6 +271,7 @@ pre {
   }
 }
 
+/* 포트폴리오 애니메이션 */
 @keyframes pulse {
   0%,
   100% {
@@ -281,7 +282,80 @@ pre {
   }
 }
 
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes portfolioFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInOverlay {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+  }
+}
+
 /* 네온 글로우 효과 */
 .neon-glow {
-  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.portfolio-card {
+  opacity: 0;
+  animation: slideInFromTop 0.6s ease-out forwards;
+}
+
+.portfolio-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.portfolio-card:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.portfolio-card:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.portfolio-header {
+  opacity: 0;
+  animation: portfolioFadeIn 0.8s ease-out forwards;
+  animation-delay: 0s;
+}
+
+.portfolio-content {
+  opacity: 0;
+  animation: portfolioFadeIn 0.8s ease-out forwards;
+  animation-delay: 0.2s;
+}
+
+.portfolio-footer {
+  opacity: 0;
+  animation: portfolioFadeIn 0.8s ease-out forwards;
+  animation-delay: 0.7s;
+}
+
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeInOverlay 0.6s ease-out forwards;
 }

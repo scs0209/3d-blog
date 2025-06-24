@@ -50,6 +50,8 @@ export default function PortfolioPage() {
   // Works 로딩 화면 상태 추가
   const [showWorksLoading, setShowWorksLoading] = useState(false);
   const [showPortfolioOverlay, setShowPortfolioOverlay] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingBarExpanded, setLoadingBarExpanded] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -257,16 +259,11 @@ export default function PortfolioPage() {
       setAboutMeClosing(true);
     } else if (showExperienceOverlay) {
       setExperienceClosing(true);
-    } else if (showPortfolioOverlay) {
+    } else if (showPortfolioOverlay || showWorksLoading) {
       setShowPortfolioOverlay(false);
       setShowWorksLoading(false);
-      setTargetPos(initialCameraPos);
-      setTargetLook(initialCameraLook);
-      setTimeout(() => {
-        setFocusedGroup(null);
-      }, 3000);
-    } else if (showWorksLoading) {
-      setShowWorksLoading(false);
+      setLoadingProgress(0);
+      setLoadingBarExpanded(false);
       setTargetPos(initialCameraPos);
       setTargetLook(initialCameraLook);
       setTimeout(() => {
@@ -339,16 +336,35 @@ export default function PortfolioPage() {
   const [quality, setQuality] = useState(false);
   const [sound, setSound] = useState(false);
 
-  // Works 로딩 완료 후 자동 닫기 (Computer 화면에서 포트폴리오 표시 후)
+  // 로딩 애니메이션 시작
   useEffect(() => {
-    if (showWorksLoading) {
-      const timer = setTimeout(() => {
-        setShowWorksLoading(false);
-      }, 8000); // 8초 후 로딩 종료 (포트폴리오 갤러리 표시 시간 포함)
+    if (showWorksLoading && !showPortfolioOverlay) {
+      setLoadingProgress(0);
+      setLoadingBarExpanded(false);
 
-      return () => clearTimeout(timer);
+      const interval = setInterval(() => {
+        setLoadingProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            console.log('로딩 완료!');
+            // 로딩 완료 후 로딩바 확장 애니메이션
+            setTimeout(() => {
+              console.log('로딩바 확장!');
+              setLoadingBarExpanded(true);
+              setTimeout(() => {
+                console.log('포트폴리오 갤러리 표시!');
+                setShowPortfolioOverlay(true);
+              }, 500);
+            }, 500);
+            return 100;
+          }
+          return prev + 4; // 4%씩 증가
+        });
+      }, 50); // 50ms마다 업데이트
+
+      return () => clearInterval(interval);
     }
-  }, [showWorksLoading]);
+  }, [showWorksLoading, showPortfolioOverlay]);
 
   // 포트폴리오 프로젝트 데이터
   const portfolioProjects = [
@@ -380,11 +396,6 @@ export default function PortfolioPage() {
       liveUrl: 'https://example.com',
     },
   ];
-
-  // Computer 로딩 완료 콜백
-  const handleLoadingComplete = () => {
-    setShowPortfolioOverlay(true);
-  };
 
   return (
     <div className='h-screen w-screen bg-gray-900'>
@@ -430,11 +441,93 @@ export default function PortfolioPage() {
         </>
       )}
 
+      {/* 로딩 오버레이 (Computer 위치) */}
+      {showWorksLoading && !showPortfolioOverlay && (
+        <div className='fixed inset-0 z-40 pointer-events-none'>
+          <div
+            className='absolute'
+            style={{
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -20%)',
+              width: '400px',
+              height: '300px',
+              background: 'rgba(0, 0, 0, 0.95)',
+              border: '2px solid #00ffff',
+              borderRadius: '8px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '20px',
+              fontFamily: 'monospace',
+              fontSize: '24px',
+              color: '#00ffff',
+              textShadow: '0 0 10px #00ffff',
+              boxShadow: '0 0 30px rgba(0, 255, 255, 0.5)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '32px',
+                fontWeight: 'bold',
+                letterSpacing: '4px',
+                textShadow: '0 0 15px #00ffff',
+                marginBottom: '10px',
+              }}
+            >
+              WORKS
+            </div>
+
+            <div
+              style={{
+                width: loadingBarExpanded ? '100%' : '320px',
+                height: loadingBarExpanded ? '100%' : '12px',
+                background: '#222',
+                borderRadius: '6px',
+                overflow: 'hidden',
+                border: '2px solid #00ffff',
+                boxShadow: '0 0 20px rgba(0, 255, 255, 0.5)',
+                transition: 'all 0.5s ease-out',
+                position: loadingBarExpanded ? 'absolute' : 'relative',
+                top: loadingBarExpanded ? '0' : 'auto',
+                left: loadingBarExpanded ? '0' : 'auto',
+              }}
+            >
+              <div
+                style={{
+                  width: `${loadingProgress}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #00ffff, #0088ff)',
+                  borderRadius: '4px',
+                  boxShadow: '0 0 25px #00ffff',
+                  transition: 'width 0.1s ease-out',
+                }}
+              />
+            </div>
+
+            {!loadingBarExpanded && (
+              <div
+                style={{
+                  fontSize: '18px',
+                  opacity: 0.9,
+                  animation: 'pulse 2s infinite',
+                  textAlign: 'center',
+                }}
+              >
+                Loading projects...
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* 오버레이 Portfolio */}
       {showPortfolioOverlay && (
-        <div className='fixed inset-0 z-50 bg-black text-white font-mono overflow-auto'>
+        <div className='fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto animate-fade-in'>
           {/* 헤더 */}
-          <div className='flex justify-between items-center p-8 border-b border-cyan-400'>
+          <div className='flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header'>
             <div>
               <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
               <p className='text-cyan-300 text-sm mt-2'>Portfolio Projects</p>
@@ -444,36 +537,40 @@ export default function PortfolioPage() {
               onClick={() => {
                 setShowPortfolioOverlay(false);
                 setShowWorksLoading(false);
+                setLoadingProgress(0);
+                setLoadingBarExpanded(false);
                 setTargetPos(initialCameraPos);
                 setTargetLook(initialCameraLook);
                 setTimeout(() => {
                   setFocusedGroup(null);
                 }, 3000);
               }}
-              className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-colors'
+              className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
             >
               EXIT
             </button>
           </div>
 
           {/* 프로젝트 그리드 */}
-          <div className='p-8'>
+          <div className='p-8 portfolio-content'>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
               {portfolioProjects.map((project, index) => (
                 <div
                   key={project.id}
-                  className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors'
+                  className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card'
                 >
                   {/* 프로젝트 이미지 */}
-                  <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400'>
-                    <div className='text-center'>
-                      <div className='text-cyan-400 text-6xl mb-4'>📁</div>
+                  <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
+                    <div className='text-center transform transition-transform duration-300 hover:scale-110'>
+                      <div className='text-cyan-400 text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
+                        📁
+                      </div>
                       <div className='text-cyan-300'>PROJECT {index + 1}</div>
                     </div>
                   </div>
 
                   {/* 프로젝트 정보 */}
-                  <div className='p-6'>
+                  <div className='p-6 transform transition-all duration-300 hover:bg-gray-800'>
                     <h3 className='text-xl font-bold text-cyan-400 mb-2'>{project.title}</h3>
                     <p className='text-cyan-300 text-sm mb-4'>{project.subtitle}</p>
                     <p className='text-gray-300 text-sm mb-6 leading-relaxed'>{project.description}</p>
@@ -481,13 +578,13 @@ export default function PortfolioPage() {
                     <div className='flex gap-4'>
                       <button
                         type='button'
-                        className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-colors text-sm'
+                        className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/30'
                       >
                         VIEW LIVE
                       </button>
                       <button
                         type='button'
-                        className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-colors text-sm'
+                        className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/50'
                       >
                         SOURCE CODE
                       </button>
@@ -499,7 +596,7 @@ export default function PortfolioPage() {
           </div>
 
           {/* 푸터 */}
-          <div className='border-t border-cyan-400 p-8 text-center'>
+          <div className='border-t border-cyan-400 p-8 text-center portfolio-footer'>
             <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
               <span>© 2025</span>
               <a
@@ -621,13 +718,7 @@ export default function PortfolioPage() {
             onPointerOut={() => setHoveredPosition(null)}
             animationType='touch'
           />,
-          <Computer
-            key='computer'
-            scale={1}
-            position={[0, 1, -4]}
-            showLoading={showWorksLoading}
-            onLoadingComplete={handleLoadingComplete}
-          />,
+          <Computer key='computer' scale={1} position={[0, 1, -4]} />,
           [0, 1, 2].map((index) => {
             const position: [number, number, number] = [0, 0, -4 - index * 1];
             return (
