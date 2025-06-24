@@ -265,11 +265,11 @@ export default function PortfolioPage() {
     } else if (showExperienceOverlay) {
       setExperienceClosing(true);
     } else if (showPortfolioOverlay || showWorksLoading) {
-      // 1단계: 포트폴리오 카드들 하나씩 차례대로 사라짐
+      // 1단계: 마지막 카드부터 차례대로 사라짐 (3번째 → 2번째 → 1번째)
       setPortfolioClosing(true);
 
       setTimeout(() => {
-        // 2단계: 창 축소 애니메이션 시작
+        // 2단계: 창이 가운데로 작아지면서 프로그래스바로 변경
         setPortfolioShrinking(true);
 
         setTimeout(() => {
@@ -305,7 +305,7 @@ export default function PortfolioPage() {
             });
           }, 50); // 50ms마다 업데이트
         }, 1000); // 창 축소 애니메이션 시간
-      }, 2500); // 카드 모두 사라질 때까지 기다림
+      }, 2000); // 카드 모두 사라질 때까지 기다림
     } else {
       // 오버레이가 없는 그룹(ContactMe 등)에서 돌아갈 때
       setTargetPos(initialCameraPos);
@@ -611,7 +611,6 @@ export default function PortfolioPage() {
                 top: loadingBarFullExpand ? '0' : 'auto',
                 left: loadingBarFullExpand ? '0' : 'auto',
                 zIndex: loadingBarFullExpand ? 9998 : 'auto',
-                transformOrigin: 'center center',
               }}
             >
               {!loadingBarFullExpand && (
@@ -660,11 +659,11 @@ export default function PortfolioPage() {
             <button
               type='button'
               onClick={() => {
-                // 1단계: 포트폴리오 카드들 하나씩 차례대로 사라짐
+                // 1단계: 마지막 카드부터 차례대로 사라짐 (3번째 → 2번째 → 1번째)
                 setPortfolioClosing(true);
 
                 setTimeout(() => {
-                  // 2단계: 창 축소 애니메이션 시작
+                  // 2단계: 창이 가운데로 작아지면서 프로그래스바로 변경
                   setPortfolioShrinking(true);
 
                   setTimeout(() => {
@@ -700,7 +699,7 @@ export default function PortfolioPage() {
                       });
                     }, 50); // 50ms마다 업데이트
                   }, 1000); // 창 축소 애니메이션 시간
-                }, 2500); // 카드 모두 사라질 때까지 기다림 (가장 늦은 카드 1.2s + 애니메이션 0.8s + 여유 0.5s)
+                }, 2000); // 카드 모두 사라질 때까지 기다림 (1번째 카드: 1.0s + 애니메이션 0.8s + 여유 0.2s)
               }}
               className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
             >
