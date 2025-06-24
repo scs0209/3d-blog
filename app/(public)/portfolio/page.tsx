@@ -59,6 +59,7 @@ export default function PortfolioPage() {
   const [portfolioShrinking, setPortfolioShrinking] = useState(false);
   const [showPortfolioContent, setShowPortfolioContent] = useState(true);
   const [portfolioExiting, setPortfolioExiting] = useState(false);
+  const [exitingCardIndices, setExitingCardIndices] = useState<number[]>([]);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -666,46 +667,67 @@ export default function PortfolioPage() {
                 <button
                   type='button'
                   onClick={() => {
-                    // 1단계: 카드들이 차례대로 위로 올라가며 사라짐
-                    setPortfolioExiting(true);
+                    console.log('EXIT 버튼 클릭됨');
 
-                    // 2단계: 카드 애니메이션 완료 후 창 축소
-                    setTimeout(() => {
-                      setShowPortfolioOverlay(false);
-                      setLoadingBarFullExpand(false);
+                    // 1단계: 카드들을 차례대로 사라지게 만들기 (마지막부터)
+                    const totalCards = portfolioProjects.length;
 
-                      // 3단계: EXIT 로딩 시작
+                    // 카드를 하나씩 순차적으로 사라지게 만들기
+                    for (let i = 0; i < totalCards; i++) {
                       setTimeout(() => {
-                        setShowExitLoading(true);
-                        setExitLoadingProgress(100);
+                        const cardIndex = totalCards - 1 - i; // 마지막 카드부터
+                        console.log(`카드 ${cardIndex} 사라짐 시작`);
+                        setExitingCardIndices((prev) => [...prev, cardIndex]);
+                      }, i * 500); // 0.5초씩 딜레이
+                    }
 
-                        // 4단계: 로딩바 역진행 (100% → 0%)
-                        const exitInterval = setInterval(() => {
-                          setExitLoadingProgress((prev) => {
-                            if (prev <= 0) {
-                              clearInterval(exitInterval);
-                              // 5단계: 모든 상태 초기화 및 3D 씬 복귀
-                              setTimeout(() => {
-                                setShowExitLoading(false);
-                                setShowWorksLoading(false);
-                                setLoadingProgress(0);
-                                setLoadingBarExpanded(false);
-                                setShowPortfolioContent(true);
-                                setPortfolioExiting(false);
-                                setExitLoadingProgress(100);
-                                setTargetPos(initialCameraPos);
-                                setTargetLook(initialCameraLook);
-                                setTimeout(() => {
-                                  setFocusedGroup(null);
-                                }, 3000);
-                              }, 300);
-                              return 0;
-                            }
-                            return prev - 4; // 4%씩 감소
-                          });
-                        }, 50); // 50ms마다 업데이트
-                      }, 500); // 축소 애니메이션 시간
-                    }, 2000); // 카드 모두 위로 올라갈 때까지 기다림
+                    // 2단계: 모든 카드가 사라진 후 창 축소
+                    setTimeout(
+                      () => {
+                        console.log('모든 카드 사라짐 완료, 창 축소 시작');
+                        setPortfolioShrinking(true);
+
+                        // 3단계: 창 축소 완료 후 오버레이 숨기기
+                        setTimeout(() => {
+                          setShowPortfolioOverlay(false);
+                          setLoadingBarFullExpand(false);
+
+                          // 4단계: EXIT 로딩 시작
+                          setTimeout(() => {
+                            setShowExitLoading(true);
+                            setExitLoadingProgress(100);
+                            setPortfolioShrinking(false);
+
+                            // 5단계: 로딩바 역진행
+                            const exitInterval = setInterval(() => {
+                              setExitLoadingProgress((prev) => {
+                                if (prev <= 0) {
+                                  clearInterval(exitInterval);
+                                  setTimeout(() => {
+                                    setShowExitLoading(false);
+                                    setShowWorksLoading(false);
+                                    setLoadingProgress(0);
+                                    setLoadingBarExpanded(false);
+                                    setShowPortfolioContent(true);
+                                    setPortfolioExiting(false);
+                                    setExitingCardIndices([]);
+                                    setExitLoadingProgress(100);
+                                    setTargetPos(initialCameraPos);
+                                    setTargetLook(initialCameraLook);
+                                    setTimeout(() => {
+                                      setFocusedGroup(null);
+                                    }, 3000);
+                                  }, 300);
+                                  return 0;
+                                }
+                                return prev - 4;
+                              });
+                            }, 50);
+                          }, 500);
+                        }, 1500); // 창 축소 애니메이션 시간
+                      },
+                      totalCards * 500 + 1000,
+                    ); // 모든 카드 사라짐 + 여유 시간
                   }}
                   className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
                 >
@@ -722,11 +744,9 @@ export default function PortfolioPage() {
                   {portfolioProjects.map((project, index) => (
                     <div
                       key={project.id}
-                      className={`border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card ${portfolioExiting ? 'exit-card' : ''}`}
+                      className={`border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card ${exitingCardIndices.includes(index) ? 'exit-card' : ''}`}
                       style={{
-                        animationDelay: portfolioExiting
-                          ? `${0.2 * (portfolioProjects.length - 1 - index)}s` // EXIT: 마지막부터 (위로 올라감)
-                          : `${index * 0.2}s`, // 나타날 때: 첫 번째부터 (아래로 내려옴)
+                        animationDelay: exitingCardIndices.includes(index) ? '0s' : `${index * 0.2}s`,
                       }}
                     >
                       {/* 프로젝트 이미지 */}
