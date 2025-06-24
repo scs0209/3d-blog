@@ -599,18 +599,20 @@ export default function PortfolioPage() {
 
             <div
               style={{
-                width: loadingBarFullExpand ? '100vw' : '320px',
-                height: loadingBarFullExpand ? '100vh' : '12px',
+                width: '320px',
+                height: '12px',
                 background: loadingBarFullExpand ? 'linear-gradient(135deg, #00ffff, #0088ff)' : '#222',
                 borderRadius: loadingBarFullExpand ? '0' : '6px',
-                overflow: 'hidden',
+                overflow: 'visible',
                 border: loadingBarFullExpand ? 'none' : '2px solid #00ffff',
                 boxShadow: loadingBarFullExpand ? 'none' : '0 0 20px rgba(0, 255, 255, 0.5)',
                 transition: 'all 1.5s ease-out',
                 position: loadingBarFullExpand ? 'fixed' : 'relative',
-                top: loadingBarFullExpand ? '0' : 'auto',
-                left: loadingBarFullExpand ? '0' : 'auto',
+                top: loadingBarFullExpand ? '50%' : 'auto',
+                left: loadingBarFullExpand ? '50%' : 'auto',
+                transform: loadingBarFullExpand ? 'translate(-50%, -50%) scale(20)' : 'none',
                 zIndex: loadingBarFullExpand ? 9998 : 'auto',
+                transformOrigin: 'center center',
               }}
             >
               {!loadingBarFullExpand && (

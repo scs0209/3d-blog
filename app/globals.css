@@ -350,14 +350,10 @@ pre {
 
 @keyframes loadingBarExpand {
   0% {
-    width: 320px;
-    height: 12px;
-    border-radius: 6px;
+    transform: scale(1);
   }
   100% {
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
+    transform: scale(20);
   }
 }
 
