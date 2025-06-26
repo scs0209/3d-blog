@@ -60,6 +60,7 @@ export default function PortfolioPage() {
   const [portfolioShrinking, setPortfolioShrinking] = useState(false);
   const [showPortfolioContent, setShowPortfolioContent] = useState(true);
   const [portfolioExiting, setPortfolioExiting] = useState(false);
+  const [showCards, setShowCards] = useState(false);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -664,6 +665,14 @@ export default function PortfolioPage() {
               duration: portfolioExiting ? 1.5 : 0.8,
               ease: 'easeInOut',
             }}
+            onAnimationComplete={() => {
+              // 창이 완전히 뜬 후 카드 표시
+              if (!portfolioExiting) {
+                setTimeout(() => {
+                  setShowCards(true);
+                }, 200);
+              }
+            }}
           >
             {showPortfolioContent && (
               <>
@@ -713,6 +722,7 @@ export default function PortfolioPage() {
                                   setShowPortfolioContent(true);
                                   setPortfolioExiting(false);
                                   setExitLoadingProgress(100);
+                                  setShowCards(false); // 카드 상태 초기화
                                   setTargetPos(initialCameraPos);
                                   setTargetLook(initialCameraLook);
                                   setTimeout(() => {
@@ -748,61 +758,62 @@ export default function PortfolioPage() {
                 >
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
                     <AnimatePresence>
-                      {portfolioProjects.map((project, index) => (
-                        <motion.div
-                          key={project.id}
-                          className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors'
-                          initial={{ opacity: 0, y: 100 }} // 아래에서 시작
-                          animate={{
-                            opacity: portfolioExiting ? 0 : 1,
-                            y: portfolioExiting ? -100 : 0, // EXIT시 위로 사라짐
-                          }}
-                          exit={{ opacity: 0, y: -100 }}
-                          transition={{
-                            duration: 0.6,
-                            delay: portfolioExiting
-                              ? (portfolioProjects.length - 1 - index) * 0.2 // 역순으로 사라짐 (마지막부터)
-                              : index * 0.3, // 순차적으로 나타남 (첫 번째부터)
-                            ease: 'easeInOut',
-                          }}
-                          whileHover={{
-                            scale: 1.02,
-                            transition: { duration: 0.2 },
-                          }}
-                        >
-                          {/* 프로젝트 이미지 */}
-                          <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
-                            <div className='text-center transform transition-transform duration-300 hover:scale-110'>
-                              <div className='text-cyan-400 text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
-                                📁
+                      {showCards &&
+                        portfolioProjects.map((project, index) => (
+                          <motion.div
+                            key={project.id}
+                            className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors'
+                            initial={{ opacity: 0, y: 100 }} // 아래에서 시작
+                            animate={{
+                              opacity: portfolioExiting ? 0 : 1,
+                              y: portfolioExiting ? -100 : 0, // EXIT시 위로 사라짐
+                            }}
+                            exit={{ opacity: 0, y: -100 }}
+                            transition={{
+                              duration: 0.6,
+                              delay: portfolioExiting
+                                ? (portfolioProjects.length - 1 - index) * 0.2 // 역순으로 사라짐 (마지막부터)
+                                : index * 0.3, // 순차적으로 나타남 (첫 번째부터)
+                              ease: 'easeInOut',
+                            }}
+                            whileHover={{
+                              scale: 1.02,
+                              transition: { duration: 0.2 },
+                            }}
+                          >
+                            {/* 프로젝트 이미지 */}
+                            <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
+                              <div className='text-center transform transition-transform duration-300 hover:scale-110'>
+                                <div className='text-cyan-400 text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
+                                  📁
+                                </div>
+                                <div className='text-cyan-300'>PROJECT {index + 1}</div>
                               </div>
-                              <div className='text-cyan-300'>PROJECT {index + 1}</div>
                             </div>
-                          </div>
 
-                          {/* 프로젝트 정보 */}
-                          <div className='p-6 transform transition-all duration-300 hover:bg-gray-800'>
-                            <h3 className='text-xl font-bold text-cyan-400 mb-2'>{project.title}</h3>
-                            <p className='text-cyan-300 text-sm mb-4'>{project.subtitle}</p>
-                            <p className='text-gray-300 text-sm mb-6 leading-relaxed'>{project.description}</p>
+                            {/* 프로젝트 정보 */}
+                            <div className='p-6 transform transition-all duration-300 hover:bg-gray-800'>
+                              <h3 className='text-xl font-bold text-cyan-400 mb-2'>{project.title}</h3>
+                              <p className='text-cyan-300 text-sm mb-4'>{project.subtitle}</p>
+                              <p className='text-gray-300 text-sm mb-6 leading-relaxed'>{project.description}</p>
 
-                            <div className='flex gap-4'>
-                              <button
-                                type='button'
-                                className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/30'
-                              >
-                                VIEW LIVE
-                              </button>
-                              <button
-                                type='button'
-                                className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/50'
-                              >
-                                SOURCE CODE
-                              </button>
+                              <div className='flex gap-4'>
+                                <button
+                                  type='button'
+                                  className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/30'
+                                >
+                                  VIEW LIVE
+                                </button>
+                                <button
+                                  type='button'
+                                  className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/50'
+                                >
+                                  SOURCE CODE
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        ))}
                     </AnimatePresence>
                   </div>
                 </motion.div>
