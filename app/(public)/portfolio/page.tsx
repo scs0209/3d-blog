@@ -7,6 +7,8 @@ import {
   ExperiencePerson,
   GridBackground,
   HoloText,
+  LoadingOverlay,
+  PortfolioOverlay,
   Server,
   TypingMan,
   WorkPerson,
@@ -22,7 +24,6 @@ import * as three from 'three';
 import { AboutMePage } from '@/widgets/portfolio/ui/AboutMePage';
 import { NeonToggle } from '@/widgets/portfolio/ui/NeonToggle';
 import { ExperiencePage } from '@/widgets/portfolio/ui/ExperiencePage';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PortfolioPage() {
   // 그룹 집중 상태: null이면 전체, 아니면 해당 그룹만 보여줌
@@ -411,36 +412,59 @@ export default function PortfolioPage() {
     }
   }, [showWorksLoading, showPortfolioOverlay]);
 
-  // 포트폴리오 프로젝트 데이터
-  const portfolioProjects = [
-    {
-      id: 1,
-      title: 'PAWSITIVE DOG FOOD',
-      subtitle: 'International e-commerce platform',
-      description:
-        'A custom-made, responsive, fully-fledged e-commerce platform for a UK company, serving over 13K monthly visitors across the UK and Ireland. It includes a public e-commerce portal and a private customer portal, a POS, Shopify store integration, a payment gateway, detailed analytics, and more.',
-      image: '/assets/images/project1.jpg',
-      liveUrl: 'https://example.com',
-    },
-    {
-      id: 2,
-      title: "MERCHIANE BALI'S PORTFOLIO V1",
-      subtitle: 'Personal portfolio website',
-      description:
-        'The first version of my portfolio website, showcasing my skills, projects, and experience as a developer. It features a 3D design and smooth navigation, emphasizing responsiveness across devices.',
-      image: '/assets/images/project2.jpg',
-      liveUrl: 'https://example.com',
-    },
-    {
-      id: 3,
-      title: "ZIME FUMUDOH'S PORTFOLIO",
-      subtitle: 'Creative personal website',
-      description:
-        "A remake of Fumudoh's personal website, inspired by an award-winning Squarespace template. Built using standard web technologies, it features engaging animations created with GSAP and WebGL, enhancing the site's visual appeal and interactivity.",
-      image: '/assets/images/project3.jpg',
-      liveUrl: 'https://example.com',
-    },
-  ];
+  // 포트폴리오 EXIT 핸들러
+  const handlePortfolioExit = () => {
+    console.log('EXIT 버튼 클릭됨');
+
+    // 1단계: 카드들만 사라지는 애니메이션 시작
+    setPortfolioExiting(true);
+
+    // 2단계: 카드가 모두 사라진 후 창 닫기
+    setTimeout(() => {
+      setShowPortfolioOverlay(false);
+      setLoadingBarFullExpand(false);
+
+      setTimeout(() => {
+        setShowExitLoading(true);
+        setExitLoadingProgress(100);
+
+        const exitInterval = setInterval(() => {
+          setExitLoadingProgress((prev) => {
+            if (prev <= 0) {
+              clearInterval(exitInterval);
+              setTimeout(() => {
+                setShowExitLoading(false);
+                setShowWorksLoading(false);
+                setLoadingProgress(0);
+                setLoadingBarExpanded(false);
+                setShowPortfolioContent(true);
+                setPortfolioExiting(false);
+                setExitLoadingProgress(100);
+                setShowCards(false);
+                setTargetPos(initialCameraPos);
+                setTargetLook(initialCameraLook);
+                setTimeout(() => {
+                  setFocusedGroup(null);
+                }, 3000);
+              }, 300);
+              return 0;
+            }
+            return prev - 4;
+          });
+        }, 50);
+      }, 300);
+    }, 1100); // 카드가 모두 사라진 후
+  };
+
+  // 포트폴리오 애니메이션 완료 핸들러
+  const handlePortfolioAnimationComplete = () => {
+    // 창이 완전히 뜬 후 카드 표시
+    if (!portfolioExiting) {
+      setTimeout(() => {
+        setShowCards(true);
+      }, 200);
+    }
+  };
 
   return (
     <div className='h-screen w-screen bg-gray-900'>
@@ -486,254 +510,25 @@ export default function PortfolioPage() {
         </>
       )}
 
-      {/* EXIT 로딩 오버레이 */}
-      {showExitLoading && (
-        <div className='fixed inset-0 z-[9999] pointer-events-none'>
-          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] bg-black/95 border-2 border-cyan-400 rounded-lg flex flex-col items-center justify-center gap-5 font-mono text-2xl text-cyan-400 shadow-[0_0_30px_rgba(0,255,255,0.5)] overflow-hidden neon-glow'>
-            <div className='text-3xl font-bold tracking-[4px] mb-2.5 neon-glow'>EXIT</div>
+      {/* 로딩 오버레이들 */}
+      <LoadingOverlay
+        showWorksLoading={showWorksLoading}
+        showPortfolioOverlay={showPortfolioOverlay}
+        showExitLoading={showExitLoading}
+        loadingProgress={loadingProgress}
+        loadingBarFullExpand={loadingBarFullExpand}
+        exitLoadingProgress={exitLoadingProgress}
+      />
 
-            <div className='w-80 h-3 bg-gray-800 rounded-md overflow-hidden border-2 border-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.5)] transition-all duration-1000 ease-out'>
-              <div
-                className='h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded shadow-[0_0_25px_#00ffff] transition-[width] duration-100 ease-out'
-                style={{ width: `${exitLoadingProgress}%` }}
-              />
-            </div>
-
-            <div className='text-lg opacity-90 animate-pulse text-center'>Closing projects...</div>
-          </div>
-        </div>
-      )}
-
-      {/* 로딩 오버레이 (Computer 위치) */}
-      {showWorksLoading && !showPortfolioOverlay && !showExitLoading && (
-        <div className='fixed inset-0 z-40 pointer-events-none'>
-          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] bg-black/95 border-2 border-cyan-400 rounded-lg flex flex-col items-center justify-center gap-5 font-mono text-2xl text-cyan-400 shadow-[0_0_30px_rgba(0,255,255,0.5)] overflow-hidden neon-glow'>
-            <div className='text-3xl font-bold tracking-[4px] mb-2.5 neon-glow'>WORKS</div>
-
-            <div
-              className={`w-80 h-3 overflow-visible transition-all duration-[1500ms] ease-out origin-center ${
-                loadingBarFullExpand
-                  ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[20] z-[9998] bg-gradient-to-br from-cyan-400 to-blue-500'
-                  : 'relative bg-gray-800 rounded-md border-2 border-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.5)]'
-              }`}
-            >
-              {!loadingBarFullExpand && (
-                <div
-                  className='h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded shadow-[0_0_25px_#00ffff] transition-[width] duration-100 ease-out'
-                  style={{ width: `${loadingProgress}%` }}
-                />
-              )}
-            </div>
-
-            {!loadingBarFullExpand && loadingProgress < 100 && (
-              <div className='text-lg opacity-90 animate-pulse text-center'>Loading projects...</div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* 오버레이 Portfolio */}
-      <AnimatePresence>
-        {showPortfolioOverlay && (
-          <motion.div
-            className='fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto'
-            initial={{ opacity: 0, scale: 0.1 }}
-            animate={{
-              opacity: 1,
-              scale: 1, // 창은 항상 크기 유지
-            }}
-            exit={{ opacity: 0, scale: 0.1 }}
-            transition={{
-              duration: 0.8,
-              ease: 'easeInOut',
-            }}
-            onAnimationComplete={() => {
-              // 창이 완전히 뜬 후 카드 표시
-              if (!portfolioExiting) {
-                setTimeout(() => {
-                  setShowCards(true);
-                }, 200);
-              }
-            }}
-          >
-            {showPortfolioContent && (
-              <>
-                {/* 헤더 */}
-                <motion.div
-                  className='flex justify-between items-center p-8 border-b border-cyan-400'
-                  initial={{ opacity: 0, y: -50 }}
-                  animate={{
-                    opacity: portfolioExiting ? 0 : 1,
-                    y: portfolioExiting ? -50 : 0,
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    delay: portfolioExiting ? 1.0 : 0,
-                  }}
-                >
-                  <div>
-                    <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
-                    <p className='text-cyan-300 text-sm mt-2'>Portfolio Projects</p>
-                  </div>
-                  <button
-                    type='button'
-                    onClick={() => {
-                      console.log('EXIT 버튼 클릭됨');
-
-                      // 1단계: 카드들만 사라지는 애니메이션 시작
-                      setPortfolioExiting(true);
-
-                      // 2단계: 카드가 모두 사라진 후 창 닫기
-                      setTimeout(() => {
-                        setShowPortfolioOverlay(false);
-                        setLoadingBarFullExpand(false);
-
-                        setTimeout(() => {
-                          setShowExitLoading(true);
-                          setExitLoadingProgress(100);
-
-                          const exitInterval = setInterval(() => {
-                            setExitLoadingProgress((prev) => {
-                              if (prev <= 0) {
-                                clearInterval(exitInterval);
-                                setTimeout(() => {
-                                  setShowExitLoading(false);
-                                  setShowWorksLoading(false);
-                                  setLoadingProgress(0);
-                                  setLoadingBarExpanded(false);
-                                  setShowPortfolioContent(true);
-                                  setPortfolioExiting(false);
-                                  setExitLoadingProgress(100);
-                                  setShowCards(false);
-                                  setTargetPos(initialCameraPos);
-                                  setTargetLook(initialCameraLook);
-                                  setTimeout(() => {
-                                    setFocusedGroup(null);
-                                  }, 3000);
-                                }, 300);
-                                return 0;
-                              }
-                              return prev - 4;
-                            });
-                          }, 50);
-                        }, 300);
-                      }, 1100); // 카드가 모두 사라진 후
-                    }}
-                    className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
-                  >
-                    EXIT
-                  </button>
-                </motion.div>
-
-                {/* 프로젝트 그리드 */}
-                <motion.div
-                  className='p-8'
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{
-                    opacity: portfolioExiting ? 0 : 1,
-                    y: portfolioExiting ? 30 : 0,
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    delay: portfolioExiting ? 0.6 : 0.2,
-                  }}
-                >
-                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
-                    <AnimatePresence>
-                      {showCards &&
-                        portfolioProjects.map((project, index) => (
-                          <motion.div
-                            key={project.id}
-                            className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors'
-                            initial={{ opacity: 0, y: 100 }} // 아래에서 시작
-                            animate={{
-                              opacity: portfolioExiting ? 0 : 1,
-                              y: portfolioExiting ? -100 : 0, // EXIT시 위로 사라짐
-                            }}
-                            exit={{ opacity: 0, y: -100 }}
-                            transition={{
-                              duration: 0.6,
-                              delay: portfolioExiting
-                                ? (portfolioProjects.length - 1 - index) * 0.2 // 역순으로 사라짐 (마지막부터)
-                                : index * 0.3, // 순차적으로 나타남 (첫 번째부터)
-                              ease: 'easeInOut',
-                            }}
-                            whileHover={{
-                              scale: 1.02,
-                              transition: { duration: 0.2 },
-                            }}
-                          >
-                            {/* 프로젝트 이미지 */}
-                            <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
-                              <div className='text-center transform transition-transform duration-300 hover:scale-110'>
-                                <div className='text-cyan-400 text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
-                                  📁
-                                </div>
-                                <div className='text-cyan-300'>PROJECT {index + 1}</div>
-                              </div>
-                            </div>
-
-                            {/* 프로젝트 정보 */}
-                            <div className='p-6 transform transition-all duration-300 hover:bg-gray-800'>
-                              <h3 className='text-xl font-bold text-cyan-400 mb-2'>{project.title}</h3>
-                              <p className='text-cyan-300 text-sm mb-4'>{project.subtitle}</p>
-                              <p className='text-gray-300 text-sm mb-6 leading-relaxed'>{project.description}</p>
-
-                              <div className='flex gap-4'>
-                                <button
-                                  type='button'
-                                  className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/30'
-                                >
-                                  VIEW LIVE
-                                </button>
-                                <button
-                                  type='button'
-                                  className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/50'
-                                >
-                                  SOURCE CODE
-                                </button>
-                              </div>
-                            </div>
-                          </motion.div>
-                        ))}
-                    </AnimatePresence>
-                  </div>
-                </motion.div>
-
-                {/* 푸터 */}
-                <motion.div
-                  className='border-t border-cyan-400 p-8 text-center'
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{
-                    opacity: portfolioExiting ? 0 : 1,
-                    y: portfolioExiting ? 50 : 0,
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    delay: portfolioExiting ? 0.2 : 0.8,
-                  }}
-                >
-                  <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
-                    <span>© 2025</span>
-                    <a
-                      href='https://github.com/yourid'
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      className='hover:text-cyan-400'
-                    >
-                      GITHUB
-                    </a>
-                    <a href='mailto:your@email.com' className='hover:text-cyan-400'>
-                      EMAIL
-                    </a>
-                    <span>LINKEDIN</span>
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* 포트폴리오 오버레이 */}
+      <PortfolioOverlay
+        showPortfolioOverlay={showPortfolioOverlay}
+        portfolioExiting={portfolioExiting}
+        showPortfolioContent={showPortfolioContent}
+        showCards={showCards}
+        onExit={handlePortfolioExit}
+        onAnimationComplete={handlePortfolioAnimationComplete}
+      />
 
       {/* 뒤로가기 버튼 */}
       {focusedGroup && !showPortfolioOverlay && !showExitLoading && (
