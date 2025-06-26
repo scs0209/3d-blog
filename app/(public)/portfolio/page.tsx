@@ -698,14 +698,15 @@ export default function PortfolioPage() {
                     onClick={() => {
                       console.log('EXIT 버튼 클릭됨');
 
-                      // 역순 애니메이션 시작
+                      // 1단계: 카드들 사라지는 애니메이션 시작
                       setPortfolioExiting(true);
 
-                      // 카드 애니메이션 완료 후 처리 (카드 3개: (3-1)*0.2 + 0.6 = 1.0초 + 여유 0.1초)
+                      // 2단계: 카드 애니메이션 완료 후 창 작아지기 시작
                       setTimeout(() => {
                         setShowPortfolioOverlay(false);
                         setLoadingBarFullExpand(false);
 
+                        // 3단계: 창 작아지는 애니메이션 완료 후 EXIT 로딩
                         setTimeout(() => {
                           setShowExitLoading(true);
                           setExitLoadingProgress(100);
@@ -722,7 +723,7 @@ export default function PortfolioPage() {
                                   setShowPortfolioContent(true);
                                   setPortfolioExiting(false);
                                   setExitLoadingProgress(100);
-                                  setShowCards(false); // 카드 상태 초기화
+                                  setShowCards(false);
                                   setTargetPos(initialCameraPos);
                                   setTargetLook(initialCameraLook);
                                   setTimeout(() => {
@@ -735,7 +736,7 @@ export default function PortfolioPage() {
                             });
                           }, 50);
                         }, 500);
-                      }, 1100); // 모든 카드 exit 애니메이션 완료까지 대기
+                      }, 1100); // 카드가 모두 사라진 후 창 작아지기
                     }}
                     className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
                   >
