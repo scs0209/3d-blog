@@ -224,6 +224,7 @@ export default function PortfolioPage() {
           setShowExperienceOverlay(true);
         } else if (focusedGroup === 'server') {
           setShowWorksLoading(true);
+          setShowCards(false); // 카드 상태 초기화
         }
       }
     }, [cameraAnimationDone, aboutMeClosing, experienceClosing, secondaryAnimation, hasClickedBack, focusedGroup]);
