@@ -489,76 +489,17 @@ export default function PortfolioPage() {
       {/* EXIT 로딩 오버레이 */}
       {showExitLoading && (
         <div className='fixed inset-0 z-[9999] pointer-events-none'>
-          <div
-            className='absolute'
-            style={{
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -20%)',
-              width: '400px',
-              height: '300px',
-              background: 'rgba(0, 0, 0, 0.95)',
-              border: '2px solid #00ffff',
-              borderRadius: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '20px',
-              fontFamily: 'monospace',
-              fontSize: '24px',
-              color: '#00ffff',
-              textShadow: '0 0 10px #00ffff',
-              boxShadow: '0 0 30px rgba(0, 255, 255, 0.5)',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '32px',
-                fontWeight: 'bold',
-                letterSpacing: '4px',
-                textShadow: '0 0 15px #00ffff',
-                marginBottom: '10px',
-              }}
-            >
-              EXIT
-            </div>
+          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] bg-black/95 border-2 border-cyan-400 rounded-lg flex flex-col items-center justify-center gap-5 font-mono text-2xl text-cyan-400 shadow-[0_0_30px_rgba(0,255,255,0.5)] overflow-hidden neon-glow'>
+            <div className='text-3xl font-bold tracking-[4px] mb-2.5 neon-glow'>EXIT</div>
 
-            <div
-              style={{
-                width: '320px',
-                height: '12px',
-                background: '#222',
-                borderRadius: '6px',
-                overflow: 'hidden',
-                border: '2px solid #00ffff',
-                boxShadow: '0 0 20px rgba(0, 255, 255, 0.5)',
-                transition: 'all 1s ease-out',
-              }}
-            >
+            <div className='w-80 h-3 bg-gray-800 rounded-md overflow-hidden border-2 border-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.5)] transition-all duration-1000 ease-out'>
               <div
-                style={{
-                  width: `${exitLoadingProgress}%`,
-                  height: '100%',
-                  background: 'linear-gradient(90deg, #00ffff, #0088ff)',
-                  borderRadius: '4px',
-                  boxShadow: '0 0 25px #00ffff',
-                  transition: 'width 0.1s ease-out',
-                }}
+                className='h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded shadow-[0_0_25px_#00ffff] transition-[width] duration-100 ease-out'
+                style={{ width: `${exitLoadingProgress}%` }}
               />
             </div>
 
-            <div
-              style={{
-                fontSize: '18px',
-                opacity: 0.9,
-                animation: 'pulse 2s infinite',
-                textAlign: 'center',
-              }}
-            >
-              Closing projects...
-            </div>
+            <div className='text-lg opacity-90 animate-pulse text-center'>Closing projects...</div>
           </div>
         </div>
       )}
@@ -566,85 +507,26 @@ export default function PortfolioPage() {
       {/* 로딩 오버레이 (Computer 위치) */}
       {showWorksLoading && !showPortfolioOverlay && !showExitLoading && (
         <div className='fixed inset-0 z-40 pointer-events-none'>
-          <div
-            className='absolute'
-            style={{
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -20%)',
-              width: '400px',
-              height: '300px',
-              background: 'rgba(0, 0, 0, 0.95)',
-              border: '2px solid #00ffff',
-              borderRadius: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '20px',
-              fontFamily: 'monospace',
-              fontSize: '24px',
-              color: '#00ffff',
-              textShadow: '0 0 10px #00ffff',
-              boxShadow: '0 0 30px rgba(0, 255, 255, 0.5)',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '32px',
-                fontWeight: 'bold',
-                letterSpacing: '4px',
-                textShadow: '0 0 15px #00ffff',
-                marginBottom: '10px',
-              }}
-            >
-              WORKS
-            </div>
+          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] bg-black/95 border-2 border-cyan-400 rounded-lg flex flex-col items-center justify-center gap-5 font-mono text-2xl text-cyan-400 shadow-[0_0_30px_rgba(0,255,255,0.5)] overflow-hidden neon-glow'>
+            <div className='text-3xl font-bold tracking-[4px] mb-2.5 neon-glow'>WORKS</div>
 
             <div
-              style={{
-                width: '320px',
-                height: '12px',
-                background: loadingBarFullExpand ? 'linear-gradient(135deg, #00ffff, #0088ff)' : '#222',
-                borderRadius: loadingBarFullExpand ? '0' : '6px',
-                overflow: 'visible',
-                border: loadingBarFullExpand ? 'none' : '2px solid #00ffff',
-                boxShadow: loadingBarFullExpand ? 'none' : '0 0 20px rgba(0, 255, 255, 0.5)',
-                transition: 'all 1.5s ease-out',
-                position: loadingBarFullExpand ? 'fixed' : 'relative',
-                top: loadingBarFullExpand ? '50%' : 'auto',
-                left: loadingBarFullExpand ? '50%' : 'auto',
-                transform: loadingBarFullExpand ? 'translate(-50%, -50%) scale(20)' : 'none',
-                zIndex: loadingBarFullExpand ? 9998 : 'auto',
-                transformOrigin: 'center center',
-              }}
+              className={`w-80 h-3 overflow-visible transition-all duration-[1500ms] ease-out origin-center ${
+                loadingBarFullExpand
+                  ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[20] z-[9998] bg-gradient-to-br from-cyan-400 to-blue-500'
+                  : 'relative bg-gray-800 rounded-md border-2 border-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.5)]'
+              }`}
             >
               {!loadingBarFullExpand && (
                 <div
-                  style={{
-                    width: `${loadingProgress}%`,
-                    height: '100%',
-                    background: 'linear-gradient(90deg, #00ffff, #0088ff)',
-                    borderRadius: '4px',
-                    boxShadow: '0 0 25px #00ffff',
-                    transition: 'width 0.1s ease-out',
-                  }}
+                  className='h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded shadow-[0_0_25px_#00ffff] transition-[width] duration-100 ease-out'
+                  style={{ width: `${loadingProgress}%` }}
                 />
               )}
             </div>
 
             {!loadingBarFullExpand && loadingProgress < 100 && (
-              <div
-                style={{
-                  fontSize: '18px',
-                  opacity: 0.9,
-                  animation: 'pulse 2s infinite',
-                  textAlign: 'center',
-                }}
-              >
-                Loading projects...
-              </div>
+              <div className='text-lg opacity-90 animate-pulse text-center'>Loading projects...</div>
             )}
           </div>
         </div>
