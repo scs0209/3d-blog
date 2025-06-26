@@ -22,6 +22,7 @@ import * as three from 'three';
 import { AboutMePage } from '@/widgets/portfolio/ui/AboutMePage';
 import { NeonToggle } from '@/widgets/portfolio/ui/NeonToggle';
 import { ExperiencePage } from '@/widgets/portfolio/ui/ExperiencePage';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PortfolioPage() {
   // 그룹 집중 상태: null이면 전체, 아니면 해당 그룹만 보여줌
@@ -59,7 +60,6 @@ export default function PortfolioPage() {
   const [portfolioShrinking, setPortfolioShrinking] = useState(false);
   const [showPortfolioContent, setShowPortfolioContent] = useState(true);
   const [portfolioExiting, setPortfolioExiting] = useState(false);
-  const [exitingCardIndices, setExitingCardIndices] = useState<number[]>([]);
 
   // 그룹별 카메라 타겟 위치 정의
   const groupCameraTargets: Record<
@@ -649,167 +649,197 @@ export default function PortfolioPage() {
       )}
 
       {/* 오버레이 Portfolio */}
-      {showPortfolioOverlay && (
-        <div
-          className={`fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto ${portfolioClosing ? 'animate-fade-out' : 'animate-fade-in'} ${portfolioShrinking ? 'animate-shrink' : ''}`}
-        >
-          {showPortfolioContent && (
-            <>
-              {/* 헤더 */}
-              <div
-                className={`flex justify-between items-center p-8 border-b border-cyan-400 portfolio-header ${portfolioExiting ? 'exit-card' : ''}`}
-                style={{ animationDelay: portfolioExiting ? '1.0s' : '0s' }}
-              >
-                <div>
-                  <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
-                  <p className='text-cyan-300 text-sm mt-2'>Portfolio Projects</p>
-                </div>
-                <button
-                  type='button'
-                  onClick={() => {
-                    console.log('EXIT 버튼 클릭됨');
-
-                    // 1단계: 카드들을 차례대로 사라지게 만들기 (마지막부터)
-                    const totalCards = portfolioProjects.length;
-
-                    // 카드를 하나씩 순차적으로 사라지게 만들기
-                    for (let i = 0; i < totalCards; i++) {
-                      setTimeout(() => {
-                        const cardIndex = totalCards - 1 - i; // 마지막 카드부터
-                        console.log(`카드 ${cardIndex} 사라짐 시작`);
-                        setExitingCardIndices((prev) => [...prev, cardIndex]);
-                      }, i * 500); // 0.5초씩 딜레이
-                    }
-
-                    // 2단계: 모든 카드가 사라진 후 창 축소
-                    setTimeout(
-                      () => {
-                        console.log('모든 카드 사라짐 완료, 창 축소 시작');
-                        setPortfolioShrinking(true);
-
-                        // 3단계: 창 축소 완료 후 오버레이 숨기기
-                        setTimeout(() => {
-                          setShowPortfolioOverlay(false);
-                          setLoadingBarFullExpand(false);
-
-                          // 4단계: EXIT 로딩 시작
-                          setTimeout(() => {
-                            setShowExitLoading(true);
-                            setExitLoadingProgress(100);
-                            setPortfolioShrinking(false);
-
-                            // 5단계: 로딩바 역진행
-                            const exitInterval = setInterval(() => {
-                              setExitLoadingProgress((prev) => {
-                                if (prev <= 0) {
-                                  clearInterval(exitInterval);
-                                  setTimeout(() => {
-                                    setShowExitLoading(false);
-                                    setShowWorksLoading(false);
-                                    setLoadingProgress(0);
-                                    setLoadingBarExpanded(false);
-                                    setShowPortfolioContent(true);
-                                    setPortfolioExiting(false);
-                                    setExitingCardIndices([]);
-                                    setExitLoadingProgress(100);
-                                    setTargetPos(initialCameraPos);
-                                    setTargetLook(initialCameraLook);
-                                    setTimeout(() => {
-                                      setFocusedGroup(null);
-                                    }, 3000);
-                                  }, 300);
-                                  return 0;
-                                }
-                                return prev - 4;
-                              });
-                            }, 50);
-                          }, 500);
-                        }, 1500); // 창 축소 애니메이션 시간
-                      },
-                      totalCards * 500 + 1000,
-                    ); // 모든 카드 사라짐 + 여유 시간
+      <AnimatePresence>
+        {showPortfolioOverlay && (
+          <motion.div
+            className='fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto'
+            initial={{ opacity: 0, scale: 0.1 }}
+            animate={{
+              opacity: 1,
+              scale: portfolioExiting ? 0.1 : 1,
+            }}
+            exit={{ opacity: 0, scale: 0.1 }}
+            transition={{
+              duration: portfolioExiting ? 1.5 : 0.8,
+              ease: 'easeInOut',
+            }}
+          >
+            {showPortfolioContent && (
+              <>
+                {/* 헤더 */}
+                <motion.div
+                  className='flex justify-between items-center p-8 border-b border-cyan-400'
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{
+                    opacity: portfolioExiting ? 0 : 1,
+                    y: portfolioExiting ? -50 : 0,
                   }}
-                  className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
+                  transition={{
+                    duration: 0.6,
+                    delay: portfolioExiting ? 1.0 : 0,
+                  }}
                 >
-                  EXIT
-                </button>
-              </div>
+                  <div>
+                    <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
+                    <p className='text-cyan-300 text-sm mt-2'>Portfolio Projects</p>
+                  </div>
+                  <button
+                    type='button'
+                    onClick={() => {
+                      console.log('EXIT 버튼 클릭됨');
 
-              {/* 프로젝트 그리드 */}
-              <div
-                className={`p-8 portfolio-content ${portfolioExiting ? 'exit-card' : ''}`}
-                style={{ animationDelay: portfolioExiting ? '0.6s' : '0s' }}
-              >
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
-                  {portfolioProjects.map((project, index) => (
-                    <div
-                      key={project.id}
-                      className={`border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors portfolio-card ${exitingCardIndices.includes(index) ? 'exit-card' : ''}`}
-                      style={{
-                        animationDelay: exitingCardIndices.includes(index) ? '0s' : `${index * 0.2}s`,
-                      }}
-                    >
-                      {/* 프로젝트 이미지 */}
-                      <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
-                        <div className='text-center transform transition-transform duration-300 hover:scale-110'>
-                          <div className='text-cyan-400 text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
-                            📁
-                          </div>
-                          <div className='text-cyan-300'>PROJECT {index + 1}</div>
-                        </div>
-                      </div>
+                      // 역순 애니메이션 시작
+                      setPortfolioExiting(true);
 
-                      {/* 프로젝트 정보 */}
-                      <div className='p-6 transform transition-all duration-300 hover:bg-gray-800'>
-                        <h3 className='text-xl font-bold text-cyan-400 mb-2'>{project.title}</h3>
-                        <p className='text-cyan-300 text-sm mb-4'>{project.subtitle}</p>
-                        <p className='text-gray-300 text-sm mb-6 leading-relaxed'>{project.description}</p>
+                      // 카드 애니메이션 완료 후 처리 (마지막 카드: (6-1)*0.2 + 0.6 = 1.6초)
+                      setTimeout(() => {
+                        setShowPortfolioOverlay(false);
+                        setLoadingBarFullExpand(false);
 
-                        <div className='flex gap-4'>
-                          <button
-                            type='button'
-                            className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/30'
-                          >
-                            VIEW LIVE
-                          </button>
-                          <button
-                            type='button'
-                            className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/50'
-                          >
-                            SOURCE CODE
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                        setTimeout(() => {
+                          setShowExitLoading(true);
+                          setExitLoadingProgress(100);
 
-              {/* 푸터 */}
-              <div
-                className={`border-t border-cyan-400 p-8 text-center portfolio-footer ${portfolioExiting ? 'exit-card' : ''}`}
-                style={{ animationDelay: portfolioExiting ? '0.2s' : '0s' }}
-              >
-                <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
-                  <span>© 2025</span>
-                  <a
-                    href='https://github.com/yourid'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='hover:text-cyan-400'
+                          const exitInterval = setInterval(() => {
+                            setExitLoadingProgress((prev) => {
+                              if (prev <= 0) {
+                                clearInterval(exitInterval);
+                                setTimeout(() => {
+                                  setShowExitLoading(false);
+                                  setShowWorksLoading(false);
+                                  setLoadingProgress(0);
+                                  setLoadingBarExpanded(false);
+                                  setShowPortfolioContent(true);
+                                  setPortfolioExiting(false);
+                                  setExitLoadingProgress(100);
+                                  setTargetPos(initialCameraPos);
+                                  setTargetLook(initialCameraLook);
+                                  setTimeout(() => {
+                                    setFocusedGroup(null);
+                                  }, 3000);
+                                }, 300);
+                                return 0;
+                              }
+                              return prev - 4;
+                            });
+                          }, 50);
+                        }, 500);
+                      }, 1700); // 헤더 애니메이션 완료까지 대기
+                    }}
+                    className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
                   >
-                    GITHUB
-                  </a>
-                  <a href='mailto:your@email.com' className='hover:text-cyan-400'>
-                    EMAIL
-                  </a>
-                  <span>LINKEDIN</span>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
+                    EXIT
+                  </button>
+                </motion.div>
+
+                {/* 프로젝트 그리드 */}
+                <motion.div
+                  className='p-8'
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{
+                    opacity: portfolioExiting ? 0 : 1,
+                    y: portfolioExiting ? 30 : 0,
+                  }}
+                  transition={{
+                    duration: 0.6,
+                    delay: portfolioExiting ? 0.6 : 0.2,
+                  }}
+                >
+                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
+                    <AnimatePresence>
+                      {portfolioProjects.map((project, index) => (
+                        <motion.div
+                          key={project.id}
+                          className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors'
+                          initial={{ opacity: 0, y: 100 }} // 아래에서 시작
+                          animate={{
+                            opacity: portfolioExiting ? 0 : 1,
+                            y: portfolioExiting ? -100 : 0, // EXIT시 위로 사라짐
+                          }}
+                          exit={{ opacity: 0, y: -100 }}
+                          transition={{
+                            duration: 0.6,
+                            delay: portfolioExiting
+                              ? (portfolioProjects.length - 1 - index) * 0.2 // 역순으로 사라짐 (마지막부터)
+                              : index * 0.3, // 순차적으로 나타남 (첫 번째부터)
+                            ease: 'easeInOut',
+                          }}
+                          whileHover={{
+                            scale: 1.02,
+                            transition: { duration: 0.2 },
+                          }}
+                        >
+                          {/* 프로젝트 이미지 */}
+                          <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
+                            <div className='text-center transform transition-transform duration-300 hover:scale-110'>
+                              <div className='text-cyan-400 text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
+                                📁
+                              </div>
+                              <div className='text-cyan-300'>PROJECT {index + 1}</div>
+                            </div>
+                          </div>
+
+                          {/* 프로젝트 정보 */}
+                          <div className='p-6 transform transition-all duration-300 hover:bg-gray-800'>
+                            <h3 className='text-xl font-bold text-cyan-400 mb-2'>{project.title}</h3>
+                            <p className='text-cyan-300 text-sm mb-4'>{project.subtitle}</p>
+                            <p className='text-gray-300 text-sm mb-6 leading-relaxed'>{project.description}</p>
+
+                            <div className='flex gap-4'>
+                              <button
+                                type='button'
+                                className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/30'
+                              >
+                                VIEW LIVE
+                              </button>
+                              <button
+                                type='button'
+                                className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/50'
+                              >
+                                SOURCE CODE
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+
+                {/* 푸터 */}
+                <motion.div
+                  className='border-t border-cyan-400 p-8 text-center'
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{
+                    opacity: portfolioExiting ? 0 : 1,
+                    y: portfolioExiting ? 50 : 0,
+                  }}
+                  transition={{
+                    duration: 0.6,
+                    delay: portfolioExiting ? 0.2 : 0.8,
+                  }}
+                >
+                  <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
+                    <span>© 2025</span>
+                    <a
+                      href='https://github.com/yourid'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='hover:text-cyan-400'
+                    >
+                      GITHUB
+                    </a>
+                    <a href='mailto:your@email.com' className='hover:text-cyan-400'>
+                      EMAIL
+                    </a>
+                    <span>LINKEDIN</span>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 뒤로가기 버튼 */}
       {focusedGroup && !showPortfolioOverlay && !showExitLoading && (

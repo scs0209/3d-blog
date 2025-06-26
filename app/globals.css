@@ -380,37 +380,7 @@ pre {
   text-shadow: 0 0 10px currentColor;
 }
 
-/* 포트폴리오 카드 기본 스타일 */
-.portfolio-card {
-  opacity: 0;
-  animation: slideInFromTop 0.6s ease-out forwards;
-}
-
-/* 포트폴리오 헤더 기본 스타일 */
-.portfolio-header {
-  opacity: 0;
-  animation: portfolioFadeIn 0.8s ease-out forwards;
-  animation-delay: 0s;
-}
-
-/* 포트폴리오 콘텐츠 기본 스타일 */
-.portfolio-content {
-  opacity: 0;
-  animation: portfolioFadeIn 0.8s ease-out forwards;
-  animation-delay: 0.1s;
-}
-
-/* 포트폴리오 푸터 기본 스타일 */
-.portfolio-footer {
-  opacity: 0;
-  animation: portfolioFadeIn 0.8s ease-out forwards;
-  animation-delay: 0.8s;
-}
-
-/* EXIT 애니메이션 - 확실하게 사라지는 애니메이션 */
-.exit-card {
-  animation: exitSlideUp 1s ease-in forwards !important;
-}
+/* 포트폴리오 카드 기본 스타일 - CSS 애니메이션 제거하고 Framer Motion 사용 */
 
 @keyframes exitSlideUp {
   0% {
