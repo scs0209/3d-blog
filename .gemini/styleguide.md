@@ -1,34 +1,34 @@
-# Gemini Code Assistant: 자동 코드 리뷰 가이드라인
+# Gemini Code Assistant: Auto Code Review Guidelines
 
-**리뷰 언어:** 모든 리뷰 코멘트는 한국어로 작성합니다.
+**Review Language:** All review comments must be written in Korean.
 
-## 1. 전반적인 원칙
+## 1. General Principles
 
-- **가독성:** 코드는 명확하고 이해하기 쉬워야 합니다. 복잡한 로직에는 주석을 추가하여 다른 개발자가 쉽게 이해할 수 있도록 합니다.
-- **일관성:** 프로젝트 전반의 코딩 스타일과 구조를 일관되게 유지합니다. 새로운 코드는 기존 코드의 컨벤션을 따릅니다.
-- **단순성 (KISS):** 불필요하게 복잡한 설계나 코드는 지양하고, 최대한 단순하게 구현합니다.
+- **Readability:** Code must be clear and easy to understand. Add comments for complex logic to help other developers.
+- **Consistency:** Maintain a consistent coding style and structure throughout the project. New code should follow the conventions of existing code.
+- **Simplicity (KISS):** Avoid unnecessarily complex designs or code. Strive for the simplest possible implementation.
 
 ## 2. TypeScript & Next.js
 
-- **타입 정의:** `any` 타입 사용을 최소화하고, 가능한 구체적인 타입을 정의합니다. `interface`와 `type`을 적절히 구분하여 사용합니다.
-- **Next.js 컨벤션:**
-    - App Router의 최신 컨벤션(서버 컴포넌트, 클라이언트 컴포넌트)을 올바르게 사용하고 있는지 확인합니다.
-    - 데이터 페칭은 `fetcher.ts`의 공통 함수를 통해 이루어져야 합니다. 직접적인 `fetch` API 사용은 지양하고, `fetcher.ts`를 사용했는지 확인합니다.
-    - API 라우트 핸들러는 명확하고 안전하게 작성되었는지 확인합니다.
+- **Type Definitions:** Minimize the use of the `any` type. Define specific types wherever possible. Use `interface` and `type` appropriately based on the context.
+- **Next.js Conventions:**
+    - Ensure the correct use of modern App Router conventions (Server Components, Client Components).
+    - Data fetching must be performed through the common functions in `fetcher.ts`. Avoid direct use of the `fetch` API and verify that `fetcher.ts` is used instead.
+    - API route handlers must be written clearly and securely.
 - **React Best Practices:**
-    - React Hooks의 규칙(Rules of Hooks)을 준수하는지 확인합니다.
-    - 컴포넌트는 단일 책임 원칙(SRP)을 따르도록 작게 분리합니다.
-    - 상태 관리 로직이 명확하고 효율적인지 검토합니다.
+    - Adhere to the Rules of Hooks.
+    - Components should be small and follow the Single Responsibility Principle (SRP).
+    - State management logic should be clear and efficient.
 
-## 3. 테스트 (Vitest)
+## 3. Testing (Vitest)
 
-- **테스트 커버리지:** 중요한 비즈니스 로직과 컴포넌트는 반드시 테스트 코드로 커버되어야 합니다.
-- **테스트 케이스:** 테스트 케이스는 명확하게 작성되어야 하며, 성공 케이스와 에러 케이스를 모두 포함하는지 확인합니다. (`describe`, `it`, `expect` 구조)
-- **모킹(Mocking):** 외부 의존성은 적절히 모킹하여 테스트의 독립성을 보장하는지 확인합니다.
+- **Test Coverage:** Critical business logic and components must be covered by tests.
+- **Test Cases:** Test cases should be written clearly and include both success and error scenarios (using `describe`, `it`, `expect` structure).
+- **Mocking:** External dependencies must be properly mocked to ensure test independence.
 
-## 4. 보안
+## 4. Security
 
-- **입력 값 검증:** 사용자 입력이나 외부 API 응답과 같이 신뢰할 수 없는 데이터는 항상 검증하고 이스케이프 처리하여 XSS(Cross-Site Scripting) 공격을 방지하는지 확인합니다.
-- **API 보안:** API 엔드포인트가 적절한 인증 및 인가 절차를 거치는지 확인합니다.
-- **민감 정보 노출:** API 키, 비밀번호 등의 민감한 정보가 코드에 하드코딩되거나 클라이언트에 노출되지 않았는지 확인합니다. `.env` 파일과 환경 변수를 올바르게 사용하는지 검토합니다.
-- **의존성 관리:** 알려진 보안 취약점이 있는 라이브러리를 사용하지 않는지 확인합니다.
+- **Input Validation:** Always validate and sanitize untrusted data, such as user input or external API responses, to prevent XSS (Cross-Site Scripting) attacks.
+- **API Security:** Ensure that API endpoints have proper authentication and authorization checks.
+- **Sensitive Information Exposure:** Check that sensitive information like API keys or passwords is not hardcoded in the source code or exposed to the client. Verify the correct use of `.env` files and environment variables.
+- **Dependency Management:** Do not use libraries with known security vulnerabilities.
