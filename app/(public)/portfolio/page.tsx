@@ -548,7 +548,7 @@ export default function PortfolioPage() {
           돌아가기
         </button>
       )}
-      <Canvas camera={{ position: [2, 5, 2], fov: 90, near: 0.1, far: 10000 }}>
+      <Canvas camera={{ position: [2, 5, 2], fov: 75, near: 0.1, far: 100 }}>
         <CameraController />
         {/* GridBackground는 항상 표시, 네온 경로/퍼짐 효과 prop 전달 */}
         <GridBackground
