@@ -461,7 +461,7 @@ export default function PortfolioPage() {
   };
 
   return (
-    <div className='h-screen w-screen bg-gray-900'>
+    <div className='h-screen w-screen bg-[#12161B]'>
       {/* 오버레이 UI: 상단좌측 타이틀/직함 */}
       <div className='absolute top-8 left-8 z-30 flex flex-col gap-1'>
         <span className='text-cyan-300 font-bold text-2xl neon-glow'>홍길동</span>
@@ -529,21 +529,7 @@ export default function PortfolioPage() {
         <button
           type='button'
           onClick={handleBack}
-          style={{
-            position: 'absolute',
-            top: 24,
-            right: 24,
-            zIndex: 10,
-            padding: '10px 18px',
-            background: '#222',
-            color: '#fff',
-            borderRadius: 8,
-            border: 'none',
-            fontWeight: 'bold',
-            fontSize: 18,
-            cursor: 'pointer',
-            opacity: 0.85,
-          }}
+          className='absolute top-6 right-6 z-10 px-[18px] py-[10px] bg-gray-800 text-white rounded-lg border-none font-bold text-lg cursor-pointer opacity-85 hover:opacity-100 transition-opacity'
         >
           돌아가기
         </button>
@@ -561,7 +547,7 @@ export default function PortfolioPage() {
         {/* 홀로테이블 단독 */}
         {isShow('holoTable') && (
           <HoloTable
-            scale={0.5}
+            scale={0.3}
             onClick={() => handleGroupClick('holoTable')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -574,7 +560,7 @@ export default function PortfolioPage() {
         {isShow('work') && [
           <WorkTable
             key='workTable'
-            scale={0.03}
+            scale={0.01}
             rotation={[0, Math.PI / 2, 0]}
             position={[4, 0, 0]}
             onClick={() => handleGroupClick('work')}
@@ -586,9 +572,9 @@ export default function PortfolioPage() {
           />,
           <TypingMan
             key='typingMan'
-            scale={0.4}
+            scale={0.2}
             rotation={[0, -Math.PI / 2, 0]}
-            position={[4.4, 0, 0]}
+            position={[4.2, 0, 0]}
             onClick={() => handleGroupClick('work')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -600,9 +586,9 @@ export default function PortfolioPage() {
         {/* contactMe 단독 */}
         {isShow('contactMe') && (
           <ContactMe
-            scale={0.4}
+            scale={0.2}
             rotation={[0, -Math.PI / 2, 0]}
-            position={[-4, 0, -1]}
+            position={[-4, 0, -0.5]}
             onClick={() => handleGroupClick('contactMe')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -615,7 +601,7 @@ export default function PortfolioPage() {
         {isShow('server') && [
           <WorkPerson
             key='serverPerson'
-            scale={0.4}
+            scale={0.2}
             rotation={[0, Math.PI, 0]}
             position={[0, 0, -3.2]}
             onClick={() => handleGroupClick('server')}
@@ -626,13 +612,13 @@ export default function PortfolioPage() {
             onPointerOut={() => setHoveredPosition(null)}
             animationType='touch'
           />,
-          <Computer key='computer' scale={1} position={[0, 1, -4]} />,
+          <Computer key='computer' scale={0.5} position={[0.1, 1, -3.2]} />,
           [0, 1, 2].map((index) => {
-            const position: [number, number, number] = [0, 0, -4 - index * 1];
+            const position: [number, number, number] = [0, 0, -4 - index * 0.2];
             return (
               <Server
                 key={index}
-                scale={0.005}
+                scale={0.002}
                 rotation={[0, Math.PI / 2, 0]}
                 position={position}
                 onClick={() => handleGroupClick('server')}
@@ -649,7 +635,7 @@ export default function PortfolioPage() {
         {isShow('experience') && [
           <ExperiencePerson
             key='experiencePerson'
-            scale={0.4}
+            scale={0.2}
             rotation={[0, Math.PI, 0]}
             position={[0, -1, 3]}
             onClick={() => handleGroupClick('experience')}
@@ -661,9 +647,9 @@ export default function PortfolioPage() {
           />,
           <ExperienceDesk
             key='experienceDesk'
-            scale={0.1}
+            scale={0.05}
             rotation={[0, 0, 0]}
-            position={[4, 0, 5.3]}
+            position={[2.3, 0, 4.1]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -677,13 +663,13 @@ export default function PortfolioPage() {
           <>
             <HoloText
               text='ABOUT ME'
-              position={[3.5, -1.8, 0]}
+              position={[4, -1.8, 0]}
               rotation={[-Math.PI / 2, 0, Math.PI / 2]}
               color='#8b5cf6'
             />
             <HoloText
               text='CONTACT'
-              position={[-2, -1.8, 0]}
+              position={[-4, -1.8, 0]}
               rotation={[-Math.PI / 2, 0, Math.PI / 2]}
               color='#8b5cf6'
             />
