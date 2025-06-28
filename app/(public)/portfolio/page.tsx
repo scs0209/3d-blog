@@ -53,12 +53,11 @@ export default function PortfolioPage() {
   const [showWorksLoading, setShowWorksLoading] = useState(false);
   const [showPortfolioOverlay, setShowPortfolioOverlay] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingBarExpanded, setLoadingBarExpanded] = useState(false);
-  const [portfolioClosing, setPortfolioClosing] = useState(false);
+
   const [loadingBarFullExpand, setLoadingBarFullExpand] = useState(false);
   const [showExitLoading, setShowExitLoading] = useState(false);
   const [exitLoadingProgress, setExitLoadingProgress] = useState(100);
-  const [portfolioShrinking, setPortfolioShrinking] = useState(false);
+
   const [showPortfolioContent, setShowPortfolioContent] = useState(true);
   const [portfolioExiting, setPortfolioExiting] = useState(false);
   const [showCards, setShowCards] = useState(false);
@@ -104,10 +103,10 @@ export default function PortfolioPage() {
       modelPosition: [0, -1, 3],
     },
     contactMe: {
-      offset: [-2, 1, 0],
-      lookAt: [-4, 0, 0],
-      pulse: [-4, 0, 0],
-      modelPosition: [-4, 0, 0],
+      offset: [2, 0.5, -0.3],
+      lookAt: [-4, 0, -1],
+      pulse: [-4, 0, -1],
+      modelPosition: [-4, 0, -1],
     },
   };
 
@@ -272,18 +271,15 @@ export default function PortfolioPage() {
       setExperienceClosing(true);
     } else if (showPortfolioOverlay || showWorksLoading) {
       // 1단계: 마지막 카드부터 차례대로 사라짐 (3번째 → 2번째 → 1번째)
-      setPortfolioClosing(true);
 
       setTimeout(() => {
         // 2단계: 창이 가운데로 작아지면서 프로그래스바로 변경
-        setPortfolioShrinking(true);
 
         setTimeout(() => {
           // 3단계: 포트폴리오 오버레이 숨기고 EXIT 로딩 표시
           setShowPortfolioOverlay(false);
           setShowExitLoading(true);
           setExitLoadingProgress(100);
-          setPortfolioShrinking(false);
 
           // 4단계: EXIT 로딩바 역순 진행 (100% → 0%)
           const exitInterval = setInterval(() => {
@@ -295,9 +291,7 @@ export default function PortfolioPage() {
                   setShowExitLoading(false);
                   setShowWorksLoading(false);
                   setLoadingProgress(0);
-                  setLoadingBarExpanded(false);
                   setLoadingBarFullExpand(false);
-                  setPortfolioClosing(false);
                   setExitLoadingProgress(100);
                   setTargetPos(initialCameraPos);
                   setTargetLook(initialCameraLook);
@@ -383,9 +377,7 @@ export default function PortfolioPage() {
   useEffect(() => {
     if (showWorksLoading && !showPortfolioOverlay) {
       setLoadingProgress(0);
-      setLoadingBarExpanded(false);
       setLoadingBarFullExpand(false);
-      setPortfolioClosing(false);
 
       const interval = setInterval(() => {
         setLoadingProgress((prev) => {
@@ -436,7 +428,7 @@ export default function PortfolioPage() {
                 setShowExitLoading(false);
                 setShowWorksLoading(false);
                 setLoadingProgress(0);
-                setLoadingBarExpanded(false);
+                setLoadingBarFullExpand(false);
                 setShowPortfolioContent(true);
                 setPortfolioExiting(false);
                 setExitLoadingProgress(100);
@@ -607,12 +599,12 @@ export default function PortfolioPage() {
         {isShow('contactMe') && (
           <ContactMe
             scale={0.4}
-            rotation={[0, Math.PI / 2, 0]}
-            position={[-4, 0, 0]}
+            rotation={[0, -Math.PI / 2, 0]}
+            position={[-4, 0, -1]}
             onClick={() => handleGroupClick('contactMe')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
-              setHoveredPosition([-4, 0, 0]);
+              setHoveredPosition([-4, 0, -1]);
             }}
             onPointerOut={() => setHoveredPosition(null)}
           />
