@@ -107,6 +107,8 @@ export default function PortfolioPage() {
       lookAt: [-4, 0, -1],
       pulse: [-4, 0, -1],
       modelPosition: [-4, 0, -1],
+      secondaryOffset: [0.5, 0.5, -0.3],
+      secondaryLookAt: [-4, 0, -1],
     },
   };
 
@@ -181,7 +183,7 @@ export default function PortfolioPage() {
 
           if (
             !animRef.current.isSecondary &&
-            (focusedGroup === 'work' || focusedGroup === 'server') &&
+            (focusedGroup === 'work' || focusedGroup === 'server' || focusedGroup === 'contactMe') &&
             !aboutMeClosing
           ) {
             // 들어갈 때: work와 server 그룹에 대해서 보조 애니메이션 실행
