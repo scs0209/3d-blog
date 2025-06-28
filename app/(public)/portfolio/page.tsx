@@ -612,7 +612,7 @@ export default function PortfolioPage() {
             onPointerOut={() => setHoveredPosition(null)}
             animationType='touch'
           />,
-          <Computer key='computer' scale={0.5} position={[0.1, 1, -3.2]} />,
+          <Computer key='computer' scale={0.5} position={[0.1, 0.6, -3.4]} />,
           [0, 1, 2].map((index) => {
             const position: [number, number, number] = [0, 0, -4 - index * 0.2];
             return (
