@@ -5,19 +5,6 @@ import { useFrame } from '@react-three/fiber';
 import * as three from 'three';
 import { useState } from 'react';
 
-// groupCameraTargets의 타입 정의
-type GroupCameraTargets = Record<
-  string,
-  {
-    offset: [number, number, number];
-    lookAt: [number, number, number];
-    pulse: [number, number, number];
-    modelPosition: [number, number, number];
-    secondaryOffset?: [number, number, number];
-    secondaryLookAt?: [number, number, number];
-  }
->;
-
 export function GridBackground({
   showNeonPaths = true,
   pulseActive = false,
@@ -35,6 +22,7 @@ export function GridBackground({
   const highlightRef = useRef<three.Mesh>(null);
   const targetOpacity = useRef(0);
   const [highlightPosition, setHighlightPosition] = useState<three.Vector3 | null>(null);
+  const [lineAnimationProgress, setLineAnimationProgress] = useState(0);
 
   const [pulse, setPulse] = useState({ scale: 1, opacity: 0, running: false });
   const pulseDuration = 0.8; // 초
@@ -96,6 +84,24 @@ export function GridBackground({
       targetOpacity.current = 0; // 사라질 때의 최종 투명도
     }
   }, [hoveredPosition]);
+
+  // 선 애니메이션 시작 (컴포넌트 마운트 시)
+  useEffect(() => {
+    if (showNeonPaths) {
+      setLineAnimationProgress(0);
+      const animationInterval = setInterval(() => {
+        setLineAnimationProgress((prev) => {
+          if (prev >= 1) {
+            clearInterval(animationInterval);
+            return 1;
+          }
+          return prev + 0.02; // 2%씩 증가
+        });
+      }, 50); // 50ms마다 업데이트
+
+      return () => clearInterval(animationInterval);
+    }
+  }, [showNeonPaths]);
 
   // pulseActive가 true로 바뀔 때마다 1회 애니메이션 트리거
   useEffect(() => {
@@ -190,10 +196,48 @@ export function GridBackground({
     return new three.LineSegments(geometry, material);
   };
 
-  // 네온 경로 라인 생성 함수
-  const createNeonPath = (start: three.Vector3, end: three.Vector3, color: string) => {
-    const points = [start, end];
-    const geometry = new three.BufferGeometry().setFromPoints(points);
+  // 애니메이션된 네온 경로 라인 생성 함수 (ㄹ자 형태, 수직/수평만)
+  const createAnimatedNeonPath = (points: three.Vector3[], color: string, progress: number) => {
+    const group = new three.Group();
+
+    if (points.length < 2) {
+      return group;
+    }
+
+    // 각 구간의 길이 계산
+    const segmentLengths: number[] = [];
+    let totalLength = 0;
+
+    for (let i = 0; i < points.length - 1; i++) {
+      const point1 = points[i];
+      const point2 = points[i + 1];
+      if (point1 && point2) {
+        const length = point1.distanceTo(point2);
+        segmentLengths.push(length);
+        totalLength += length;
+      }
+    }
+
+    // 각 구간의 비율 계산
+    const segmentRatios = segmentLengths.map((length) => length / totalLength);
+
+    // 현재 진행률에 따라 어느 구간까지 그릴지 결정
+    let currentSegment = segmentRatios.length - 1; // 기본값을 마지막 구간으로 설정
+    let accumulatedRatio = 0;
+
+    for (let i = 0; i < segmentRatios.length; i++) {
+      if (progress <= accumulatedRatio + segmentRatios[i]!) {
+        currentSegment = i;
+        break;
+      }
+      accumulatedRatio += segmentRatios[i]!;
+    }
+
+    // currentSegment가 결정된 후 해당 구간의 시작점까지의 누적 비율 재계산
+    let segmentStartRatio = 0;
+    for (let i = 0; i < currentSegment; i++) {
+      segmentStartRatio += segmentRatios[i]!;
+    }
 
     const material = new three.LineBasicMaterial({
       color: color,
@@ -202,7 +246,6 @@ export function GridBackground({
       linewidth: 3,
     });
 
-    // 네온 효과를 위한 두 번째 라인 (더 밝고 얇은)
     const glowMaterial = new three.LineBasicMaterial({
       color: color,
       transparent: true,
@@ -210,9 +253,32 @@ export function GridBackground({
       linewidth: 1,
     });
 
-    const group = new three.Group();
-    group.add(new three.Line(geometry.clone(), material));
-    group.add(new three.Line(geometry.clone(), glowMaterial));
+    // 완료된 구간들 그리기
+    for (let i = 0; i < currentSegment; i++) {
+      const startPoint = points[i];
+      const endPoint = points[i + 1];
+      if (startPoint && endPoint) {
+        const geometry = new three.BufferGeometry().setFromPoints([startPoint, endPoint]);
+        group.add(new three.Line(geometry.clone(), material));
+        group.add(new three.Line(geometry.clone(), glowMaterial));
+      }
+    }
+
+    // 현재 진행 중인 구간 그리기
+    if (currentSegment < points.length - 1) {
+      const startPoint = points[currentSegment];
+      const endPoint = points[currentSegment + 1];
+      const segmentRatio = segmentRatios[currentSegment];
+
+      if (startPoint && endPoint && segmentRatio !== undefined) {
+        const segmentProgress = (progress - segmentStartRatio) / segmentRatio;
+        const clampedProgress = Math.max(0, Math.min(1, segmentProgress)); // 0-1 사이로 제한
+        const animatedEnd = new three.Vector3().lerpVectors(startPoint, endPoint, clampedProgress);
+        const geometry = new three.BufferGeometry().setFromPoints([startPoint, animatedEnd]);
+        group.add(new three.Line(geometry.clone(), material));
+        group.add(new three.Line(geometry.clone(), glowMaterial));
+      }
+    }
 
     return group;
   };
@@ -278,14 +344,51 @@ export function GridBackground({
       <primitive object={createGrid(80, 80, '#747272', 0.15)} />
       {/* 메인 그리드 교차점 - 원형 흰색 */}
       <primitive ref={pointsRef} object={createGridPoints(80, 80, '#ffffff', 3, 0.8)} />
-      {/* 네온 보라색 경로들 - HoloTable(중심)에서 각 모델로 */}
+      {/* 네온 보라색 경로들 - HoloTable(중심)에서 홀로그램 텍스트로 */}
       {showNeonPaths && (
         <>
-          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(4.4, 2, 0), '#8b5cf6')} />
-          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(-4, 2, 0), '#8b5cf6')} />
-          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -4), '#8b5cf6')} />
-          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -5), '#8b5cf6')} />
-          <primitive object={createNeonPath(new three.Vector3(0, 2, 0), new three.Vector3(0, 2, -6), '#8b5cf6')} />
+          {/* ABOUT ME로 연결 (ㄹ자 형태, 수직/수평만) */}
+          <primitive
+            object={createAnimatedNeonPath(
+              [
+                new three.Vector3(0, 2, 0), // 시작점 (중심)
+                new three.Vector3(3, 2, 0), // 오른쪽으로
+                new three.Vector3(3, 2, 0.8), // 아래쪽으로
+                new three.Vector3(3.35, 2, 0.8),
+                new three.Vector3(3.35, 2, 0.6),
+              ],
+              '#8b5cf6',
+              lineAnimationProgress,
+            )}
+          />
+          {/* CONTACT로 연결 (ㄹ자 형태, 수직/수평만) */}
+          <primitive
+            object={createAnimatedNeonPath(
+              [
+                new three.Vector3(0, 2, 0), // 시작점 (중심)
+                new three.Vector3(-2.0, 2, 0), // 왼쪽으로
+                new three.Vector3(-2.0, 2, 1), // 아래쪽으로
+                new three.Vector3(-2.55, 2, 1), // 텍스트 시작 부분으로
+                new three.Vector3(-2.55, 2, 0.6), // 텍스트 시작 부분으로
+              ],
+              '#8b5cf6',
+              lineAnimationProgress,
+            )}
+          />
+          {/* WORKS로 연결 (ㄹ자 형태, 수직/수평만) */}
+          <primitive
+            object={createAnimatedNeonPath(
+              [
+                new three.Vector3(0, 2, 0), // 시작점 (중심)
+                new three.Vector3(0, 2, -2), // 뒤쪽으로
+                new three.Vector3(1.2, 2, -2), // 왼쪽으로
+                new three.Vector3(1.2, 2, -2.9), // 더 뒤쪽으로
+                new three.Vector3(0.9, 2, -2.9), // 텍스트 시작 부분으로
+              ],
+              '#8b5cf6',
+              lineAnimationProgress,
+            )}
+          />
         </>
       )}
       {/* 퍼짐 파동 효과 (링) */}
