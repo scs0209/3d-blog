@@ -1,17 +1,7 @@
-# Gemini Code Assistant Configuration
-
 version: 1
-
-# Defines the events that trigger a PR review.
-# 'opened': When the PR is first opened.
-# 'synchronize': When new commits are pushed to the PR.
-on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-
-# Defines which features to enable.
 enabled_features:
-  # Enables automatic code review.
-  auto_review: true
+  auto_review:
+    # Enables auto-review on PR creation.
+    on_opening: true
+    # Enables auto-review on subsequent commits.
+    on_commit: true
