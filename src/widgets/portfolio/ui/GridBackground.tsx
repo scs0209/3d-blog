@@ -275,9 +275,9 @@ export function GridBackground({
       )}
 
       {/* 메인 그리드 라인 - 촘촘한 옅은 회색 */}
-      <primitive object={createGrid(100, 100, '#747272', 0.15)} />
+      <primitive object={createGrid(80, 80, '#747272', 0.15)} />
       {/* 메인 그리드 교차점 - 원형 흰색 */}
-      <primitive ref={pointsRef} object={createGridPoints(100, 100, '#ffffff', 3, 0.8)} />
+      <primitive ref={pointsRef} object={createGridPoints(80, 80, '#ffffff', 3, 0.8)} />
       {/* 네온 보라색 경로들 - HoloTable(중심)에서 각 모델로 */}
       {showNeonPaths && (
         <>
