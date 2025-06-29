@@ -347,15 +347,15 @@ export function GridBackground({
       {/* 네온 보라색 경로들 - HoloTable(중심)에서 홀로그램 텍스트로 */}
       {showNeonPaths && (
         <>
-          {/* ABOUT ME로 연결 (ㄹ자 형태, 수직/수평만) */}
+          {/* WORKS로 연결 (ㄹ자 형태, 수직/수평만) */}
           <primitive
             object={createAnimatedNeonPath(
               [
                 new three.Vector3(0, 2, 0), // 시작점 (중심)
-                new three.Vector3(3, 2, 0), // 오른쪽으로
-                new three.Vector3(3, 2, 0.8), // 아래쪽으로
-                new three.Vector3(3.35, 2, 0.8),
-                new three.Vector3(3.35, 2, 0.6),
+                new three.Vector3(0, 2, -2), // 뒤쪽으로
+                new three.Vector3(1.2, 2, -2), // 왼쪽으로
+                new three.Vector3(1.2, 2, -2.9), // 더 뒤쪽으로
+                new three.Vector3(0.9, 2, -2.9), // 텍스트 시작 부분으로
               ],
               '#8b5cf6',
               lineAnimationProgress,
@@ -375,15 +375,29 @@ export function GridBackground({
               lineAnimationProgress,
             )}
           />
-          {/* WORKS로 연결 (ㄹ자 형태, 수직/수평만) */}
+          {/* ABOUT ME로 연결 (ㄹ자 형태, 수직/수평만) */}
           <primitive
             object={createAnimatedNeonPath(
               [
                 new three.Vector3(0, 2, 0), // 시작점 (중심)
-                new three.Vector3(0, 2, -2), // 뒤쪽으로
-                new three.Vector3(1.2, 2, -2), // 왼쪽으로
-                new three.Vector3(1.2, 2, -2.9), // 더 뒤쪽으로
-                new three.Vector3(0.9, 2, -2.9), // 텍스트 시작 부분으로
+                new three.Vector3(3, 2, 0), // 오른쪽으로
+                new three.Vector3(3, 2, 0.8), // 아래쪽으로
+                new three.Vector3(3.35, 2, 0.8),
+                new three.Vector3(3.35, 2, 0.6),
+              ],
+              '#8b5cf6',
+              lineAnimationProgress,
+            )}
+          />
+          {/* RESUME로 연결 (ㄹ자 형태, 수직/수평만) */}
+          <primitive
+            object={createAnimatedNeonPath(
+              [
+                new three.Vector3(0, 2, -0.08), // 시작점 (중심)
+                new three.Vector3(2, 2, -0.08), // 뒤쪽으로
+                new three.Vector3(2, 2, -2), // 아래쪽으로
+                // new three.Vector3(3.35, 2, 0.8),
+                // new three.Vector3(3.35, 2, 0.6),
               ],
               '#8b5cf6',
               lineAnimationProgress,
