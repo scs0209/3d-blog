@@ -15,4 +15,5 @@ export * from './PortfolioOverlay';
 export * from './ResumeConsole';
 export * from './RobotArm';
 export * from './InspectingPerson';
-export * from './Radar';
+export * from './Antenna';
+export * from './DataRack';
