@@ -1,11 +1,71 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
-import type * as three from 'three';
+import * as three from 'three';
+
+// 사이버펑크 테마 재질 생성
+const cyberpunkMaterials = {
+  robotBody: new three.MeshStandardMaterial({
+    color: '#00ffff',
+    emissive: '#001a1a',
+    emissiveIntensity: 0.3,
+    metalness: 0.8,
+    roughness: 0.2,
+  }),
+  robotJoint: new three.MeshStandardMaterial({
+    color: '#ff00ff',
+    emissive: '#1a001a',
+    emissiveIntensity: 0.4,
+    metalness: 0.9,
+    roughness: 0.1,
+  }),
+  robotBase: new three.MeshStandardMaterial({
+    color: '#ffff00',
+    emissive: '#1a1a00',
+    emissiveIntensity: 0.2,
+    metalness: 0.7,
+    roughness: 0.3,
+  }),
+  robotText: new three.MeshStandardMaterial({
+    color: '#00ff00',
+    emissive: '#001a00',
+    emissiveIntensity: 0.5,
+    metalness: 0.3,
+    roughness: 0.7,
+  }),
+  purpleNeonBox: new three.MeshStandardMaterial({
+    color: '#9d00ff',
+    emissive: '#9d00ff',
+    emissiveIntensity: 3.5,
+    metalness: 0.1,
+    roughness: 0.1,
+    transparent: true,
+    opacity: 0.95,
+    toneMapped: false,
+  }),
+  silverMetal: new three.MeshStandardMaterial({
+    color: '#ffffff',
+    emissive: '#ffffff',
+    emissiveIntensity: 0.1,
+    metalness: 0.9,
+    roughness: 0.1,
+  }),
+};
 
 export function RobotArm(props: any) {
   const group = useRef<three.Group>(null);
   const { nodes, materials, animations } = useGLTF('/robot_arm_animation.glb');
   const { actions } = useAnimations(animations, group);
+
+  useEffect(() => {
+    if (actions) {
+      for (const action of Object.values(actions)) {
+        if (action) {
+          action.play();
+        }
+      }
+    }
+  }, [actions]);
+
   return (
     <group ref={group} {...props} dispose={null}>
       <group name='Sketchfab_Scene'>
@@ -30,7 +90,7 @@ export function RobotArm(props: any) {
                         castShadow
                         receiveShadow
                         geometry={(nodes.Shoulder_Robot_obj_Shoulder_0 as three.Mesh)?.geometry}
-                        material={materials.Robot_obj_Shoulder}
+                        material={cyberpunkMaterials.robotJoint}
                       />
                     </group>
                     <group name='UpperArm' position={[17.363, 0.581, 7.448]} rotation={[0, -0.016, 0]}>
@@ -40,7 +100,7 @@ export function RobotArm(props: any) {
                           castShadow
                           receiveShadow
                           geometry={(nodes.UpperArm_Robot_obj_UpperArm_0 as three.Mesh)?.geometry}
-                          material={materials.Robot_obj_UpperArm}
+                          material={cyberpunkMaterials.robotBody}
                         />
                       </group>
                       <group name='ForeArm' position={[-0.316, 12.886, 48.232]} rotation={[0, 0.03, 0]}>
@@ -50,7 +110,7 @@ export function RobotArm(props: any) {
                             castShadow
                             receiveShadow
                             geometry={(nodes.ForeArm_Robot_obj_ForeArm_0 as three.Mesh)?.geometry}
-                            material={materials.Robot_obj_ForeArm}
+                            material={cyberpunkMaterials.robotBody}
                           />
                         </group>
                         <group name='Hand' position={[41.145, -0.02, 8.614]}>
@@ -60,7 +120,7 @@ export function RobotArm(props: any) {
                               castShadow
                               receiveShadow
                               geometry={(nodes.Hand_Robot_obj_Hand_0 as three.Mesh)?.geometry}
-                              material={materials.Robot_obj_Hand}
+                              material={cyberpunkMaterials.robotBody}
                             />
                           </group>
                           <group name='Finger' position={[12.328, 4.238, -0.945]} rotation={[0, -0.014, 0]}>
@@ -70,32 +130,18 @@ export function RobotArm(props: any) {
                                 castShadow
                                 receiveShadow
                                 geometry={(nodes.Finger_Robot_obj_Finger_0 as three.Mesh)?.geometry}
-                                material={materials.Robot_obj_Finger}
+                                material={cyberpunkMaterials.robotBody}
                               />
                             </group>
-                            <group name='Box001' position={[4.401, -3.916, -81.426]}>
-                              <mesh
-                                name='Box001_09_-_Default_0'
-                                castShadow
-                                receiveShadow
-                                geometry={(nodes['Box001_09_-_Default_0'] as three.Mesh)?.geometry}
-                                material={materials['09_-_Default']}
-                              />
-                              <group
-                                name='Text005'
-                                position={[-15.01, 0.03, 12.416]}
-                                rotation={[Math.PI / 2, -1.571, 0]}
-                                scale={0.078}
-                              >
-                                <mesh
-                                  name='Text005_03_-_Default_0'
-                                  castShadow
-                                  receiveShadow
-                                  geometry={(nodes['Text005_03_-_Default_0'] as three.Mesh)?.geometry}
-                                  material={materials['03_-_Default']}
-                                />
-                              </group>
-                            </group>
+
+                            <mesh
+                              name='Box001_09_-_Default_0'
+                              position={[4.401, -3.916, -81.426]}
+                              castShadow
+                              receiveShadow
+                              geometry={(nodes['Box001_09_-_Default_0'] as three.Mesh)?.geometry}
+                              material={cyberpunkMaterials.purpleNeonBox}
+                            />
                           </group>
                         </group>
                       </group>
@@ -119,17 +165,8 @@ export function RobotArm(props: any) {
                     castShadow
                     receiveShadow
                     geometry={(nodes['Circle001_08_-_Default_0'] as three.Mesh)?.geometry}
-                    material={materials['08_-_Default']}
+                    material={cyberpunkMaterials.silverMetal}
                   />
-                  <group name='Text006' position={[-75.16, -1.01, 3.86]} rotation={[0, 0, -Math.PI / 2]} scale={0.365}>
-                    <mesh
-                      name='Text006_02_-_Default_0'
-                      castShadow
-                      receiveShadow
-                      geometry={(nodes['Text006_02_-_Default_0'] as three.Mesh)?.geometry}
-                      material={materials['02_-_Default']}
-                    />
-                  </group>
                 </group>
                 <group
                   name='Circle002'
@@ -142,7 +179,7 @@ export function RobotArm(props: any) {
                     castShadow
                     receiveShadow
                     geometry={(nodes['Circle002_07_-_Default_0'] as three.Mesh)?.geometry}
-                    material={materials['07_-_Default']}
+                    material={materials.tech_pedestal_tech_pedestal_mat}
                   />
                 </group>
                 <group name='Circle003' position={[-4.225, -19.174, 1.377]} rotation={[-Math.PI / 2, 0, 0]}>
