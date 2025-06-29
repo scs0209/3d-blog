@@ -12,3 +12,5 @@ export * from './Computer';
 export * from './WorkPerson';
 export * from './LoadingOverlay';
 export * from './PortfolioOverlay';
+export * from './ResumeConsole';
+export * from './RobotArm';
