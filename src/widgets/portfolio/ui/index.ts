@@ -14,3 +14,4 @@ export * from './LoadingOverlay';
 export * from './PortfolioOverlay';
 export * from './ResumeConsole';
 export * from './RobotArm';
+export * from './InspectingPerson';
