@@ -17,3 +17,5 @@ export * from './RobotArm';
 export * from './InspectingPerson';
 export * from './Antenna';
 export * from './DataRack';
+export * from './Platform';
+export * from './FloatMan';
