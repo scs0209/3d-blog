@@ -1,14 +1,19 @@
 'use client';
 
 import {
+  Antenna,
   Computer,
   ContactMe,
+  DataRack,
   ExperienceDesk,
   ExperiencePerson,
   GridBackground,
   HoloText,
+  InspectingPerson,
   LoadingOverlay,
   PortfolioOverlay,
+  ResumeConsole,
+  RobotArm,
   Server,
   TypingMan,
   WorkPerson,
@@ -27,9 +32,9 @@ import { ExperiencePage } from '@/widgets/portfolio/ui/ExperiencePage';
 
 export default function PortfolioPage() {
   // 그룹 집중 상태: null이면 전체, 아니면 해당 그룹만 보여줌
-  const [focusedGroup, setFocusedGroup] = useState<null | 'holoTable' | 'work' | 'server' | 'experience' | 'contactMe'>(
-    null,
-  );
+  const [focusedGroup, setFocusedGroup] = useState<
+    null | 'holoTable' | 'work' | 'server' | 'experience' | 'contactMe' | 'resumeConsole' | 'skill' | 'radar'
+  >(null);
   // pulse 효과 상태
   const [pulseActive, setPulseActive] = useState(false);
   const [pulseCenter, setPulseCenter] = useState<[number, number, number] | null>(null);
@@ -109,6 +114,12 @@ export default function PortfolioPage() {
       modelPosition: [-4, 0, -1],
       secondaryOffset: [0.5, 0.5, -0.3],
       secondaryLookAt: [-4, 0, -1],
+    },
+    resumeConsole: {
+      offset: [0, 0, 0],
+      lookAt: [0, 0, 0],
+      pulse: [0, 0, 0],
+      modelPosition: [0, 0, 0],
     },
   };
 
@@ -637,7 +648,7 @@ export default function PortfolioPage() {
             key='experiencePerson'
             scale={0.2}
             rotation={[0, Math.PI, 0]}
-            position={[0, -1, 3]}
+            position={[-1, -1, 3]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -649,7 +660,7 @@ export default function PortfolioPage() {
             key='experienceDesk'
             scale={0.05}
             rotation={[0, 0, 0]}
-            position={[2.3, 0, 4.1]}
+            position={[1.3, 0, 4.1]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -676,6 +687,15 @@ export default function PortfolioPage() {
             <HoloText text='WORKS' position={[-1.3, -1.8, -4.5]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
           </>
         )}
+        {isShow('resumeConsole') && (
+          <>
+            <ResumeConsole scale={0.5} rotation={[0, Math.PI / 2, 0]} position={[3, 0, -2.5]} />
+            <InspectingPerson scale={0.2} rotation={[0, -Math.PI / 2, 0]} position={[3.5, 0, -3]} />
+            <DataRack scale={0.4} position={[3, 0, -3]} />
+          </>
+        )}
+        {isShow('skill') && <RobotArm scale={0.005} position={[1.5, 0, 1.5]} />}
+        {isShow('radar') && <Antenna scale={0.2} rotation={[0, Math.PI, 0]} position={[-1.5, 0, -1.5]} />}
         {/* 메인 조명 */}
         <ambientLight intensity={0.2} color='#002244' />
         <directionalLight position={[10, 10, 5]} intensity={0.5} color='#ffffff' />
