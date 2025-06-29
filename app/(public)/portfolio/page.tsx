@@ -7,10 +7,12 @@ import {
   DataRack,
   ExperienceDesk,
   ExperiencePerson,
+  FloatMan,
   GridBackground,
   HoloText,
   InspectingPerson,
   LoadingOverlay,
+  Platform,
   PortfolioOverlay,
   ResumeConsole,
   RobotArm,
@@ -33,7 +35,16 @@ import { ExperiencePage } from '@/widgets/portfolio/ui/ExperiencePage';
 export default function PortfolioPage() {
   // 그룹 집중 상태: null이면 전체, 아니면 해당 그룹만 보여줌
   const [focusedGroup, setFocusedGroup] = useState<
-    null | 'holoTable' | 'work' | 'server' | 'experience' | 'contactMe' | 'resumeConsole' | 'skill' | 'radar'
+    | null
+    | 'holoTable'
+    | 'work'
+    | 'server'
+    | 'experience'
+    | 'contactMe'
+    | 'resumeConsole'
+    | 'skill'
+    | 'radar'
+    | 'platform'
   >(null);
   // pulse 효과 상태
   const [pulseActive, setPulseActive] = useState(false);
@@ -669,6 +680,12 @@ export default function PortfolioPage() {
             onPointerOut={() => setHoveredPosition(null)}
           />,
         ]}
+        {isShow('platform') && (
+          <>
+            <Platform scale={0.1} position={[-3, 0, 3]} />
+            <FloatMan scale={0.25} rotation={[-Math.PI / 2, 0, Math.PI / 2]} position={[-3.3, 0.2, 3]} />
+          </>
+        )}
         {/* 홀로그램 이름표들 */}
         {!focusedGroup && !pulseActive && (
           <>
