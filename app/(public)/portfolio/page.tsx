@@ -570,6 +570,7 @@ export default function PortfolioPage() {
         {isShow('holoTable') && (
           <HoloTable
             scale={0.3}
+            position={[0, 0, 0]}
             onClick={() => handleGroupClick('holoTable')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -691,17 +692,17 @@ export default function PortfolioPage() {
           <>
             <HoloText
               text='ABOUT ME'
-              position={[4, -1.8, 0]}
+              position={[3.5, 0, 0.5]}
               rotation={[-Math.PI / 2, 0, Math.PI / 2]}
               color='#8b5cf6'
             />
             <HoloText
               text='CONTACT'
-              position={[-4, -1.8, 0]}
+              position={[-2.5, 0, 0.5]}
               rotation={[-Math.PI / 2, 0, Math.PI / 2]}
               color='#8b5cf6'
             />
-            <HoloText text='WORKS' position={[-1.3, -1.8, -4.5]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
+            <HoloText text='WORKS' position={[0, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
           </>
         )}
         {isShow('resumeConsole') && (
