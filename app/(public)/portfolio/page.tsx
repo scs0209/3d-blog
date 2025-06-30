@@ -659,7 +659,7 @@ export default function PortfolioPage() {
             key='experiencePerson'
             scale={0.2}
             rotation={[0, Math.PI, 0]}
-            position={[-1, -1, 3]}
+            position={[-1, -1, 4]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -671,7 +671,7 @@ export default function PortfolioPage() {
             key='experienceDesk'
             scale={0.05}
             rotation={[0, 0, 0]}
-            position={[1.3, 0, 4.1]}
+            position={[1.3, 0, 5.1]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -712,7 +712,7 @@ export default function PortfolioPage() {
           </>
         )}
         {isShow('skill') && <RobotArm scale={0.005} position={[1.5, 0, 1.5]} />}
-        {isShow('radar') && <Antenna scale={0.2} rotation={[0, Math.PI, 0]} position={[-1.5, 0, -1.5]} />}
+        {isShow('radar') && <Antenna scale={0.2} rotation={[0, Math.PI, 0]} position={[-2.5, 0, -3.5]} />}
         {/* 메인 조명 */}
         <ambientLight intensity={0.2} color='#002244' />
         <directionalLight position={[10, 10, 5]} intensity={0.5} color='#ffffff' />
