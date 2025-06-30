@@ -58,7 +58,7 @@ type HoloTextProps = {
   color?: string;
 };
 
-export function HoloText({ text, position, rotation = [0, 0, 0], scale = 1, color = '#a78bfa' }: HoloTextProps) {
+export function HoloText({ text, position, rotation = [0, 0, 0], scale = 0.5, color = '#a78bfa' }: HoloTextProps) {
   const textRef = useRef<three.Mesh>(null);
   const [bounds, setBounds] = useState<three.Box3 | null>(null);
 
@@ -111,7 +111,7 @@ export function HoloText({ text, position, rotation = [0, 0, 0], scale = 1, colo
       <Text3D
         ref={textRef}
         font='/gt.json'
-        size={0.3}
+        size={0.25}
         height={0.05}
         position={[0, 0, 0]}
         curveSegments={12}
