@@ -325,7 +325,7 @@ export function GridBackground({
   };
 
   return (
-    <group ref={gridRef} position={[0, -2, 0]}>
+    <group ref={gridRef} position={[0, 0, 0]}>
       {/* 호버 하이라이트 원 */}
       {highlightPosition && (
         <mesh ref={highlightRef} position={highlightPosition} rotation={[-Math.PI / 2, 0, 0]}>
@@ -351,11 +351,11 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 2, 0), // 시작점 (중심)
-                new three.Vector3(0, 2, -2), // 뒤쪽으로
-                new three.Vector3(1.2, 2, -2), // 왼쪽으로
-                new three.Vector3(1.2, 2, -2.9), // 더 뒤쪽으로
-                new three.Vector3(0.9, 2, -2.9), // 텍스트 시작 부분으로
+                new three.Vector3(0, 0, 0), // 시작점 (중심)
+                new three.Vector3(0, 0, -2), // 뒤쪽으로
+                new three.Vector3(1.2, 0, -2), // 왼쪽으로
+                new three.Vector3(1.2, 0, -2.9), // 더 뒤쪽으로
+                new three.Vector3(0.9, 0, -2.9), // 텍스트 시작 부분으로
               ],
               '#8b5cf6',
               lineAnimationProgress,
@@ -365,10 +365,10 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0.1, 2, -0.08), // 시작점 (중심)
-                new three.Vector3(0.1, 2, -1), // 뒤쪽으로
-                new three.Vector3(2.3, 2, -1), // 아래쪽으로
-                new three.Vector3(2.3, 2, -2),
+                new three.Vector3(0.1, 0, -0.08), // 시작점 (중심)
+                new three.Vector3(0.1, 0, -1), // 뒤쪽으로
+                new three.Vector3(2.3, 0, -1), // 아래쪽으로
+                new three.Vector3(2.3, 0, -2),
                 // new three.Vector3(3.35, 2, 0.6),
               ],
               '#8b5cf6',
@@ -379,11 +379,11 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(-0.1, 2, 0), // 시작점 (중심)
-                new three.Vector3(-0.1, 2, 2.3), // 뒤쪽으로
-                new three.Vector3(1, 2, 2.3), // 왼쪽으로
-                new three.Vector3(1, 2, 3), // 더 뒤쪽으로
-                new three.Vector3(0, 2, 3), // 텍스트 시작 부분으로
+                new three.Vector3(-0.1, 0, 0), // 시작점 (중심)
+                new three.Vector3(-0.1, 0, 2.3), // 뒤쪽으로
+                new three.Vector3(1, 0, 2.3), // 왼쪽으로
+                new three.Vector3(1, 0, 3), // 더 뒤쪽으로
+                new three.Vector3(0, 0, 3), // 텍스트 시작 부분으로
               ],
               '#8b5cf6',
               lineAnimationProgress,
@@ -393,11 +393,11 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 2, 0), // 시작점 (중심)
-                new three.Vector3(-2.0, 2, 0), // 왼쪽으로
-                new three.Vector3(-2.0, 2, 1), // 아래쪽으로
-                new three.Vector3(-2.55, 2, 1), // 텍스트 시작 부분으로
-                new three.Vector3(-2.55, 2, 0.6), // 텍스트 시작 부분으로
+                new three.Vector3(0, 0, 0), // 시작점 (중심)
+                new three.Vector3(-2.0, 0, 0), // 왼쪽으로
+                new three.Vector3(-2.0, 0, 1), // 아래쪽으로
+                new three.Vector3(-2.55, 0, 1), // 텍스트 시작 부분으로
+                new three.Vector3(-2.55, 0, 0.6), // 텍스트 시작 부분으로
               ],
               '#8b5cf6',
               lineAnimationProgress,
@@ -407,11 +407,11 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 2, -0.1), // 시작점 (중심)
-                new three.Vector3(-1.5, 2, -0.1), // 왼쪽으로
-                new three.Vector3(-1.5, 2, -2), // 아래쪽으로
-                new three.Vector3(-2, 2, -2), // 텍스트 시작 부분으로
-                new three.Vector3(-2, 2, -3), // 텍스트 시작 부분으로
+                new three.Vector3(0, 0, -0.1), // 시작점 (중심)
+                new three.Vector3(-1.5, 0, -0.1), // 왼쪽으로
+                new three.Vector3(-1.5, 0, -2), // 아래쪽으로
+                new three.Vector3(-2, 0, -2), // 텍스트 시작 부분으로
+                new three.Vector3(-2, 0, -3), // 텍스트 시작 부분으로
               ],
               '#8b5cf6',
               lineAnimationProgress,
@@ -420,10 +420,10 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 2, 0.1), // 시작점 (중심)
-                new three.Vector3(-1.5, 2, 0.1), // 왼쪽으로
-                new three.Vector3(-1.5, 2, 2.5), // 아래쪽으로
-                new three.Vector3(-2.5, 2, 2.5), // 텍스트 시작 부분으로
+                new three.Vector3(0, 0, 0.1), // 시작점 (중심)
+                new three.Vector3(-1.5, 0, 0.1), // 왼쪽으로
+                new three.Vector3(-1.5, 0, 2.5), // 아래쪽으로
+                new three.Vector3(-2.5, 0, 2.5), // 텍스트 시작 부분으로
               ],
               '#8b5cf6',
               lineAnimationProgress,
@@ -433,11 +433,11 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 2, 0), // 시작점 (중심)
-                new three.Vector3(3, 2, 0), // 오른쪽으로
-                new three.Vector3(3, 2, 0.8), // 아래쪽으로
-                new three.Vector3(3.35, 2, 0.8),
-                new three.Vector3(3.35, 2, 0.6),
+                new three.Vector3(0, 0, 0), // 시작점 (중심)
+                new three.Vector3(3, 0, 0), // 오른쪽으로
+                new three.Vector3(3, 0, 0.8), // 아래쪽으로
+                new three.Vector3(3.35, 0, 0.8),
+                new three.Vector3(3.35, 0, 0.6),
               ],
               '#8b5cf6',
               lineAnimationProgress,
@@ -447,9 +447,9 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 2, 0.1), // 시작점 (중심)
-                new three.Vector3(2.3, 2, 0.1), // 오른쪽으로
-                new three.Vector3(2.3, 2, 1), // 아래쪽으로
+                new three.Vector3(0, 0, 0.1), // 시작점 (중심)
+                new three.Vector3(2.3, 0, 0.1), // 오른쪽으로
+                new three.Vector3(2.3, 0, 1), // 아래쪽으로
               ],
               '#8b5cf6',
               lineAnimationProgress,
