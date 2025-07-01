@@ -660,7 +660,7 @@ export default function PortfolioPage() {
             key='experiencePerson'
             scale={0.2}
             rotation={[0, Math.PI, 0]}
-            position={[-1, -1, 4]}
+            position={[-1, 0, 4]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -692,17 +692,27 @@ export default function PortfolioPage() {
           <>
             <HoloText
               text='ABOUT ME'
-              position={[3.5, 0, 0.5]}
+              position={[3.4, 0, 0.5]}
               rotation={[-Math.PI / 2, 0, Math.PI / 2]}
               color='#8b5cf6'
             />
             <HoloText
               text='CONTACT'
-              position={[-2.5, 0, 0.5]}
+              position={[-1.9, 0, -3.1]}
               rotation={[-Math.PI / 2, 0, Math.PI / 2]}
               color='#8b5cf6'
             />
-            <HoloText text='WORKS' position={[0, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
+            <HoloText text='WORKS' position={[-0.3, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
+            <HoloText
+              text='RESUME'
+              position={[2.35, 0, -2.2]}
+              rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+              color='#8b5cf6'
+            />
+            <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.1]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
+            <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
+            <HoloText text='HOME' position={[-2.5, 0, 0.5]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
+            <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
           </>
         )}
         {isShow('resumeConsole') && (
@@ -723,7 +733,7 @@ export default function PortfolioPage() {
         {/* 분위기 조명 */}
         <pointLight position={[0, 5, 0]} intensity={0.3} color='#00ffff' />
         {/* OrbitControls는 전체 뷰에서만 허용 */}
-        {!focusedGroup && !pulseActive && <OrbitControls />}
+        {<OrbitControls />}
       </Canvas>
     </div>
   );
