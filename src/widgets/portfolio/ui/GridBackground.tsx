@@ -204,13 +204,16 @@ export function GridBackground({
       return group;
     }
 
+    // 모든 점들을 살짝 위로 올려서 그리드와 겹치지 않게 함
+    const elevatedPoints = points.map((point) => new three.Vector3(point.x, 0.01, point.z));
+
     // 각 구간의 길이 계산
     const segmentLengths: number[] = [];
     let totalLength = 0;
 
-    for (let i = 0; i < points.length - 1; i++) {
-      const point1 = points[i];
-      const point2 = points[i + 1];
+    for (let i = 0; i < elevatedPoints.length - 1; i++) {
+      const point1 = elevatedPoints[i];
+      const point2 = elevatedPoints[i + 1];
       if (point1 && point2) {
         const length = point1.distanceTo(point2);
         segmentLengths.push(length);
@@ -239,35 +242,50 @@ export function GridBackground({
       segmentStartRatio += segmentRatios[i]!;
     }
 
+    // 메인 네온 라인 재질 (더 밝고 명확하게)
     const material = new three.LineBasicMaterial({
       color: color,
       transparent: true,
-      opacity: 0.8,
-      linewidth: 3,
+      opacity: 0.95,
+      linewidth: 2,
+      depthWrite: false,
     });
 
-    const glowMaterial = new three.LineBasicMaterial({
+    // 내부 glow 재질
+    const innerGlowMaterial = new three.LineBasicMaterial({
       color: color,
       transparent: true,
-      opacity: 0.4,
-      linewidth: 1,
+      opacity: 0.6,
+      linewidth: 4,
+      depthWrite: false,
+    });
+
+    // 외부 glow 재질 (더 넓은 범위)
+    const outerGlowMaterial = new three.LineBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.2,
+      linewidth: 8,
+      depthWrite: false,
     });
 
     // 완료된 구간들 그리기
     for (let i = 0; i < currentSegment; i++) {
-      const startPoint = points[i];
-      const endPoint = points[i + 1];
+      const startPoint = elevatedPoints[i];
+      const endPoint = elevatedPoints[i + 1];
       if (startPoint && endPoint) {
         const geometry = new three.BufferGeometry().setFromPoints([startPoint, endPoint]);
+        // 레이어 순서: 외부 glow -> 내부 glow -> 메인 라인
+        group.add(new three.Line(geometry.clone(), outerGlowMaterial));
+        group.add(new three.Line(geometry.clone(), innerGlowMaterial));
         group.add(new three.Line(geometry.clone(), material));
-        group.add(new three.Line(geometry.clone(), glowMaterial));
       }
     }
 
     // 현재 진행 중인 구간 그리기
-    if (currentSegment < points.length - 1) {
-      const startPoint = points[currentSegment];
-      const endPoint = points[currentSegment + 1];
+    if (currentSegment < elevatedPoints.length - 1) {
+      const startPoint = elevatedPoints[currentSegment];
+      const endPoint = elevatedPoints[currentSegment + 1];
       const segmentRatio = segmentRatios[currentSegment];
 
       if (startPoint && endPoint && segmentRatio !== undefined) {
@@ -275,8 +293,10 @@ export function GridBackground({
         const clampedProgress = Math.max(0, Math.min(1, segmentProgress)); // 0-1 사이로 제한
         const animatedEnd = new three.Vector3().lerpVectors(startPoint, endPoint, clampedProgress);
         const geometry = new three.BufferGeometry().setFromPoints([startPoint, animatedEnd]);
+        // 레이어 순서: 외부 glow -> 내부 glow -> 메인 라인
+        group.add(new three.Line(geometry.clone(), outerGlowMaterial));
+        group.add(new three.Line(geometry.clone(), innerGlowMaterial));
         group.add(new three.Line(geometry.clone(), material));
-        group.add(new three.Line(geometry.clone(), glowMaterial));
       }
     }
 
@@ -340,8 +360,8 @@ export function GridBackground({
         </mesh>
       )}
 
-      {/* 메인 그리드 라인 - 촘촘한 옅은 회색 */}
-      <primitive object={createGrid(80, 80, '#747272', 0.15)} />
+      {/* 메인 그리드 라인 - 촘촘한 옅은 회색 (네온 경로가 잘 보이도록 opacity 감소) */}
+      <primitive object={createGrid(80, 80, '#747272', 0.08)} />
       {/* 메인 그리드 교차점 - 원형 흰색 */}
       <primitive ref={pointsRef} object={createGridPoints(80, 80, '#ffffff', 3, 0.8)} />
       {/* 네온 보라색 경로들 - HoloTable(중심)에서 홀로그램 텍스트로 */}
