@@ -132,6 +132,12 @@ export default function PortfolioPage() {
       pulse: [0, 0, 0],
       modelPosition: [0, 0, 0],
     },
+    radar: {
+      offset: [1, 2, 1],
+      lookAt: [-2.5, 0, -3.5],
+      pulse: [-2.5, 0, -3.5],
+      modelPosition: [-2.5, 0, -3.5],
+    },
   };
 
   // 초기 카메라 위치/LookAt 상수
@@ -672,7 +678,7 @@ export default function PortfolioPage() {
             key='experienceDesk'
             scale={0.05}
             rotation={[0, 0, 0]}
-            position={[1.3, 0, 5.1]}
+            position={[1, 0, 5.1]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
@@ -713,6 +719,12 @@ export default function PortfolioPage() {
             <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
             <HoloText text='HOME' position={[-2.5, 0, 0.5]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
             <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
+            <HoloText
+              text='RADAR'
+              position={[-1.8, 0, -3.2]}
+              rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+              color='#8b5cf6'
+            />
           </>
         )}
         {isShow('resumeConsole') && (
@@ -723,7 +735,19 @@ export default function PortfolioPage() {
           </>
         )}
         {isShow('skill') && <RobotArm scale={0.005} position={[1.5, 0, 1.5]} />}
-        {isShow('radar') && <Antenna scale={0.2} rotation={[0, Math.PI, 0]} position={[-2.5, 0, -3.5]} />}
+        {isShow('radar') && (
+          <Antenna
+            scale={0.2}
+            rotation={[0, Math.PI, 0]}
+            position={[-2.5, 0, -3.5]}
+            onClick={() => handleGroupClick('radar')}
+            onPointerOver={(e: any) => {
+              e.stopPropagation();
+              setHoveredPosition([-2.5, 0, -3.5]);
+            }}
+            onPointerOut={() => setHoveredPosition(null)}
+          />
+        )}
         {/* 메인 조명 */}
         <ambientLight intensity={0.2} color='#002244' />
         <directionalLight position={[10, 10, 5]} intensity={0.5} color='#ffffff' />
