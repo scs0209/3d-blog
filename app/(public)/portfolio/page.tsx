@@ -137,6 +137,8 @@ export default function PortfolioPage() {
       lookAt: [-2.5, 0, -3.5],
       pulse: [-2.5, 0, -3.5],
       modelPosition: [-2.5, 0, -3.5],
+      secondaryOffset: [0, 2, 2], // x-1, z+1
+      secondaryLookAt: [-3.5, 0, -2.5], // x-1, z+1
     },
   };
 
@@ -211,7 +213,10 @@ export default function PortfolioPage() {
 
           if (
             !animRef.current.isSecondary &&
-            (focusedGroup === 'work' || focusedGroup === 'server' || focusedGroup === 'contactMe') &&
+            (focusedGroup === 'work' ||
+              focusedGroup === 'server' ||
+              focusedGroup === 'contactMe' ||
+              focusedGroup === 'radar') &&
             !aboutMeClosing
           ) {
             // 들어갈 때: work와 server 그룹에 대해서 보조 애니메이션 실행
@@ -719,12 +724,6 @@ export default function PortfolioPage() {
             <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
             <HoloText text='HOME' position={[-2.5, 0, 0.5]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
             <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
-            <HoloText
-              text='RADAR'
-              position={[-1.8, 0, -3.2]}
-              rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-              color='#8b5cf6'
-            />
           </>
         )}
         {isShow('resumeConsole') && (

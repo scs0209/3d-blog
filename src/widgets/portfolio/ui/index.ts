@@ -19,3 +19,4 @@ export * from './Antenna';
 export * from './DataRack';
 export * from './Platform';
 export * from './FloatMan';
+export * from './CyberpunkContactForm';
