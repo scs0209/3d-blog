@@ -31,6 +31,7 @@ import * as three from 'three';
 import { AboutMePage } from '@/widgets/portfolio/ui/AboutMePage';
 import { NeonToggle } from '@/widgets/portfolio/ui/NeonToggle';
 import { ExperiencePage } from '@/widgets/portfolio/ui/ExperiencePage';
+import { CyberpunkContactForm } from '@/widgets/portfolio/ui/CyberpunkContactForm';
 
 export default function PortfolioPage() {
   // 그룹 집중 상태: null이면 전체, 아니면 해당 그룹만 보여줌
@@ -57,6 +58,7 @@ export default function PortfolioPage() {
   const [showExperienceOverlay, setShowExperienceOverlay] = useState(false);
   const [aboutMeClosing, setAboutMeClosing] = useState(false);
   const [experienceClosing, setExperienceClosing] = useState(false);
+  const [showContactForm, setShowContactForm] = useState(false);
   // 추가 애니메이션 상태
   const [secondaryAnimation, setSecondaryAnimation] = useState(false);
   // AboutMePage 애니메이션 완료 상태 추가
@@ -178,7 +180,7 @@ export default function PortfolioPage() {
         animRef.current.isSecondary = secondaryAnimation;
         setCameraAnimationDone(false);
       }
-    }, [targetPos, targetLook, clock, camera, secondaryAnimation, aboutMeAnimationDone, aboutMeClosing]);
+    }, [targetPos, targetLook, clock, camera, aboutMeAnimationDone, aboutMeClosing]);
 
     useFrame(() => {
       if (animRef.current.running) {
@@ -217,7 +219,8 @@ export default function PortfolioPage() {
               focusedGroup === 'server' ||
               focusedGroup === 'contactMe' ||
               focusedGroup === 'radar') &&
-            !aboutMeClosing
+            !aboutMeClosing &&
+            !hasClickedBack
           ) {
             // 들어갈 때: work와 server 그룹에 대해서 보조 애니메이션 실행
             const target = groupCameraTargets[focusedGroup];
@@ -244,6 +247,10 @@ export default function PortfolioPage() {
               setCameraAnimationDone(false);
             }, 3000);
             return;
+          } else if (animRef.current.isSecondary) {
+            // 다른 그룹들의 보조 애니메이션 완료 처리
+            setSecondaryAnimation(false);
+            return;
           }
           setSecondaryAnimation(false);
         }
@@ -261,6 +268,8 @@ export default function PortfolioPage() {
         } else if (focusedGroup === 'server') {
           setShowWorksLoading(true);
           setShowCards(false); // 카드 상태 초기화
+        } else if (focusedGroup === 'radar') {
+          setShowContactForm(true);
         }
       }
     }, [cameraAnimationDone, aboutMeClosing, experienceClosing, secondaryAnimation, hasClickedBack, focusedGroup]);
@@ -304,6 +313,16 @@ export default function PortfolioPage() {
       setAboutMeClosing(true);
     } else if (showExperienceOverlay) {
       setExperienceClosing(true);
+    } else if (showContactForm) {
+      setShowContactForm(false);
+      setHasClickedBack(true);
+      setTargetPos(initialCameraPos);
+      setTargetLook(initialCameraLook);
+      setTimeout(() => {
+        setFocusedGroup(null);
+        setHasClickedBack(false);
+      }, 3000);
+      return;
     } else if (showPortfolioOverlay || showWorksLoading) {
       // 1단계: 마지막 카드부터 차례대로 사라짐 (3번째 → 2번째 → 1번째)
 
@@ -535,6 +554,13 @@ export default function PortfolioPage() {
             <ExperiencePage isClosing={experienceClosing} onClose={handleExperienceClose} />
           </div>
         </>
+      )}
+
+      {/* Contact Form */}
+      {showContactForm && (
+        <div className='fixed left-[100px] top-1/2 transform -translate-y-1/2 z-50'>
+          <CyberpunkContactForm show={showContactForm} />
+        </div>
       )}
 
       {/* 로딩 오버레이들 */}
