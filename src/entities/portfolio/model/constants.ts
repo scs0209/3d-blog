@@ -49,10 +49,10 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     secondaryLookAt: [-4, 0, -1],
   },
   resumeConsole: {
-    offset: [0, 0, 0],
-    lookAt: [0, 0, 0],
-    pulse: [0, 0, 0],
-    modelPosition: [0, 0, 0],
+    offset: [1, 2, 0.5],
+    lookAt: [3.2, 0.5, -2.8],
+    pulse: [3.2, 0, -2.8],
+    modelPosition: [3.2, 0, -2.8],
   },
   radar: {
     offset: [1, 2, 1],

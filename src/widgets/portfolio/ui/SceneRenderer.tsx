@@ -191,9 +191,29 @@ export const SceneRenderer = (props: SceneRendererProps) => {
 
       {isShow('resumeConsole') && (
         <>
-          <ResumeConsole scale={0.5} rotation={[0, Math.PI / 2, 0]} position={[3, 0, -2.5]} />
-          <InspectingPerson scale={0.2} rotation={[0, -Math.PI / 2, 0]} position={[3.5, 0, -3]} />
-          <DataRack scale={0.4} position={[3, 0, -3]} />
+          <ResumeConsole
+            scale={0.5}
+            rotation={[0, Math.PI / 2, 0]}
+            position={[3, 0, -2.5]}
+            onClick={() => onGroupClick('resumeConsole')}
+            onPointerOver={handlePointerOver([3, 0, -2.5])}
+            onPointerOut={handlePointerOut}
+          />
+          <InspectingPerson
+            scale={0.2}
+            rotation={[0, -Math.PI / 2, 0]}
+            position={[3.5, 0, -3]}
+            onClick={() => onGroupClick('resumeConsole')}
+            onPointerOver={handlePointerOver([3.5, 0, -3])}
+            onPointerOut={handlePointerOut}
+          />
+          <DataRack
+            scale={0.4}
+            position={[3, 0, -3]}
+            onClick={() => onGroupClick('resumeConsole')}
+            onPointerOver={handlePointerOver([3, 0, -3])}
+            onPointerOut={handlePointerOut}
+          />
         </>
       )}
 

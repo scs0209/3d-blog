@@ -5,6 +5,7 @@ import type { CameraAnimationRef, Position3D, FocusedGroup } from '@/entities/po
 import {
   CAMERA_ANIMATION_DURATION,
   SECONDARY_ANIMATION_DURATION,
+  CAMERA_ANIMATION_DELAY,
   easeInOutCubic,
   GROUP_CAMERA_TARGETS,
 } from '@/entities/portfolio/model/constants';
@@ -106,6 +107,31 @@ export const CameraController = (props: CameraControllerProps) => {
     secondaryAnimation,
     hasClickedBack,
     setShowExperienceOverlay,
+  ]);
+
+  // ResumeConsole 모델 클릭 시 카메라 애니메이션 완료 후 처리
+  useEffect(() => {
+    if (focusedGroup === 'resumeConsole' && cameraAnimationDone && !secondaryAnimation && !hasClickedBack) {
+      console.log('ResumeConsole: 카메라 애니메이션 완료, 2초 후 자동으로 복귀');
+      // 2초 후 자동으로 초기 위치로 복귀
+      setTimeout(() => {
+        setTargetPos([2, 5, 2]); // INITIAL_CAMERA_POS
+        setTargetLook([0, 0, 0]); // INITIAL_CAMERA_LOOK
+        setTimeout(() => {
+          setFocusedGroup(null);
+          setCameraAnimationDone(false);
+        }, CAMERA_ANIMATION_DELAY);
+      }, 2000);
+    }
+  }, [
+    focusedGroup,
+    cameraAnimationDone,
+    secondaryAnimation,
+    hasClickedBack,
+    setTargetPos,
+    setTargetLook,
+    setFocusedGroup,
+    setCameraAnimationDone,
   ]);
 
   // 카메라 애니메이션 시작
