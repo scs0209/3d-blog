@@ -116,9 +116,9 @@ export default function PortfolioPage() {
     },
     experience: {
       offset: [0, 1, 2],
-      lookAt: [0, 1, 0],
+      lookAt: [0, 1.5, 0],
       pulse: [1.75, 0, 4.15],
-      modelPosition: [0, -1, 3],
+      modelPosition: [-1, -0.5, 3],
     },
     contactMe: {
       offset: [2, 0.5, -0.3],
@@ -707,9 +707,8 @@ export default function PortfolioPage() {
           />,
           <ExperienceDesk
             key='experienceDesk'
-            scale={0.05}
-            rotation={[0, 0, 0]}
-            position={[1, 0, 5.1]}
+            scale={0.07}
+            position={[1.8, 0, 5.7]}
             onClick={() => handleGroupClick('experience')}
             onPointerOver={(e: any) => {
               e.stopPropagation();
