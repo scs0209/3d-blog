@@ -176,14 +176,15 @@ export const CameraController = (props: CameraControllerProps) => {
         });
         setCameraAnimationDone(true);
 
-        // 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar)
+        // 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar, Resume, Skill)
         if (
           !animRef.current.isSecondary &&
           (focusedGroup === 'work' ||
             focusedGroup === 'server' ||
             focusedGroup === 'contactMe' ||
             focusedGroup === 'radar' ||
-            focusedGroup === 'resumeConsole') &&
+            focusedGroup === 'resumeConsole' ||
+            focusedGroup === 'skill') &&
           !aboutMeClosing &&
           !hasClickedBack
         ) {
@@ -192,9 +193,14 @@ export const CameraController = (props: CameraControllerProps) => {
             console.log(`${focusedGroup}: 보조 애니메이션 트리거`);
             if (focusedGroup === 'work') {
               workAnimation.triggerSecondaryAnimation();
-            } else if (focusedGroup === 'radar' || focusedGroup === 'contactMe' || focusedGroup === 'resumeConsole') {
-              // Contact 모델의 보조 애니메이션 트리거
-              console.log(`${focusedGroup}: Contact 보조 애니메이션 시작`);
+            } else if (
+              focusedGroup === 'radar' ||
+              focusedGroup === 'contactMe' ||
+              focusedGroup === 'resumeConsole' ||
+              focusedGroup === 'skill'
+            ) {
+              // Contact, Resume, Skill 모델의 보조 애니메이션 트리거
+              console.log(`${focusedGroup}: ${focusedGroup} 보조 애니메이션 시작`);
               setSecondaryAnimation(true);
               const newPos: Position3D = [
                 target.modelPosition[0] + target.secondaryOffset[0],

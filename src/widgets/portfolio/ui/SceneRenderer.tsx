@@ -217,7 +217,15 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         </>
       )}
 
-      {isShow('skill') && <RobotArm scale={0.005} position={[1.5, 0, 1.5]} />}
+      {isShow('skill') && (
+        <RobotArm
+          scale={0.005}
+          position={[1.5, 0, 1.5]}
+          onClick={() => onGroupClick('skill')}
+          onPointerOver={handlePointerOver([1.5, 0, 1.5])}
+          onPointerOut={handlePointerOut}
+        />
+      )}
 
       {isShow('radar') && (
         <Antenna
