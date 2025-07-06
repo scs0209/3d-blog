@@ -182,7 +182,8 @@ export const CameraController = (props: CameraControllerProps) => {
           (focusedGroup === 'work' ||
             focusedGroup === 'server' ||
             focusedGroup === 'contactMe' ||
-            focusedGroup === 'radar') &&
+            focusedGroup === 'radar' ||
+            focusedGroup === 'resumeConsole') &&
           !aboutMeClosing &&
           !hasClickedBack
         ) {
@@ -191,7 +192,7 @@ export const CameraController = (props: CameraControllerProps) => {
             console.log(`${focusedGroup}: 보조 애니메이션 트리거`);
             if (focusedGroup === 'work') {
               workAnimation.triggerSecondaryAnimation();
-            } else if (focusedGroup === 'radar' || focusedGroup === 'contactMe') {
+            } else if (focusedGroup === 'radar' || focusedGroup === 'contactMe' || focusedGroup === 'resumeConsole') {
               // Contact 모델의 보조 애니메이션 트리거
               console.log(`${focusedGroup}: Contact 보조 애니메이션 시작`);
               setSecondaryAnimation(true);
