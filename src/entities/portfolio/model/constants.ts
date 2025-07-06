@@ -72,6 +72,34 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     secondaryOffset: [0, 2, 2],
     secondaryLookAt: [-3.5, 0, -2.5],
   },
+  skill: {
+    // 모델의 절대 위치
+    modelPosition: [1.5, 0, 1.5],
+
+    // 첫 번째 애니메이션: 모델 기준 상대 위치
+    offset: [1, 1.5, 1],
+    // 실제 첫 번째 카메라 위치 = modelPosition + offset
+    // = [1.5, 0, 1.5] + [1, 1.5, 1] = [2.5, 1.5, 2.5]
+
+    // 첫 번째 애니메이션에서 카메라가 바라보는 절대 좌표
+    lookAt: [1.5, 0, 1.5], // 모델을 정면으로 바라봄
+
+    // 클릭 시 펄스 효과 위치 (보통 모델 위치와 동일)
+    pulse: [1.5, 0, 1.5],
+
+    // 두 번째 애니메이션: 모델 기준 상대 위치 (더 많이 움직이도록 조정)
+    secondaryOffset: [2.5, 1.5, -0.5],
+    // 실제 두 번째 카메라 위치 = modelPosition + secondaryOffset
+    // = [1.5, 0, 1.5] + [2.5, 2, -0.5] = [4, 2, 1]
+
+    // 카메라 이동 벡터 = 두 번째 위치 - 첫 번째 위치
+    // = [4, 2, 1] - [2.5, 1.5, 2.5] = [1.5, 0.5, -1.5]
+
+    // 평행 이동을 위해 lookAt도 같은 벡터만큼 이동
+    // 두 번째 lookAt = 첫 번째 lookAt + 카메라 이동 벡터
+    // = [1.5, 0, 1.5] + [1.5, 0.5, -1.5] = [3, 0.5, 0]
+    secondaryLookAt: [3, 0, 0],
+  },
 };
 
 export const easeInOutCubic = (t: number): number => {
