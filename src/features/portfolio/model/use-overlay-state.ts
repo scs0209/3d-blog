@@ -5,6 +5,7 @@ export const useOverlayState = () => {
   const [showExperienceOverlay, setShowExperienceOverlay] = useState(false);
   const [aboutMeClosing, setAboutMeClosing] = useState(false);
   const [experienceClosing, setExperienceClosing] = useState(false);
+  const [contactClosing, setContactClosing] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
   const [aboutMeAnimationDone, setAboutMeAnimationDone] = useState(false);
 
@@ -13,6 +14,7 @@ export const useOverlayState = () => {
     setShowExperienceOverlay(false);
     setAboutMeClosing(false);
     setExperienceClosing(false);
+    setContactClosing(false);
     setShowContactForm(false);
     setAboutMeAnimationDone(false);
   };
@@ -23,6 +25,7 @@ export const useOverlayState = () => {
     showExperienceOverlay,
     aboutMeClosing,
     experienceClosing,
+    contactClosing,
     showContactForm,
     aboutMeAnimationDone,
     // Setters
@@ -30,6 +33,7 @@ export const useOverlayState = () => {
     setShowExperienceOverlay,
     setAboutMeClosing,
     setExperienceClosing,
+    setContactClosing,
     setShowContactForm,
     setAboutMeAnimationDone,
     // Actions

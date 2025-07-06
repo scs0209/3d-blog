@@ -22,6 +22,7 @@ type UsePortfolioActionsProps = {
   setAboutMeClosing: (closing: boolean) => void;
   setShowExperienceOverlay: (show: boolean) => void;
   setExperienceClosing: (closing: boolean) => void;
+  setContactClosing: (closing: boolean) => void;
   setShowContactForm: (show: boolean) => void;
   setAboutMeAnimationDone: (done: boolean) => void;
   // 로딩 상태들
@@ -55,6 +56,7 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     setAboutMeClosing,
     setShowExperienceOverlay,
     setExperienceClosing,
+    setContactClosing,
     setShowContactForm,
     setAboutMeAnimationDone,
     showPortfolioOverlay,
@@ -131,15 +133,11 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
           }, 50);
         }, 1000);
       }, 2000);
-    } else if (focusedGroup === 'radar') {
-      // Radar 모델(Contact Form)인 경우
-      // Contact Form을 닫고 Radar 애니메이션 훅에서 처리하도록 설정
-      console.log('handleBack: Radar 모델 닫기 처리');
-      setShowContactForm(false);
-      resetToInitialPosition();
-      setTimeout(() => {
-        setFocusedGroup(null);
-      }, CAMERA_ANIMATION_DELAY);
+    } else if (focusedGroup === 'radar' || focusedGroup === 'contactMe') {
+      // Contact 모델인 경우 - Contact Form 역순 애니메이션 시작
+      console.log(`handleBack: ${focusedGroup} 모델 닫기 - Contact Form 역순 애니메이션 시작`);
+      setContactClosing(true);
+      // Contact Form은 바로 닫지 않음 - 역순 애니메이션 완료 후 처리
     } else {
       // 일반적인 뒤로가기
       resetToInitialPosition();
@@ -161,7 +159,7 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     resetAnimationState,
     setHasClickedBack,
     focusedGroup,
-    setShowContactForm,
+    setContactClosing,
   ]);
 
   const handleAboutMeClose = useCallback(() => {
@@ -221,10 +219,16 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     setCameraAnimationDone,
   ]);
 
+  const handleContactClose = useCallback(() => {
+    console.log('handleContactClose 호출됨 - Contact Form 역순 애니메이션 시작');
+    setContactClosing(true);
+  }, [setContactClosing]);
+
   return {
     handleGroupClick,
     handleBack,
     handleAboutMeClose,
     handleExperienceClose,
+    handleContactClose,
   };
 };
