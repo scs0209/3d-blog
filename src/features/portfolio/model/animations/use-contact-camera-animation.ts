@@ -1,20 +1,13 @@
 import { useCallback } from 'react';
 import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
-import {
-  CAMERA_ANIMATION_DELAY,
-  INITIAL_CAMERA_POS,
-  INITIAL_CAMERA_LOOK,
-  GROUP_CAMERA_TARGETS,
-} from '@/entities/portfolio/model/constants';
+import { GROUP_CAMERA_TARGETS } from '@/entities/portfolio/model/constants';
 
 type UseContactCameraAnimationProps = {
   setShowContactForm: (show: boolean) => void;
   setTargetPos: (pos: Position3D) => void;
   setTargetLook: (look: Position3D) => void;
-  setFocusedGroup: (group: FocusedGroup) => void;
-  setContactClosing: (closing: boolean) => void;
-  setCameraAnimationDone: (done: boolean) => void;
   setSecondaryAnimation: (secondary: boolean) => void;
+  setCameraAnimationDone: (done: boolean) => void;
   focusedGroup: FocusedGroup;
 };
 
@@ -23,10 +16,8 @@ export const useContactCameraAnimation = (props: UseContactCameraAnimationProps)
     setShowContactForm,
     setTargetPos,
     setTargetLook,
-    setFocusedGroup,
-    setContactClosing,
-    setCameraAnimationDone,
     setSecondaryAnimation,
+    setCameraAnimationDone,
     focusedGroup,
   } = props;
 
@@ -49,40 +40,9 @@ export const useContactCameraAnimation = (props: UseContactCameraAnimationProps)
       setTargetLook(target.lookAt);
       setCameraAnimationDone(false);
 
-      // 보조 애니메이션 역순 완료 후 초기 위치로 복귀
-      setTimeout(() => {
-        setSecondaryAnimation(false);
-        setTargetPos(INITIAL_CAMERA_POS);
-        setTargetLook(INITIAL_CAMERA_LOOK);
-        setCameraAnimationDone(false);
-
-        // 초기 위치 복귀 완료 후 완전 초기화
-        setTimeout(() => {
-          setFocusedGroup(null);
-          setContactClosing(false);
-        }, CAMERA_ANIMATION_DELAY);
-      }, CAMERA_ANIMATION_DELAY);
-    } else {
-      // 타겟이 없는 경우 바로 초기 위치로 복귀
-      setContactClosing(false);
-      setTargetPos(INITIAL_CAMERA_POS);
-      setTargetLook(INITIAL_CAMERA_LOOK);
-
-      setTimeout(() => {
-        setFocusedGroup(null);
-        setCameraAnimationDone(false);
-      }, CAMERA_ANIMATION_DELAY);
+      // 나머지는 CameraController의 useFrame에서 자동 처리
     }
-  }, [
-    setShowContactForm,
-    setContactClosing,
-    setTargetPos,
-    setTargetLook,
-    setFocusedGroup,
-    setCameraAnimationDone,
-    setSecondaryAnimation,
-    focusedGroup,
-  ]);
+  }, [setShowContactForm, setTargetPos, setTargetLook, setSecondaryAnimation, setCameraAnimationDone, focusedGroup]);
 
   return {
     handleContactAnimationComplete,

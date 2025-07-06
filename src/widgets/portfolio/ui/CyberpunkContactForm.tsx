@@ -1,25 +1,43 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type CyberpunkContactFormProps = {
   show: boolean;
+  isClosing?: boolean;
+  onClose?: () => void;
   style?: React.CSSProperties;
   className?: string;
 };
 
-export const CyberpunkContactForm = ({ show, style, className }: CyberpunkContactFormProps) => {
+export const CyberpunkContactForm = ({
+  show,
+  isClosing = false,
+  onClose,
+  style,
+  className,
+}: CyberpunkContactFormProps) => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // 역순 애니메이션 완료 후 콜백 호출
+  useEffect(() => {
+    if (isClosing && onClose) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 800); // 애니메이션 시간과 맞춤
+      return () => clearTimeout(timer);
+    }
+  }, [isClosing, onClose]);
+
   return (
     <AnimatePresence>
       {show && (
         <motion.div
           initial={{ y: 80, opacity: 0, scale: 0.98 }}
-          animate={{ y: 0, opacity: 1, scale: 1 }}
+          animate={isClosing ? { y: 80, opacity: 0, scale: 0.98 } : { y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 80, opacity: 0, scale: 0.98 }}
           transition={{ type: 'spring', stiffness: 80, damping: 18 }}
           className={`max-w-md w-full p-8 rounded-xl border-2 border-violet-500/80 bg-black/40 shadow-[0_0_32px_4px_rgba(139,92,246,0.5)] relative ${className || ''}`}

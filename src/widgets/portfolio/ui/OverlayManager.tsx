@@ -28,6 +28,9 @@ interface OverlayManagerProps {
 
   // Contact
   showContactForm: boolean;
+  contactClosing: boolean;
+  onContactClose: () => void;
+  onContactAnimationComplete?: () => void;
 
   // Loading
   showWorksLoading: boolean;
@@ -62,6 +65,9 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     onExperienceClose,
     onExperienceAnimationComplete,
     showContactForm,
+    contactClosing,
+    onContactClose,
+    onContactAnimationComplete,
     showWorksLoading,
     showPortfolioOverlay,
     showExitLoading,
@@ -126,7 +132,11 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       {/* Contact Form */}
       {showContactForm && (
         <div className='fixed left-[100px] top-1/2 transform -translate-y-1/2 z-50'>
-          <CyberpunkContactForm show={showContactForm} />
+          <CyberpunkContactForm
+            show={showContactForm}
+            isClosing={contactClosing}
+            onClose={contactClosing ? onContactAnimationComplete : onContactClose}
+          />
         </div>
       )}
 
@@ -161,8 +171,8 @@ export const OverlayManager = (props: OverlayManagerProps) => {
             } else if (showExperienceOverlay) {
               onExperienceClose();
             } else if (showContactForm) {
-              // Contact Form은 바로 onBack 호출 (Radar 모델 처리)
-              onBack();
+              // Contact Form 닫기 (역순 애니메이션 시작)
+              onContactClose();
             } else {
               // 다른 상태에서는 기본 onBack 호출
               onBack();

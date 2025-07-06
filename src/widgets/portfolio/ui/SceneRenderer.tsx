@@ -242,7 +242,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       <pointLight position={[0, 5, 0]} intensity={0.3} color='#00ffff' />
 
       {/* OrbitControls는 전체 뷰에서만 허용 */}
-      <OrbitControls />
+      {!focusedGroup && <OrbitControls />}
     </>
   );
 };

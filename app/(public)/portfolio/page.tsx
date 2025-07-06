@@ -5,6 +5,7 @@ import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
 import { useWorkCameraAnimation } from '@/features/portfolio/model/animations/use-work-camera-animation';
 import { useExperienceCameraAnimation } from '@/features/portfolio/model/animations/use-experience-camera-animation';
+import { useContactCameraAnimation } from '@/features/portfolio/model/animations/use-contact-camera-animation';
 import { CameraController } from '@/widgets/portfolio/ui/CameraController';
 import { SceneRenderer } from '@/widgets/portfolio/ui/SceneRenderer';
 import { OverlayManager } from '@/widgets/portfolio/ui/OverlayManager';
@@ -30,6 +31,7 @@ export default function PortfolioPage() {
     showAboutMeOverlay,
     showExperienceOverlay,
     experienceClosing,
+    contactClosing,
     showContactForm,
     showWorksLoading,
     showPortfolioOverlay,
@@ -58,6 +60,7 @@ export default function PortfolioPage() {
     setAboutMeClosing,
     setAboutMeAnimationDone,
     setExperienceClosing,
+    setContactClosing,
 
     // 액션들
     isShow,
@@ -65,6 +68,7 @@ export default function PortfolioPage() {
     handleBack,
     handleAboutMeClose,
     handleExperienceClose,
+    handleContactClose,
     handlePortfolioExit,
     handlePortfolioAnimationComplete,
   } = portfolio;
@@ -101,6 +105,16 @@ export default function PortfolioPage() {
     setCameraAnimationDone,
   });
 
+  // Contact 애니메이션 훅 사용
+  const contactAnimation = useContactCameraAnimation({
+    setShowContactForm,
+    setTargetPos,
+    setTargetLook,
+    setSecondaryAnimation,
+    setCameraAnimationDone,
+    focusedGroup,
+  });
+
   return (
     <div className='h-screen w-screen bg-[#12161B]'>
       <OverlayManager
@@ -119,6 +133,9 @@ export default function PortfolioPage() {
         onExperienceClose={handleExperienceClose}
         onExperienceAnimationComplete={experienceAnimation.handleExperienceAnimationComplete}
         showContactForm={showContactForm}
+        contactClosing={contactClosing}
+        onContactClose={handleContactClose}
+        onContactAnimationComplete={contactAnimation.handleContactAnimationComplete}
         showWorksLoading={showWorksLoading}
         showPortfolioOverlay={showPortfolioOverlay}
         showExitLoading={showExitLoading}
@@ -144,19 +161,19 @@ export default function PortfolioPage() {
           setTargetPos={setTargetPos}
           setTargetLook={setTargetLook}
           cameraAnimationDone={cameraAnimationDone}
-          experienceClosing={experienceClosing}
           hasClickedBack={hasClickedBack}
           focusedGroup={focusedGroup}
           setShowAboutMeOverlay={setShowAboutMeOverlay}
           setShowExperienceOverlay={setShowExperienceOverlay}
-          setShowWorksLoading={setShowWorksLoading}
-          setShowCards={setShowCards}
           setShowContactForm={setShowContactForm}
+          // workAnimation에서만 사용되는 props들
           setFocusedGroup={setFocusedGroup}
           setAboutMeClosing={setAboutMeClosing}
           setAboutMeAnimationDone={setAboutMeAnimationDone}
-          setExperienceClosing={setExperienceClosing}
           onAboutMeAnimationComplete={workAnimation.handleAboutMeAnimationComplete}
+          // contact 역순 애니메이션용
+          contactClosing={contactClosing}
+          setContactClosing={setContactClosing}
         />
 
         <SceneRenderer

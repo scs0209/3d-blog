@@ -7,6 +7,8 @@ import {
   SECONDARY_ANIMATION_DURATION,
   easeInOutCubic,
   GROUP_CAMERA_TARGETS,
+  INITIAL_CAMERA_POS,
+  INITIAL_CAMERA_LOOK,
 } from '@/entities/portfolio/model/constants';
 import { useWorkCameraAnimation } from '@/features/portfolio/model/animations/use-work-camera-animation';
 
@@ -22,19 +24,19 @@ type CameraControllerProps = {
   setTargetLook: (look: Position3D) => void;
   // 오버레이 관련
   cameraAnimationDone: boolean;
-  experienceClosing: boolean;
   hasClickedBack: boolean;
   focusedGroup: FocusedGroup;
   setShowAboutMeOverlay: (show: boolean) => void;
   setShowExperienceOverlay: (show: boolean) => void;
-  setShowWorksLoading: (show: boolean) => void;
-  setShowCards: (show: boolean) => void;
   setShowContactForm: (show: boolean) => void;
+  // workAnimation에서만 사용되는 props들
   setFocusedGroup: (group: FocusedGroup) => void;
   setAboutMeClosing: (closing: boolean) => void;
   setAboutMeAnimationDone: (done: boolean) => void;
-  setExperienceClosing: (closing: boolean) => void;
   onAboutMeAnimationComplete: () => void;
+  // contact 역순 애니메이션용
+  contactClosing: boolean;
+  setContactClosing: (closing: boolean) => void;
 };
 
 export const CameraController = (props: CameraControllerProps) => {
@@ -49,14 +51,19 @@ export const CameraController = (props: CameraControllerProps) => {
     setTargetPos,
     setTargetLook,
     cameraAnimationDone,
-    experienceClosing,
     hasClickedBack,
     focusedGroup,
     setShowAboutMeOverlay,
     setShowExperienceOverlay,
+    setShowContactForm,
+    // workAnimation에서만 사용되는 props들
     setFocusedGroup,
     setAboutMeClosing,
     setAboutMeAnimationDone,
+    onAboutMeAnimationComplete,
+    // contact 역순 애니메이션용
+    contactClosing,
+    setContactClosing,
   } = props;
 
   const { camera, clock } = useThree();
@@ -89,24 +96,11 @@ export const CameraController = (props: CameraControllerProps) => {
 
   // Experience 모델 클릭 시 카메라 애니메이션 완료 후 처리
   useEffect(() => {
-    if (
-      focusedGroup === 'experience' &&
-      cameraAnimationDone &&
-      !experienceClosing &&
-      !secondaryAnimation &&
-      !hasClickedBack
-    ) {
+    if (focusedGroup === 'experience' && cameraAnimationDone && !secondaryAnimation && !hasClickedBack) {
       console.log('Experience: 카메라 애니메이션 완료, Experience 오버레이 표시');
       setShowExperienceOverlay(true);
     }
-  }, [
-    focusedGroup,
-    cameraAnimationDone,
-    experienceClosing,
-    secondaryAnimation,
-    hasClickedBack,
-    setShowExperienceOverlay,
-  ]);
+  }, [focusedGroup, cameraAnimationDone, secondaryAnimation, hasClickedBack, setShowExperienceOverlay]);
 
   // ResumeConsole 모델 클릭 시 카메라 애니메이션 완료 후 처리
   useEffect(() => {
@@ -169,6 +163,10 @@ export const CameraController = (props: CameraControllerProps) => {
       );
 
       if (t === 1) {
+        // 애니메이션 끝날 때 최종 위치로 확실히 고정
+        camera.position.set(...animRef.current.toPos);
+        camera.lookAt(...animRef.current.toLook);
+
         animRef.current.running = false;
         console.log('카메라 애니메이션 완료:', {
           focusedGroup,
@@ -191,10 +189,50 @@ export const CameraController = (props: CameraControllerProps) => {
             console.log(`${focusedGroup}: 보조 애니메이션 트리거`);
             if (focusedGroup === 'work') {
               workAnimation.triggerSecondaryAnimation();
+            } else if (focusedGroup === 'radar' || focusedGroup === 'contactMe') {
+              // Contact 모델의 보조 애니메이션 트리거
+              console.log(`${focusedGroup}: Contact 보조 애니메이션 시작`);
+              setSecondaryAnimation(true);
+              const newPos: Position3D = [
+                target.modelPosition[0] + target.secondaryOffset[0],
+                target.modelPosition[1] + target.secondaryOffset[1],
+                target.modelPosition[2] + target.secondaryOffset[2],
+              ];
+              setTargetPos(newPos);
+              setTargetLook(target.secondaryLookAt);
+              setCameraAnimationDone(false);
             }
             // 다른 모델들도 필요시 보조 애니메이션 추가
             return;
           }
+        } else if (
+          animRef.current.isSecondary &&
+          (focusedGroup === 'radar' || focusedGroup === 'contactMe') &&
+          !hasClickedBack
+        ) {
+          // Contact 모델의 보조 애니메이션 완료 시 Contact Form 표시
+          console.log(`${focusedGroup}: 보조 애니메이션 완료, Contact Form 표시`);
+          setShowContactForm(true);
+          setSecondaryAnimation(false);
+          return;
+        } else if (
+          animRef.current.isSecondary &&
+          (focusedGroup === 'radar' || focusedGroup === 'contactMe') &&
+          contactClosing
+        ) {
+          // Contact 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
+          console.log(`${focusedGroup}: 보조 애니메이션 역순 완료, 초기 위치로 복귀`);
+          setSecondaryAnimation(false);
+          setTargetPos(INITIAL_CAMERA_POS);
+          setTargetLook(INITIAL_CAMERA_LOOK);
+          setCameraAnimationDone(false);
+
+          // 초기 위치 복귀 완료 후 완전 초기화 플래그 설정
+          setTimeout(() => {
+            setFocusedGroup(null);
+            setContactClosing(false);
+          }, CAMERA_ANIMATION_DURATION * 1000);
+          return;
         } else if (animRef.current.isSecondary && focusedGroup === 'work' && aboutMeClosing) {
           // Work 모델의 종료 처리
           workAnimation.handleWorkExit();
