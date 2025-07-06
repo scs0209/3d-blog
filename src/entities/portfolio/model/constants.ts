@@ -58,7 +58,10 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     pulse: [3.2, 0, -2.8],
     // 모델 위치(카메라가 바라보는 대상)
     modelPosition: [3.2, 0, -2.8],
+    // 보조 애니메이션 시 카메라 위치
+    // 실제 카메라 위치 = 모델 위치 + offset = [3.2, 0, -2.8] + [2, 1.5, 2] = [5.2, 1.5, -0.8]
     secondaryOffset: [2, 1.5, 2],
+    // 보조 애니메이션 시 카메라가 바라보는 절대 좌표(어디를 향해 보는지)
     secondaryLookAt: [3.2, 0, -0.8],
   },
   radar: {
