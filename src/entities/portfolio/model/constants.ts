@@ -58,6 +58,8 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     pulse: [3.2, 0, -2.8],
     // 모델 위치(카메라가 바라보는 대상)
     modelPosition: [3.2, 0, -2.8],
+    secondaryOffset: [2, 1.5, 2],
+    secondaryLookAt: [3.2, 0, -0.8],
   },
   radar: {
     offset: [1, 2, 1],
