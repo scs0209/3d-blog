@@ -171,6 +171,8 @@ export const CameraController = (props: CameraControllerProps) => {
         console.log('카메라 애니메이션 완료:', {
           focusedGroup,
           isSecondary: animRef.current.isSecondary,
+          contactClosing,
+          hasClickedBack,
         });
         setCameraAnimationDone(true);
 
@@ -208,16 +210,6 @@ export const CameraController = (props: CameraControllerProps) => {
         } else if (
           animRef.current.isSecondary &&
           (focusedGroup === 'radar' || focusedGroup === 'contactMe') &&
-          !hasClickedBack
-        ) {
-          // Contact 모델의 보조 애니메이션 완료 시 Contact Form 표시
-          console.log(`${focusedGroup}: 보조 애니메이션 완료, Contact Form 표시`);
-          setShowContactForm(true);
-          setSecondaryAnimation(false);
-          return;
-        } else if (
-          animRef.current.isSecondary &&
-          (focusedGroup === 'radar' || focusedGroup === 'contactMe') &&
           contactClosing
         ) {
           // Contact 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
@@ -232,6 +224,16 @@ export const CameraController = (props: CameraControllerProps) => {
             setFocusedGroup(null);
             setContactClosing(false);
           }, CAMERA_ANIMATION_DURATION * 1000);
+          return;
+        } else if (
+          animRef.current.isSecondary &&
+          (focusedGroup === 'radar' || focusedGroup === 'contactMe') &&
+          !hasClickedBack
+        ) {
+          // Contact 모델의 보조 애니메이션 완료 시 Contact Form 표시
+          console.log(`${focusedGroup}: 보조 애니메이션 완료, Contact Form 표시`);
+          setShowContactForm(true);
+          setSecondaryAnimation(false);
           return;
         } else if (animRef.current.isSecondary && focusedGroup === 'work' && aboutMeClosing) {
           // Work 모델의 종료 처리
