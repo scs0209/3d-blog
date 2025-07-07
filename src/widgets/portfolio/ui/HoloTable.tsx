@@ -42,7 +42,7 @@ export function HoloTable(props: HoloTableProps) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group name='Sketchfab_Scene'>
-        <group name='Sketchfab_model' position={[-0.118, 0.005, -0.054]} rotation={[-1.544, 0.076, -0.195]}>
+        <group name='Sketchfab_model' position={[-0.118, 0.005, -0.054]}>
           <group name='Root'>
             <group name='Icosphere002' scale={1.001}>
               <mesh

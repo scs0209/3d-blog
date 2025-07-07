@@ -21,6 +21,7 @@ import {
   WorkTable,
 } from '@/widgets/portfolio/ui';
 import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
+import { HoloContainer } from '@/widgets/portfolio/ui/HoloContainer';
 
 type SceneRendererProps = {
   focusedGroup: FocusedGroup;
@@ -76,16 +77,19 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         />
       )}
 
-      {/* 홀로테이블 - 항상 표시하되 스케일과 위치를 동적으로 제어 */}
+      {/* 홀로테이블과 보관함 - 항상 표시하되 스케일과 위치를 동적으로 제어 */}
       {isShow('holoTable') && (
-        <HoloTable
-          scale={holoTableScale}
-          position={holoTablePosition}
-          onClick={() => onGroupClick('holoTable')}
-          onPointerOver={handlePointerOver([0, 0, 0])}
-          onPointerOut={handlePointerOut}
-          rotation={[0.1, 0, 0]}
-        />
+        <>
+          {/* 보관함은 초기 애니메이션이 완료된 후에만 표시 */}
+          {!isInitialAnimation && <HoloContainer scale={holoTableScale} position={[0, 0.6, 0]} />}
+          <HoloTable
+            scale={holoTableScale}
+            position={holoTablePosition}
+            onClick={() => onGroupClick('holoTable')}
+            onPointerOver={handlePointerOver([0, 0, 0])}
+            onPointerOut={handlePointerOut}
+          />
+        </>
       )}
 
       {/* 다른 모델들은 초기 애니메이션 완료 후에만 표시 */}
