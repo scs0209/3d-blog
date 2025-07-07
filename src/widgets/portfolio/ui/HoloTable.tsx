@@ -16,10 +16,7 @@ const subtleGlowMaterial = new three.MeshStandardMaterial({
 type HoloTableProps = {
   scale?: number | [number, number, number];
   position?: [number, number, number];
-  onClick?: () => void;
-  onPointerOver?: (e: any) => void;
-  onPointerOut?: (e: any) => void;
-} & Omit<JSX.IntrinsicElements['group'], 'scale' | 'position' | 'onClick' | 'onPointerOver' | 'onPointerOut'>;
+} & Omit<JSX.IntrinsicElements['group'], 'scale' | 'position'>;
 
 export function HoloTable(props: HoloTableProps) {
   const group = useRef<three.Group>(null);

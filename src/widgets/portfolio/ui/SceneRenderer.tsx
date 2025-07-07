@@ -82,13 +82,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         <>
           {/* 보관함은 초기 애니메이션이 완료된 후에만 표시 */}
           {!isInitialAnimation && <HoloContainer scale={holoTableScale} position={[0, 0.6, 0]} />}
-          <HoloTable
-            scale={holoTableScale}
-            position={holoTablePosition}
-            onClick={() => onGroupClick('holoTable')}
-            onPointerOver={handlePointerOver([0, 0, 0])}
-            onPointerOut={handlePointerOut}
-          />
+          <HoloTable scale={holoTableScale} position={holoTablePosition} />
         </>
       )}
 
