@@ -84,6 +84,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           onClick={() => onGroupClick('holoTable')}
           onPointerOver={handlePointerOver([0, 0, 0])}
           onPointerOut={handlePointerOut}
+          rotation={[0.1, 0, 0]}
         />
       )}
 
@@ -114,7 +115,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       {/* contactMe 단독 */}
       {showOtherModels && isShow('contactMe') && (
         <ContactMe
-          scale={1}
+          scale={0.3}
           rotation={[0, -Math.PI / 2, 0]}
           position={[-4, 0, -0.1]}
           onClick={() => onGroupClick('contactMe')}
