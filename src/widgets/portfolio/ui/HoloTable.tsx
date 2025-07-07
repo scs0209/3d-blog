@@ -1,16 +1,16 @@
-import { type JSX, useEffect, useRef } from 'react';
+﻿import { type JSX, useEffect, useRef } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import * as three from 'three';
 
-// 은은한 발광 재질 생성 (겉면용 - 불투명)
+// ????諛쒓킅 ?ъ쭏 ?앹꽦 (寃됰㈃??- 遺덊닾紐?
 const subtleGlowMaterial = new three.MeshStandardMaterial({
-  color: '#94a3b8', // 부드러운 회청색
-  emissive: '#475569', // 은은한 발광
-  emissiveIntensity: 0.3, // 낮은 발광 강도
-  transparent: false, // 불투명
-  opacity: 1.0, // 완전 불투명
-  roughness: 0.4,
-  metalness: 0.6,
+  color: '#06b6d4',
+  emissive: '#22d3ee',
+  emissiveIntensity: 0.8,
+  transparent: false,
+  opacity: 1.0,
+  roughness: 0.2,
+  metalness: 0.8,
 });
 
 type HoloTableProps = {
@@ -69,7 +69,7 @@ export function HoloTable(props: HoloTableProps) {
                 material={materials.material_7}
               />
             </group>
-            {/* 겉면 큐브들 - 은은한 발광색 */}
+            {/* 寃됰㈃ ?먮툕??- ????諛쒓킅??*/}
             <group name='Cube_cell415' position={[0.992, 0.435, 0.178]}>
               <mesh
                 name='Cube_cell415_0'
@@ -211,7 +211,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell399_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell398' position={[0.741, -0.596, -0.736]}>
@@ -220,7 +220,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell398_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell397' position={[0.945, 0.03, -0.171]}>
@@ -229,7 +229,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell397_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell396' position={[0.067, 0.972, -0.395]}>
@@ -238,7 +238,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell396_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell395' position={[-0.281, -0.782, -0.722]}>
@@ -247,7 +247,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell395_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell394' position={[-0.235, 0.953, 0.257]}>
@@ -256,7 +256,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell394_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell392_cell005' position={[-0.499, -0.933, -0.022]}>
@@ -265,7 +265,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell392_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell392_cell004' position={[-0.129, -0.957, -0.132]}>
@@ -274,7 +274,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell392_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell392_cell003' position={[-0.519, -0.945, -0.349]}>
@@ -283,7 +283,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell392_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell391_cell_cell005' position={[0.066, -0.893, -0.565]}>
@@ -292,7 +292,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell391_cell_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell391_cell_cell004' position={[-0.209, -0.949, -0.466]}>
@@ -301,7 +301,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell391_cell_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell391_cell_cell003' position={[-0.289, -0.977, -0.496]}>
@@ -310,7 +310,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell391_cell_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell391_cell002' position={[0.102, -0.948, -0.227]}>
@@ -319,7 +319,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell391_cell002_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell389_cell004' position={[0.26, -0.965, 0.057]}>
@@ -328,7 +328,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell389_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell389_cell003' position={[0.07, -0.952, 0.104]}>
@@ -337,7 +337,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell389_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell389_cell002_cell005' position={[0.237, -0.876, 0.142]}>
@@ -346,7 +346,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell389_cell002_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell389_cell002_cell004' position={[0.419, -0.873, 0.068]}>
@@ -355,7 +355,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell389_cell002_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell389_cell002_cell003' position={[0.249, -0.865, -0.105]}>
@@ -364,7 +364,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell389_cell002_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell385_cell_cell005' position={[0.024, -0.998, 0.057]}>
@@ -373,7 +373,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell385_cell_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell385_cell_cell004' position={[0.024, -0.996, 0.038]}>
@@ -382,7 +382,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell385_cell_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell385_cell_cell003' position={[0.015, -0.993, 0.048]}>
@@ -391,7 +391,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell385_cell_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell385_cell004' position={[0.033, -0.995, 0.02]}>
@@ -400,7 +400,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell385_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell385_cell003' position={[0.018, -0.981, 0.037]}>
@@ -409,7 +409,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell385_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell381_cell_cell005' position={[-0.995, 0.304, 0.696]}>
@@ -418,7 +418,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell381_cell_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell381_cell_cell004' position={[-0.925, 0.313, 0.476]}>
@@ -427,7 +427,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell381_cell_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell381_cell_cell003' position={[-0.934, 0.129, 0.097]}>
@@ -436,7 +436,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell381_cell_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell381_cell003' position={[-0.929, 0.453, 0.059]}>
@@ -445,7 +445,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell381_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell381_cell002_cell005' position={[-0.915, -0.028, 0.12]}>
@@ -454,7 +454,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell381_cell002_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell381_cell002_cell004' position={[-0.932, -0.068, 0.091]}>
@@ -463,7 +463,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell381_cell002_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell381_cell002_cell003' position={[-0.932, -0.012, 0.064]}>
@@ -472,7 +472,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell381_cell002_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell380_cell009' position={[0.243, 0.994, -0.194]}>
@@ -481,7 +481,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell380_cell009_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell380_cell008' position={[0.092, 0.967, -0.12]}>
@@ -490,7 +490,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell380_cell008_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell380_cell007' position={[-0.159, 0.988, -0.159]}>
@@ -499,7 +499,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell380_cell007_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell380_cell006' position={[0.114, 0.965, -0.23]}>
@@ -508,7 +508,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell380_cell006_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell380_cell005' position={[-0.078, 0.99, -0.023]}>
@@ -517,7 +517,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell380_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell377_cell004' position={[-0.307, 0.368, -0.917]}>
@@ -526,7 +526,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell377_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell377_cell003' position={[-0.31, 0.813, -0.832]}>
@@ -535,7 +535,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell377_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell371_cell005' position={[0.177, 0.569, 0.846]}>
@@ -544,7 +544,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell371_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell371_cell004' position={[0.142, 0.947, 0.018]}>
@@ -553,7 +553,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell371_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell371_cell003' position={[-0.02, 0.924, 0.003]}>
@@ -562,7 +562,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell371_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell368_cell005' position={[0.028, -0.758, 0.835]}>
@@ -571,7 +571,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell368_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell368_cell004' position={[0.398, -0.96, 0.339]}>
@@ -580,7 +580,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell368_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell368_cell003' position={[0.195, -0.951, 0.38]}>
@@ -589,7 +589,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell368_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell367_cell003' position={[0.659, 0.796, -0.62]}>
@@ -598,7 +598,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell367_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell367_cell002_cell005' position={[0.639, 0.969, -0.441]}>
@@ -607,7 +607,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell367_cell002_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell367_cell002_cell004' position={[0.504, 0.949, -0.346]}>
@@ -616,7 +616,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell367_cell002_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell367_cell002_cell003' position={[0.759, 0.888, -0.223]}>
@@ -625,7 +625,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell367_cell002_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell367_cell001_cell005' position={[0.349, 0.945, -0.228]}>
@@ -634,7 +634,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell367_cell001_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell367_cell001_cell004' position={[0.24, 0.842, -0.54]}>
@@ -643,7 +643,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell367_cell001_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell367_cell001_cell003' position={[0.32, 0.964, -0.454]}>
@@ -652,7 +652,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell367_cell001_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell366_cell005' position={[-0.927, -0.783, 0.41]}>
@@ -661,7 +661,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell366_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell366_cell004' position={[-0.05, -0.143, 0.922]}>
@@ -670,7 +670,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell366_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell366_cell003' position={[-0.846, -0.574, 0.637]}>
@@ -679,7 +679,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell366_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell050_cell005' position={[0.79, -0.623, 0.024]}>
@@ -688,7 +688,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell050_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell050_cell004' position={[0.917, -0.423, 0.399]}>
@@ -697,7 +697,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell050_cell004_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell050_cell003' position={[0.742, -0.86, 0.214]}>
@@ -706,7 +706,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell050_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell032_cell006' position={[0.592, -0.806, 0.63]}>
@@ -715,7 +715,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell032_cell006_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell032_cell005' position={[0.812, -0.762, 0.725]}>
@@ -724,7 +724,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell032_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell032_cell003' position={[0.698, -0.929, 0.313]}>
@@ -733,7 +733,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell032_cell003_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Icosphere003' scale={1.001}>
@@ -778,7 +778,7 @@ export function HoloTable(props: HoloTableProps) {
                 castShadow
                 receiveShadow
                 geometry={(nodes.Cube_cell377_cell005_0 as three.Mesh)?.geometry}
-                material={materials['Material.080']}
+                material={subtleGlowMaterial}
               />
             </group>
             <group name='Cube_cell427' position={[0.44, 0.607, 0.33]}>
