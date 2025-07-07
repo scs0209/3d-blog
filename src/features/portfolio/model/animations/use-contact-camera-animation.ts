@@ -29,18 +29,20 @@ export const useContactCameraAnimation = (props: UseContactCameraAnimationProps)
     // 보조 애니메이션 역순: 두 번째 위치 → 첫 번째 위치
     if (focusedGroup && GROUP_CAMERA_TARGETS[focusedGroup]) {
       const target = GROUP_CAMERA_TARGETS[focusedGroup];
-      const firstPos: Position3D = [
-        target.modelPosition[0] + target.offset[0],
-        target.modelPosition[1] + target.offset[1],
-        target.modelPosition[2] + target.offset[2],
-      ];
+      if (target) {
+        const firstPos: Position3D = [
+          target.modelPosition[0] + target.offset[0],
+          target.modelPosition[1] + target.offset[1],
+          target.modelPosition[2] + target.offset[2],
+        ];
 
-      setSecondaryAnimation(true);
-      setTargetPos(firstPos);
-      setTargetLook(target.lookAt);
-      setCameraAnimationDone(false);
+        setSecondaryAnimation(true);
+        setTargetPos(firstPos);
+        setTargetLook(target.lookAt);
+        setCameraAnimationDone(false);
 
-      // 나머지는 CameraController의 useFrame에서 자동 처리
+        // 나머지는 CameraController의 useFrame에서 자동 처리
+      }
     }
   }, [setShowContactForm, setTargetPos, setTargetLook, setSecondaryAnimation, setCameraAnimationDone, focusedGroup]);
 
