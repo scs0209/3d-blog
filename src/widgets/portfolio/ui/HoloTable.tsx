@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { type JSX, useRef } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import type * as three from 'three';
 
@@ -15,15 +15,24 @@ export function HoloTable(props: HoloTableProps) {
   const { nodes, materials, animations } = useGLTF('/placeholder-cube_3.glb');
   const { actions } = useAnimations(animations, group);
 
-  useEffect(() => {
-    if (actions) {
-      for (const action of Object.values(actions)) {
-        if (action) {
-          action.play();
-        }
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (actions) {
+  //     for (const action of Object.values(actions)) {
+  //       if (action) {
+  //         action.play();
+  //       }
+  //     }
+  //   }
+  //   return () => {
+  //     if (actions) {
+  //       for (const action of Object.values(actions)) {
+  //         if (action) {
+  //           action.stop();
+  //         }
+  //       }
+  //     }
+  //   };
+  // }, []);
 
   return (
     <group ref={group} {...props} dispose={null}>
