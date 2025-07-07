@@ -37,6 +37,8 @@ type CameraControllerProps = {
   // contact 역순 애니메이션용
   contactClosing: boolean;
   setContactClosing: (closing: boolean) => void;
+  // 초기 애니메이션 관련
+  isInitialAnimation?: boolean;
 };
 
 export const CameraController = (props: CameraControllerProps) => {
@@ -60,10 +62,11 @@ export const CameraController = (props: CameraControllerProps) => {
     setFocusedGroup,
     setAboutMeClosing,
     setAboutMeAnimationDone,
-    onAboutMeAnimationComplete,
     // contact 역순 애니메이션용
     contactClosing,
     setContactClosing,
+    // 초기 애니메이션 관련
+    isInitialAnimation,
   } = props;
 
   const { camera, clock } = useThree();
@@ -112,6 +115,11 @@ export const CameraController = (props: CameraControllerProps) => {
 
   // 카메라 애니메이션 시작
   useEffect(() => {
+    // 초기 애니메이션 중에는 카메라 애니메이션 실행하지 않음
+    if (isInitialAnimation) {
+      return;
+    }
+
     if (targetPos && targetLook && (aboutMeAnimationDone || !aboutMeClosing)) {
       console.log('카메라 애니메이션 시작:', { targetPos, targetLook, secondaryAnimation });
       animRef.current.start = clock.getElapsedTime();
@@ -134,6 +142,7 @@ export const CameraController = (props: CameraControllerProps) => {
     aboutMeClosing,
     secondaryAnimation,
     setCameraAnimationDone,
+    isInitialAnimation, // 의존성 추가
   ]);
 
   // 카메라 애니메이션 업데이트
@@ -214,12 +223,8 @@ export const CameraController = (props: CameraControllerProps) => {
             // 다른 모델들도 필요시 보조 애니메이션 추가
             return;
           }
-        } else if (
-          animRef.current.isSecondary &&
-          (focusedGroup === 'radar' || focusedGroup === 'contactMe') &&
-          contactClosing
-        ) {
-          // Contact 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
+        } else if (animRef.current.isSecondary && focusedGroup === 'radar' && contactClosing) {
+          // Radar 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
           console.log(`${focusedGroup}: 보조 애니메이션 역순 완료, 초기 위치로 복귀`);
           setSecondaryAnimation(false);
           setTargetPos(INITIAL_CAMERA_POS);
@@ -232,12 +237,8 @@ export const CameraController = (props: CameraControllerProps) => {
             setContactClosing(false);
           }, CAMERA_ANIMATION_DURATION * 1000);
           return;
-        } else if (
-          animRef.current.isSecondary &&
-          (focusedGroup === 'radar' || focusedGroup === 'contactMe') &&
-          !hasClickedBack
-        ) {
-          // Contact 모델의 보조 애니메이션 완료 시 Contact Form 표시
+        } else if (animRef.current.isSecondary && focusedGroup === 'radar' && !hasClickedBack) {
+          // Radar 모델의 보조 애니메이션 완료 시 Contact Form 표시
           console.log(`${focusedGroup}: 보조 애니메이션 완료, Contact Form 표시`);
           setShowContactForm(true);
           setSecondaryAnimation(false);

@@ -133,13 +133,13 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
           }, 50);
         }, 1000);
       }, 2000);
-    } else if (focusedGroup === 'radar' || focusedGroup === 'contactMe') {
-      // Contact 모델인 경우 - Contact Form 역순 애니메이션 시작
+    } else if (focusedGroup === 'radar') {
+      // Radar 모델인 경우 - Contact Form 역순 애니메이션 시작
       console.log(`handleBack: ${focusedGroup} 모델 닫기 - Contact Form 역순 애니메이션 시작`);
       setContactClosing(true);
       // Contact Form은 바로 닫지 않음 - 역순 애니메이션 완료 후 처리
     } else {
-      // 일반적인 뒤로가기
+      // 일반적인 뒤로가기 (contactMe 포함)
       resetToInitialPosition();
       setTimeout(() => {
         setFocusedGroup(null);

@@ -31,11 +31,28 @@ type SceneRendererProps = {
   onGroupClick: (group: FocusedGroup) => void;
   onPointerOver: (position: Position3D) => void;
   onPointerOut: () => void;
+  // 초기 애니메이션 props 추가
+  holoTableScale?: number;
+  holoTablePosition?: [number, number, number];
+  showOtherModels?: boolean;
+  isInitialAnimation?: boolean;
 };
 
 export const SceneRenderer = (props: SceneRendererProps) => {
-  const { focusedGroup, pulseActive, pulseCenter, hoveredPosition, isShow, onGroupClick, onPointerOver, onPointerOut } =
-    props;
+  const {
+    focusedGroup,
+    pulseActive,
+    pulseCenter,
+    hoveredPosition,
+    isShow,
+    onGroupClick,
+    onPointerOver,
+    onPointerOut,
+    holoTableScale = 0.3,
+    holoTablePosition = [0, 0.4, 0],
+    showOtherModels = true,
+    isInitialAnimation = false,
+  } = props;
 
   const handlePointerOver = (position: Position3D) => (e: any) => {
     e.stopPropagation();
@@ -49,54 +66,57 @@ export const SceneRenderer = (props: SceneRendererProps) => {
 
   return (
     <>
-      {/* GridBackground는 항상 표시, 네온 경로/퍼짐 효과 prop 전달 */}
-      <GridBackground
-        showNeonPaths={!focusedGroup}
-        pulseActive={pulseActive}
-        pulseCenter={pulseCenter}
-        hoveredPosition={hoveredPosition}
-      />
+      {/* 초기 애니메이션 중이 아닐 때만 GridBackground 표시 */}
+      {!isInitialAnimation && (
+        <GridBackground
+          showNeonPaths={!focusedGroup}
+          pulseActive={pulseActive}
+          pulseCenter={pulseCenter}
+          hoveredPosition={hoveredPosition}
+        />
+      )}
 
-      {/* 메인 3D 모델 */}
-      {/* 홀로테이블 단독 */}
+      {/* 홀로테이블 - 항상 표시하되 스케일과 위치를 동적으로 제어 */}
       {isShow('holoTable') && (
         <HoloTable
-          scale={0.3}
-          position={[0, 0, 0]}
+          scale={holoTableScale}
+          position={holoTablePosition}
           onClick={() => onGroupClick('holoTable')}
           onPointerOver={handlePointerOver([0, 0, 0])}
           onPointerOut={handlePointerOut}
         />
       )}
 
+      {/* 다른 모델들은 초기 애니메이션 완료 후에만 표시 */}
       {/* work 그룹: workTable + typingMan */}
-      {isShow('work') && [
-        <WorkTable
-          key='workTable'
-          scale={0.01}
-          rotation={[0, Math.PI / 2, 0]}
-          position={[4, 0, 0]}
-          onClick={() => onGroupClick('work')}
-          onPointerOver={handlePointerOver([4, 0, 0])}
-          onPointerOut={handlePointerOut}
-        />,
-        <TypingMan
-          key='typingMan'
-          scale={0.2}
-          rotation={[0, -Math.PI / 2, 0]}
-          position={[4.2, 0, 0]}
-          onClick={() => onGroupClick('work')}
-          onPointerOver={handlePointerOver([4.2, 0, 0])}
-          onPointerOut={handlePointerOut}
-        />,
-      ]}
+      {showOtherModels &&
+        isShow('work') && [
+          <WorkTable
+            key='workTable'
+            scale={0.01}
+            rotation={[0, Math.PI / 2, 0]}
+            position={[4, 0, 0]}
+            onClick={() => onGroupClick('work')}
+            onPointerOver={handlePointerOver([4, 0, 0])}
+            onPointerOut={handlePointerOut}
+          />,
+          <TypingMan
+            key='typingMan'
+            scale={0.2}
+            rotation={[0, -Math.PI / 2, 0]}
+            position={[4.2, 0, 0]}
+            onClick={() => onGroupClick('work')}
+            onPointerOver={handlePointerOver([4.2, 0, 0])}
+            onPointerOut={handlePointerOut}
+          />,
+        ]}
 
       {/* contactMe 단독 */}
-      {isShow('contactMe') && (
+      {showOtherModels && isShow('contactMe') && (
         <ContactMe
-          scale={0.2}
+          scale={1}
           rotation={[0, -Math.PI / 2, 0]}
-          position={[-4, 0, -0.5]}
+          position={[-4, 0, -0.1]}
           onClick={() => onGroupClick('contactMe')}
           onPointerOver={handlePointerOver([-4, 0, -1])}
           onPointerOut={handlePointerOut}
@@ -104,56 +124,58 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       )}
 
       {/* server 그룹: server0,1,2 */}
-      {isShow('server') && [
-        <WorkPerson
-          key='serverPerson'
-          scale={0.2}
-          rotation={[0, Math.PI, 0]}
-          position={[0, 0, -3.2]}
-          onClick={() => onGroupClick('server')}
-          onPointerOver={handlePointerOver([0, 0, -3.2])}
-          onPointerOut={handlePointerOut}
-          animationType='touch'
-        />,
-        <Computer key='computer' scale={0.5} position={[0.1, 0.6, -3.4]} />,
-        [0, 1, 2].map((index) => {
-          const position: Position3D = [0, 0, -4 - index * 0.2];
-          return (
-            <Server
-              key={index}
-              scale={0.002}
-              rotation={[0, Math.PI / 2, 0]}
-              position={position}
-              onClick={() => onGroupClick('server')}
-              onPointerOver={handlePointerOver(position)}
-              onPointerOut={handlePointerOut}
-            />
-          );
-        }),
-      ]}
+      {showOtherModels &&
+        isShow('server') && [
+          <WorkPerson
+            key='serverPerson'
+            scale={0.2}
+            rotation={[0, Math.PI, 0]}
+            position={[0, 0, -3.2]}
+            onClick={() => onGroupClick('server')}
+            onPointerOver={handlePointerOver([0, 0, -3.2])}
+            onPointerOut={handlePointerOut}
+            animationType='touch'
+          />,
+          <Computer key='computer' scale={0.5} position={[0.1, 0.6, -3.4]} />,
+          [0, 1, 2].map((index) => {
+            const position: Position3D = [0, 0, -4 - index * 0.2];
+            return (
+              <Server
+                key={index}
+                scale={0.002}
+                rotation={[0, Math.PI / 2, 0]}
+                position={position}
+                onClick={() => onGroupClick('server')}
+                onPointerOver={handlePointerOver(position)}
+                onPointerOut={handlePointerOut}
+              />
+            );
+          }),
+        ]}
 
       {/* experience 그룹: experiencePerson + experienceDesk */}
-      {isShow('experience') && [
-        <ExperiencePerson
-          key='experiencePerson'
-          scale={0.2}
-          rotation={[0, Math.PI, 0]}
-          position={[-1, 0, 4]}
-          onClick={() => onGroupClick('experience')}
-          onPointerOver={handlePointerOver([0, 0, 3])}
-          onPointerOut={handlePointerOut}
-        />,
-        <ExperienceDesk
-          key='experienceDesk'
-          scale={0.07}
-          position={[1.8, 0, 5.7]}
-          onClick={() => onGroupClick('experience')}
-          onPointerOver={handlePointerOver([4, 0, 5.3])}
-          onPointerOut={handlePointerOut}
-        />,
-      ]}
+      {showOtherModels &&
+        isShow('experience') && [
+          <ExperiencePerson
+            key='experiencePerson'
+            scale={0.2}
+            rotation={[0, Math.PI, 0]}
+            position={[-1, 0, 4]}
+            onClick={() => onGroupClick('experience')}
+            onPointerOver={handlePointerOver([0, 0, 3])}
+            onPointerOut={handlePointerOut}
+          />,
+          <ExperienceDesk
+            key='experienceDesk'
+            scale={0.07}
+            position={[1.8, 0, 5.7]}
+            onClick={() => onGroupClick('experience')}
+            onPointerOver={handlePointerOver([4, 0, 5.3])}
+            onPointerOut={handlePointerOut}
+          />,
+        ]}
 
-      {isShow('platform') && (
+      {showOtherModels && isShow('platform') && (
         <>
           <Platform scale={0.1} position={[-3, 0, 3]} />
           <FloatMan scale={0.25} rotation={[-Math.PI / 2, 0, Math.PI / 2]} position={[-3.3, 0.2, 3]} />
@@ -161,7 +183,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       )}
 
       {/* 홀로그램 이름표들 */}
-      {!focusedGroup && !pulseActive && (
+      {showOtherModels && !focusedGroup && !pulseActive && (
         <>
           <HoloText
             text='ABOUT ME'
@@ -189,7 +211,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         </>
       )}
 
-      {isShow('resumeConsole') && (
+      {showOtherModels && isShow('resumeConsole') && (
         <>
           <ResumeConsole
             scale={0.5}
@@ -217,7 +239,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         </>
       )}
 
-      {isShow('skill') && (
+      {showOtherModels && isShow('skill') && (
         <RobotArm
           scale={0.005}
           position={[1.5, 0, 1.5]}
@@ -227,7 +249,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         />
       )}
 
-      {isShow('radar') && (
+      {showOtherModels && isShow('radar') && (
         <Antenna
           scale={0.2}
           rotation={[0, Math.PI, 0]}
@@ -249,8 +271,8 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       {/* 분위기 조명 */}
       <pointLight position={[0, 5, 0]} intensity={0.3} color='#00ffff' />
 
-      {/* OrbitControls는 전체 뷰에서만 허용 */}
-      {!focusedGroup && <OrbitControls />}
+      {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
+      {!focusedGroup && !isInitialAnimation && <OrbitControls />}
     </>
   );
 };

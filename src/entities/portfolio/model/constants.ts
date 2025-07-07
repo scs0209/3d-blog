@@ -12,12 +12,6 @@ export const LOADING_PROGRESS_STEP = 4;
 export const LOADING_PROGRESS_INTERVAL = 50;
 
 export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
-  holoTable: {
-    offset: [0, 1, 2],
-    lookAt: [0, 0, 0],
-    pulse: [0, 0, 0],
-    modelPosition: [0, 0, 0],
-  },
   work: {
     offset: [1, 2, 0],
     lookAt: [4.2, 0, 0],
@@ -41,12 +35,12 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     modelPosition: [-1, -0.5, 3],
   },
   contactMe: {
-    offset: [2, 0.5, -0.3],
-    lookAt: [-4, 0, -1],
-    pulse: [-4, 0, -1],
-    modelPosition: [-4, 0, -1],
-    secondaryOffset: [0.5, 0.5, -0.3],
-    secondaryLookAt: [-4, 0, -1],
+    offset: [2, 0.5, 0], // 첫 번째 카메라: [-2, 0.5, -0.1]
+    lookAt: [-4, 0, -0.1],
+    pulse: [-4, 0, -0.1],
+    modelPosition: [-4, 0, -0.1],
+    secondaryOffset: [0, 0.5, 0], // 두 번째 카메라: [-4, 0.5, -0.1] (모델에 매우 가까이)
+    secondaryLookAt: [-4.3, 0.5, -0.3], // 왼쪽으로 살짝 회전해서 바라봄
   },
   resumeConsole: {
     // 모델 위치를 기준으로 카메라가 상대적으로 얼마나 떨어진 곳에 위치할지

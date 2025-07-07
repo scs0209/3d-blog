@@ -3,6 +3,7 @@
 import { Canvas } from '@react-three/fiber';
 import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
+import { useInitialAnimation } from '@/features/portfolio/model/use-initial-animation';
 import { useWorkCameraAnimation } from '@/features/portfolio/model/animations/use-work-camera-animation';
 import { useExperienceCameraAnimation } from '@/features/portfolio/model/animations/use-experience-camera-animation';
 import { useContactCameraAnimation } from '@/features/portfolio/model/animations/use-contact-camera-animation';
@@ -12,6 +13,9 @@ import { OverlayManager } from '@/widgets/portfolio/ui/OverlayManager';
 
 export default function PortfolioPage() {
   const portfolio = usePortfolio();
+
+  // 초기 애니메이션 훅 사용
+  const initialAnimation = useInitialAnimation();
 
   const {
     // 상태들
@@ -174,6 +178,8 @@ export default function PortfolioPage() {
           // contact 역순 애니메이션용
           contactClosing={contactClosing}
           setContactClosing={setContactClosing}
+          // 초기 애니메이션 관련
+          isInitialAnimation={!initialAnimation.isAnimationComplete}
         />
 
         <SceneRenderer
@@ -185,6 +191,11 @@ export default function PortfolioPage() {
           onGroupClick={handleGroupClick}
           onPointerOver={setHoveredPosition}
           onPointerOut={() => setHoveredPosition(null)}
+          // 초기 애니메이션 props 추가
+          holoTableScale={initialAnimation.holoTableScale}
+          holoTablePosition={initialAnimation.holoTablePosition}
+          showOtherModels={initialAnimation.showOtherModels}
+          isInitialAnimation={!initialAnimation.isAnimationComplete}
         />
       </Canvas>
     </div>
