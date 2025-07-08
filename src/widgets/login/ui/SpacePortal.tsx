@@ -1,6 +1,6 @@
 'use client';
 
-import { Environment, MeshPortalMaterial, PerspectiveCamera, Stars } from '@react-three/drei';
+import { MeshPortalMaterial, PerspectiveCamera, Stars } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { Container, Content, Fullscreen } from '@react-three/uikit';
