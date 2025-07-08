@@ -57,8 +57,6 @@ export default function PortfolioPage() {
     setTargetLook,
     setShowAboutMeOverlay,
     setShowExperienceOverlay,
-    setShowWorksLoading,
-    setShowCards,
     setShowContactForm,
     setFocusedGroup,
     setAboutMeClosing,
