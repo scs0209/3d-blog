@@ -299,7 +299,7 @@ export function GridBackground({
         sectionColor={'#606060'}
         fadeDistance={15}
         fadeStrength={1}
-        followCamera={false}
+        followCamera={true}
         infiniteGrid={false}
       />
 
