@@ -1,115 +1,169 @@
-import { render, fireEvent, screen } from '@testing-library/react';
+import { create, act } from '@react-three/test-renderer';
 import { vi } from 'vitest';
 import { CubeModel } from '../Cube'; // 경로 확인
+import * as drei from '@react-three/drei'; // useGLTF를 mock하기 위해
 
-// @react-three/drei 와 @react-three/fiber 는 tests/setup.ts 에서 이미 mock 되어 있음
-// useGLTF 에 대한 mock을 좀 더 구체화할 필요가 있음
+// useGLTF mock 설정
 const mockUseGLTF = vi.fn();
+// useGLTF.preload도 mock 해야 함
+mockUseGLTF.preload = vi.fn();
 
+// @react-three/drei 모듈에서 useGLTF만 mock하도록 설정
 vi.mock('@react-three/drei', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    useGLTF: mockUseGLTF, // 여기서 useGLTF를 mock 함수로 대체
+    useGLTF: mockUseGLTF,
   };
 });
 
-describe('CubeModel', () => {
+// document.body.style.cursor를 mock (jsdom 환경에서는 실제 body.style이 없음)
+const mockCursorSet = vi.fn();
+Object.defineProperty(document.body.style, 'cursor', {
+  get: () => mockCursorSet.mock.calls.length > 0 ? mockCursorSet.mock.calls[mockCursorSet.mock.calls.length - 1][0] : 'auto',
+  set: mockCursorSet,
+});
+
+
+describe('CubeModel with @react-three/test-renderer', () => {
   const mockOnClick = vi.fn();
   const defaultProps = {
-    position: [0, 0, 0] as [number, number, number],
+    position: [1, 2, 3] as [number, number, number],
     onClick: mockOnClick,
   };
 
+  const mockGLTFResult = {
+    nodes: {
+      Cube_Material_0: { // geometry를 포함하는 mock 객체
+        geometry: { uuid: 'mockGeometry-uuid' }, // 실제 geometry 객체 대신 고유 식별자나 간단한 객체
+      },
+    },
+    materials: {
+      Material: { uuid: 'mockMaterial-uuid' }, // 실제 material 객체 대신 고유 식별자나 간단한 객체
+    },
+  };
+
   beforeEach(() => {
-    // 각 테스트 전에 useGLTF mock을 기본값으로 설정
-    mockUseGLTF.mockReturnValue({
-      nodes: {
-        Cube_Material_0: { // geometry를 포함하는 mock 객체
-          geometry: 'mockGeometry', // 실제 geometry 객체 대신 간단한 문자열 또는 객체
-        },
-      },
-      materials: {
-        Material: 'mockMaterial', // 실제 material 객체 대신 간단한 문자열 또는 객체
-      },
-    });
     vi.clearAllMocks();
-    document.body.style.cursor = 'auto'; // 테스트 시작 전 커서 스타일 초기화
+    mockUseGLTF.mockReturnValue(mockGLTFResult);
+    // mockCursorSet.mockClear(); // 위에서 setter를 mock했으므로 이걸로 초기화
+    document.body.style.cursor = 'auto'; // mockCursorSet을 통해 'auto'로 설정됨
+    mockCursorSet.mockClear(); // 호출 기록만 초기화
   });
 
-  it('renders correctly without errors', () => {
-    const { container } = render(<CubeModel {...defaultProps} />);
-    // <group> 요소가 렌더링 되는지 (실제로는 tests/setup.ts의 mock Canvas 내부의 div로 렌더링됨)
-    // data-testid 등을 CubeModel의 최상위 group에 추가하면 더 명확하게 찾을 수 있음
-    expect(container.firstChild).toBeInTheDocument();
-    // useGLTF.preload도 호출되는지 확인 (Cube.tsx 파일 하단에 있음)
-    // preload는 useGLTF의 속성으로 mock해야 함
+  test('renders correctly and applies initial props', async () => {
+    const renderer = await create(<CubeModel {...defaultProps} />);
+    const group = renderer.scene.children[0]; // 최상위 group
+
+    expect(group.type).toBe('Group');
+    expect(group.props.position).toEqual(defaultProps.position);
+    expect(group.props.scale).toEqual(0.5);
+
+    const interactionGroup = group.children[0]; // 클릭 이벤트가 있는 내부 group
+    expect(interactionGroup.type).toBe('Group');
+
+    const mesh = interactionGroup.children[0]; // mesh
+    expect(mesh.type).toBe('Mesh');
+    expect(mesh.props.geometry).toEqual(mockGLTFResult.nodes.Cube_Material_0.geometry);
+    expect(mesh.props.material).toEqual(mockGLTFResult.materials.Material);
+    expect(mesh.props.scale).toEqual(100);
   });
 
-  it('calls useGLTF with the correct path and preloads it', () => {
-    // useGLTF.preload를 mock
-    const mockPreload = vi.fn();
-    mockUseGLTF.preload = mockPreload; // preload 함수를 mockUseGLTF 객체에 할당
-
-    render(<CubeModel {...defaultProps} />);
+  test('calls useGLTF with the correct path and preloads it', async () => {
+    await create(<CubeModel {...defaultProps} />);
     expect(mockUseGLTF).toHaveBeenCalledWith('/tesseract_cube.glb');
-    expect(mockPreload).toHaveBeenCalledWith('/tesseract_cube.glb');
+    // useGLTF.preload는 CubeModel 컴포넌트 파일의 최하단에서 호출됩니다.
+    // vi.mock('@react-three/drei', ...)에서 useGLTF가 mockUseGLTF로 대체되었고,
+    // mockUseGLTF.preload = vi.fn()으로 설정했으므로, mockUseGLTF.preload를 확인해야 합니다.
+    expect(mockUseGLTF.preload).toHaveBeenCalledWith('/tesseract_cube.glb');
   });
 
-  it('calls onClick handler when the group is clicked', () => {
-    // CubeModel 내부의 클릭 가능한 group에 data-testid를 추가하면 선택이 용이함
-    // 현재는 <group>이 특별한 role이나 text를 가지지 않으므로,
-    // CubeModel 최상단 group에 data-testid="cube-model-group"을 추가했다고 가정.
-    // Cube.tsx: <group {...props} data-testid="cube-model-clickable-group" dispose={null} scale={0.5} position={position}>
-    // 내부 클릭 대상 group에 testid를 추가하는 것이 더 정확함.
-    //   <group ref={cubeRef} data-testid="clickable-cube-mesh-group" onClick ... >
+  test('handles onClick event', async () => {
+    const renderer = await create(<CubeModel {...defaultProps} />);
+    const interactionGroup = renderer.scene.children[0].children[0]; // 내부 group
 
-    // 여기서는 컴포넌트의 최상위 요소(div로 mock된 group)를 가져와서 테스트
-    const { container } = render(<CubeModel {...defaultProps} />);
-    const clickableGroup = container.querySelector('[scale="0.5"]'); // 좀 더 구체적인 selector 필요
+    // onClick prop이 있는지 확인
+    expect(interactionGroup.props.onClick).toBeDefined();
 
-    // 만약 CubeModel의 <group ref={cubeRef} ... /> 에 data-testid="inner-cube"를 추가했다면:
-    // render(<CubeModel {...defaultProps} data-testid="outer-group" />);
-    // const innerCube = screen.getByTestId('inner-cube'); // 이 방식이 더 좋음
-    // fireEvent.click(innerCube);
+    // 이벤트 시뮬레이션 (stopPropagation을 mock해야 할 수도 있음)
+    const mockStopPropagation = vi.fn();
+    await act(async () => {
+      interactionGroup.props.onClick({ stopPropagation: mockStopPropagation });
+    });
 
-    // 현재 코드에서는 최상위 group의 자식 group이 클릭 이벤트를 가짐
-    // <mesh>를 포함하는 group을 찾아야 함.
-    // CubeModel의 <group ref={cubeRef} ...> 에 data-testid="cube-interaction-group" 를 추가하면 좋음
-    // 지금은 일단 첫번째 group을 클릭한다고 가정. (실제로는 div로 렌더링됨)
-    const firstGroupElement = container.querySelector('div > div'); // Canvas mock > Group mock
-    if (firstGroupElement) {
-      fireEvent.click(firstGroupElement);
-      expect(mockOnClick).toHaveBeenCalledTimes(1);
-    } else {
-      throw new Error("Clickable group element not found. Consider adding a data-testid.");
-    }
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
+    expect(mockStopPropagation).toHaveBeenCalledTimes(1);
   });
 
-  it('changes cursor style on pointer over and out', () => {
-    // 위와 마찬가지로 data-testid를 사용하는 것이 좋음
-    const { container } = render(<CubeModel {...defaultProps} />);
-    const firstGroupElement = container.querySelector('div > div');
+  test('handles pointerOver and pointerOut events for cursor change', async () => {
+    const renderer = await create(<CubeModel {...defaultProps} />);
+    const interactionGroup = renderer.scene.children[0].children[0];
 
-    if (firstGroupElement) {
-      fireEvent.pointerOver(firstGroupElement);
-      expect(document.body.style.cursor).toBe('pointer');
+    expect(interactionGroup.props.onPointerOver).toBeDefined();
+    expect(interactionGroup.props.onPointerOut).toBeDefined();
 
-      fireEvent.pointerOut(firstGroupElement);
-      expect(document.body.style.cursor).toBe('auto');
-    } else {
-      throw new Error("Interactive group element not found for pointer events.");
-    }
+    const mockStopPropagation = vi.fn();
+
+    await act(async () => {
+      interactionGroup.props.onPointerOver({ stopPropagation: mockStopPropagation });
+    });
+    expect(mockCursorSet).toHaveBeenLastCalledWith('pointer');
+    expect(mockStopPropagation).toHaveBeenCalledTimes(1);
+
+    mockStopPropagation.mockClear(); // 이전 호출 초기화
+
+    await act(async () => {
+      interactionGroup.props.onPointerOut({ stopPropagation: mockStopPropagation });
+    });
+    expect(mockCursorSet).toHaveBeenLastCalledWith('auto');
+    expect(mockStopPropagation).toHaveBeenCalledTimes(1);
   });
 
-  // useFrame의 호출 자체를 테스트하기는 어려우나,
-  // useFrame이 tests/setup.ts에서 mock처리 되어 있으므로,
-  // 해당 mock이 의도대로 동작하는지 (예: 특정 함수를 호출하거나 상태를 변경) 간접적으로 확인할 수 있음.
-  // 여기서는 useFrame이 사용되고 있다는 사실에 대한 테스트는 생략하고,
-  // 렌더링 및 이벤트 핸들러에 집중.
+  test('useFrame updates rotation (conceptual)', async () => {
+    const renderer = await create(<CubeModel {...defaultProps} />);
+    const interactionGroup = renderer.scene.children[0].children[0]; // cubeRef가 가리키는 group
 
-  it('matches snapshot', () => {
-    const { container } = render(<CubeModel {...defaultProps} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const initialRotationY = interactionGroup.instance.rotation.y;
+
+    // advanceFrames를 사용하여 프레임 진행 및 시간 경과 시뮬레이션
+    // 1프레임, 16ms (60fps 기준) 경과
+    await act(async () => {
+      renderer.advanceFrames(1, 1/60);
+    });
+
+    // useFrame 내부 로직: cubeRef.current.rotation.y += delta * 0.5;
+    // delta는 1/60 (약 0.01666)
+    // 예상 증가량: (1/60) * 0.5
+    const expectedIncrease = (1/60) * 0.5;
+    expect(interactionGroup.instance.rotation.y).toBeCloseTo(initialRotationY + expectedIncrease);
+
+    // 여러 프레임 진행
+    await act(async () => {
+      renderer.advanceFrames(10, 1/60);
+    });
+    expect(interactionGroup.instance.rotation.y).toBeCloseTo(initialRotationY + expectedIncrease * 11); // (10+1) 프레임
+  });
+
+  test('matches initial snapshot of the scene', async () => {
+    const renderer = await create(<CubeModel {...defaultProps} />);
+    // renderer.scene은 Three.js 객체이므로 toMatchSnapshot()에 직접 사용하기 부적합할 수 있음
+    // renderer.toGraph() 와 같은 API로 JSON 직렬화 가능한 형태로 변환하거나,
+    // 주요 노드의 props를 스냅샷으로 만드는 것이 더 일반적입니다.
+    // 여기서는 주요 요소들의 props를 스냅샷으로 만듭니다.
+    const group = renderer.scene.children[0];
+    const interactionGroup = group.children[0];
+    const mesh = interactionGroup.children[0];
+
+    const snapshotData = {
+      groupProps: { position: group.props.position, scale: group.props.scale },
+      interactionGroupType: interactionGroup.type, // ref는 props에 직접 나타나지 않음
+      meshProps: {
+        geometry: mesh.props.geometry,
+        material: mesh.props.material,
+        scale: mesh.props.scale,
+        rotation: mesh.props.rotation, // 초기 rotation 값
+      },
+    };
+    expect(snapshotData).toMatchSnapshot();
   });
 });

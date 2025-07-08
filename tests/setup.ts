@@ -20,91 +20,24 @@ if (typeof window !== 'undefined') {
   };
 }
 
-// @react-three/fiber mock
-vi.mock('@react-three/fiber', async (importOriginal) => {
+// @react-three/test-renderer 사용 시 @react-three/fiber의 많은 부분을 mock할 필요가 줄어듭니다.
+// Canvas, useThree, useFrame 등은 test-renderer가 내부적으로 처리하거나 테스트용 버전을 제공합니다.
+// 하지만, useGLTF 같이 파일 시스템/네트워크 접근이 있는 훅은 여전히 mock하는 것이 좋습니다.
+
+vi.mock('@react-three/drei', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    Canvas: ({ children, ...props }) => <div data-testid="mock-canvas" {...props}>{children}</div>,
-    useThree: () => ({
-      gl: {
-        domElement: {
-          getContext: () => ({
-            getExtension: vi.fn(),
-            getParameter: vi.fn(),
-            createShader: vi.fn(),
-            shaderSource: vi.fn(),
-            compileShader: vi.fn(),
-            createProgram: vi.fn(),
-            attachShader: vi.fn(),
-            linkProgram: vi.fn(),
-            useProgram: vi.fn(),
-            getShaderParameter: vi.fn(() => true), // Simulate successful shader compilation
-            getProgramParameter: vi.fn(() => true), // Simulate successful program linking
-            // Add other WebGLRenderingContext methods if needed by components
-          }),
-          // Mock other domElement properties if accessed
-          width: 100,
-          height: 100,
-        }
-      },
-      scene: {
-        add: vi.fn(),
-        remove: vi.fn(),
-        traverse: vi.fn(),
-        // Mock other scene properties/methods if accessed
-      },
-      camera: {
-        position: { set: vi.fn(), x: 0, y: 0, z: 5 },
-        lookAt: vi.fn(),
-        // Mock other camera properties/methods if accessed
-      },
-      size: { width: 100, height: 100 },
-      viewport: { width: 100, height: 100, factor: 1 },
-      // Mock other useThree return properties if accessed by components
-    }),
-    useFrame: (callback, renderPriority) => {
-      // For most unit tests, useFrame logic might not need to be executed every frame.
-      // If specific timing or sequence is important, this mock might need adjustment.
-      // vi.fn(callback)(); // Example: call the callback once
-    },
-    // Mock other R3F exports if necessary
+    // useGLTF만 mock하고, 다른 Drei 컴포넌트/훅은 test-renderer가 처리하도록 둡니다.
+    // Cube.test.tsx에서 useGLTF를 직접 mock 하므로, 여기서는 전역 mock을 제거하거나 최소화합니다.
+    // 만약 다른 Drei 요소에 대한 전역 mock이 필요하다면 여기에 추가합니다.
+    // useGLTF: vi.fn().mockReturnValue({ nodes: {}, materials: {} }), // Cube.test.tsx에서 구체적으로 mock
   };
 });
 
-// @react-three/drei mock (필요에 따라 확장)
-vi.mock('@react-three/drei', async (importOriginal) => {
-  const actual = await importOriginal();
-  const MockComponent = ({ children, ...props }) => <div {...props}>{children}</div>;
-
-  // 모든 named export를 MockComponent로 대체하거나, 개별적으로 mock
-  const mockedDrei = Object.keys(actual).reduce((acc, key) => {
-    // 특정 컴포넌트는 다르게 mock 할 수 있음
-    // if (key === 'OrbitControls') acc[key] = () => <div data-testid="mock-orbit-controls" />;
-    // else if (typeof actual[key] === 'function' || (actual[key] && typeof actual[key] === 'object' && 'render' in actual[key])) {
-    //   // Heuristic for components
-    //   acc[key] = ({ children, ...props }) => <div data-testid={`mock-${key.toLowerCase()}`} {...props}>{children}</div>;
-    // } else {
-    //   acc[key] = actual[key]; // Non-component exports (hooks, helpers) can be kept or mocked specifically
-    // }
-    if (typeof actual[key] === 'function') {
-       // 간단화를 위해 모든 함수형 컴포넌트를 div로 mock. 실제 컴포넌트 동작과 유사하게 만들려면 더 정교한 mock 필요.
-       // @ts-ignore
-      acc[key] = (props) => <div data-testid={`mock-${key.toLowerCase()}`} {...props} />;
-    } else {
-      acc[key] = actual[key]; // 함수가 아닌 export는 그대로 유지 (예: constants)
-    }
-    return acc;
-  }, {});
-
-  return {
-    ...mockedDrei,
-    // 개별적으로 더 정교한 mock이 필요한 경우 여기에 명시
-    // 예: Html: ({ children }) => <div data-testid="mock-html">{children}</div>,
-  };
-});
 
 // next/router 및 next/navigation mock (라우팅 관련 기능 테스트 시)
+// 이 부분은 R3F 테스트와 직접적인 관련은 없으므로 그대로 둡니다.
 vi.mock('next/router', () => ({
   useRouter: () => ({
     route: '/',
