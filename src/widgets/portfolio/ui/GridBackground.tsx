@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Grid } from '@react-three/drei';
 import * as three from 'three';
@@ -18,6 +18,7 @@ export function GridBackground({
   hoveredPosition?: [number, number, number] | null;
 }) {
   const gridRef = useRef<three.Group>(null);
+  const pointsRef = useRef<three.Points>(null);
   const highlightRef = useRef<three.Mesh>(null);
   const targetOpacity = useRef(0);
   const [highlightPosition, setHighlightPosition] = useState<three.Vector3 | null>(null);
@@ -30,6 +31,81 @@ export function GridBackground({
   const pulseOuterStart = 1.1;
   const pulseInnerEnd = 2.2;
   const pulseOuterEnd = 3.5;
+
+  // 원형 텍스처 생성 (빛나는 교차점용)
+  const circleTexture = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const context = canvas.getContext('2d');
+
+    if (context) {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = 15;
+
+      // 원형 그라디언트
+      const gradient = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.8)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+      context.fillStyle = gradient;
+      context.beginPath();
+      context.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      context.fill();
+    }
+
+    const texture = new three.CanvasTexture(canvas);
+    return texture;
+  }, []);
+
+  // 교차점 생성 함수 (빛나는 점들)
+  const createGridPoints = useMemo(() => {
+    const intersectionPoints: three.Vector3[] = [];
+    const colors: number[] = [];
+    const fadeDistance = 15; // Grid의 fadeDistance와 일치
+    const step = 1; // Grid의 cellSize와 일치
+
+    // fadeDistance 범위 내에서만 교차점 생성
+    for (let i = -fadeDistance; i <= fadeDistance; i += step) {
+      for (let j = -fadeDistance; j <= fadeDistance; j += step) {
+        const x = i;
+        const z = j;
+
+        // 중심에서의 거리 계산
+        const distanceFromCenter = Math.sqrt(x * x + z * z);
+
+        // fadeDistance 내에 있는 점들만 추가
+        if (distanceFromCenter <= fadeDistance) {
+          intersectionPoints.push(new three.Vector3(x, 0, z));
+
+          // 거리에 따른 페이드 효과 (Grid와 동일한 방식)
+          const fadeOpacity = Math.max(0.1, 1 - (distanceFromCenter / fadeDistance) * 0.8);
+
+          // 거리에 따른 색상 강도
+          colors.push(fadeOpacity, fadeOpacity, fadeOpacity);
+        }
+      }
+    }
+
+    const geometry = new three.BufferGeometry().setFromPoints(intersectionPoints);
+    geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3));
+
+    const material = new three.PointsMaterial({
+      color: '#ffffff',
+      size: 3,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: false,
+      blending: three.AdditiveBlending,
+      map: circleTexture,
+      alphaTest: 0.001,
+      vertexColors: true,
+    });
+
+    return new three.Points(geometry, material);
+  }, [circleTexture]);
 
   // hoveredGroup 변경 시 하이라이트 위치 및 투명도 목표 설정
   useEffect(() => {
@@ -93,6 +169,13 @@ export function GridBackground({
         }
         return { scale: nextScale, opacity: nextOpacity, running: true };
       });
+    }
+
+    // 교차점 펄스 효과
+    if (pointsRef.current) {
+      const time = state.clock.getElapsedTime();
+      const material = pointsRef.current.material as three.PointsMaterial;
+      material.opacity = 0.7 + Math.sin(time * 1.5) * 0.3;
     }
   });
 
@@ -212,13 +295,16 @@ export function GridBackground({
         cellThickness={0.5}
         cellColor={'#404040'}
         sectionSize={10}
-        sectionThickness={1}
+        sectionThickness={0}
         sectionColor={'#606060'}
-        fadeDistance={40}
+        fadeDistance={15}
         fadeStrength={1}
         followCamera={false}
         infiniteGrid={false}
       />
+
+      {/* 빛나는 교차점들 */}
+      <primitive ref={pointsRef} object={createGridPoints} />
 
       {/* 호버 하이라이트 원 */}
       {highlightPosition && (
