@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { Grid } from '@react-three/drei';
 import * as three from 'three';
 import { useState } from 'react';
 
@@ -17,8 +18,6 @@ export function GridBackground({
   hoveredPosition?: [number, number, number] | null;
 }) {
   const gridRef = useRef<three.Group>(null);
-  const pointsRef = useRef<three.Points>(null);
-  const originalColors = useRef<Float32Array | null>(null);
   const highlightRef = useRef<three.Mesh>(null);
   const targetOpacity = useRef(0);
   const [highlightPosition, setHighlightPosition] = useState<three.Vector3 | null>(null);
@@ -31,44 +30,6 @@ export function GridBackground({
   const pulseOuterStart = 1.1;
   const pulseInnerEnd = 2.2;
   const pulseOuterEnd = 3.5;
-
-  // 원형 텍스처 생성
-  const circleTexture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 32;
-    canvas.height = 32;
-    const context = canvas.getContext('2d');
-
-    if (context) {
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const radius = 15;
-
-      // 원형 그라디언트
-      const gradient = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-      gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.8)');
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-      context.fillStyle = gradient;
-      context.beginPath();
-      context.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      context.fill();
-    }
-
-    const texture = new three.CanvasTexture(canvas);
-    return texture;
-  }, []);
-
-  useEffect(() => {
-    if (pointsRef.current) {
-      const geometry = pointsRef.current.geometry as three.BufferGeometry;
-      if (geometry.attributes.color && !originalColors.current) {
-        // 원래 색상 데이터를 한 번만 저장
-        originalColors.current = geometry.attributes.color.array.slice() as Float32Array;
-      }
-    }
-  }, []);
 
   // hoveredGroup 변경 시 하이라이트 위치 및 투명도 목표 설정
   useEffect(() => {
@@ -133,68 +94,7 @@ export function GridBackground({
         return { scale: nextScale, opacity: nextOpacity, running: true };
       });
     }
-    // 기존 교차점 펄스 효과
-    if (gridRef.current) {
-      const time = state.clock.getElapsedTime();
-      gridRef.current.children.forEach((child, index) => {
-        if (child instanceof three.Points) {
-          const material = child.material as three.PointsMaterial;
-          material.opacity = 0.7 + Math.sin(time * 1 + index * 0.3) * 0.2;
-        }
-      });
-    }
   });
-
-  // 그리드 생성 함수 (거리에 따른 opacity 조절)
-  const createGrid = (size: number, divisions: number, color: string, opacity = 0.1) => {
-    const points: three.Vector3[] = [];
-    const colors: number[] = [];
-    const step = size / divisions;
-    const halfSize = size / 2;
-
-    // 수직선들
-    for (let i = 0; i <= divisions; i++) {
-      const x = -halfSize + i * step;
-      points.push(new three.Vector3(x, 0, -halfSize));
-      points.push(new three.Vector3(x, 0, halfSize));
-
-      // 중심에서의 거리에 따른 색상 강도 조절
-      const distanceFromCenter = Math.abs(x) / halfSize;
-      const fadeOpacity = Math.max(0.1, 1 - distanceFromCenter * 0.8);
-
-      // 실제 fadeOpacity 적용
-      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
-      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
-    }
-
-    // 수평선들
-    for (let i = 0; i <= divisions; i++) {
-      const z = -halfSize + i * step;
-      points.push(new three.Vector3(-halfSize, 0, z));
-      points.push(new three.Vector3(halfSize, 0, z));
-
-      // 중심에서의 거리에 따른 색상 강도 조절
-      const distanceFromCenter = Math.abs(z) / halfSize;
-      const fadeOpacity = Math.max(0.1, 1 - distanceFromCenter * 0.8);
-
-      // 실제 fadeOpacity 적용
-      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
-      colors.push(fadeOpacity * 0.4, fadeOpacity * 0.4, fadeOpacity * 0.4);
-    }
-
-    const geometry = new three.BufferGeometry().setFromPoints(points);
-    geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3));
-
-    const material = new three.LineBasicMaterial({
-      color: color,
-      transparent: true,
-      opacity: opacity,
-      linewidth: 1,
-      vertexColors: true,
-    });
-
-    return new three.LineSegments(geometry, material);
-  };
 
   // 애니메이션된 네온 경로 라인 생성 함수 (ㄹ자 형태, 수직/수평만)
   const createAnimatedNeonPath = (points: three.Vector3[], color: string, progress: number) => {
@@ -303,49 +203,23 @@ export function GridBackground({
     return group;
   };
 
-  // 교차점 생성 함수 (거리에 따른 opacity 조절)
-  const createGridPoints = (size: number, divisions: number, color: string, pointSize = 4, opacity = 0.8) => {
-    const intersectionPoints: three.Vector3[] = [];
-    const colors: number[] = [];
-    const step = size / divisions;
-    const halfSize = size / 2;
-
-    // 모든 교차점 생성
-    for (let i = 0; i <= divisions; i++) {
-      for (let j = 0; j <= divisions; j++) {
-        const x = -halfSize + i * step;
-        const z = -halfSize + j * step;
-        intersectionPoints.push(new three.Vector3(x, 0, z));
-
-        // 중심에서의 거리 계산
-        const distanceFromCenter = Math.sqrt(x * x + z * z) / (halfSize * Math.sqrt(2));
-        const fadeOpacity = Math.max(0.2, 1 - distanceFromCenter * 0.7);
-
-        // 거리에 따른 색상 강도
-        colors.push(fadeOpacity, fadeOpacity, fadeOpacity);
-      }
-    }
-
-    const geometry = new three.BufferGeometry().setFromPoints(intersectionPoints);
-    geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3));
-
-    const material = new three.PointsMaterial({
-      color: color,
-      size: pointSize,
-      transparent: true,
-      opacity: opacity,
-      sizeAttenuation: false,
-      blending: three.AdditiveBlending,
-      map: circleTexture,
-      alphaTest: 0.001,
-      vertexColors: true,
-    });
-
-    return new three.Points(geometry, material);
-  };
-
   return (
     <group ref={gridRef} position={[0, 0, 0]}>
+      {/* @react-three/drei Grid 컴포넌트 사용 */}
+      <Grid
+        args={[80, 80]}
+        cellSize={1}
+        cellThickness={0.5}
+        cellColor={'#404040'}
+        sectionSize={10}
+        sectionThickness={1}
+        sectionColor={'#606060'}
+        fadeDistance={40}
+        fadeStrength={1}
+        followCamera={false}
+        infiniteGrid={false}
+      />
+
       {/* 호버 하이라이트 원 */}
       {highlightPosition && (
         <mesh ref={highlightRef} position={highlightPosition} rotation={[-Math.PI / 2, 0, 0]}>
@@ -360,10 +234,6 @@ export function GridBackground({
         </mesh>
       )}
 
-      {/* 메인 그리드 라인 - 촘촘한 옅은 회색 (네온 경로가 잘 보이도록 opacity 감소) */}
-      <primitive object={createGrid(80, 80, '#747272', 0.08)} />
-      {/* 메인 그리드 교차점 - 원형 흰색 */}
-      <primitive ref={pointsRef} object={createGridPoints(80, 80, '#ffffff', 3, 0.8)} />
       {/* 네온 보라색 경로들 - HoloTable(중심)에서 홀로그램 텍스트로 */}
       {showNeonPaths && (
         <>
@@ -490,6 +360,12 @@ export function GridBackground({
           <meshBasicMaterial color={'#8b5cf6'} transparent opacity={pulse.opacity} depthWrite={false} />
         </mesh>
       )}
+
+      {/* 포그 효과 - 포트폴리오 모델들이 잘 보이도록 색상과 거리 조정 */}
+      <fog attach='fog' args={['#2a2a3a', 25, 100]} />
+
+      {/* 부드러운 주변 조명 */}
+      <ambientLight intensity={0.1} color='#333366' />
     </group>
   );
 }

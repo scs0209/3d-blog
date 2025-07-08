@@ -23,6 +23,25 @@ const labGlowMaterial = new three.MeshStandardMaterial({
   metalness: 0.7,
 });
 
+// gltf.pmnd.rs 변환으로 손실된 재질들 복원
+const restoredMainMaterial = new three.MeshStandardMaterial({
+  color: '#cccccc',
+  roughness: 0.3,
+  metalness: 0.1,
+});
+
+const restoredPlasticMaterial = new three.MeshStandardMaterial({
+  color: '#888888',
+  roughness: 0.4,
+  metalness: 0.0,
+});
+
+const restoredMetalMaterial = new three.MeshStandardMaterial({
+  color: '#999999',
+  roughness: 0.2,
+  metalness: 0.8,
+});
+
 export function LabMachine(props: any) {
   const group = useRef<three.Group>(null);
   const { nodes, materials, animations } = useGLTF('/dna_lab_machine.glb');
@@ -41,21 +60,21 @@ export function LabMachine(props: any) {
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main_Main_0 as three.Mesh)?.geometry}
-                    material={materials.Main}
+                    material={restoredMainMaterial}
                   />
                   <mesh
                     name='Main_Plastic_0'
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main_Plastic_0 as three.Mesh)?.geometry}
-                    material={materials.Plastic}
+                    material={restoredPlasticMaterial}
                   />
                   <mesh
                     name='Main_Metal_0'
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main_Metal_0 as three.Mesh)?.geometry}
-                    material={materials.Metal}
+                    material={restoredMetalMaterial}
                   />
                   <mesh
                     name='Main_ScreenKeyboard_0'
@@ -90,14 +109,14 @@ export function LabMachine(props: any) {
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main001_Metal_0 as three.Mesh)?.geometry}
-                    material={materials.Metal}
+                    material={restoredMetalMaterial}
                   />
                   <mesh
                     name='Main001_Main_0'
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main001_Main_0 as three.Mesh)?.geometry}
-                    material={materials.Main}
+                    material={restoredMainMaterial}
                   />
                 </group>
                 <group
@@ -111,14 +130,14 @@ export function LabMachine(props: any) {
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main002_Metal_0 as three.Mesh)?.geometry}
-                    material={materials.Metal}
+                    material={restoredMetalMaterial}
                   />
                   <mesh
                     name='Main002_Main_0'
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main002_Main_0 as three.Mesh)?.geometry}
-                    material={materials.Main}
+                    material={restoredMainMaterial}
                   />
                 </group>
                 <group name='Main003' position={[0, 0, 0.648]} rotation={[-Math.PI / 2, 0, 0]} scale={100}>
@@ -127,7 +146,7 @@ export function LabMachine(props: any) {
                     castShadow
                     receiveShadow
                     geometry={(nodes.Main003_Main_0 as three.Mesh)?.geometry}
-                    material={materials.Main}
+                    material={restoredMainMaterial}
                   />
                   <mesh
                     name='Main003_ScreenKeyboard_0'
