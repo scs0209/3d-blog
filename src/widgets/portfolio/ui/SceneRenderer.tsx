@@ -5,7 +5,7 @@ import {
   Antenna,
   Computer,
   ContactMe,
-  DataRack,
+  LabMachine,
   ExperienceDesk,
   ExperiencePerson,
   FloatMan,
@@ -13,7 +13,6 @@ import {
   HoloText,
   InspectingPerson,
   Platform,
-  ResumeConsole,
   RobotArm,
   Server,
   TypingMan,
@@ -212,25 +211,18 @@ export const SceneRenderer = (props: SceneRendererProps) => {
 
       {showOtherModels && isShow('resumeConsole') && (
         <>
-          <ResumeConsole
-            scale={0.5}
-            rotation={[0, Math.PI / 2, 0]}
-            position={[3, 0, -2.5]}
-            onClick={() => onGroupClick('resumeConsole')}
-            onPointerOver={handlePointerOver([3, 0, -2.5])}
-            onPointerOut={handlePointerOut}
-          />
           <InspectingPerson
             scale={0.2}
             rotation={[0, -Math.PI / 2, 0]}
-            position={[3.5, 0, -3]}
+            position={[3.2, 0, -2.5]}
             onClick={() => onGroupClick('resumeConsole')}
-            onPointerOver={handlePointerOver([3.5, 0, -3])}
+            onPointerOver={handlePointerOver([3.5, 0, -2.5])}
             onPointerOut={handlePointerOut}
           />
-          <DataRack
-            scale={0.4}
-            position={[3, 0, -3]}
+          <LabMachine
+            scale={0.3}
+            position={[2.5, 0, -2.5]}
+            rotation={[0, Math.PI / 2, 0]}
             onClick={() => onGroupClick('resumeConsole')}
             onPointerOver={handlePointerOver([3, 0, -3])}
             onPointerOut={handlePointerOut}
