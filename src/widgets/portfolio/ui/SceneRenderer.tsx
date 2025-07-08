@@ -252,15 +252,11 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       )}
 
       {/* 메인 조명 */}
-      <ambientLight intensity={0.2} color='#002244' />
       <directionalLight position={[10, 10, 5]} intensity={0.5} color='#ffffff' />
 
       <EffectComposer>
-        <Bloom luminanceThreshold={0} mipmapBlur luminanceSmoothing={0.0} intensity={5} />
+        <Bloom luminanceThreshold={0} mipmapBlur luminanceSmoothing={0.0} intensity={2} />
       </EffectComposer>
-
-      {/* 분위기 조명 */}
-      <pointLight position={[0, 5, 0]} intensity={0.3} color='#00ffff' />
 
       {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
       {!focusedGroup && !isInitialAnimation && <OrbitControls />}
