@@ -288,7 +288,6 @@ export function GridBackground({
 
   return (
     <group ref={gridRef} position={[0, 0, 0]}>
-      {/* @react-three/drei Grid 컴포넌트 사용 */}
       <Grid
         args={[80, 80]}
         cellSize={1}
@@ -299,7 +298,7 @@ export function GridBackground({
         sectionColor={'#606060'}
         fadeDistance={15}
         fadeStrength={1}
-        followCamera={true}
+        followCamera={false}
         infiniteGrid={false}
       />
 
