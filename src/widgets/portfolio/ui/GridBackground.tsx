@@ -490,10 +490,6 @@ export function GridBackground({
           <meshBasicMaterial color={'#8b5cf6'} transparent opacity={pulse.opacity} depthWrite={false} />
         </mesh>
       )}
-      {/* 포그 효과 */}
-      <fog attach='fog' args={['#1e293b', 20, 80]} />
-      {/* 주변 조명 효과 - 어둡게 조정 */}
-      <ambientLight intensity={0.05} color='#001122' />
     </group>
   );
 }
