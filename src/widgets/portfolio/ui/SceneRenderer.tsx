@@ -18,6 +18,7 @@ import {
   TypingMan,
   WorkPerson,
   WorkTable,
+  FPSMeasurer,
 } from '@/widgets/portfolio/ui';
 import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
 import { HoloContainer } from '@/widgets/portfolio/ui/HoloContainer';
@@ -32,6 +33,7 @@ type SceneRendererProps = {
   onGroupClick: (group: FocusedGroup) => void;
   onPointerOver: (position: Position3D) => void;
   onPointerOut: () => void;
+  onFpsUpdate: (fps: number) => void;
   // 초기 애니메이션 props 추가
   holoTableScale?: number;
   holoTablePosition?: [number, number, number];
@@ -279,6 +281,8 @@ export const SceneRenderer = (props: SceneRendererProps) => {
 
       {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
       {!focusedGroup && !isInitialAnimation && <OrbitControls />}
+
+      <FPSMeasurer onFpsUpdate={props.onFpsUpdate} />
     </>
   );
 };

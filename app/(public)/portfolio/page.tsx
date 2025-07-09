@@ -1,6 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
+import { useState } from 'react';
 import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
 import { useInitialAnimation } from '@/features/portfolio/model/use-initial-animation';
@@ -10,8 +11,10 @@ import { useContactCameraAnimation } from '@/features/portfolio/model/animations
 import { CameraController } from '@/widgets/portfolio/ui/CameraController';
 import { SceneRenderer } from '@/widgets/portfolio/ui/SceneRenderer';
 import { OverlayManager } from '@/widgets/portfolio/ui/OverlayManager';
+import { FPSDisplay } from '@/widgets/portfolio/ui/FPSDisplay';
 
 export default function PortfolioPage() {
+  const [fps, setFps] = useState(60);
   const portfolio = usePortfolio();
 
   // 초기 애니메이션 훅 사용
@@ -189,6 +192,7 @@ export default function PortfolioPage() {
           onGroupClick={handleGroupClick}
           onPointerOver={setHoveredPosition}
           onPointerOut={() => setHoveredPosition(null)}
+          onFpsUpdate={setFps}
           // 초기 애니메이션 props 추가
           holoTableScale={initialAnimation.holoTableScale}
           holoTablePosition={initialAnimation.holoTablePosition}
@@ -196,6 +200,7 @@ export default function PortfolioPage() {
           isInitialAnimation={!initialAnimation.isAnimationComplete}
         />
       </Canvas>
+      <FPSDisplay fps={fps} />
     </div>
   );
 }
