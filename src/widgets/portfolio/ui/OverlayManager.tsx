@@ -1,10 +1,12 @@
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
-import { AboutMePage } from '@/widgets/portfolio/ui/AboutMePage';
-import { NeonToggle } from '@/widgets/portfolio/ui/NeonToggle';
-import { ExperiencePage } from '@/widgets/portfolio/ui/ExperiencePage';
-import { CyberpunkContactForm } from '@/widgets/portfolio/ui/CyberpunkContactForm';
-import { LoadingOverlay } from '@/widgets/portfolio/ui/LoadingOverlay';
-import { PortfolioOverlay } from '@/widgets/portfolio/ui/PortfolioOverlay';
+import {
+  CyberpunkContactForm,
+  LoadingOverlay,
+  PortfolioOverlay,
+  NeonToggle,
+  ExperiencePage,
+  AboutMePage,
+} from '@/widgets/portfolio/ui';
 
 interface OverlayManagerProps {
   focusedGroup: FocusedGroup;
@@ -85,13 +87,8 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     <>
       {/* 오버레이 UI: 상단좌측 타이틀/직함 */}
       <div className='absolute top-8 left-8 z-30 flex flex-col gap-1'>
-        <span className='text-cyan-300 font-bold text-2xl neon-glow'>홍길동</span>
-        <span className='text-cyan-500 text-xs font-mono neon-glow'>FULL STACK WEB DEVELOPER</span>
-      </div>
-
-      {/* 오버레이 UI: 상단우측 EXIT/FPS */}
-      <div className='absolute top-8 right-8 z-30 flex gap-4 items-center'>
-        <span className='text-cyan-400 font-mono text-sm'>FPS 76</span>
+        <span className='text-cyan-300 font-bold text-2xl neon-glow'>Ayaan</span>
+        <span className='text-cyan-500 text-xs font-mono neon-glow'>Frontend Developer</span>
       </div>
 
       {/* 오버레이 UI: 하단좌측 퀄리티/사운드/라이트모드 */}
