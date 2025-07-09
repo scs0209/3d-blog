@@ -89,8 +89,8 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     <>
       {/* 오버레이 UI: 상단좌측 타이틀/직함 */}
       <div className='absolute top-8 left-8 z-30 flex flex-col gap-1'>
-        <span className='text-cyan-300 font-bold text-2xl neon-glow'>Ayaan</span>
-        <span className='text-cyan-500 text-xs font-mono neon-glow'>Frontend Developer</span>
+        <span className='text-pink-300 font-bold text-2xl neon-glow'>Ayaan</span>
+        <span className='text-pink-500 text-xs font-mono neon-glow'>Frontend Developer</span>
       </div>
 
       {/* 오버레이 UI: 하단좌측 퀄리티/사운드/라이트모드 */}
@@ -100,7 +100,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       </div>
 
       {/* 오버레이 UI: 하단중앙 저작권/소셜 */}
-      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-6 items-center text-cyan-300 font-mono text-xs'>
+      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-6 items-center text-pink-300 font-mono text-xs'>
         <span>© 2025</span>
         <AnimatedLink href='https://github.com/yourid' target='_blank' rel='noopener noreferrer'>
           <GithubIcon className='w-4 h-4' />
@@ -185,7 +185,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
               onBack();
             }
           }}
-          className='absolute top-6 right-6 z-10 px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-cyan-300 rounded border border-cyan-400/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-cyan-400/10 hover:border-cyan-300 hover:text-cyan-100 hover:shadow-lg hover:shadow-cyan-400/25 active:scale-95'
+          className='absolute top-6 right-6 z-10 px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-pink-300 rounded border border-pink-400/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-pink-400/10 hover:border-pink-300 hover:text-pink-100 hover:shadow-lg hover:shadow-pink-400/25 active:scale-95'
         >
           ← EXIT
         </button>
