@@ -364,15 +364,15 @@ export function GridBackground({
               lineAnimationProgress,
             )}
           />
-          {/* CONTACT로 연결 (ㄹ자 형태, 수직/수평만) */}
+          {/* HOME으로 연결 (ㄹ자 형태, 수직/수평만) */}
           <primitive
             object={createAnimatedNeonPath(
               [
                 new three.Vector3(0, 0, 0), // 시작점 (중심)
-                new three.Vector3(-2.0, 0, 0), // 왼쪽으로
-                new three.Vector3(-2.0, 0, 1), // 아래쪽으로
-                new three.Vector3(-2.55, 0, 1), // 텍스트 시작 부분으로
-                new three.Vector3(-2.55, 0, 0.6), // 텍스트 시작 부분으로
+                new three.Vector3(-2.5, 0, 0), // 왼쪽으로
+                new three.Vector3(-2.5, 0, 1), // 아래쪽으로
+                new three.Vector3(-3.05, 0, 1), // 텍스트 시작 부분으로
+                new three.Vector3(-3.05, 0, 0.4), // 텍스트 시작 부분으로
               ],
               '#8b5cf6',
               lineAnimationProgress,

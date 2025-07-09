@@ -21,6 +21,7 @@ import {
 } from '@/widgets/portfolio/ui';
 import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
 import { HoloContainer } from '@/widgets/portfolio/ui/HoloContainer';
+import { HoverCameraController } from '@/widgets/portfolio/ui/HoverCameraController';
 
 type SceneRendererProps = {
   focusedGroup: FocusedGroup;
@@ -66,6 +67,13 @@ export const SceneRenderer = (props: SceneRendererProps) => {
 
   return (
     <>
+      {/* 호버 카메라 컨트롤러 - 초기 애니메이션이 아니고 특정 그룹에 포커스되지 않았을 때만 작동 */}
+      <HoverCameraController
+        hoveredPosition={hoveredPosition}
+        isInitialAnimation={isInitialAnimation}
+        focusedGroup={focusedGroup}
+      />
+
       {/* 초기 애니메이션 중이 아닐 때만 GridBackground 표시 */}
       {!isInitialAnimation && (
         <GridBackground
@@ -204,7 +212,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           />
           <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.1]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
           <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
-          <HoloText text='HOME' position={[-2.5, 0, 0.5]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
+          <HoloText text='HOME' position={[-3, 0, 0.2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#8b5cf6' />
           <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#8b5cf6' />
         </>
       )}

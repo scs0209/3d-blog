@@ -20,5 +20,6 @@ export * from './Platform';
 export * from './FloatMan';
 export * from './CyberpunkContactForm';
 export * from './CameraController';
+export * from './HoverCameraController';
 export * from './SceneRenderer';
 export * from './OverlayManager';
