@@ -124,7 +124,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           rotation={[0, -Math.PI / 2, 0]}
           position={[-4, 0, -0.1]}
           onClick={() => onGroupClick('contactMe')}
-          onPointerOver={handlePointerOver([-4, 0, -1])}
+          onPointerOver={handlePointerOver([-4, 0, -0.1])}
           onPointerOut={handlePointerOut}
         />
       )}
@@ -138,7 +138,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             rotation={[0, Math.PI, 0]}
             position={[0, 0, -3.2]}
             onClick={() => onGroupClick('server')}
-            onPointerOver={handlePointerOver([0, 0, -3.2])}
+            onPointerOver={handlePointerOver([0, 0, -4])}
             onPointerOut={handlePointerOut}
             animationType='touch'
           />,
@@ -152,7 +152,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
                 rotation={[0, Math.PI / 2, 0]}
                 position={position}
                 onClick={() => onGroupClick('server')}
-                onPointerOver={handlePointerOver(position)}
+                onPointerOver={handlePointerOver([0, 0, -4])}
                 onPointerOut={handlePointerOut}
               />
             );
@@ -168,23 +168,34 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             rotation={[0, Math.PI, 0]}
             position={[-1, 0, 4]}
             onClick={() => onGroupClick('experience')}
-            onPointerOver={handlePointerOver([0, 0, 3])}
+            onPointerOver={handlePointerOver([-1, 0, 4])}
             onPointerOut={handlePointerOut}
           />,
           <ExperienceDesk
             key='experienceDesk'
             scale={0.07}
             position={[1.8, 0, 5.7]}
-            onClick={() => onGroupClick('experience')}
-            onPointerOver={handlePointerOver([4, 0, 5.3])}
+            onPointerOver={handlePointerOver([-1, 0, 4])}
             onPointerOut={handlePointerOut}
+            onClick={() => onGroupClick('experience')}
           />,
         ]}
 
       {showOtherModels && isShow('platform') && (
         <>
-          <Platform scale={0.1} position={[-3, 0, 3]} />
-          <FloatMan scale={0.25} rotation={[-Math.PI / 2, 0, Math.PI / 2]} position={[-3.3, 0.2, 3]} />
+          <Platform
+            scale={0.1}
+            position={[-3, 0, 3]}
+            onPointerOver={handlePointerOver([-3, 0, 3])}
+            onPointerOut={handlePointerOut}
+          />
+          <FloatMan
+            scale={0.25}
+            rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+            position={[-3.3, 0.2, 3]}
+            onPointerOver={handlePointerOver([-3.3, 0.2, 3])}
+            onPointerOut={handlePointerOut}
+          />
         </>
       )}
 
@@ -224,7 +235,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             rotation={[0, -Math.PI / 2, 0]}
             position={[3.2, 0, -2.5]}
             onClick={() => onGroupClick('resumeConsole')}
-            onPointerOver={handlePointerOver([3.5, 0, -2.5])}
+            onPointerOver={handlePointerOver([3.5, 0, -2.6])}
             onPointerOut={handlePointerOut}
           />
           <LabMachine
@@ -232,7 +243,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             position={[2.5, 0, -2.5]}
             rotation={[0, Math.PI / 2, 0]}
             onClick={() => onGroupClick('resumeConsole')}
-            onPointerOver={handlePointerOver([3, 0, -3])}
+            onPointerOver={handlePointerOver([3, 0, -2.6])}
             onPointerOut={handlePointerOut}
           />
         </>
