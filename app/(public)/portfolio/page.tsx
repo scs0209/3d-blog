@@ -200,7 +200,7 @@ export default function PortfolioPage() {
           isInitialAnimation={!initialAnimation.isAnimationComplete}
         />
       </Canvas>
-      <FPSDisplay fps={fps} />
+      {!focusedGroup && <FPSDisplay fps={fps} />}
     </div>
   );
 }

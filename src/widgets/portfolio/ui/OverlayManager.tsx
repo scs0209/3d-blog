@@ -1,11 +1,13 @@
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
+import { Mail, LinkedinIcon, GithubIcon } from 'lucide-react';
 import {
-  CyberpunkContactForm,
   LoadingOverlay,
+  AboutMePage,
+  ExperiencePage,
+  CyberpunkContactForm,
   PortfolioOverlay,
   NeonToggle,
-  ExperiencePage,
-  AboutMePage,
+  AnimatedLink,
 } from '@/widgets/portfolio/ui';
 
 interface OverlayManagerProps {
@@ -97,13 +99,21 @@ export const OverlayManager = (props: OverlayManagerProps) => {
         <NeonToggle checked={sound} onChange={onSoundChange} label='SOUND EFFECTS' />
       </div>
 
-      {/* 오버레이 UI: 하단우측 저작권/소셜 */}
-      <div className='absolute bottom-8 right-8 z-30 flex gap-4 items-center text-cyan-300 font-mono text-xs'>
+      {/* 오버레이 UI: 하단중앙 저작권/소셜 */}
+      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-6 items-center text-cyan-300 font-mono text-xs'>
         <span>© 2025</span>
-        <a href='https://github.com/yourid' target='_blank' rel='noopener noreferrer'>
-          GITHUB
-        </a>
-        <a href='mailto:your@email.com'>EMAIL</a>
+        <AnimatedLink href='https://github.com/yourid' target='_blank' rel='noopener noreferrer'>
+          <GithubIcon className='w-4 h-4' />
+          <span>GITHUB</span>
+        </AnimatedLink>
+        <AnimatedLink href='https://linkedin.com/in/yourid' target='_blank' rel='noopener noreferrer'>
+          <LinkedinIcon className='w-4 h-4' />
+          <span>LINKEDIN</span>
+        </AnimatedLink>
+        <AnimatedLink href='mailto:your@email.com'>
+          <Mail className='w-4 h-4' />
+          <span>EMAIL</span>
+        </AnimatedLink>
       </div>
 
       {/* 오버레이 AboutMePage */}
@@ -175,9 +185,9 @@ export const OverlayManager = (props: OverlayManagerProps) => {
               onBack();
             }
           }}
-          className='absolute top-6 right-6 z-10 px-[18px] py-[10px] bg-gray-800 text-white rounded-lg border-none font-bold text-lg cursor-pointer opacity-85 hover:opacity-100 transition-opacity'
+          className='absolute top-6 right-6 z-10 px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-cyan-300 rounded border border-cyan-400/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-cyan-400/10 hover:border-cyan-300 hover:text-cyan-100 hover:shadow-lg hover:shadow-cyan-400/25 active:scale-95'
         >
-          돌아가기
+          ← EXIT
         </button>
       )}
     </>
