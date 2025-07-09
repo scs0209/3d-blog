@@ -25,3 +25,6 @@ export * from './FPSDisplay';
 export * from './FPSMeasurer';
 export * from './SceneRenderer';
 export * from './OverlayManager';
+export * from './AboutMePage';
+export * from './ExperiencePage';
+export * from './NeonToggle';
