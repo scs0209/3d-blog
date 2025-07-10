@@ -32,7 +32,7 @@ export const useInitialAnimation = () => {
       const duration = 1500; // 1.5초
       const startTime = Date.now();
       const startScale = 2.5;
-      const endScale = 0.3;
+      const endScale = 0.2;
       const startPosition: [number, number, number] = [0, 0, 0];
       const endPosition: [number, number, number] = [0, 0.4, 0];
 
