@@ -26,7 +26,7 @@ export const FPSDisplay = ({ fps }: FPSDisplayProps) => {
 
   return (
     <div className='fixed top-5 right-5 z-[9999] pointer-events-none'>
-      <div className='bg-gray-900/95 backdrop-blur-lg border border-pink-500/30 rounded-lg px-4 py-3 shadow-xl shadow-pink-500/10 min-w-[100px]'>
+      <div className='bg-transparent backdrop-blur-sm border border-pink-500/20 rounded-lg px-4 py-3 shadow-lg shadow-pink-500/5 min-w-[100px]'>
         {/* FPS 텍스트 */}
         <div className='flex items-center justify-between mb-2'>
           <span className='text-pink-300 text-xs font-mono font-medium tracking-wide'>FPS</span>
