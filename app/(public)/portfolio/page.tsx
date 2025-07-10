@@ -198,6 +198,7 @@ export default function PortfolioPage() {
           holoTablePosition={initialAnimation.holoTablePosition}
           showOtherModels={initialAnimation.showOtherModels}
           isInitialAnimation={!initialAnimation.isAnimationComplete}
+          cameraAnimationDone={cameraAnimationDone}
         />
       </Canvas>
       {!focusedGroup && <FPSDisplay fps={fps} />}

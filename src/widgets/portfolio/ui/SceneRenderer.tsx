@@ -39,6 +39,8 @@ type SceneRendererProps = {
   holoTablePosition?: [number, number, number];
   showOtherModels?: boolean;
   isInitialAnimation?: boolean;
+  // 카메라 애니메이션 완료 상태 추가
+  cameraAnimationDone?: boolean;
 };
 
 export const SceneRenderer = (props: SceneRendererProps) => {
@@ -55,6 +57,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
     holoTablePosition = [0, 0.4, 0],
     showOtherModels = true,
     isInitialAnimation = false,
+    cameraAnimationDone = false,
   } = props;
 
   const handlePointerOver = (position: Position3D) => (e: any) => {
@@ -119,7 +122,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           />,
         ]}
 
-      {/* contactMe 단독 */}
+      {/* HOME */}
       {showOtherModels && isShow('contactMe') && (
         <ContactMe
           scale={0.3}
@@ -128,6 +131,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           onClick={() => onGroupClick('contactMe')}
           onPointerOver={handlePointerOver([-4, 0, -0.1])}
           onPointerOut={handlePointerOut}
+          triggerAnimation={focusedGroup === 'contactMe' && cameraAnimationDone}
         />
       )}
 
@@ -187,15 +191,15 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         <>
           <Platform
             scale={0.1}
-            position={[-3, 0, 3]}
-            onPointerOver={handlePointerOver([-3, 0, 3])}
+            position={[-3.5, 0, 3]}
+            onPointerOver={handlePointerOver([-3.5, 0, 3])}
             onPointerOut={handlePointerOut}
           />
           <FloatMan
             scale={0.25}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            position={[-3.3, 0.2, 3]}
-            onPointerOver={handlePointerOver([-3.3, 0.2, 3])}
+            position={[-3.7, 0.2, 3]}
+            onPointerOver={handlePointerOver([-3.5, 0, 3])}
             onPointerOut={handlePointerOut}
           />
         </>
