@@ -310,7 +310,7 @@ export function GridBackground({
         <mesh ref={highlightRef} position={highlightPosition} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[3, 3]} />
           <meshBasicMaterial
-            color='#8b5cf6'
+            color='#c084fc'
             transparent
             opacity={0}
             depthWrite={false}
@@ -332,7 +332,7 @@ export function GridBackground({
                 new three.Vector3(1.2, 0, -2.9), // 더 뒤쪽으로
                 new three.Vector3(0.9, 0, -2.9), // 텍스트 시작 부분으로
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -346,7 +346,7 @@ export function GridBackground({
                 new three.Vector3(2.3, 0, -2),
                 // new three.Vector3(3.35, 2, 0.6),
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -360,7 +360,7 @@ export function GridBackground({
                 new three.Vector3(1, 0, 3), // 더 뒤쪽으로
                 new three.Vector3(0, 0, 3), // 텍스트 시작 부분으로
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -374,7 +374,7 @@ export function GridBackground({
                 new three.Vector3(-3.05, 0, 1), // 텍스트 시작 부분으로
                 new three.Vector3(-3.05, 0, 0.4), // 텍스트 시작 부분으로
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -388,7 +388,7 @@ export function GridBackground({
                 new three.Vector3(-2, 0, -2), // 텍스트 시작 부분으로
                 new three.Vector3(-2, 0, -3), // 텍스트 시작 부분으로
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -400,7 +400,7 @@ export function GridBackground({
                 new three.Vector3(-1.5, 0, 2.5), // 아래쪽으로
                 new three.Vector3(-2.5, 0, 2.5), // 텍스트 시작 부분으로
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -414,7 +414,7 @@ export function GridBackground({
                 new three.Vector3(3.35, 0, 0.8),
                 new three.Vector3(3.35, 0, 0.6),
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -426,7 +426,7 @@ export function GridBackground({
                 new three.Vector3(2.3, 0, 0.1), // 오른쪽으로
                 new three.Vector3(2.3, 0, 1), // 아래쪽으로
               ],
-              '#8b5cf6',
+              '#c084fc',
               lineAnimationProgress,
             )}
           />
@@ -442,7 +442,7 @@ export function GridBackground({
               96,
             ]}
           />
-          <meshBasicMaterial color={'#8b5cf6'} transparent opacity={pulse.opacity} depthWrite={false} />
+          <meshBasicMaterial color={'#c084fc'} transparent opacity={pulse.opacity} depthWrite={false} />
         </mesh>
       )}
 
