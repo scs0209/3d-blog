@@ -10,10 +10,10 @@ const frameMaterial = new three.MeshStandardMaterial({
   roughness: 0.3,
 });
 
-// 네온 라인 재질 (사이안 블루)
+// 네온 라인 재질 (화이트-블루)
 const neonBlueMaterial = new three.MeshStandardMaterial({
-  color: '#00ffff',
-  emissive: '#00ccee',
+  color: '#f0f9ff',
+  emissive: '#bae6fd',
   emissiveIntensity: 1.0,
   transparent: true,
   opacity: 0.8,
@@ -30,21 +30,21 @@ const neonPurpleMaterial = new three.MeshStandardMaterial({
 
 // 홀로그램 패널 재질
 const holoPanelMaterial = new three.MeshStandardMaterial({
-  color: '#0ea5e9',
-  emissive: '#0284c7',
-  emissiveIntensity: 0.3,
+  color: '#f8fafc',
+  emissive: '#e2e8f0',
+  emissiveIntensity: 0.4,
   transparent: true,
-  opacity: 0.1,
+  opacity: 0.15,
   side: three.DoubleSide,
 });
 
 // 바닥 그리드 재질
 const gridMaterial = new three.MeshStandardMaterial({
-  color: '#1e40af',
-  emissive: '#1d4ed8',
-  emissiveIntensity: 0.5,
+  color: '#f1f5f9',
+  emissive: '#cbd5e1',
+  emissiveIntensity: 0.6,
   transparent: true,
-  opacity: 0.6,
+  opacity: 0.7,
 });
 
 type HoloContainerProps = {
