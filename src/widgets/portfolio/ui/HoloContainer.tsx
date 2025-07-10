@@ -21,8 +21,8 @@ const neonBlueMaterial = new three.MeshStandardMaterial({
 
 // 네온 라인 재질 (퍼플)
 const neonPurpleMaterial = new three.MeshStandardMaterial({
-  color: '#8b5cf6',
-  emissive: '#7c3aed',
+  color: '#c084fc',
+  emissive: '#a855f7',
   emissiveIntensity: 1.2,
   transparent: true,
   opacity: 0.9,
@@ -69,7 +69,7 @@ export function HoloContainer(props: HoloContainerProps) {
 
         {/* 바닥 겉면 보라색 네온 테두리 */}
         <mesh position={[0, -0.74, 0]} material={neonPurpleMaterial} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[2.4, 2.5, 32]} />
+          <ringGeometry args={[2.3, 2.6, 32]} />
         </mesh>
 
         {/* 코너 필러 (8각형) */}
