@@ -1,24 +1,78 @@
 import { useAnimations, useGLTF } from '@react-three/drei';
-import { useRef } from 'react';
-import type * as three from 'three';
+import { useEffect, useRef } from 'react';
+import * as three from 'three';
 
-export function ContactMe(props: any) {
+// 보라색 네온 재질
+const purpleNeonMaterial = new three.MeshStandardMaterial({
+  color: '#c084fc',
+  emissive: '#c48ff5',
+  emissiveIntensity: 2.0,
+  transparent: true,
+  opacity: 0.9,
+  metalness: 0.8,
+  roughness: 0.2,
+});
+
+type ContactMeProps = {
+  triggerAnimation?: boolean;
+} & any;
+
+export function ContactMe(props: ContactMeProps) {
+  const { triggerAnimation, ...otherProps } = props;
   const group = useRef<three.Group>(null);
+  const isAnimationRunning = useRef(false);
   const { nodes, materials, animations } = useGLTF('/sci-fi_door..glb');
-  const { actions } = useAnimations(animations, group);
+  const { actions, mixer } = useAnimations(animations, group);
 
-  // useEffect(() => {
-  //   if (actions) {
-  //     for (const action of Object.values(actions)) {
-  //       if (action) {
-  //         action.play();
-  //       }
-  //     }
-  //   }
-  // }, []);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (triggerAnimation && actions && mixer && !isAnimationRunning.current) {
+      isAnimationRunning.current = true;
+
+      for (const action of Object.values(actions)) {
+        if (action) {
+          // 애니메이션 설정
+          action.setLoop(three.LoopOnce, 1);
+          action.clampWhenFinished = true;
+          action.play();
+
+          // 애니메이션 완료 이벤트 리스너
+          const handleFinished = (e: any) => {
+            if (e.action === action) {
+              // 1.5초 대기 후 역방향 애니메이션 실행
+              setTimeout(() => {
+                action.reset();
+                action.timeScale = -1; // 역방향으로 실행
+                action.setLoop(three.LoopOnce, 1);
+                action.clampWhenFinished = true;
+                action.time = action.getClip().duration; // 끝 시간으로 설정
+                action.play();
+
+                // 역방향 애니메이션 완료 후 정리
+                const handleReverseFinished = (e: any) => {
+                  if (e.action === action) {
+                    action.timeScale = 1; // 원래 방향으로 복원
+                    action.stop(); // 애니메이션 정지 (reset 대신 stop 사용)
+                    isAnimationRunning.current = false; // 애니메이션 완료
+                    mixer.removeEventListener('finished', handleReverseFinished);
+                  }
+                };
+                mixer.addEventListener('finished', handleReverseFinished);
+              }, 1500);
+
+              mixer.removeEventListener('finished', handleFinished);
+            }
+          };
+
+          mixer.addEventListener('finished', handleFinished);
+          break; // 첫 번째 액션만 실행하고 중단
+        }
+      }
+    }
+  }, [triggerAnimation]);
 
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...otherProps} dispose={null}>
       <group name='Sketchfab_Scene'>
         <group name='Sketchfab_model' rotation={[-Math.PI / 2, 0, 0]}>
           <group name='root'>
@@ -36,7 +90,7 @@ export function ContactMe(props: any) {
                   castShadow
                   receiveShadow
                   geometry={(nodes.Object_5 as three.Mesh)?.geometry}
-                  material={materials['Material.010']}
+                  material={purpleNeonMaterial}
                 />
                 <mesh
                   name='Object_6'
@@ -94,15 +148,7 @@ export function ContactMe(props: any) {
                   material={materials['Material.009']}
                 />
               </group>
-              <group name='strings_13' position={[0.307, 0.03, 0]}>
-                <mesh
-                  name='Object_25'
-                  castShadow
-                  receiveShadow
-                  geometry={(nodes.Object_25 as three.Mesh)?.geometry}
-                  material={materials['Material.006']}
-                />
-              </group>
+
               <group name='lights_14' position={[0.001, 2.771, -0.001]} rotation={[Math.PI / 2, 0, 0]}>
                 <mesh
                   name='Object_27'
@@ -131,6 +177,21 @@ export function ContactMe(props: any) {
                     />
                   </group>
                 </group>
+              </group>
+
+              {/* 문 뒤 홀로그램 패널 - 문 안쪽 깊숙이 배치 */}
+              <group name='back_panel' position={[0, 1.5, 0]}>
+                <mesh position={[0, 0, 0]}>
+                  <planeGeometry args={[2, 2.8]} />
+                  <meshStandardMaterial
+                    color='#c084fc'
+                    emissive='#c48ff5'
+                    emissiveIntensity={1.5}
+                    transparent
+                    opacity={0.8}
+                    side={three.DoubleSide}
+                  />
+                </mesh>
               </group>
             </group>
           </group>
