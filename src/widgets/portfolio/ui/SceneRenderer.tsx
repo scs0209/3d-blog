@@ -51,7 +51,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
     onGroupClick,
     onPointerOver,
     onPointerOut,
-    holoTableScale = 0.3,
+    holoTableScale = 0.1,
     holoTablePosition = [0, 0.4, 0],
     showOtherModels = true,
     isInitialAnimation = false,
@@ -208,25 +208,25 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             text='ABOUT ME'
             position={[3.4, 0, 0.5]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#e879f9'
+            color='#ffffff'
           />
           <HoloText
             text='CONTACT'
             position={[-1.9, 0, -3.1]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#e879f9'
+            color='#ffffff'
           />
-          <HoloText text='WORKS' position={[-0.3, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#e879f9' />
+          <HoloText text='WORKS' position={[-0.3, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#ffffff' />
           <HoloText
             text='RESUME'
             position={[2.35, 0, -2.2]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#e879f9'
+            color='#ffffff'
           />
-          <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.1]} rotation={[-Math.PI / 2, 0, 0]} color='#e879f9' />
-          <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#e879f9' />
-          <HoloText text='HOME' position={[-3, 0, 0.2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#e879f9' />
-          <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#e879f9' />
+          <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.1]} rotation={[-Math.PI / 2, 0, 0]} color='#ffffff' />
+          <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#ffffff' />
+          <HoloText text='HOME' position={[-3, 0, 0.2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#ffffff' />
+          <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#ffffff' />
         </>
       )}
 
@@ -276,7 +276,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       <directionalLight position={[10, 10, 5]} intensity={0.5} color='#ffffff' />
 
       <EffectComposer>
-        <Bloom luminanceThreshold={0} mipmapBlur luminanceSmoothing={0.0} intensity={2} />
+        <Bloom luminanceThreshold={0} mipmapBlur luminanceSmoothing={0.0} intensity={1} />
       </EffectComposer>
 
       {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
