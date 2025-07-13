@@ -23,6 +23,7 @@ export function GridBackground({
   const targetOpacity = useRef(0);
   const [highlightPosition, setHighlightPosition] = useState<three.Vector3 | null>(null);
   const [lineAnimationProgress, setLineAnimationProgress] = useState(0);
+  const lineColor = '#0696e4';
 
   const [pulse, setPulse] = useState({ scale: 1, opacity: 0, running: false });
   const pulseDuration = 0.8; // 초
@@ -332,7 +333,7 @@ export function GridBackground({
                 new three.Vector3(1.2, 0, -2.9), // 더 뒤쪽으로
                 new three.Vector3(0.9, 0, -2.9), // 텍스트 시작 부분으로
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -346,7 +347,7 @@ export function GridBackground({
                 new three.Vector3(2.3, 0, -2),
                 // new three.Vector3(3.35, 2, 0.6),
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -360,7 +361,7 @@ export function GridBackground({
                 new three.Vector3(1, 0, 3), // 더 뒤쪽으로
                 new three.Vector3(0, 0, 3), // 텍스트 시작 부분으로
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -374,7 +375,7 @@ export function GridBackground({
                 new three.Vector3(-3.05, 0, 1), // 텍스트 시작 부분으로
                 new three.Vector3(-3.05, 0, 0.4), // 텍스트 시작 부분으로
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -388,7 +389,7 @@ export function GridBackground({
                 new three.Vector3(-2, 0, -2), // 텍스트 시작 부분으로
                 new three.Vector3(-2, 0, -3), // 텍스트 시작 부분으로
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -400,7 +401,7 @@ export function GridBackground({
                 new three.Vector3(-1.5, 0, 2.5), // 아래쪽으로
                 new three.Vector3(-2.5, 0, 2.5), // 텍스트 시작 부분으로
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -414,7 +415,7 @@ export function GridBackground({
                 new three.Vector3(3.35, 0, 0.8),
                 new three.Vector3(3.35, 0, 0.6),
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -426,7 +427,7 @@ export function GridBackground({
                 new three.Vector3(2.3, 0, 0.1), // 오른쪽으로
                 new three.Vector3(2.3, 0, 1), // 아래쪽으로
               ],
-              '#c084fc',
+              lineColor,
               lineAnimationProgress,
             )}
           />
@@ -450,7 +451,7 @@ export function GridBackground({
       <fog attach='fog' args={['#2a2a3a', 25, 100]} />
 
       {/* 부드러운 주변 조명 */}
-      <ambientLight intensity={0.1} color='#333366' />
+      <ambientLight intensity={0.1} color='#c084fc' />
     </group>
   );
 }
