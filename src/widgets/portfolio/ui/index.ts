@@ -29,3 +29,4 @@ export * from './OverlayManager';
 export * from './AboutMePage';
 export * from './ExperiencePage';
 export * from './NeonToggle';
+export * from './WorkChair';
