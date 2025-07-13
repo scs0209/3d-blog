@@ -19,6 +19,7 @@ import {
   WorkPerson,
   WorkTable,
   FPSMeasurer,
+  WorkChair,
 } from '@/widgets/portfolio/ui';
 import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
 import { HoloContainer } from '@/widgets/portfolio/ui/HoloContainer';
@@ -104,9 +105,8 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         isShow('work') && [
           <WorkTable
             key='workTable'
-            scale={0.01}
-            rotation={[0, Math.PI / 2, 0]}
-            position={[4, 0, 0]}
+            scale={0.3}
+            position={[4.7, 0, 0.4]}
             onClick={() => onGroupClick('work')}
             onPointerOver={handlePointerOver([4, 0, 0])}
             onPointerOut={handlePointerOut}
@@ -116,6 +116,15 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             scale={0.2}
             rotation={[0, -Math.PI / 2, 0]}
             position={[4.2, 0, 0]}
+            onClick={() => onGroupClick('work')}
+            onPointerOver={handlePointerOver([4.2, 0, 0])}
+            onPointerOut={handlePointerOut}
+          />,
+          <WorkChair
+            key='workChair'
+            scale={0.4}
+            position={[4.45, 0, -0.1]}
+            rotation={[0, -Math.PI, 0]}
             onClick={() => onGroupClick('work')}
             onPointerOver={handlePointerOver([4.2, 0, 0])}
             onPointerOut={handlePointerOut}
