@@ -188,8 +188,8 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           />,
           <ExperienceDesk
             key='experienceDesk'
-            scale={0.07}
-            position={[1.8, 0, 5.7]}
+            scale={0.4}
+            position={[-1, 0, 3.8]}
             onPointerOver={handlePointerOver([-1, 0, 4])}
             onPointerOut={handlePointerOut}
             onClick={() => onGroupClick('experience')}
@@ -293,7 +293,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       </EffectComposer>
 
       {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
-      {!focusedGroup && !isInitialAnimation && <OrbitControls />}
+      {<OrbitControls />}
 
       <FPSMeasurer onFpsUpdate={props.onFpsUpdate} />
     </>
