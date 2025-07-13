@@ -1,40 +1,72 @@
+import type * as three from 'three';
 import { useGLTF } from '@react-three/drei';
-import * as three from 'three';
+import type { GLTF } from 'three-stdlib';
+import type { JSX } from 'react';
 
-const screenGlowMaterial = new three.MeshStandardMaterial({
-  color: '#8ff0ff',
-  emissive: '#8ff0ff',
-  emissiveIntensity: 0.5,
-  toneMapped: false,
-});
+type GLTFResult = GLTF & {
+  nodes: {
+    middle_piece_low_Material_0: three.Mesh;
+    screen_low_Material_0: three.Mesh;
+    hinge_bottom_low_Material_0: three.Mesh;
+    back_piece_low_Material_0: three.Mesh;
+    front_piece_low_Material_0: three.Mesh;
+  };
+  materials: {
+    Material: three.MeshStandardMaterial;
+  };
+};
 
-interface ComputerProps {
-  [key: string]: any;
-}
-
-export function Computer({ ...props }: ComputerProps) {
-  const { nodes } = useGLTF('/computer.glb');
+export function Computer(props: JSX.IntrinsicElements['group']) {
+  const { nodes, materials } = useGLTF('/scifi_terminal.glb') as unknown as GLTFResult;
 
   return (
     <group {...props} dispose={null}>
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={(nodes.Object_5 as three.Mesh)?.geometry}
-        material={screenGlowMaterial}
-        position={[-0.056, 0.066, 0.3]}
-        scale={[0.531, 0.354, 0.001]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={(nodes.Object_7 as three.Mesh)?.geometry}
-        material={screenGlowMaterial}
-        position={[0.15, -0.078, 0.383]}
-        scale={[0.513, 0.342, 0.001]}
-      />
+      <group scale={0.01}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.middle_piece_low_Material_0.geometry}
+          material={materials.Material}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={100}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.screen_low_Material_0.geometry}
+          material={materials.Material}
+          position={[-89.674, 458.777, 0]}
+          rotation={[-Math.PI / 2, Math.PI / 6, 0]}
+          scale={114.035}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.hinge_bottom_low_Material_0.geometry}
+          material={materials.Material}
+          position={[-74.84, 402.051, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={100}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.back_piece_low_Material_0.geometry}
+          material={materials.Material}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={100}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.front_piece_low_Material_0.geometry}
+          material={materials.Material}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={100}
+        />
+      </group>
     </group>
   );
 }
 
-useGLTF.preload('/computer.glb');
+useGLTF.preload('/scifi_terminal.glb');
