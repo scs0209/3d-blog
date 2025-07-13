@@ -290,7 +290,7 @@ export function GridBackground({
     <group ref={gridRef} position={[0, 0, 0]}>
       <Grid
         args={[80, 80]}
-        cellSize={1}
+        cellSize={0}
         cellThickness={0.5}
         cellColor={'#404040'}
         sectionSize={10}
