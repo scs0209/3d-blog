@@ -311,7 +311,7 @@ export function GridBackground({
         <mesh ref={highlightRef} position={highlightPosition} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[3, 3]} />
           <meshBasicMaterial
-            color='#c084fc'
+            color='#d0e9f7'
             transparent
             opacity={0}
             depthWrite={false}
@@ -443,15 +443,9 @@ export function GridBackground({
               96,
             ]}
           />
-          <meshBasicMaterial color={'#c084fc'} transparent opacity={pulse.opacity} depthWrite={false} />
+          <meshBasicMaterial color={'#d0e9f7'} transparent opacity={pulse.opacity} depthWrite={false} />
         </mesh>
       )}
-
-      {/* 포그 효과 - 포트폴리오 모델들이 잘 보이도록 색상과 거리 조정 */}
-      <fog attach='fog' args={['#2a2a3a', 25, 100]} />
-
-      {/* 부드러운 주변 조명 */}
-      <ambientLight intensity={0.1} color='#c084fc' />
     </group>
   );
 }

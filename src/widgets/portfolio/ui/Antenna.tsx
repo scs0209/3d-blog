@@ -33,7 +33,7 @@ const cyberpunkAntennaMaterials = {
   }),
   // 디스크 - 은색 메탈릭 발광
   dishGlow: new three.MeshStandardMaterial({
-    color: '#c0c0ff',
+    color: '#9696a7',
     emissive: '#202040',
     emissiveIntensity: 0.3,
     metalness: 0.9,
@@ -50,8 +50,8 @@ const cyberpunkAntennaMaterials = {
   }),
   // 검은 전선 - 보라색 네온
   blackWireGlow: new three.MeshStandardMaterial({
-    color: '#8000ff',
-    emissive: '#8000ff',
+    color: '#0080ff',
+    emissive: '#0080ff',
     emissiveIntensity: 0.6,
     metalness: 0.3,
     roughness: 0.4,
