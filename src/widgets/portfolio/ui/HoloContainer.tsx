@@ -94,52 +94,10 @@ export function HoloContainer(props: HoloContainerProps) {
           );
         })}
 
-        {/* 상단 링 프레임 (수평) */}
-        <mesh position={[0, 0.9, 0]} material={frameMaterial}>
-          <torusGeometry args={[2.0, 0.08, 8, 16]} />
-        </mesh>
-
-        {/* 상단 링 프레임 (수직 - Z축 교차) */}
-        <mesh position={[0, 0.9, 0]} rotation={[0, 0, Math.PI / 2]} material={frameMaterial}>
-          <torusGeometry args={[2.0, 0.08, 8, 16]} />
-        </mesh>
-
-        {/* 상단 네온 링 (반원 - 수평) */}
-        <mesh position={[0, 0.95, 0]} material={neonBlueMaterial}>
+        {/* 추가 수직 네온 링 - X축 회전 */}
+        <mesh position={[0, 0.93, 0]} rotation={[Math.PI / 2, 0, 0]} material={neonBlueMaterial}>
           <torusGeometry args={[2.0, 0.03, 8, 32]} />
         </mesh>
-
-        {/* 상단 네온 링 (반원 - 수직 교차) */}
-        <mesh position={[0, 0.97, 0]} rotation={[0, Math.PI / 2, 0]} material={neonPurpleMaterial}>
-          <torusGeometry args={[2.0, 0.03, 8, 32]} />
-        </mesh>
-
-        {/* 상단 프레임 링 (반원 - 수평) */}
-        <mesh position={[0, 0.9, 0]} material={frameMaterial}>
-          <torusGeometry args={[2.0, 0.08, 8, 8]} />
-        </mesh>
-
-        {/* 상단 프레임 링 (반원 - 수직 교차) */}
-        <mesh position={[0, 0.9, 0]} rotation={[0, Math.PI / 2, 0]} material={frameMaterial}>
-          <torusGeometry args={[2.0, 0.08, 8, 8]} />
-        </mesh>
-
-        {/* 홀로그램 패널들 (4개 방향) */}
-        {Array.from({ length: 4 }).map((_, i) => {
-          const angle = (i * Math.PI) / 2;
-          const x = Math.cos(angle) * 1.7;
-          const z = Math.sin(angle) * 1.7;
-          return (
-            <mesh
-              key={`panel-${i}-${x.toFixed(1)}-${z.toFixed(1)}`}
-              position={[x, 0.2, z]}
-              rotation={[0, angle + Math.PI / 2, 0]}
-              material={holoPanelMaterial}
-            >
-              <planeGeometry args={[0.8, 1.2]} />
-            </mesh>
-          );
-        })}
 
         {/* 에너지 코어 라인들 (중앙에서 퍼져나가는) */}
         {Array.from({ length: 6 }).map((_, i) => {
