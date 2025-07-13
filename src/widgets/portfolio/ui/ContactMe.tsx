@@ -4,8 +4,8 @@ import * as three from 'three';
 
 // 보라색 네온 재질
 const purpleNeonMaterial = new three.MeshStandardMaterial({
-  color: '#c084fc',
-  emissive: '#c48ff5',
+  color: '#23a1f5',
+  emissive: '#0696e4',
   emissiveIntensity: 2.0,
   transparent: true,
   opacity: 0.9,
@@ -184,8 +184,8 @@ export function ContactMe(props: ContactMeProps) {
                 <mesh position={[0, 0, 0]}>
                   <planeGeometry args={[2, 2.8]} />
                   <meshStandardMaterial
-                    color='#c084fc'
-                    emissive='#c48ff5'
+                    color='#f0f9ff'
+                    emissive='#bae6fd'
                     emissiveIntensity={1.5}
                     transparent
                     opacity={0.8}

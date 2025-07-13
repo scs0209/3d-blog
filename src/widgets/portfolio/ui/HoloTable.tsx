@@ -3,8 +3,8 @@ import { useGLTF, useAnimations } from '@react-three/drei';
 import * as three from 'three';
 
 const subtleGlowMaterial = new three.MeshStandardMaterial({
-  color: '#d8b4fe',
-  emissive: '#c084fc',
+  color: '#EC4899',
+  emissive: '#e672ac',
   emissiveIntensity: 1.2,
   transparent: false,
   opacity: 1.0,

@@ -21,21 +21,11 @@ const neonBlueMaterial = new three.MeshStandardMaterial({
 
 // 네온 라인 재질 (퍼플)
 const neonPurpleMaterial = new three.MeshStandardMaterial({
-  color: '#c084fc',
-  emissive: '#a855f7',
+  color: '#23a1f5',
+  emissive: '#0696e4',
   emissiveIntensity: 1.2,
   transparent: true,
   opacity: 0.9,
-});
-
-// 홀로그램 패널 재질
-const holoPanelMaterial = new three.MeshStandardMaterial({
-  color: '#f8fafc',
-  emissive: '#e2e8f0',
-  emissiveIntensity: 0.4,
-  transparent: true,
-  opacity: 0.15,
-  side: three.DoubleSide,
 });
 
 // 바닥 그리드 재질

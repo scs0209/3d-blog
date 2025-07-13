@@ -33,8 +33,8 @@ const cyberpunkMaterials = {
     roughness: 0.7,
   }),
   purpleNeonBox: new three.MeshStandardMaterial({
-    color: '#9d00ff',
-    emissive: '#9d00ff',
+    color: '#f0f9ff',
+    emissive: '#bae6fd',
     emissiveIntensity: 3.5,
     metalness: 0.1,
     roughness: 0.1,

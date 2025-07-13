@@ -221,25 +221,25 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             text='ABOUT ME'
             position={[3.4, 0, 0.5]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#ffffff'
+            color='#E5D6C4'
           />
           <HoloText
             text='CONTACT'
             position={[-1.9, 0, -3.1]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#ffffff'
+            color='#E5D6C4'
           />
-          <HoloText text='WORKS' position={[-0.3, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#ffffff' />
+          <HoloText text='WORKS' position={[-0.3, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
           <HoloText
             text='RESUME'
             position={[2.35, 0, -2.2]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#ffffff'
+            color='#E5D6C4'
           />
-          <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.1]} rotation={[-Math.PI / 2, 0, 0]} color='#ffffff' />
-          <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#ffffff' />
-          <HoloText text='HOME' position={[-3, 0, 0.2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#ffffff' />
-          <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#ffffff' />
+          <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.1]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
+          <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#E5D6C4' />
+          <HoloText text='HOME' position={[-3, 0, 0.2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#E5D6C4' />
+          <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
         </>
       )}
 
