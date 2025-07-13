@@ -157,13 +157,13 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             onPointerOut={handlePointerOut}
             animationType='touch'
           />,
-          <Computer key='computer' scale={0.5} position={[0.1, 0.6, -3.4]} />,
+          <Computer key='computer' scale={0.06} position={[0, 0.3, -3.3]} rotation={[0, Math.PI / 2, 0]} />,
           [0, 1, 2].map((index) => {
             const position: Position3D = [0, 0, -4 - index * 0.2];
             return (
               <Server
                 key={index}
-                scale={0.002}
+                scale={0.003}
                 rotation={[0, Math.PI / 2, 0]}
                 position={position}
                 onClick={() => onGroupClick('server')}
