@@ -89,8 +89,8 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     <>
       {/* 오버레이 UI: 상단좌측 타이틀/직함 */}
       <div className='absolute top-8 left-8 z-30 flex flex-col gap-1'>
-        <span className='text-pink-300 font-bold text-2xl neon-glow'>Ayaan</span>
-        <span className='text-pink-500 text-xs font-mono neon-glow'>Frontend Developer</span>
+        <span className='text-[#E5D6C4] font-bold text-2xl neon-glow'>Ayaan</span>
+        <span className='text-[#eeebe7] text-xs font-mono neon-glow'>Frontend Developer</span>
       </div>
 
       {/* 오버레이 UI: 하단좌측 퀄리티/사운드/라이트모드 */}
@@ -100,7 +100,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       </div>
 
       {/* 오버레이 UI: 하단중앙 저작권/소셜 */}
-      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-6 items-center text-pink-300 font-mono text-xs'>
+      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-6 items-center text-[#E5D6C4] font-mono text-xs'>
         <span>© 2025</span>
         <AnimatedLink href='https://github.com/yourid' target='_blank' rel='noopener noreferrer'>
           <GithubIcon className='w-4 h-4' />

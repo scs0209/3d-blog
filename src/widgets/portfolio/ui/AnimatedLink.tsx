@@ -14,8 +14,8 @@ export const AnimatedLink = ({ href, children, target, rel, className = '' }: An
       href={href}
       target={target}
       rel={rel}
-      className={`flex items-center gap-1.5 hover:text-pink-100 transition-colors relative 
-        before:absolute before:-bottom-1 before:left-0 before:w-full before:h-0.5 before:bg-pink-300 
+      className={`flex items-center gap-1.5 hover:text-[#f3efeb] transition-colors relative 
+        before:absolute before:-bottom-1 before:left-0 before:w-full before:h-0.5 before:bg-[#f3efeb] 
         before:scale-x-0 before:origin-left before:transition-transform before:duration-300 
         hover:before:scale-x-100 ${className}`}
     >
