@@ -134,11 +134,11 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       {/* HOME */}
       {showOtherModels && isShow('contactMe') && (
         <ContactMe
-          scale={0.3}
+          scale={0.4}
           rotation={[0, -Math.PI / 2, 0]}
-          position={[-4, 0, -0.1]}
+          position={[-5, 0, -0.1]}
           onClick={() => onGroupClick('contactMe')}
-          onPointerOver={handlePointerOver([-4, 0, -0.1])}
+          onPointerOver={handlePointerOver([-5, 0, -0.1])}
           onPointerOut={handlePointerOut}
           triggerAnimation={focusedGroup === 'contactMe' && cameraAnimationDone}
         />
@@ -151,19 +151,19 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             key='serverPerson'
             scale={0.2}
             rotation={[0, Math.PI, 0]}
-            position={[0, 0, -3.2]}
+            position={[0.3, 0, -3.4]}
             onClick={() => onGroupClick('server')}
             onPointerOver={handlePointerOver([0, 0, -4])}
             onPointerOut={handlePointerOut}
             animationType='touch'
           />,
-          <Computer key='computer' scale={0.06} position={[0, 0.3, -3.3]} rotation={[0, Math.PI / 2, 0]} />,
+          <Computer key='computer' scale={0.06} position={[0.3, 0.3, -3.5]} rotation={[0, Math.PI / 2, 0]} />,
           [0, 1, 2].map((index) => {
-            const position: Position3D = [0, 0, -4 - index * 0.2];
+            const position: Position3D = [0.3, 0, -4.2 - index * 0.2];
             return (
               <Server
                 key={index}
-                scale={0.003}
+                scale={0.004}
                 rotation={[0, Math.PI / 2, 0]}
                 position={position}
                 onClick={() => onGroupClick('server')}
@@ -181,7 +181,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             key='experiencePerson'
             scale={0.2}
             rotation={[0, Math.PI, 0]}
-            position={[-1, 0, 4]}
+            position={[-1, 0, 4.2]}
             onClick={() => onGroupClick('experience')}
             onPointerOver={handlePointerOver([-1, 0, 4])}
             onPointerOut={handlePointerOut}
@@ -189,7 +189,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           <ExperienceDesk
             key='experienceDesk'
             scale={0.4}
-            position={[-1, 0, 3.8]}
+            position={[-1, 0, 4]}
             onPointerOver={handlePointerOver([-1, 0, 4])}
             onPointerOut={handlePointerOut}
             onClick={() => onGroupClick('experience')}
@@ -200,15 +200,15 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         <>
           <Platform
             scale={0.1}
-            position={[-3.5, 0, 3]}
-            onPointerOver={handlePointerOver([-3.5, 0, 3])}
+            position={[-4, 0, 3.5]}
+            onPointerOver={handlePointerOver([-4, 0, 3.4])}
             onPointerOut={handlePointerOut}
           />
           <FloatMan
-            scale={0.25}
+            scale={0.2}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            position={[-3.7, 0.2, 3]}
-            onPointerOver={handlePointerOver([-3.5, 0, 3])}
+            position={[-4.1, 0.2, 3.45]}
+            onPointerOver={handlePointerOver([-4, 0, 3.4])}
             onPointerOut={handlePointerOut}
           />
         </>
@@ -228,18 +228,25 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             position={[-1.9, 0, -3.1]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
             color='#E5D6C4'
+            scale={0.8}
           />
-          <HoloText text='WORKS' position={[-0.3, 0, -2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
+          <HoloText text='WORKS' position={[-0.1, 0, -3]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
           <HoloText
             text='RESUME'
-            position={[2.35, 0, -2.2]}
+            position={[2.85, 0, -2.5]}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
             color='#E5D6C4'
           />
-          <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.1]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
+          <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.3]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
           <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#E5D6C4' />
-          <HoloText text='HOME' position={[-3, 0, 0.2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#E5D6C4' />
-          <HoloText text='PLAYGROUND' position={[-4, 0, 2.6]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
+          <HoloText
+            text='HOME'
+            position={[-4, 0, 0.3]}
+            rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+            color='#E5D6C4'
+            scale={0.8}
+          />
+          <HoloText text='PLAYGROUND' position={[-4.5, 0, 2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
         </>
       )}
 
@@ -248,14 +255,14 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           <InspectingPerson
             scale={0.2}
             rotation={[0, -Math.PI / 2, 0]}
-            position={[3.2, 0, -2.5]}
+            position={[3.7, 0, -2.9]}
             onClick={() => onGroupClick('resumeConsole')}
-            onPointerOver={handlePointerOver([3.5, 0, -2.6])}
+            onPointerOver={handlePointerOver([3, 0, -2.6])}
             onPointerOut={handlePointerOut}
           />
           <LabMachine
             scale={0.3}
-            position={[2.5, 0, -2.5]}
+            position={[3, 0, -3]}
             rotation={[0, Math.PI / 2, 0]}
             onClick={() => onGroupClick('resumeConsole')}
             onPointerOver={handlePointerOver([3, 0, -2.6])}
@@ -276,11 +283,11 @@ export const SceneRenderer = (props: SceneRendererProps) => {
 
       {showOtherModels && isShow('radar') && (
         <Antenna
-          scale={0.2}
+          scale={0.3}
           rotation={[0, Math.PI, 0]}
-          position={[-2.5, 0, -3.5]}
+          position={[-3, 0, -3.5]}
           onClick={() => onGroupClick('radar')}
-          onPointerOver={handlePointerOver([-2.5, 0, -3.5])}
+          onPointerOver={handlePointerOver([-3, 0, -3.5])}
           onPointerOut={handlePointerOut}
         />
       )}
@@ -293,7 +300,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       </EffectComposer>
 
       {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
-      {<OrbitControls />}
+      <OrbitControls />
 
       <FPSMeasurer onFpsUpdate={props.onFpsUpdate} />
     </>
