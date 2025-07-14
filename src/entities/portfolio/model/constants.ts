@@ -1,6 +1,6 @@
 import type { CameraTarget, Position3D } from './types';
 
-export const INITIAL_CAMERA_POS: Position3D = [2, 5, 2];
+export const INITIAL_CAMERA_POS: Position3D = [2, 5, 2.5];
 export const INITIAL_CAMERA_LOOK: Position3D = [0, 0, 0];
 
 export const CAMERA_ANIMATION_DURATION = 3;
