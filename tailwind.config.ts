@@ -61,6 +61,26 @@ export default {
 					border: "hsl(var(--sidebar-border))",
 					ring: "hsl(var(--sidebar-ring))",
 				},
+				// Custom cream/neon color palette based on #E5D6C4
+				cream: {
+					50: '#faf8f6',
+					100: '#f5f1ed',
+					200: '#ebe3da',
+					300: '#e5d6c4', // Base color
+					400: '#d9c4a8',
+					500: '#cdb08c',
+					600: '#b8966f',
+					700: '#9a7a57',
+					800: '#7d6247',
+					900: '#645039',
+				},
+				neon: {
+					cream: '#E5D6C4',
+					'cream-light': '#F0E6D9',
+					'cream-dark': '#DAC5AF',
+					'cream-glow': 'rgba(229, 214, 196, 0.8)',
+					'cream-shadow': 'rgba(229, 214, 196, 0.4)',
+				},
 			},
 			borderRadius: {
 				lg: "var(--radius)",
@@ -70,6 +90,9 @@ export default {
 			animation: {
 				"meteor-effect": "meteor 5s linear infinite",
 				"gradient-border": "gradientBorder 3s linear infinite",
+			},
+			backgroundImage: {
+				'warm-sunset': 'linear-gradient(90deg, #f7e6d4, #e2b8a1, #d89e88, #c77c6b, #a65d54)',
 			},
 			keyframes: {
 				meteor: {
