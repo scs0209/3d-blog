@@ -59,12 +59,12 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     secondaryLookAt: [3.2, 0, -0.8],
   },
   radar: {
-    offset: [1, 2, 1],
-    lookAt: [-2.5, 0, -3.5],
-    pulse: [-2.5, 0, -3.5],
-    modelPosition: [-2.5, 0, -3.5],
-    secondaryOffset: [0, 2, 2],
-    secondaryLookAt: [-3.5, 0, -2.5],
+    offset: [1.6, 2.4, 1.6], // lookAt에서 1.3배 거리만큼 떨어진 위치
+    lookAt: [-3, 0, -3.5],
+    pulse: [-3, 0, -3.5],
+    modelPosition: [-3, 0, -3.5],
+    secondaryOffset: [1.6 - 1.2, 2.4, 1.6 + 1.2], // [0.4, 2.4, 2.8]
+    secondaryLookAt: [-3 - 1.2, 0, -3.5 + 1.2], // [-4.2, 0, -2.3]
   },
   skill: {
     // 모델의 절대 위치
