@@ -40,52 +40,80 @@ export const CyberpunkContactForm = ({
           animate={isClosing ? { y: 80, opacity: 0, scale: 0.98 } : { y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 80, opacity: 0, scale: 0.98 }}
           transition={{ type: 'spring', stiffness: 80, damping: 18 }}
-          className={`max-w-md w-full p-8 rounded-xl border-2 border-violet-500/80 bg-black/40 shadow-[0_0_32px_4px_rgba(139,92,246,0.5)] relative ${className || ''}`}
+          className={`relative overflow-visible max-w-md w-full p-8 rounded-2xl border border-white/60 bg-white/10 backdrop-blur-md shadow ${className || ''}`}
           style={style}
         >
+          {/* Cyberpunk SVG Frame */}
+          <svg
+            className='absolute inset-0 w-full h-full pointer-events-none z-0'
+            viewBox='0 0 100 100'
+            preserveAspectRatio='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <title>Cyberpunk frame</title>
+            {/* 네 변 border */}
+            <line x1='8' y1='0' x2='92' y2='0' stroke='white' strokeWidth='1.5' />
+            <line x1='100' y1='8' x2='100' y2='92' stroke='white' strokeWidth='1.5' />
+            <line x1='92' y1='100' x2='8' y2='100' stroke='white' strokeWidth='1.5' />
+            <line x1='0' y1='92' x2='0' y2='8' stroke='white' strokeWidth='1.5' />
+            {/* 좌상단 ┏ */}
+            <polyline points='0,16 0,0 16,0' stroke='white' strokeWidth='3.5' fill='none' />
+            {/* 우상단 ┓ */}
+            <polyline points='84,0 100,0 100,16' stroke='white' strokeWidth='3.5' fill='none' />
+            {/* 우하단 ┛ */}
+            <polyline points='100,84 100,100 84,100' stroke='white' strokeWidth='3.5' fill='none' />
+            {/* 좌하단 ┗ */}
+            <polyline points='16,100 0,100 0,84' stroke='white' strokeWidth='3.5' fill='none' />
+          </svg>
           <form className='flex flex-col gap-6 relative z-10'>
             <div className='flex gap-4'>
               <input
                 type='text'
                 name='name'
-                placeholder='Full name'
+                placeholder='이름'
                 value={form.name}
                 onChange={handleChange}
-                className='w-1/2 bg-transparent border border-violet-400/60 rounded-md px-4 py-2 text-white placeholder:text-violet-300 focus:outline-none focus:ring-2 focus:ring-violet-500 transition'
+                className='w-1/2 bg-white/10 border border-white/60 rounded-lg px-4 py-2 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white transition backdrop-blur-md'
                 autoComplete='off'
+                aria-label='이름'
+                tabIndex={0}
               />
               <input
                 type='email'
                 name='email'
-                placeholder='Email'
+                placeholder='이메일'
                 value={form.email}
                 onChange={handleChange}
-                className='w-1/2 bg-transparent border border-violet-400/60 rounded-md px-4 py-2 text-white placeholder:text-violet-300 focus:outline-none focus:ring-2 focus:ring-violet-500 transition'
+                className='w-1/2 bg-white/10 border border-white/60 rounded-lg px-4 py-2 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white transition backdrop-blur-md'
                 autoComplete='off'
+                aria-label='이메일'
+                tabIndex={0}
               />
             </div>
             <textarea
               name='message'
-              placeholder='Message'
+              placeholder='메시지'
               value={form.message}
               onChange={handleChange}
               rows={5}
-              className='bg-transparent border border-violet-400/60 rounded-md px-4 py-2 text-white placeholder:text-violet-300 focus:outline-none focus:ring-2 focus:ring-violet-500 transition resize-none'
+              className='bg-white/10 border border-white/60 rounded-lg px-4 py-2 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white transition resize-none backdrop-blur-md'
+              aria-label='메시지'
+              tabIndex={0}
             />
-            <div className='text-xs text-violet-300 flex items-center gap-1'>
-              <span className='text-yellow-400'>⚡</span>
-              NOTE: 문제가 있으면 <span className='underline underline-offset-2'>your@email.com</span> 으로 연락!
+            <div className='text-xs text-white flex items-center gap-1'>
+              <span className='text-white'>💬</span>
+              문의가 잘 안되면 <span className='underline underline-offset-2 text-white'>your@email.com</span> 으로
+              연락!
             </div>
             <button
               type='submit'
-              className='mt-2 py-3 rounded-md bg-violet-500/90 text-white font-bold text-lg tracking-widest shadow-[0_0_16px_2px_rgba(139,92,246,0.7)] hover:bg-violet-400/90 hover:shadow-[0_0_32px_4px_rgba(139,92,246,0.9)] transition'
+              className='mt-2 py-3 rounded-lg bg-white/10 text-white font-bold text-lg tracking-widest shadow hover:bg-white/20 hover:text-slate-900 hover:shadow-xl transition focus:outline-none focus:ring-2 focus:ring-white'
+              aria-label='메시지 보내기'
+              tabIndex={0}
             >
-              Send
+              보내기
             </button>
           </form>
-          {/* 네온 각진 모서리 장식 */}
-          <span className='absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-violet-400 rounded-tl-xl shadow-[0_0_8px_2px_rgba(139,92,246,0.7)]' />
-          <span className='absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-violet-400 rounded-br-xl shadow-[0_0_8px_2px_rgba(139,92,246,0.7)]' />
         </motion.div>
       )}
     </AnimatePresence>
