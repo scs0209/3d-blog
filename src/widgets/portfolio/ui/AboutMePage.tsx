@@ -28,7 +28,6 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
   const slideDuration = 0.5;
   const dropDuration = 0.7;
   const borderDelay = sectionCount * 0.5 + 0.2;
-  const dropDelay = borderDelay + slideDuration;
 
   useEffect(() => {
     // 섹션 border 애니메이션이 모두 끝난 후 컨텐츠 border 애니메이션 시작
@@ -86,16 +85,18 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
           {aboutMeData.sections.map((section, i) => (
             <div
               key={section.key}
-              className='relative min-w-[180px] min-h-[70px] px-6 py-5 bg-white/5 text-white font-bold tracking-widest flex flex-col items-start justify-end mr-6 shadow-[0_0_12px_#22d3ee,0_0_4px_#67e8f9] border border-cyan-400/80'
+              className='relative min-w-[180px] min-h-[70px] px-6 py-5 bg-white/5 text-white font-bold tracking-widest flex flex-col items-start justify-end mr-6 shadow-[0_0_12px_theme(colors.neon.cream),0_0_4px_theme(colors.neon.cream)] border border-neon-cream/80'
               style={{
                 clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px)',
-                boxShadow: '0 0 12px #22d3ee, 0 0 4px #67e8f9',
+                boxShadow: '0 0 12px theme(colors.neon.cream), 0 0 4px theme(colors.neon.cream)',
               }}
             >
-              <span className='text-xs font-mono text-cyan-300 drop-shadow-[0_0_6px_#67e8f9] mb-2'>SEC-{i}</span>
+              <span className='text-xs font-mono text-cyan-300 drop-shadow-[0_0_6px_theme(colors.neon.cream)] mb-2'>
+                SEC-{i}
+              </span>
               {/* 하단 강조선 */}
               <motion.div
-                className='absolute left-0 bottom-0 h-[4px] bg-cyan-400 rounded shadow-[0_0_8px_#67e8f9]'
+                className='absolute left-0 bottom-0 h-[4px] bg-neon-cream rounded shadow-[0_0_8px_theme(colors.neon.cream)]'
                 initial={{ width: 0 }}
                 animate={{ width: '100%' }}
                 transition={{ duration: 0.28, delay: i * 0.5 }}
@@ -103,7 +104,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
               />
               {/* 오른쪽 border */}
               <motion.div
-                className='absolute right-0 bottom-0 w-[2px] bg-cyan-400'
+                className='absolute right-0 bottom-0 w-[2px] bg-neon-cream'
                 initial={{ height: 0 }}
                 animate={{ height: '100%' }}
                 transition={{ duration: 0.18, delay: i * 0.5 + 0.28 }}
@@ -111,7 +112,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
               />
               {/* 상단 border */}
               <motion.div
-                className='absolute right-0 top-0 h-[2px] bg-cyan-400'
+                className='absolute right-0 top-0 h-[2px] bg-neon-cream'
                 initial={{ width: 0 }}
                 animate={{ width: '100%' }}
                 transition={{ duration: 0.18, delay: i * 0.5 + 0.46 }}
@@ -119,7 +120,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
               />
               {/* 왼쪽 border */}
               <motion.div
-                className='absolute left-0 top-0 w-[2px] bg-cyan-400'
+                className='absolute left-0 top-0 w-[2px] bg-neon-cream'
                 initial={{ height: 0 }}
                 animate={{ height: '100%' }}
                 transition={{ duration: 0.18, delay: i * 0.5 + 0.64 }}
@@ -130,9 +131,9 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.5 + 0.82, duration: 0.22 }}
-                className='text-cyan-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_#67e8f9]'
+                className='text-cyan-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_theme(colors.neon.cream)]'
                 style={{
-                  textShadow: '0 0 8px #67e8f9, 0 0 2px #fff',
+                  textShadow: '0 0 8px theme(colors.neon.cream), 0 0 2px #fff',
                   letterSpacing: '0.15em',
                 }}
               >
@@ -154,7 +155,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                   transition={{ duration: slideDuration, delay: borderDelay, ease: 'easeInOut' }}
                   onAnimationComplete={() => setSlideDone(true)}
                 >
-                  <div className='h-[3px] bg-cyan-400 shadow-[0_0_8px_#67e8f9] rounded-t w-full' />
+                  <div className='h-[3px] bg-neon-cream shadow-[0_0_8px_theme(colors.neon.cream)] rounded-t w-full' />
                 </motion.div>
               )}
               {(slideDone || isClosing) && (
@@ -167,7 +168,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                     minHeight: 0,
                     boxSizing: 'border-box',
                     background: 'rgba(0,0,0,0.25)',
-                    borderBottom: '2px solid #22d3ee',
+                    borderBottom: '2px solid theme(colors.neon.cream)',
                   }}
                   onAnimationComplete={() => {
                     if (isClosing) {
@@ -201,7 +202,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                   animate={{ width: 0 }}
                   transition={{ duration: slideDuration, delay: dropDuration, ease: 'easeInOut' }}
                 >
-                  <div className='h-[3px] bg-cyan-400 shadow-[0_0_8px_#67e8f9] rounded-t w-full' />
+                  <div className='h-[3px] bg-neon-cream shadow-[0_0_8px_theme(colors.neon.cream)] rounded-t w-full' />
                 </motion.div>
               )}
             </>
