@@ -1,0 +1,445 @@
+name: AI PR 자동 작성
+on:
+  pull_request:
+    types: [opened, synchronize]
+    
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  ai-pr-writer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: 시스템 정보 확인
+        run: |
+          echo "=== 시스템 정보 ==="
+          uname -a
+          free -h
+          df -h
+          
+      - name: Ollama 설치 및 설정
+        run: |
+          echo "Ollama 설치 중..."
+          curl -fsSL https://ollama.ai/install.sh | sh
+          
+          echo "Ollama 서버 시작..."
+          ollama serve &
+          
+          # 서버 시작 대기
+          echo "서버 시작 대기 중..."
+          for i in {1..30}; do
+            if curl -s http://localhost:11434/api/version >/dev/null 2>&1; then
+              echo "Ollama 서버가 준비되었습니다."
+              break
+            fi
+            echo "대기 중... ($i/30)"
+            sleep 2
+          done
+          
+          # 연결 확인
+          echo "Ollama 연결 테스트..."
+          curl -s http://localhost:11434/api/version || exit 1
+          
+          # 경량 모델 사용
+          echo "모델 다운로드 중..."
+          ollama pull qwen2.5-coder:1.5b
+          
+      - name: 변경사항 분석 및 카테고리 분류
+        run: |
+          echo "변경사항 분석 시작..."
+          git fetch origin ${{ github.base_ref }}
+          
+          # 모든 변경된 파일 찾기
+          all_changed_files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala|json|yml|yaml|md|sql|css|html|xml|sh)$' || true)
+          
+          echo "변경된 파일 목록:"
+          echo "$all_changed_files"
+          
+          if [ -n "$all_changed_files" ]; then
+            > file_changes.txt
+            > code_changes.txt
+            > config_changes.txt
+            > doc_changes.txt
+            
+            # 파일별 변경사항 분석
+            for file in $all_changed_files; do
+              if [ -f "$file" ]; then
+                echo "=== $file 분석 ===" >> file_changes.txt
+                
+                # 파일 타입 분류
+                case "$file" in
+                  *.py|*.js|*.ts|*.jsx|*.tsx|*.java|*.cpp|*.c|*.h|*.php|*.rb|*.go|*.rs|*.kt|*.swift|*.dart|*.scala)
+                    echo "코드 파일: $file" >> code_changes.txt
+                    category="code"
+                    ;;
+                  *.json|*.yml|*.yaml|*.xml|*.sh)
+                    echo "설정 파일: $file" >> config_changes.txt
+                    category="config"
+                    ;;
+                  *.md|*.txt|*.rst)
+                    echo "문서 파일: $file" >> doc_changes.txt
+                    category="doc"
+                    ;;
+                  *)
+                    echo "기타 파일: $file" >> file_changes.txt
+                    category="other"
+                    ;;
+                esac
+                
+                # 변경사항 추출 (파일 크기에 따라 조정)
+                file_size=$(wc -l < "$file" 2>/dev/null || echo "0")
+                
+                if [ "$file_size" -gt 500 ]; then
+                  # 대용량 파일: 핵심 변경사항만
+                  diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -100)
+                  echo "대용량 파일 (${file_size}줄) - 핵심 변경사항:" >> file_changes.txt
+                else
+                  # 일반 파일: 전체 변경사항
+                  diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -200)
+                  echo "파일 크기: ${file_size}줄" >> file_changes.txt
+                fi
+                
+                echo "$diff_content" >> file_changes.txt
+                echo "" >> file_changes.txt
+                echo "---" >> file_changes.txt
+                echo "" >> file_changes.txt
+              else
+                echo "삭제된 파일: $file" >> file_changes.txt
+              fi
+            done
+            
+            # 통계 정보 생성
+            total_files=$(echo "$all_changed_files" | wc -l)
+            code_files=$(grep -c "코드 파일" code_changes.txt 2>/dev/null || echo "0")
+            config_files=$(grep -c "설정 파일" config_changes.txt 2>/dev/null || echo "0")
+            doc_files=$(grep -c "문서 파일" doc_changes.txt 2>/dev/null || echo "0")
+            
+            echo "TOTAL_FILES=$total_files" >> $GITHUB_ENV
+            echo "CODE_FILES=$code_files" >> $GITHUB_ENV
+            echo "CONFIG_FILES=$config_files" >> $GITHUB_ENV
+            echo "DOC_FILES=$doc_files" >> $GITHUB_ENV
+            
+            echo "=== 변경사항 통계 ==="
+            echo "총 파일: $total_files"
+            echo "코드 파일: $code_files"
+            echo "설정 파일: $config_files"
+            echo "문서 파일: $doc_files"
+            
+          else
+            echo "변경된 파일이 없습니다."
+            echo "TOTAL_FILES=0" >> $GITHUB_ENV
+          fi
+          
+      - name: AI를 통한 PR 내용 생성
+        run: |
+          if [ -f "file_changes.txt" ] && [ -s "file_changes.txt" ]; then
+            echo "AI PR 내용 생성 시작..."
+            
+            # 변경사항 읽기
+            changes_content=$(cat file_changes.txt)
+            
+            # PR 제목 생성
+            title_prompt="다음 코드 변경사항을 분석하여 적절한 PR 제목을 한국어로 생성해주세요. 
+            
+          변경사항:
+              $changes_content
+
+          다음 형식 중 하나를 선택하여 간결하고 명확한 제목을 만들어주세요:
+          - feat: 새로운 기능 추가
+          - fix: 버그 수정
+          - docs: 문서 수정
+          - style: 코드 스타일 변경
+          - refactor: 코드 리팩토링
+          - test: 테스트 추가/수정
+          - chore: 빌드 관련 변경사항
+
+          예시: 'feat: 사용자 인증 기능 추가' 또는 'fix: 데이터 검증 로직 오류 수정'
+
+          간결한 제목만 응답해주세요 (50자 이내):"
+
+            echo "PR 제목 생성 중..."
+            pr_title=$(echo "$title_prompt" | timeout 60s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            
+            if [ -z "$pr_title" ]; then
+              pr_title="코드 변경사항 업데이트"
+            fi
+            
+            echo "생성된 제목: $pr_title"
+            echo "$pr_title" > pr_title.txt
+            
+            # PR 본문 생성
+            body_prompt="다음 코드 변경사항을 분석하여 상세한 PR 설명을 한국어로 작성해주세요.
+
+          변경사항:
+          $changes_content
+
+          다음 형식으로 작성해주세요:
+
+          ## 📝 작업 내용
+          - 이번 PR에서 수행한 주요 작업들을 구체적으로 설명
+
+          ## 🔄 주요 변경사항
+          - 추가된 기능이나 수정된 내용을 파일별로 정리
+          - 중요한 코드 변경사항을 하이라이트
+
+          ## 🎯 목적 및 배경
+          - 이 작업이 필요한 이유와 배경 설명
+          - 해결하려는 문제나 개선하려는 점
+
+          ## 🧪 테스트 방법
+          - 변경사항을 확인할 수 있는 테스트 방법 제시
+          - 검증 포인트나 확인사항
+
+          ## 📋 체크리스트
+          - [ ] 코드 리뷰 완료
+          - [ ] 테스트 통과 확인
+          - [ ] 문서 업데이트 (필요시)
+          - [ ] 성능 영향 검토
+
+          ## 🔗 관련 이슈
+          - 관련된 이슈 번호나 참조사항 (있는 경우)
+
+          구체적이고 실용적인 내용으로 작성해주세요. 개발자가 이해하기 쉽도록 기술적 세부사항도 포함해주세요."
+
+                      echo "PR 본문 생성 중..."
+                      pr_body=$(echo "$body_prompt" | timeout 180s ollama run qwen2.5-coder:1.5b 2>/dev/null)
+                      
+                      if [ -z "$pr_body" ]; then
+                        pr_body="## 📝 작업 내용
+          이번 PR에서는 다음과 같은 변경사항이 있습니다:
+
+          - 총 ${TOTAL_FILES:-0}개 파일 수정
+          - 코드 파일: ${CODE_FILES:-0}개
+          - 설정 파일: ${CONFIG_FILES:-0}개  
+          - 문서 파일: ${DOC_FILES:-0}개
+
+          ## 🔄 주요 변경사항
+          변경된 파일들을 검토하여 세부사항을 확인해주세요.
+
+          ## 🧪 테스트 방법
+          변경사항에 대한 적절한 테스트를 수행해주세요.
+
+          ## 📋 체크리스트
+          - [ ] 코드 리뷰 완료
+          - [ ] 테스트 통과 확인
+          - [ ] 문서 업데이트 (필요시)"
+                      fi
+                      
+                      echo "PR 본문 생성 완료"
+                      echo "$pr_body" > pr_body.txt
+                      
+                      # 변경사항 요약 생성
+                      summary_prompt="다음 변경사항을 간단히 요약해주세요 (1-2줄로):
+
+          $changes_content
+
+          핵심 변경사항만 간결하게 한국어로 설명해주세요:"
+
+            echo "변경사항 요약 생성 중..."
+            change_summary=$(echo "$summary_prompt" | timeout 60s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            
+            if [ -z "$change_summary" ]; then
+              change_summary="코드 변경사항 업데이트"
+            fi
+            
+            echo "생성된 요약: $change_summary"
+            echo "$change_summary" > change_summary.txt
+            
+          else
+            echo "변경사항이 없어 기본 PR 내용을 생성합니다."
+            echo "문서 또는 설정 파일 업데이트" > pr_title.txt
+            echo "## 📝 작업 내용
+          이번 PR에서는 프로젝트 파일들이 업데이트되었습니다.
+
+          ## 🔄 주요 변경사항
+          세부 변경사항을 확인해주세요.
+
+          ## 📋 체크리스트
+          - [ ] 변경사항 검토 완료
+          - [ ] 테스트 확인" > pr_body.txt
+                      echo "일반적인 프로젝트 파일 업데이트" > change_summary.txt
+                    fi
+                    
+                - name: PR 제목 및 본문 업데이트
+                  uses: actions/github-script@v7
+                  with:
+                    github-token: ${{ secrets.GITHUB_TOKEN }}
+                    script: |
+                      const fs = require('fs');
+                      
+                      try {
+                        // 생성된 PR 정보 읽기
+                        const prTitle = fs.readFileSync('pr_title.txt', 'utf8').trim();
+                        const prBody = fs.readFileSync('pr_body.txt', 'utf8').trim();
+                        const changeSummary = fs.readFileSync('change_summary.txt', 'utf8').trim();
+                        
+                        const prNumber = context.payload.pull_request.number;
+                        const currentPr = context.payload.pull_request;
+                        
+                        // 환경변수에서 통계 정보 가져오기
+                        const totalFiles = process.env.TOTAL_FILES || '0';
+                        const codeFiles = process.env.CODE_FILES || '0';
+                        const configFiles = process.env.CONFIG_FILES || '0';
+                        const docFiles = process.env.DOC_FILES || '0';
+                        
+                        // 자동 생성 표시 추가
+                        const autoGeneratedNote = `
+
+          ---
+
+          <details>
+          <summary>🤖 AI 자동 생성 정보</summary>
+
+          **생성 시간**: ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}
+          **분석된 파일**: ${totalFiles}개 (코드: ${codeFiles}, 설정: ${configFiles}, 문서: ${docFiles})
+          **AI 모델**: qwen2.5-coder:1.5b
+          **변경사항 요약**: ${changeSummary}
+
+          > ⚠️ 이 PR 내용은 AI가 자동으로 생성했습니다. 
+          > 내용을 검토하고 필요에 따라 수정해주세요.
+
+          </details>`;
+              
+              const finalPrBody = prBody + autoGeneratedNote;
+              
+              // PR 제목이 현재 제목과 다르고, 기본 제목이 아닌 경우에만 업데이트
+              const shouldUpdateTitle = prTitle && 
+                prTitle !== currentPr.title && 
+                !currentPr.title.startsWith('feat:') && 
+                !currentPr.title.startsWith('fix:') && 
+                !currentPr.title.startsWith('docs:') && 
+                !currentPr.title.startsWith('style:') && 
+                !currentPr.title.startsWith('refactor:') && 
+                !currentPr.title.startsWith('test:') && 
+                !currentPr.title.startsWith('chore:');
+              
+              // PR 본문이 비어있거나 기본 템플릿인 경우에만 업데이트
+              const shouldUpdateBody = !currentPr.body || 
+                currentPr.body.trim() === '' || 
+                currentPr.body.includes('<!-- PR 템플릿 -->');
+              
+              console.log('PR 업데이트 계획:');
+              console.log('- 제목 업데이트:', shouldUpdateTitle ? '예' : '아니오');
+              console.log('- 본문 업데이트:', shouldUpdateBody ? '예' : '아니오');
+              console.log('- 생성된 제목:', prTitle);
+              console.log('- 현재 제목:', currentPr.title);
+              
+              // PR 업데이트 실행
+              if (shouldUpdateTitle || shouldUpdateBody) {
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  title: shouldUpdateTitle ? prTitle : currentPr.title,
+                  body: shouldUpdateBody ? finalPrBody : currentPr.body
+                });
+                
+                console.log('✅ PR 업데이트 완료');
+                
+                // 업데이트 결과 코멘트 추가
+                const updateComment = `## 🤖 AI PR 자동 작성 완료
+
+          **업데이트 내용:**
+          ${shouldUpdateTitle ? `- ✅ 제목 자동 생성: "${prTitle}"` : '- ⏭️ 제목 유지 (기존 제목 보존)'}
+          ${shouldUpdateBody ? '- ✅ 본문 자동 생성 완료' : '- ⏭️ 본문 유지 (기존 내용 보존)'}
+
+          **분석 결과:**
+          - 📁 총 변경 파일: ${totalFiles}개
+          - 💻 코드 파일: ${codeFiles}개
+          - ⚙️ 설정 파일: ${configFiles}개
+          - 📚 문서 파일: ${docFiles}개
+
+          **핵심 변경사항:**
+          ${changeSummary}
+
+          > 💡 **참고**: PR 제목과 본문이 자동으로 생성되었습니다. 필요에 따라 수정해주세요.
+
+          ---
+          *Generated by AI PR Auto Writer • ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*`;
+
+                await github.rest.issues.createComment({
+                  issue_number: prNumber,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: updateComment
+                });
+                
+              } else {
+                console.log('ℹ️ 조건에 맞지 않아 PR을 업데이트하지 않았습니다.');
+                
+                // 업데이트하지 않은 이유 코멘트
+                const skipComment = `## 🤖 AI PR 자동 작성 결과
+
+          **처리 결과:** ⏭️ PR 업데이트 건너뜀
+
+          **건너뛴 이유:**
+          ${!shouldUpdateTitle ? '- 제목: 이미 적절한 제목이 설정되어 있습니다' : ''}
+          ${!shouldUpdateBody ? '- 본문: 이미 내용이 작성되어 있습니다' : ''}
+
+          **생성된 제안사항:**
+          - **제목 제안**: ${prTitle}
+          - **변경사항 요약**: ${changeSummary}
+
+          > 💡 **참고**: 필요하다면 위 제안사항을 참고하여 PR 내용을 수정해주세요.
+
+          ---
+          *Generated by AI PR Auto Writer • ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*`;
+
+                await github.rest.issues.createComment({
+                  issue_number: prNumber,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: skipComment
+                });
+              }
+              
+            } catch (error) {
+              console.error('PR 업데이트 실패:', error.message);
+              core.setFailed(`PR 업데이트에 실패했습니다: ${error.message}`);
+              
+              // 오류 발생 시 코멘트 작성
+              const errorComment = `## 🤖 AI PR 자동 작성 오류
+
+          **오류 내용:** ${error.message}
+
+          PR 자동 작성 중 오류가 발생했습니다. 수동으로 PR 내용을 작성해주세요.
+
+          ---
+          *Generated by AI PR Auto Writer • ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*`;
+
+              try {
+                await github.rest.issues.createComment({
+                  issue_number: context.payload.pull_request.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: errorComment
+                });
+              } catch (commentError) {
+                console.error('오류 코멘트 작성 실패:', commentError.message);
+              }
+            }
+            
+      - name: 처리 결과 분석
+        run: |
+          echo "=== AI PR 자동 작성 완료 ==="
+          echo "- 총 변경 파일: ${TOTAL_FILES:-0}개"
+          echo "- 코드 파일: ${CODE_FILES:-0}개"
+          echo "- 설정 파일: ${CONFIG_FILES:-0}개"
+          echo "- 문서 파일: ${DOC_FILES:-0}개"
+          
+          if [ -f "pr_title.txt" ]; then
+            echo "- 생성된 제목: $(cat pr_title.txt)"
+          fi
+          
+          if [ -f "change_summary.txt" ]; then
+            echo "- 변경사항 요약: $(cat change_summary.txt)"
+          fi
+          
+          echo "=== 처리 완료 ==="
