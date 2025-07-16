@@ -121,10 +121,11 @@ jobs:
             config_files=$(grep -c "설정 파일" config_changes.txt 2>/dev/null || echo "0")
             doc_files=$(grep -c "문서 파일" doc_changes.txt 2>/dev/null || echo "0")
             
-            echo "TOTAL_FILES=$total_files" >> $GITHUB_ENV
-            echo "CODE_FILES=$code_files" >> $GITHUB_ENV
-            echo "CONFIG_FILES=$config_files" >> $GITHUB_ENV
-            echo "DOC_FILES=$doc_files" >> $GITHUB_ENV
+            # 환경변수 설정 (빈 값 방지)
+            echo "TOTAL_FILES=${total_files:-0}" >> $GITHUB_ENV
+            echo "CODE_FILES=${code_files:-0}" >> $GITHUB_ENV
+            echo "CONFIG_FILES=${config_files:-0}" >> $GITHUB_ENV
+            echo "DOC_FILES=${doc_files:-0}" >> $GITHUB_ENV
             
             echo "=== 변경사항 통계 ==="
             echo "총 파일: $total_files"
@@ -135,6 +136,9 @@ jobs:
           else
             echo "변경된 파일이 없습니다."
             echo "TOTAL_FILES=0" >> $GITHUB_ENV
+            echo "CODE_FILES=0" >> $GITHUB_ENV
+            echo "CONFIG_FILES=0" >> $GITHUB_ENV
+            echo "DOC_FILES=0" >> $GITHUB_ENV
           fi
           
       - name: AI를 통한 PR 내용 생성
