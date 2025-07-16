@@ -206,9 +206,10 @@ export const CameraController = (props: CameraControllerProps) => {
               focusedGroup === 'radar' ||
               focusedGroup === 'contactMe' ||
               focusedGroup === 'resumeConsole' ||
-              focusedGroup === 'skill'
+              focusedGroup === 'skill' ||
+              focusedGroup === 'server'
             ) {
-              // Contact, Resume, Skill 모델의 보조 애니메이션 트리거
+              // Contact, Resume, Skill, Server 모델의 보조 애니메이션 트리거
               console.log(`${focusedGroup}: ${focusedGroup} 보조 애니메이션 시작`);
               setSecondaryAnimation(true);
               const newPos: Position3D = [

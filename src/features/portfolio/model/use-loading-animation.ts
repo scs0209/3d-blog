@@ -39,7 +39,10 @@ export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
               setTimeout(() => {
                 console.log('포트폴리오 갤러리 표시!');
                 setShowPortfolioOverlay(true);
-                setShowWorksLoading(false);
+                // LoadingOverlay가 전체 화면 확장 애니메이션을 완료한 후에 사라지도록 추가 지연
+                setTimeout(() => {
+                  setShowWorksLoading(false);
+                }, 1500); // 전체 화면 확장 애니메이션 완료 후 추가 지연
               }, 1000); // 전체 화면 확장 애니메이션 시간
             }, 300);
             return 100;
