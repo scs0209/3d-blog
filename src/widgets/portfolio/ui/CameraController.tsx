@@ -111,7 +111,6 @@ export const CameraController = (props: CameraControllerProps) => {
     secondaryAnimation,
     hasClickedBack,
     setShowWorksLoading,
-    setShowCards,
   });
 
   // Experience 모델 클릭 시 카메라 애니메이션 완료 후 처리

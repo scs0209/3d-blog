@@ -34,7 +34,7 @@ type SceneRendererProps = {
   onGroupClick: (group: FocusedGroup) => void;
   onPointerOver: (position: Position3D) => void;
   onPointerOut: () => void;
-  onFpsUpdate: (fps: number) => void;
+  // onFpsUpdate prop 제거
   // 초기 애니메이션 props 추가
   holoTableScale?: number;
   holoTablePosition?: [number, number, number];
@@ -302,7 +302,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
       <OrbitControls />
 
-      <FPSMeasurer onFpsUpdate={props.onFpsUpdate} />
+      <FPSMeasurer />
     </>
   );
 };
