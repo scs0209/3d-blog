@@ -23,6 +23,7 @@ export * from './CameraController';
 export * from './HoverCameraController';
 export * from './FPSDisplay';
 export * from './FPSMeasurer';
+export * from './FPSContext';
 export * from './AnimatedLink';
 export * from './SceneRenderer';
 export * from './OverlayManager';
