@@ -148,7 +148,7 @@ jobs:
             changes_content=$(cat file_changes.txt)
             
             # PR 제목 생성
-            title_prompt="다음 코드 변경사항을 분석하여 적절한 PR 제목을 한국어로 생성해주세요. 
+            title_prompt="다음 코드 변경사항을 분석하여 간결한 PR 제목을 한국어로 생성해주세요. 
             
           변경사항:
               $changes_content
@@ -162,12 +162,10 @@ jobs:
           - test: 테스트 추가/수정
           - chore: 빌드 관련 변경사항
 
-          예시: 'feat: 사용자 인증 기능 추가' 또는 'fix: 데이터 검증 로직 오류 수정'
-
           간결한 제목만 응답해주세요 (50자 이내):"
 
             echo "PR 제목 생성 중..."
-            pr_title=$(echo "$title_prompt" | timeout 60s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            pr_title=$(echo "$title_prompt" | timeout 120s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
             
             if [ -z "$pr_title" ]; then
               pr_title="코드 변경사항 업데이트"
@@ -176,76 +174,51 @@ jobs:
             echo "생성된 제목: $pr_title"
             echo "$pr_title" > pr_title.txt
             
-            # PR 본문 생성
-            body_prompt="다음 코드 변경사항을 분석하여 상세한 PR 설명을 한국어로 작성해주세요.
+            # PR 본문 생성 (간소화)
+            body_prompt="다음 코드 변경사항을 분석하여 간단한 PR 설명을 한국어로 작성해주세요.
 
           변경사항:
           $changes_content
 
-          다음 형식으로 작성해주세요:
+          다음 형식으로 간단히 작성해주세요:
 
           ## 📝 작업 내용
-          - 이번 PR에서 수행한 주요 작업들을 구체적으로 설명
+          - 이번 PR에서 수행한 주요 작업들
 
           ## 🔄 주요 변경사항
-          - 추가된 기능이나 수정된 내용을 파일별로 정리
-          - 중요한 코드 변경사항을 하이라이트
-
-          ## 🎯 목적 및 배경
-          - 이 작업이 필요한 이유와 배경 설명
-          - 해결하려는 문제나 개선하려는 점
+          - 추가된 기능이나 수정된 내용
 
           ## 🧪 테스트 방법
-          - 변경사항을 확인할 수 있는 테스트 방법 제시
-          - 검증 포인트나 확인사항
+          - 변경사항 확인 방법
 
-          ## 📋 체크리스트
-          - [ ] 코드 리뷰 완료
-          - [ ] 테스트 통과 확인
-          - [ ] 문서 업데이트 (필요시)
-          - [ ] 성능 영향 검토
+          간결하고 실용적인 내용으로 작성해주세요."
 
-          ## 🔗 관련 이슈
-          - 관련된 이슈 번호나 참조사항 (있는 경우)
-
-          구체적이고 실용적인 내용으로 작성해주세요. 개발자가 이해하기 쉽도록 기술적 세부사항도 포함해주세요."
-
-                      echo "PR 본문 생성 중..."
-                      pr_body=$(echo "$body_prompt" | timeout 180s ollama run qwen2.5-coder:1.5b 2>/dev/null)
-                      
-                      if [ -z "$pr_body" ]; then
-                        pr_body="## 📝 작업 내용
-          이번 PR에서는 다음과 같은 변경사항이 있습니다:
-
-          - 총 ${TOTAL_FILES:-0}개 파일 수정
-          - 코드 파일: ${CODE_FILES:-0}개
-          - 설정 파일: ${CONFIG_FILES:-0}개  
-          - 문서 파일: ${DOC_FILES:-0}개
+            echo "PR 본문 생성 중..."
+            pr_body=$(echo "$body_prompt" | timeout 300s ollama run qwen2.5-coder:1.5b 2>/dev/null)
+            
+            if [ -z "$pr_body" ]; then
+              pr_body="## 📝 작업 내용
+          이번 PR에서는 다음과 같은 변경사항이 있습니다.
 
           ## 🔄 주요 변경사항
           변경된 파일들을 검토하여 세부사항을 확인해주세요.
 
           ## 🧪 테스트 방법
-          변경사항에 대한 적절한 테스트를 수행해주세요.
-
-          ## 📋 체크리스트
-          - [ ] 코드 리뷰 완료
-          - [ ] 테스트 통과 확인
-          - [ ] 문서 업데이트 (필요시)"
-                      fi
-                      
-                      echo "PR 본문 생성 완료"
-                      echo "$pr_body" > pr_body.txt
-                      
-                      # 변경사항 요약 생성
-                      summary_prompt="다음 변경사항을 간단히 요약해주세요 (1-2줄로):
+          변경사항에 대한 적절한 테스트를 수행해주세요."
+            fi
+            
+            echo "PR 본문 생성 완료"
+            echo "$pr_body" > pr_body.txt
+            
+            # 변경사항 요약 생성
+            summary_prompt="다음 변경사항을 간단히 요약해주세요 (1-2줄로):
 
           $changes_content
 
           핵심 변경사항만 간결하게 한국어로 설명해주세요:"
 
             echo "변경사항 요약 생성 중..."
-            change_summary=$(echo "$summary_prompt" | timeout 60s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+            change_summary=$(echo "$summary_prompt" | timeout 120s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
             
             if [ -z "$change_summary" ]; then
               change_summary="코드 변경사항 업데이트"
