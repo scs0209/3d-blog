@@ -121,43 +121,22 @@ jobs:
             config_files=$(grep -c "설정 파일" config_changes.txt 2>/dev/null || echo "0")
             doc_files=$(grep -c "문서 파일" doc_changes.txt 2>/dev/null || echo "0")
             
-            # 환경변수 설정 (빈 값 방지)
-            if [ -z "$total_files" ] || [ "$total_files" = "0" ]; then
-              echo "TOTAL_FILES=0" >> $GITHUB_ENV
-            else
-              echo "TOTAL_FILES=$total_files" >> $GITHUB_ENV
-            fi
-            
-            if [ -z "$code_files" ] || [ "$code_files" = "0" ]; then
-              echo "CODE_FILES=0" >> $GITHUB_ENV
-            else
-              echo "CODE_FILES=$code_files" >> $GITHUB_ENV
-            fi
-            
-            if [ -z "$config_files" ] || [ "$config_files" = "0" ]; then
-              echo "CONFIG_FILES=0" >> $GITHUB_ENV
-            else
-              echo "CONFIG_FILES=$config_files" >> $GITHUB_ENV
-            fi
-            
-            if [ -z "$doc_files" ] || [ "$doc_files" = "0" ]; then
-              echo "DOC_FILES=0" >> $GITHUB_ENV
-            else
-              echo "DOC_FILES=$doc_files" >> $GITHUB_ENV
-            fi
-            
             echo "=== 변경사항 통계 ==="
-            echo "총 파일: $total_files"
-            echo "코드 파일: $code_files"
-            echo "설정 파일: $config_files"
-            echo "문서 파일: $doc_files"
+            if [ "$total_files" != "0" ]; then
+              echo "총 파일: $total_files"
+            fi
+            if [ "$code_files" != "0" ]; then
+              echo "코드 파일: $code_files"
+            fi
+            if [ "$config_files" != "0" ]; then
+              echo "설정 파일: $config_files"
+            fi
+            if [ "$doc_files" != "0" ]; then
+              echo "문서 파일: $doc_files"
+            fi
             
           else
             echo "변경된 파일이 없습니다."
-            echo "TOTAL_FILES=0" >> $GITHUB_ENV
-            echo "CODE_FILES=0" >> $GITHUB_ENV
-            echo "CONFIG_FILES=0" >> $GITHUB_ENV
-            echo "DOC_FILES=0" >> $GITHUB_ENV
           fi
           
       - name: AI를 통한 PR 내용 생성
