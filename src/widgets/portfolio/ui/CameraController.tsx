@@ -11,6 +11,7 @@ import {
   INITIAL_CAMERA_LOOK,
 } from '@/entities/portfolio/model/constants';
 import { useWorkCameraAnimation } from '@/features/portfolio/model/animations/use-work-camera-animation';
+import { useServerCameraAnimation } from '@/features/portfolio/model/animations/use-server-camera-animation';
 
 type CameraControllerProps = {
   targetPos: Position3D | null;
@@ -39,6 +40,9 @@ type CameraControllerProps = {
   setContactClosing: (closing: boolean) => void;
   // 초기 애니메이션 관련
   isInitialAnimation?: boolean;
+  // server 애니메이션용
+  setShowWorksLoading: (show: boolean) => void;
+  setShowCards: (show: boolean) => void;
 };
 
 export const CameraController = (props: CameraControllerProps) => {
@@ -67,6 +71,9 @@ export const CameraController = (props: CameraControllerProps) => {
     setContactClosing,
     // 초기 애니메이션 관련
     isInitialAnimation,
+    // server 애니메이션용
+    setShowWorksLoading,
+    setShowCards,
   } = props;
 
   const { camera, clock } = useThree();
@@ -95,6 +102,16 @@ export const CameraController = (props: CameraControllerProps) => {
     setAboutMeClosing,
     setAboutMeAnimationDone,
     setCameraAnimationDone,
+  });
+
+  // Server 애니메이션 훅
+  useServerCameraAnimation({
+    focusedGroup,
+    cameraAnimationDone,
+    secondaryAnimation,
+    hasClickedBack,
+    setShowWorksLoading,
+    setShowCards,
   });
 
   // Experience 모델 클릭 시 카메라 애니메이션 완료 후 처리

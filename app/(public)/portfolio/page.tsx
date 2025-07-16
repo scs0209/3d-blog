@@ -66,6 +66,8 @@ export default function PortfolioPage() {
     setAboutMeAnimationDone,
     setExperienceClosing,
     setContactClosing,
+    setShowWorksLoading,
+    setShowCards,
 
     // 액션들
     isShow,
@@ -181,6 +183,9 @@ export default function PortfolioPage() {
           setContactClosing={setContactClosing}
           // 초기 애니메이션 관련
           isInitialAnimation={!initialAnimation.isAnimationComplete}
+          // server 애니메이션용
+          setShowWorksLoading={setShowWorksLoading}
+          setShowCards={setShowCards}
         />
 
         <SceneRenderer
