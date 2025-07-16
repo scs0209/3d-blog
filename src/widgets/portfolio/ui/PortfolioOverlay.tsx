@@ -58,6 +58,8 @@ export function PortfolioOverlay({
   onExit,
   onAnimationComplete,
 }: PortfolioOverlayProps) {
+  console.log('showPortfolioOverlay', showPortfolioOverlay);
+  console.log('portfolioExiting', portfolioExiting);
   return (
     <AnimatePresence>
       {showPortfolioOverlay && (
