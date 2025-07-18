@@ -11,7 +11,6 @@ interface LoadingOverlayProps {
 
 export function LoadingOverlay({
   showWorksLoading,
-  showPortfolioOverlay,
   showExitLoading,
   loadingProgress,
   loadingBarFullExpand,
@@ -22,8 +21,8 @@ export function LoadingOverlay({
       {/* EXIT 로딩 오버레이 */}
       {showExitLoading && (
         <div className='fixed inset-0 z-[9999] pointer-events-none'>
-          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] bg-black/95 border-2 border-cyan-400 rounded-lg flex flex-col items-center justify-center gap-5 font-mono text-2xl text-cyan-400 shadow-[0_0_30px_rgba(0,255,255,0.5)] overflow-hidden neon-glow'>
-            <div className='text-3xl font-bold tracking-[4px] mb-2.5 neon-glow'>EXIT</div>
+          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] flex flex-col items-center justify-center gap-5 font-mono overflow-hidden text-white'>
+            <div className='text-3xl text-white font-bold tracking-[4px] mb-2.5 neon-glow'>EXIT</div>
 
             <div className='w-80 h-3 bg-gray-800 rounded-md overflow-hidden border-2 border-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.5)] transition-all duration-1000 ease-out'>
               <div
@@ -40,8 +39,8 @@ export function LoadingOverlay({
       {/* WORKS 로딩 오버레이 */}
       {showWorksLoading && !showExitLoading && (
         <div className='fixed inset-0 z-40 pointer-events-none'>
-          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] bg-black/95 border-2 border-cyan-400 rounded-lg flex flex-col items-center justify-center gap-5 font-mono text-2xl text-cyan-400 shadow-[0_0_30px_rgba(0,255,255,0.5)] overflow-hidden neon-glow'>
-            <div className='text-3xl font-bold tracking-[4px] mb-2.5 neon-glow'>WORKS</div>
+          <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[20%] w-[400px] h-[300px] flex flex-col items-center justify-center gap-5 font-mono overflow-hidden text-white'>
+            <div className='text-3xl text-white font-bold tracking-[4px] mb-2.5 neon-glow'>WORKS</div>
 
             <div
               className={`w-80 h-3 overflow-visible transition-all duration-[1500ms] ease-out origin-center ${
