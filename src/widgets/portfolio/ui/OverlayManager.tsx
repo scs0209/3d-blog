@@ -1,5 +1,6 @@
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { Mail, LinkedinIcon, GithubIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LoadingOverlay,
   AboutMePage,
@@ -50,6 +51,11 @@ interface OverlayManagerProps {
   showCards: boolean;
   onPortfolioExit: () => void;
   onPortfolioAnimationComplete: () => void;
+
+  // Title
+  currentTitle?: string;
+  currentSubtitle?: string;
+  titleAnimation?: 'idle' | 'changing' | 'exiting';
 }
 
 export const OverlayManager = (props: OverlayManagerProps) => {
@@ -83,6 +89,9 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     showCards,
     onPortfolioExit,
     onPortfolioAnimationComplete,
+    currentTitle = 'Ayaan',
+    currentSubtitle = 'Frontend Developer',
+    titleAnimation = 'idle',
   } = props;
 
   return (
@@ -92,6 +101,67 @@ export const OverlayManager = (props: OverlayManagerProps) => {
         <span className='text-[#E5D6C4] font-bold text-2xl neon-glow'>Ayaan</span>
         <span className='text-[#eeebe7] text-xs font-mono neon-glow'>Frontend Developer</span>
       </div>
+
+      {/* 오버레이 UI: 상단가운데 타이틀/직함 - 모델 클릭 시에만 표시 */}
+      {focusedGroup && (
+        <div className='absolute top-8 left-1/2 transform -translate-x-1/2 flex flex-col gap-1 items-center z-100'>
+          <AnimatePresence mode='wait'>
+            <motion.span
+              key={currentTitle}
+              className='text-[#E5D6C4] font-bold text-2xl neon-glow'
+              initial={{
+                opacity: 0,
+                y: titleAnimation === 'changing' ? -20 : titleAnimation === 'exiting' ? 20 : 0,
+                scale: 0.8,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: titleAnimation === 'changing' ? 20 : titleAnimation === 'exiting' ? -20 : 0,
+                scale: 0.8,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: 'easeInOut',
+              }}
+            >
+              {currentTitle}
+            </motion.span>
+          </AnimatePresence>
+          <AnimatePresence mode='wait'>
+            <motion.span
+              key={currentSubtitle}
+              className='text-[#eeebe7] text-xs font-mono neon-glow'
+              initial={{
+                opacity: 0,
+                y: titleAnimation === 'changing' ? -10 : titleAnimation === 'exiting' ? 10 : 0,
+                scale: 0.9,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: titleAnimation === 'changing' ? 10 : titleAnimation === 'exiting' ? -10 : 0,
+                scale: 0.9,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: 'easeInOut',
+                delay: 0.1,
+              }}
+            >
+              {currentSubtitle}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+      )}
 
       {/* 오버레이 UI: 하단좌측 퀄리티/사운드/라이트모드 */}
       <div className='absolute bottom-8 left-8 z-30 flex flex-col gap-3'>

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { GlassmorphismCard, GlassmorphismButton } from '@/shared/ui/glassmorphism';
 
 interface PortfolioProject {
   id: number;
@@ -58,15 +59,17 @@ export function PortfolioOverlay({
   onExit,
   onAnimationComplete,
 }: PortfolioOverlayProps) {
+  console.log('showPortfolioOverlay', showPortfolioOverlay);
+  console.log('portfolioExiting', portfolioExiting);
   return (
     <AnimatePresence>
       {showPortfolioOverlay && (
         <motion.div
-          className='fixed inset-0 z-[9999] bg-black text-white font-mono overflow-auto'
+          className='fixed inset-0 z-[9999] bg-black/10 backdrop-blur-xl text-white font-mono overflow-auto'
           initial={{ opacity: 0, scale: 0.1 }}
           animate={{
             opacity: 1,
-            scale: 1, // 창은 항상 크기 유지
+            scale: 1,
           }}
           exit={{ opacity: 0, scale: 0.1 }}
           transition={{
@@ -76,10 +79,10 @@ export function PortfolioOverlay({
           onAnimationComplete={onAnimationComplete}
         >
           {showPortfolioContent && (
-            <>
+            <div className='min-h-screen p-4'>
               {/* 헤더 */}
               <motion.div
-                className='flex justify-between items-center p-8 border-b border-cyan-400'
+                className='flex justify-between items-center p-8 mb-8'
                 initial={{ opacity: 0, y: -50 }}
                 animate={{
                   opacity: portfolioExiting ? 0 : 1,
@@ -90,22 +93,19 @@ export function PortfolioOverlay({
                   delay: portfolioExiting ? 1.0 : 0,
                 }}
               >
-                <div>
-                  <h1 className='text-4xl font-bold text-cyan-400 neon-glow'>WORKS</h1>
-                  <p className='text-cyan-300 text-sm mt-2'>Portfolio Projects</p>
-                </div>
-                <button
-                  type='button'
+                <GlassmorphismButton
+                  variant='outline'
+                  size='lg'
                   onClick={onExit}
-                  className='px-6 py-2 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-cyan-400/50 font-bold'
+                  className='transform hover:scale-110 hover:shadow-lg hover:shadow-white/30'
                 >
                   EXIT
-                </button>
+                </GlassmorphismButton>
               </motion.div>
 
               {/* 프로젝트 그리드 */}
               <motion.div
-                className='p-8'
+                className='mb-8'
                 initial={{ opacity: 0, y: 30 }}
                 animate={{
                   opacity: portfolioExiting ? 0 : 1,
@@ -120,94 +120,52 @@ export function PortfolioOverlay({
                   <AnimatePresence>
                     {showCards &&
                       portfolioProjects.map((project, index) => (
-                        <motion.div
+                        <GlassmorphismCard
                           key={project.id}
-                          className='border border-cyan-400 bg-gray-900 hover:bg-gray-800 transition-colors'
-                          initial={{ opacity: 0, y: 100 }} // 아래에서 시작
+                          className='overflow-hidden'
+                          initial={{ opacity: 0, y: 100 }}
                           animate={{
                             opacity: portfolioExiting ? 0 : 1,
-                            y: portfolioExiting ? -100 : 0, // EXIT시 위로 사라짐
+                            y: portfolioExiting ? -100 : 0,
                           }}
                           exit={{ opacity: 0, y: -100 }}
                           transition={{
                             duration: 0.6,
-                            delay: portfolioExiting
-                              ? (portfolioProjects.length - 1 - index) * 0.2 // 역순으로 사라짐 (마지막부터)
-                              : index * 0.3, // 순차적으로 나타남 (첫 번째부터)
+                            delay: portfolioExiting ? (portfolioProjects.length - 1 - index) * 0.2 : index * 0.3,
                             ease: 'easeInOut',
-                          }}
-                          whileHover={{
-                            scale: 1.02,
-                            transition: { duration: 0.2 },
                           }}
                         >
                           {/* 프로젝트 이미지 */}
-                          <div className='h-64 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border-b border-cyan-400 overflow-hidden'>
+                          <div className='h-64 bg-gradient-to-br from-white/3 to-white/8 flex items-center justify-center border-b border-white/15 overflow-hidden'>
                             <div className='text-center transform transition-transform duration-300 hover:scale-110'>
-                              <div className='text-cyan-400 text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
+                              <div className='text-white text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
                                 📁
                               </div>
-                              <div className='text-cyan-300'>PROJECT {index + 1}</div>
+                              <div className='text-white/70'>PROJECT {index + 1}</div>
                             </div>
                           </div>
 
                           {/* 프로젝트 정보 */}
-                          <div className='p-6 transform transition-all duration-300 hover:bg-gray-800'>
-                            <h3 className='text-xl font-bold text-cyan-400 mb-2'>{project.title}</h3>
-                            <p className='text-cyan-300 text-sm mb-4'>{project.subtitle}</p>
-                            <p className='text-gray-300 text-sm mb-6 leading-relaxed'>{project.description}</p>
+                          <div className='p-6'>
+                            <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
+                            <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
+                            <p className='text-white/80 text-sm mb-6 leading-relaxed'>{project.description}</p>
 
                             <div className='flex gap-4'>
-                              <button
-                                type='button'
-                                className='flex-1 py-2 px-4 border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/30'
-                              >
+                              <GlassmorphismButton variant='outline' size='sm' className='flex-1'>
                                 VIEW LIVE
-                              </button>
-                              <button
-                                type='button'
-                                className='flex-1 py-2 px-4 bg-cyan-400 text-black hover:bg-cyan-300 transition-all duration-300 text-sm transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/50'
-                              >
+                              </GlassmorphismButton>
+                              <GlassmorphismButton variant='primary' size='sm' className='flex-1'>
                                 SOURCE CODE
-                              </button>
+                              </GlassmorphismButton>
                             </div>
                           </div>
-                        </motion.div>
+                        </GlassmorphismCard>
                       ))}
                   </AnimatePresence>
                 </div>
               </motion.div>
-
-              {/* 푸터 */}
-              <motion.div
-                className='border-t border-cyan-400 p-8 text-center'
-                initial={{ opacity: 0, y: 50 }}
-                animate={{
-                  opacity: portfolioExiting ? 0 : 1,
-                  y: portfolioExiting ? 50 : 0,
-                }}
-                transition={{
-                  duration: 0.6,
-                  delay: portfolioExiting ? 0.2 : 0.8,
-                }}
-              >
-                <div className='flex justify-center items-center gap-8 text-cyan-300 text-sm'>
-                  <span>© 2025</span>
-                  <a
-                    href='https://github.com/yourid'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='hover:text-cyan-400'
-                  >
-                    GITHUB
-                  </a>
-                  <a href='mailto:your@email.com' className='hover:text-cyan-400'>
-                    EMAIL
-                  </a>
-                  <span>LINKEDIN</span>
-                </div>
-              </motion.div>
-            </>
+            </div>
           )}
         </motion.div>
       )}
