@@ -1,7 +1,9 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
+import { useState } from 'react';
 import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
+import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
 import { useInitialAnimation } from '@/features/portfolio/model/use-initial-animation';
 import {
@@ -16,6 +18,11 @@ export default function PortfolioPage() {
 
   // 초기 애니메이션 훅 사용
   const initialAnimation = useInitialAnimation();
+
+  // 타이틀 상태 추가
+  const [currentTitle, setCurrentTitle] = useState('Ayaan');
+  const [currentSubtitle, setCurrentSubtitle] = useState('Frontend Developer');
+  const [titleAnimation, setTitleAnimation] = useState<'idle' | 'changing' | 'exiting'>('idle');
 
   const {
     // 상태들
@@ -77,6 +84,49 @@ export default function PortfolioPage() {
     handlePortfolioAnimationComplete,
   } = portfolio;
 
+  // 모델 클릭 시 타이틀 변경 핸들러
+  const handleGroupClickWithTitle = (group: FocusedGroup) => {
+    if (!group) {
+      return;
+    }
+
+    setTitleAnimation('changing');
+
+    // 그룹에 따른 타이틀 매핑 (HoloText와 동일한 텍스트)
+    const titleMap: Record<string, { title: string; subtitle: string }> = {
+      work: { title: 'ABOUT ME', subtitle: 'Personal Information' },
+      contactMe: { title: 'CONTACT', subtitle: 'Get In Touch' },
+      server: { title: 'WORKS', subtitle: 'Portfolio Projects' },
+      resumeConsole: { title: 'RESUME', subtitle: 'Professional Experience' },
+      experience: { title: 'EXPERIENCE', subtitle: 'Work History' },
+      skill: { title: 'SKILLS', subtitle: 'Technical Expertise' },
+      platform: { title: 'HOME', subtitle: 'Welcome Back' },
+      holoTable: { title: 'PLAYGROUND', subtitle: 'Creative Space' },
+    };
+
+    const newTitle = titleMap[group] || { title: group.toUpperCase(), subtitle: 'Section' };
+
+    setTimeout(() => {
+      setCurrentTitle(newTitle.title);
+      setCurrentSubtitle(newTitle.subtitle);
+      setTitleAnimation('idle');
+    }, 300);
+
+    // 기존 클릭 핸들러 호출
+    handleGroupClick(group);
+  };
+
+  // 뒤로가기 시 원래 타이틀로 복원
+  const handleBackWithTitleReset = () => {
+    setTitleAnimation('exiting');
+    setTimeout(() => {
+      setCurrentTitle('Ayaan');
+      setCurrentSubtitle('Frontend Developer');
+      setTitleAnimation('idle');
+    }, 300);
+    handleBack();
+  };
+
   // Work 애니메이션 훅 사용
   const workAnimation = useWorkCameraAnimation({
     focusedGroup,
@@ -128,7 +178,7 @@ export default function PortfolioPage() {
           sound={sound}
           onQualityChange={setQuality}
           onSoundChange={setSound}
-          onBack={handleBack}
+          onBack={handleBackWithTitleReset}
           showAboutMeOverlay={showAboutMeOverlay}
           aboutMeClosing={aboutMeClosing}
           onAboutMeClose={handleAboutMeClose}
@@ -152,6 +202,9 @@ export default function PortfolioPage() {
           showCards={showCards}
           onPortfolioExit={handlePortfolioExit}
           onPortfolioAnimationComplete={handlePortfolioAnimationComplete}
+          currentTitle={currentTitle}
+          currentSubtitle={currentSubtitle}
+          titleAnimation={titleAnimation}
         />
 
         <Canvas camera={{ position: INITIAL_CAMERA_POS, fov: 75, near: 0.1, far: 100 }}>
@@ -192,7 +245,7 @@ export default function PortfolioPage() {
             pulseCenter={pulseCenter}
             hoveredPosition={hoveredPosition}
             isShow={isShow}
-            onGroupClick={handleGroupClick}
+            onGroupClick={handleGroupClickWithTitle}
             onPointerOver={setHoveredPosition}
             onPointerOut={() => setHoveredPosition(null)}
             // 초기 애니메이션 props 추가
