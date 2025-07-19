@@ -198,6 +198,35 @@ FSD 아키텍처와 Next.js App Router를 적용함에 따라, 프로젝트의 �
 *   `pnpm start`: 프로덕션 서버를 시작합니다.
 *   `pnpm lint`: ESLint를 사용하여 코드베이스를 검사합니다.
 *   `pnpm generate-types`: OpenAPI 명세로부터 API 타입을 생성합니다. (출력: `src/shared/api/openapi-types.ts`)
+
+## AI PR 자동 작성 (AI PR Auto Writer)
+
+이 프로젝트는 GitHub Actions를 통해 PR이 생성되거나 업데이트될 때 자동으로 AI가 PR 제목과 본문을 생성하는 기능을 제공합니다.
+
+### 설정 방법
+
+1. **GitHub Secrets 설정**
+   - GitHub 저장소의 Settings > Secrets and variables > Actions로 이동
+   - `GEMINI_API_KEY` 시크릿을 추가하고 Google Gemini API 키를 입력
+
+2. **로컬 테스트**
+   ```bash
+   # 환경 변수 설정
+   export GEMINI_API_KEY="your_api_key_here"
+   
+   # 스크립트 실행
+   node scripts/ai-pr.mjs HEAD~2 HEAD
+   ```
+
+3. **GitHub Actions 워크플로우**
+   - `.github/workflows/ai-pr.yml` 파일이 자동으로 PR을 분석하고 AI로 내용을 생성
+   - PR이 열리거나 업데이트될 때마다 자동 실행
+
+### 기능
+- **변경사항 분석**: git diff를 통해 변경된 파일들을 자동 분석
+- **파일 타입 분류**: 코드, 설정, 문서 파일을 자동으로 분류
+- **AI 기반 생성**: Gemini 2.5 Pro를 사용하여 PR 제목과 본문 자동 생성
+- **한국어 지원**: 한국어로 PR 내용 생성
 *   `pnpm exec prisma migrate dev`: Prisma 마이그레이션을 실행하여 데이터베이스 스키마를 업데이트합니다.
 *   `pnpm exec prisma studio`: Prisma Studio를 열어 데이터베이스를 보고 관리합니다.
 
