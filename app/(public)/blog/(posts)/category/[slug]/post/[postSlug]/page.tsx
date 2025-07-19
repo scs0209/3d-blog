@@ -2,6 +2,7 @@ import { getPostBySlug } from '@/features/post/api/post-api';
 import { formatDateToYMD } from '@/shared/utils';
 import dynamic from 'next/dynamic';
 import { CommentSection } from '@/features/comment/ui';
+import { PostSummary } from '@/shared/ui/PostSummary';
 
 const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
 
@@ -29,6 +30,14 @@ export default async function PostPage({
           <span className='opacity-60'>|</span>
           <span>{formatDateToYMD(post?.createdAt ?? '')}</span>
         </div>
+        
+        {/* AI 요약 표시 */}
+        
+          <div className='relative z-10 p-2'>
+            <PostSummary post={post} />
+          </div>
+        
+        
         <div className='relative z-10'>
           <NovelViewer content={post.content ?? ''} />
         </div>
