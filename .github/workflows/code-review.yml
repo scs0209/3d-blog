@@ -162,7 +162,7 @@ jobs:
             ---
         
             <details>
-            <summary>📊 적응형 처리 정보</summary>
+            <summary>📊 처리 정보</summary>
         
             **처리 전략:**
             - 📁 총 파일 수에 따른 동적 모드 선택

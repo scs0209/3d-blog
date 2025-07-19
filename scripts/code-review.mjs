@@ -415,36 +415,13 @@ export async function generateCodeReviewWorkflow(baseSha, headSha) {
 console.log('=== AI 코드 리뷰 스크립트 시작 ===');
 console.log('인자:', process.argv);
 
-let baseSha = process.argv[2];
-let headSha = process.argv[3];
+const baseSha = process.argv[2];
+const headSha = process.argv[3];
 
-// 인자가 없으면 최근 커밋 2개 사용
 if (!baseSha || !headSha) {
-  try {
-    // 최근 커밋 2개 가져오기
-    const recentCommits = execSync('git log --oneline -2', { encoding: 'utf8' })
-      .trim()
-      .split('\n')
-      .map((line) => line.split(' ')[0]);
-
-    if (recentCommits.length >= 2) {
-      headSha = recentCommits[0];
-      baseSha = recentCommits[1];
-      console.log('자동으로 최근 커밋 2개 사용:');
-      console.log(`Base SHA: ${baseSha}`);
-      console.log(`Head SHA: ${headSha}`);
-    } else {
-      console.error('최근 커밋이 2개 미만입니다.');
-      console.error('사용법: node code-review.mjs <base-sha> <head-sha>');
-      console.error('예시: node code-review.mjs HEAD~2 HEAD');
-      process.exit(1);
-    }
-  } catch (error) {
-    console.error('Git 커밋 정보를 가져올 수 없습니다:', error.message);
-    console.error('사용법: node code-review.mjs <base-sha> <head-sha>');
-    console.error('예시: node code-review.mjs HEAD~2 HEAD');
-    process.exit(1);
-  }
+  console.error('사용법: node code-review.mjs <base-sha> <head-sha>');
+  console.error('예시: node code-review.mjs HEAD~2 HEAD');
+  process.exit(1);
 }
 
 console.log(`Base SHA: ${baseSha}`);
