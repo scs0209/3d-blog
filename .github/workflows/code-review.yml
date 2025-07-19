@@ -1,4 +1,4 @@
-name: AI 코드 리뷰 (개선된 버전)
+name: AI 코드 리뷰 (Gemini AI 버전)
 on:
   pull_request:
     types: [opened, synchronize]
@@ -17,603 +17,267 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: 시스템 정보 확인
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: pnpm 설치
+        run: npm install -g pnpm
+        
+      - name: 의존성 설치
+        run: pnpm install
+        
+      - name: AI 코드 리뷰 실행
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          echo "=== 시스템 정보 ==="
-          uname -a
-          free -h
-          df -h
+          echo "AI 코드 리뷰 시작..."
+          node scripts/code-review.mjs ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
           
-      - name: Ollama 설치 및 설정
-        run: |
-          echo "Ollama 설치 중..."
-          curl -fsSL https://ollama.ai/install.sh | sh
-          
-          echo "Ollama 서버 시작..."
-          ollama serve &
-          
-          # 서버 시작 대기 (더 안정적인 방법)
-          echo "서버 시작 대기 중..."
-          for i in {1..30}; do
-            if curl -s http://localhost:11434/api/version >/dev/null 2>&1; then
-              echo "Ollama 서버가 준비되었습니다."
-              break
-            fi
-            echo "대기 중... ($i/30)"
-            sleep 2
-          done
-          
-          # 연결 확인
-          echo "Ollama 연결 테스트..."
-          curl -s http://localhost:11434/api/version || exit 1
-          
-          # 경량 모델 사용
-          echo "모델 다운로드 중..."
-          ollama pull qwen2.5-coder:1.5b
-          
-          # 한국어 테스트
-          echo "한국어 테스트..."
-          echo "안녕하세요. 한국어로 인사해주세요." | ollama run qwen2.5-coder:1.5b
-          
-      - name: 변경된 파일 분석 및 우선순위 설정
-        run: |
-            echo "변경된 파일 확인 및 분석..."
-            git fetch origin ${{ github.base_ref }}
-            
-            # 모든 변경된 파일 찾기
-            all_changed_files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala)$' || true)
-            
-            if [ -n "$all_changed_files" ]; then
-              echo "전체 변경된 파일:"
-              echo "$all_changed_files"
-              
-              # 파일 분석 및 우선순위 설정
-              > file_analysis.txt
-              > large_files.txt
-              
-              total_files=0
-              
-              for file in $all_changed_files; do
-                total_files=$((total_files + 1))
-                
-                if [ -f "$file" ]; then
-                  # 파일 크기 확인 (KB)
-                  file_size=$(du -k "$file" 2>/dev/null | cut -f1 || echo "0")
-                  
-                  # 변경 라인 수 확인
-                  changed_lines=$(git diff --numstat ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | awk '{print $1+$2}' || echo "0")
-                  
-                  # 우선순위 점수 계산 (변경 라인 수 * 10 + 파일 크기)
-                  priority_score=$((changed_lines * 10 + file_size))
-                  
-                  echo "$priority_score:$file:$file_size:$changed_lines" >> file_analysis.txt
-                  
-                  # 대용량 파일 체크 (100KB 이상 또는 1000라인 이상 변경)
-                  if [ "$file_size" -gt 100 ] || [ "$changed_lines" -gt 1000 ]; then
-                    echo "$file" >> large_files.txt
-                    echo "⚠️ 대용량 파일 감지: $file (크기: ${file_size}KB, 변경: ${changed_lines}라인)"
-                  fi
-                else
-                  # 삭제된 파일 (낮은 우선순위)
-                  echo "1:$file:0:0" >> file_analysis.txt
-                fi
-              done
-              
-              # 우선순위별 정렬 (높은 점수부터)
-              sort -nr file_analysis.txt > sorted_files.txt
-              
-              echo "=== 파일 처리 계획 ==="
-              echo "총 파일 수: $total_files"
-              
-              # 파일 수에 따른 동적 처리 전략
-              if [ $total_files -le 5 ]; then
-                # 5개 이하: 모든 파일 상세 리뷰
-                max_files=$total_files
-                review_mode="detailed"
-                echo "모드: 전체 상세 리뷰 ($total_files 파일)"
-              elif [ $total_files -le 15 ]; then
-                # 15개 이하: 모든 파일 처리, 큰 파일만 간략 리뷰
-                max_files=$total_files
-                review_mode="mixed"
-                echo "모드: 혼합 리뷰 ($total_files 파일)"
-              else
-                # 15개 초과: 상위 15개만 처리
-                max_files=15
-                review_mode="priority"
-                echo "⚠️ 모드: 우선순위 리뷰 (상위 $max_files/$total_files 파일)"
-              fi
-              
-              # 처리할 파일 목록 생성
-              > review_files.txt
-              processed_files=0
-              while IFS=':' read -r score file size lines && [ $processed_files -lt $max_files ]; do
-                echo "$file:$size:$lines:$score" >> review_files.txt
-                processed_files=$((processed_files + 1))
-                echo "처리 예정: $file (점수: $score, 크기: ${size}KB, 변경: ${lines}라인)"
-              done < sorted_files.txt
-              
-              skipped_files=$((total_files - processed_files))
-              if [ $skipped_files -gt 0 ]; then
-                echo "⚠️ $skipped_files 개 파일을 건너뜁니다."
-              fi
-              
-              echo "TOTAL_FILES=$total_files" >> $GITHUB_ENV
-              echo "PROCESSED_FILES=$processed_files" >> $GITHUB_ENV
-              echo "SKIPPED_FILES=$skipped_files" >> $GITHUB_ENV
-              echo "REVIEW_MODE=$review_mode" >> $GITHUB_ENV
-            else
-              echo "리뷰할 코드 파일이 없습니다."
-              echo "TOTAL_FILES=0" >> $GITHUB_ENV
-              echo "PROCESSED_FILES=0" >> $GITHUB_ENV
-              echo "SKIPPED_FILES=0" >> $GITHUB_ENV
-              echo "REVIEW_MODE=none" >> $GITHUB_ENV
-            fi
-          
-      - name: 적응형 코드 리뷰 실행
-        run: |
-              if [ -f "review_files.txt" ] && [ -s "review_files.txt" ]; then
-                echo "적응형 리뷰 시작 (모드: $REVIEW_MODE)..."
-                > review.txt
-                
-                # 시작 시간 기록
-                start_time=$(date +%s)
-                max_duration=700  # 11분 30초 제한 (여유시간 확보)
-                
-                file_num=0
-                
-                while IFS=':' read -r file size lines score; do
-                  current_time=$(date +%s)
-                  elapsed=$((current_time - start_time))
-                  file_num=$((file_num + 1))
-                  
-                  # 시간 체크
-                  if [ $elapsed -gt $max_duration ]; then
-                    echo "⚠️ 시간 제한 도달 - 리뷰 중단 ($file_num/$PROCESSED_FILES)"
-                    echo "TIME_LIMIT_REACHED=true" >> $GITHUB_ENV
-                    break
-                  fi
-                  
-                  echo "=== 파일 $file_num/$PROCESSED_FILES: $file 처리 중 ==="
-                  echo "=== $file 리뷰 ===" >> review.txt
-                  echo "" >> review.txt
-                  
-                  # 파일 존재 확인
-                  if [ ! -f "$file" ]; then
-                    echo "📋 삭제된 파일: $file" >> review.txt
-                    echo "" >> review.txt
-                    echo "---" >> review.txt
-                    echo "" >> review.txt
-                    continue
-                  fi
-                  
-                  # 파일 확장자별 언어 감지
-                  case "$file" in
-                    *.py) language="Python" ;;
-                    *.js|*.jsx) language="JavaScript" ;;
-                    *.ts|*.tsx) language="TypeScript" ;;
-                    *) language="Unknown" ;;
-                  esac
-                  
-                  # 변경 내용 추출 (크기에 따라 조정)
-                  if [ "$size" -gt 50 ] || [ "$lines" -gt 500 ]; then
-                    # 대용량 파일: 변경 부분만
-                    echo "📊 대용량 파일 (${size}KB, ${lines}라인 변경) - 핵심 변경사항 분석" >> review.txt
-                    diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -80)
-                    review_type="summary"
-                  else
-                    # 일반 파일: 상세 분석
-                    diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -150)
-                    review_type="detailed"
-                  fi
-                  
-                  if [ -n "$diff_content" ]; then
-                    # 리뷰 모드에 따른 프롬프트 설정
-                    if [ "$review_type" = "detailed" ] && [ "$REVIEW_MODE" = "detailed" ]; then
-                      # 상세 리뷰 프롬프트 (코드 예시 포함)
-                      review_prompt="다음 ${language} 코드 변경사항을 상세히 분석하고 한국어로 리뷰해주세요:
-    
-              $diff_content
-    
-              다음 형식으로 답변해주세요:
-              🚨 위험도: [낮음/보통/높음/긴급]
-              
-              🔍 주요 발견사항:
-              - (구체적인 이슈들 나열)
-              
-              🔒 보안 및 안정성:
-              - (보안 관련 체크사항)
-              
-              ⚡ 성능 영향:
-              - (성능 관련 분석)
-              
-              💡 권장사항:
-              - (개선 제안사항)
-              
-              📝 개선 코드 예시:
-              만약 문제가 있는 부분이 있다면, 구체적인 개선 코드 예시를 제공해주세요:
-              
-              \`\`\`${language,,}
-              // 개선 전 (문제가 있는 코드)
-              [기존 코드 일부]
-              
-              // 개선 후 (권장 코드)
-              [개선된 코드]
-              \`\`\`
-              
-              개선 이유: (왜 이렇게 개선해야 하는지 설명)
-    
-              핵심적이고 실용적인 내용으로 답변해주세요."
-                      timeout_duration=120
-                    else
-                      # 간략 리뷰 프롬프트 (코드 예시 포함)
-                      review_prompt="다음 ${language} 코드 변경사항을 간결하게 한국어로 리뷰해주세요:
-    
-              $diff_content
-    
-              다음 형식으로 답변해주세요:
-              🚨 위험도: [낮음/보통/높음/긴급]
-              🔍 주요 이슈: (핵심 이슈 1-2개)
-              💡 권장사항: (주요 개선사항 1-2개)
-              
-              📝 핵심 개선 예시:
-              가장 중요한 개선사항이 있다면 간단한 코드 예시 포함:
-              \`\`\`${language,,}
-              // 개선 전 → 개선 후
-              [간단한 before/after 코드]
-              \`\`\`
-    
-              간결하고 핵심적인 내용만 포함해주세요."
-                      timeout_duration=90
-                    fi
-                    
-                    echo "리뷰 진행 중... (제한시간: ${timeout_duration}초)"
-                    
-                    # AI 리뷰 실행 (타임아웃 적용)
-                    if timeout ${timeout_duration}s bash -c "echo '$review_prompt' | ollama run qwen2.5-coder:1.5b" >> review.txt 2>/dev/null; then
-                      echo "✅ 리뷰 완료: $file"
-                    else
-                      echo "⚠️ 리뷰 시간 초과: $file (${timeout_duration}초)" >> review.txt
-                      echo "⚠️ 타임아웃: $file"
-                    fi
-                  else
-                    echo "변경 내용이 감지되지 않았습니다." >> review.txt
-                  fi
-                  
-                  echo "" >> review.txt
-                  echo "---" >> review.txt
-                  echo "" >> review.txt
-                  
-                  # 진행 상황 출력
-                  remaining_time=$((max_duration - elapsed))
-                  echo "진행률: $file_num/$PROCESSED_FILES 완료 (남은 시간: ${remaining_time}초)"
-                  
-                done < review_files.txt
-                
-                # 최종 통계
-                end_time=$(date +%s)
-                total_duration=$((end_time - start_time))
-                echo "리뷰 완료 - 실제 처리: $file_num/$PROCESSED_FILES 파일, 소요시간: ${total_duration}초"
-                
-                echo "REVIEW_DURATION=$total_duration" >> $GITHUB_ENV
-                echo "ACTUAL_PROCESSED=$file_num" >> $GITHUB_ENV
-                
-              else
-                echo "리뷰할 파일이 없습니다."
-                echo "## 📝 리뷰 결과
-    
-              이번 Pull Request에서는 리뷰할 코드 파일 변경사항이 없습니다.
-    
-              검토 대상 파일 형식: Python, JavaScript, TypeScript, Java, C/C++, PHP, Ruby, Go, Rust, Kotlin, Swift, Dart, Scala" > review.txt
-              fi
-
-      - name: 코드 예시 품질 향상 처리
-        run: |
-                if [ -f "review.txt" ] && [ -s "review.txt" ]; then
-                  echo "코드 예시 품질 검증 중..."
-                  
-                  # 코드 블록 개수 확인
-                  code_blocks=$(grep -c '\`\`\`' review.txt || echo "0")
-                  echo "발견된 코드 블록: $code_blocks"
-                  
-                  # 코드 예시가 포함된 리뷰인지 확인
-                  if grep -q "개선.*코드" review.txt || grep -q '\`\`\`' review.txt; then
-                    echo "CODE_EXAMPLES_INCLUDED=true" >> $GITHUB_ENV
-                    echo "✅ 코드 예시가 포함된 리뷰 생성됨"
-                  else
-                    echo "CODE_EXAMPLES_INCLUDED=false" >> $GITHUB_ENV
-                    echo "ℹ️ 코드 예시 없이 일반 리뷰 생성됨"
-                  fi
-                  
-                  # 코드 예시 품질 점수 계산
-                  quality_score=0
-                  
-                  # 개선 전/후 비교가 있는지 확인
-                  if grep -q "개선.*전" review.txt && grep -q "개선.*후" review.txt; then
-                    quality_score=$((quality_score + 30))
-                    echo "✅ Before/After 비교 포함 (+30점)"
-                  fi
-                  
-                  # 구체적인 코드 설명이 있는지 확인
-                  if grep -q "개선.*이유" review.txt || grep -q "설명" review.txt; then
-                    quality_score=$((quality_score + 20))
-                    echo "✅ 개선 설명 포함 (+20점)"
-                  fi
-                  
-                  # 다양한 언어 지원 확인
-                  languages_found=$(grep -o '\`\`\`[a-zA-Z]*' review.txt | sort -u | wc -l || echo "0")
-                  if [ "$languages_found" -gt 0 ]; then
-                    quality_score=$((quality_score + 10))
-                    echo "✅ 언어별 코드 예시 포함 (+10점)"
-                  fi
-                  
-                  echo "코드 예시 품질 점수: $quality_score/60"
-                  echo "CODE_QUALITY_SCORE=$quality_score" >> $GITHUB_ENV
-                  
-                else
-                  echo "리뷰 파일이 없습니다."
-                fi
+          # 결과 파일 확인
+          if [ -f "review.txt" ] && [ -f "review_analysis.json" ]; then
+            echo "✅ 코드 리뷰 생성 완료"
+            echo "리뷰 파일 크기: $(wc -c < review.txt) 문자"
+          else
+            echo "❌ 코드 리뷰 생성 실패"
+            exit 1
+          fi
           
       - name: 리뷰 결과 댓글 작성
         uses: actions/github-script@v7
         with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  script: |
-                    const fs = require('fs');
-                    
-                    try {
-                      const review = fs.readFileSync('review.txt', 'utf8');
-                      const prNumber = context.payload.pull_request?.number || context.issue.number;
-                      
-                      // 환경변수에서 통계 정보 가져오기
-                      const totalFiles = process.env.TOTAL_FILES || '0';
-                      const processedFiles = process.env.PROCESSED_FILES || '0';
-                      const actualProcessed = process.env.ACTUAL_PROCESSED || processedFiles;
-                      const skippedFiles = process.env.SKIPPED_FILES || '0';
-                      const reviewDuration = process.env.REVIEW_DURATION || '0';
-                      const reviewMode = process.env.REVIEW_MODE || 'unknown';
-                      const timeLimitReached = process.env.TIME_LIMIT_REACHED === 'true';
-                      const codeExamplesIncluded = process.env.CODE_EXAMPLES_INCLUDED === 'true';
-                      const codeQualityScore = process.env.CODE_QUALITY_SCORE || '0';
-                      
-                      // 위험도 추출 (더 정확한 패턴 매칭)
-                      const riskMatches = review.match(/🚨\s*위험도[^:]*:\s*\[?([^\]]+)\]?/gi) || [];
-                      let highestRisk = '낮음';
-                      let riskCounts = { '긴급': 0, '높음': 0, '보통': 0, '낮음': 0 };
-                      
-                      riskMatches.forEach(match => {
-                        const risk = match.match(/\[?([^\]]+)\]?$/)[1].trim();
-                        if (risk.includes('긴급')) {
-                          riskCounts['긴급']++;
-                          highestRisk = '긴급';
-                        } else if (risk.includes('높음') && !highestRisk.includes('긴급')) {
-                          riskCounts['높음']++;
-                          highestRisk = '높음';
-                        } else if (risk.includes('보통') && !['긴급', '높음'].includes(highestRisk)) {
-                          riskCounts['보통']++;
-                          highestRisk = '보통';
-                        } else if (risk.includes('낮음') && highestRisk === '낮음') {
-                          riskCounts['낮음']++;
-                        }
-                      });
-                      
-                      // 위험도에 따른 이모지
-                      const getRiskEmoji = (risk) => {
-                        if (risk.includes('긴급')) return '🚨';
-                        if (risk.includes('높음')) return '⚠️';
-                        if (risk.includes('보통')) return '⚡';
-                        return '✅';
-                      };
-                      
-                      // 리뷰 모드 설명
-                      const getModeDescription = (mode) => {
-                        switch(mode) {
-                          case 'detailed': return '전체 상세 리뷰 (코드 예시 포함)';
-                          case 'mixed': return '혼합 모드 (대용량 파일 간략화)';
-                          case 'priority': return '우선순위 모드 (상위 파일만)';
-                          default: return '표준 모드';
-                        }
-                      };
-                      
-                      // 코드 품질 등급
-                      const getQualityGrade = (score) => {
-                        if (score >= 50) return 'A (우수)';
-                        if (score >= 30) return 'B (양호)';
-                        if (score >= 10) return 'C (보통)';
-                        return 'D (기본)';
-                      };
-                      
-                      // 기존 AI 리뷰 댓글 확인
-                      const { data: comments } = await github.rest.issues.listComments({
-                        issue_number: prNumber,
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                      });
-                      
-                      const botComment = comments.find(comment => 
-                        comment.user.login === 'github-actions[bot]' && 
-                        comment.body.includes('🤖 AI 코드 리뷰')
-                      );
-                      
-                      const reviewDate = new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
-                      const riskEmoji = getRiskEmoji(highestRisk);
-                      
-                      // 처리 효율성 계산
-                      const efficiency = totalFiles > 0 ? Math.round((actualProcessed / totalFiles) * 100) : 100;
-                      
-                      const commentBody = `## 🤖 AI 코드 리뷰 보고서 ${codeExamplesIncluded ? '📝' : ''}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const review = fs.readFileSync('review.txt', 'utf8');
+              const analysis = JSON.parse(fs.readFileSync('review_analysis.json', 'utf8'));
+              const prNumber = context.payload.pull_request?.number || context.issue.number;
+              
+              // 위험도에 따른 이모지
+              const getRiskEmoji = (risk) => {
+                if (risk.includes('긴급')) return '🚨';
+                if (risk.includes('높음')) return '⚠️';
+                if (risk.includes('보통')) return '⚡';
+                return '✅';
+              };
+              
+              // 리뷰 모드 설명
+              const getModeDescription = (mode) => {
+                switch(mode) {
+                  case 'detailed': return '전체 상세 리뷰 (코드 예시 포함)';
+                  case 'mixed': return '혼합 모드 (대용량 파일 간략화)';
+                  case 'priority': return '우선순위 모드 (상위 파일만)';
+                  default: return '표준 모드';
+                }
+              };
+              
+              // 코드 품질 등급
+              const getQualityGrade = (score) => {
+                if (score >= 50) return 'A (우수)';
+                if (score >= 30) return 'B (양호)';
+                if (score >= 10) return 'C (보통)';
+                return 'D (기본)';
+              };
+              
+              // 기존 AI 리뷰 댓글 확인
+              const { data: comments } = await github.rest.issues.listComments({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              
+              const botComment = comments.find(comment => 
+                comment.user.login === 'github-actions[bot]' && 
+                comment.body.includes('🤖 AI 코드 리뷰')
+              );
+              
+              const reviewDate = new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
+              const riskEmoji = getRiskEmoji(analysis.highestRisk);
+              
+              // 처리 효율성 계산
+              const efficiency = analysis.totalFiles > 0 ? Math.round((analysis.actualProcessed / analysis.totalFiles) * 100) : 100;
+              
+              const commentBody = `## 🤖 AI 코드 리뷰 보고서 📝
         
-                    <table>
-                    <tr>
-                    <td><strong>📊 리뷰 개요</strong></td>
-                    <td><strong>상세 정보</strong></td>
-                    </tr>
-                    <tr>
-                    <td>최고 위험도</td>
-                    <td>${riskEmoji} <strong>${highestRisk}</strong></td>
-                    </tr>
-                    <tr>
-                    <td>처리된 파일</td>
-                    <td>${actualProcessed}/${totalFiles}개 (${efficiency}%)</td>
-                    </tr>
-                    <tr>
-                    <td>리뷰 모드</td>
-                    <td>${getModeDescription(reviewMode)}</td>
-                    </tr>
-                    ${codeExamplesIncluded ? `<tr><td>코드 예시 품질</td><td>📝 ${getQualityGrade(codeQualityScore)} (${codeQualityScore}/60점)</td></tr>` : ''}
-                    ${skippedFiles > 0 ? `<tr><td>건너뛴 파일</td><td>${skippedFiles}개</td></tr>` : ''}
-                    ${timeLimitReached ? `<tr><td>상태</td><td>⚠️ 시간 제한 도달</td></tr>` : ''}
-                    <tr>
-                    <td>처리 시간</td>
-                    <td>${reviewDuration}초</td>
-                    </tr>
-                    <tr>
-                    <td>리뷰 시간</td>
-                    <td>${reviewDate}</td>
-                    </tr>
-                    <tr>
-                    <td>AI 모델</td>
-                    <td>qwen2.5-coder:1.5b</td>
-                    </tr>
-                    </table>
+            <table>
+            <tr>
+            <td><strong>📊 리뷰 개요</strong></td>
+            <td><strong>상세 정보</strong></td>
+            </tr>
+            <tr>
+            <td>최고 위험도</td>
+            <td>${riskEmoji} <strong>${analysis.highestRisk}</strong></td>
+            </tr>
+            <tr>
+            <td>처리된 파일</td>
+            <td>${analysis.actualProcessed}/${analysis.totalFiles}개 (${efficiency}%)</td>
+            </tr>
+            <tr>
+            <td>리뷰 모드</td>
+            <td>${getModeDescription(analysis.reviewMode)}</td>
+            </tr>
+            <tr>
+            <td>코드 예시 품질</td>
+            <td>📝 ${getQualityGrade(analysis.qualityScore)} (${analysis.qualityScore}/60점)</td>
+            </tr>
+            ${analysis.skippedFiles > 0 ? `<tr><td>건너뛴 파일</td><td>${analysis.skippedFiles}개</td></tr>` : ''}
+            ${analysis.timeLimitReached ? `<tr><td>상태</td><td>⚠️ 시간 제한 도달</td></tr>` : ''}
+            <tr>
+            <td>처리 시간</td>
+            <td>${analysis.duration}초</td>
+            </tr>
+            <tr>
+            <td>리뷰 시간</td>
+            <td>${reviewDate}</td>
+            </tr>
+            <tr>
+            <td>AI 모델</td>
+            <td>gemini-2.5-pro</td>
+            </tr>
+            </table>
         
-                    ${Object.keys(riskCounts).some(key => riskCounts[key] > 0) ? `
-                    **위험도 분포:**
-                    ${Object.entries(riskCounts).filter(([_, count]) => count > 0).map(([risk, count]) => `${getRiskEmoji(risk)} ${risk}: ${count}개 파일`).join(' • ')}
-                    ` : ''}
+            ${Object.keys(analysis.riskCounts).some(key => analysis.riskCounts[key] > 0) ? `
+            **위험도 분포:**
+            ${Object.entries(analysis.riskCounts).filter(([_, count]) => count > 0).map(([risk, count]) => `${getRiskEmoji(risk)} ${risk}: ${count}개 파일`).join(' • ')}
+            ` : ''}
         
-                    ${codeExamplesIncluded ? `
-                    > 💡 **향상된 기능**: 이 리뷰에는 실제 코드 개선 예시가 포함되어 있습니다! 
-                    > 📝 Before/After 비교와 구체적인 개선 방법을 확인해보세요.
+            > 💡 **향상된 기능**: 이 리뷰에는 실제 코드 개선 예시가 포함되어 있습니다! 
+            > 📝 Before/After 비교와 구체적인 개선 방법을 확인해보세요.
         
-                    ` : ''}
+            ${analysis.skippedFiles > 0 || analysis.timeLimitReached ? `
+            > ⚠️ **알림**: ${analysis.timeLimitReached ? '시간 제한으로 인해 일부 파일의 처리가 중단되었습니다.' : ''}${analysis.skippedFiles > 0 ? ` 총 ${analysis.skippedFiles}개 파일을 건너뛰었습니다.` : ''} 
+            > 중요도가 높은 파일을 우선적으로 처리했습니다.
         
-                    ${skippedFiles > 0 || timeLimitReached ? `
-                    > ⚠️ **알림**: ${timeLimitReached ? '시간 제한으로 인해 일부 파일의 처리가 중단되었습니다.' : ''}${skippedFiles > 0 ? ` 총 ${skippedFiles}개 파일을 건너뛰었습니다.` : ''} 
-                    > 중요도가 높은 파일을 우선적으로 처리했습니다.
+            ` : ''}
         
-                    ` : ''}
+            ---
         
-                    ---
+            ## 📋 상세 리뷰 결과
         
-                    ## 📋 상세 리뷰 결과
+            ${review}
         
-                    ${review}
+            ---
         
-                    ---
+            <details>
+            <summary>📊 적응형 처리 정보</summary>
         
-                    <details>
-                    <summary>📊 적응형 처리 정보</summary>
+            **처리 전략:**
+            - 📁 총 파일 수에 따른 동적 모드 선택
+            - 🎯 변경량과 파일 크기 기반 우선순위 설정
+            - 🔤 파일별 언어 자동 감지 및 맞춤형 프롬프트
+            - ⏱️ 파일별 적응형 타임아웃 (상세: 120초, 간략: 90초)
+            - 🔄 실시간 시간 관리 및 진행률 모니터링
+            - 📝 코드 개선 예시 자동 생성
         
-                    **처리 전략:**
-                    - 📁 총 파일 수에 따른 동적 모드 선택
-                    - 🎯 변경량과 파일 크기 기반 우선순위 설정
-                    - 🔤 파일별 언어 자동 감지 및 맞춤형 프롬프트
-                    - ⏱️ 파일별 적응형 타임아웃 (상세: 120초, 간략: 90초)
-                    - 🔄 실시간 시간 관리 및 진행률 모니터링
-                    - 📝 코드 개선 예시 자동 생성
+            **모드별 특징:**
+            - **전체 상세 (≤5파일)**: 모든 파일 상세 분석 + 코드 예시
+            - **혼합 모드 (≤15파일)**: 대용량 파일 간략화 + 핵심 코드 예시
+            - **우선순위 (>15파일)**: 상위 15개 파일만 처리
         
-                    **모드별 특징:**
-                    - **전체 상세 (≤5파일)**: 모든 파일 상세 분석 + 코드 예시
-                    - **혼합 모드 (≤15파일)**: 대용량 파일 간략화 + 핵심 코드 예시
-                    - **우선순위 (>15파일)**: 상위 15개 파일만 처리
-        
-                    **코드 예시 품질 평가:**
-                    - Before/After 비교: ${review.includes('개선 전') && review.includes('개선 후') ? '✅' : '❌'}
-                    - 개선 설명 포함: ${review.includes('개선 이유') || review.includes('설명') ? '✅' : '❌'}
-                    - 언어별 맞춤형: ${review.includes('\`\`\`') ? '✅' : '❌'}
-                    - 총 품질 점수: ${codeQualityScore}/60점 (${getQualityGrade(codeQualityScore)})
+            **코드 예시 품질 평가:**
+            - Before/After 비교: ${review.includes('개선 전') && review.includes('개선 후') ? '✅' : '❌'}
+            - 개선 설명 포함: ${review.includes('개선 이유') || review.includes('설명') ? '✅' : '❌'}
+            - 언어별 맞춤형: ${review.includes('\`\`\`') ? '✅' : '❌'}
+            - 총 품질 점수: ${analysis.qualityScore}/60점 (${getQualityGrade(analysis.qualityScore)})
 
-                    </details>
+            </details>
 
-                    <details>
-                    <summary>📖 리뷰 가이드라인</summary>
+            <details>
+            <summary>📖 리뷰 가이드라인</summary>
 
-                    **위험도 기준:**
-                    - 🚨 **긴급**: 보안 취약점, 심각한 버그, 프로덕션 장애 가능성
-                    - ⚠️ **높음**: 성능 이슈, 데이터 손실 위험, 중요 로직 오류
-                    - ⚡ **보통**: 코드 품질 이슈, 가독성 문제, 경미한 버그
-                    - ✅ **낮음**: 스타일 이슈, 최적화 제안, 베스트 프랙티스
+            **위험도 기준:**
+            - 🚨 **긴급**: 보안 취약점, 심각한 버그, 프로덕션 장애 가능성
+            - ⚠️ **높음**: 성능 이슈, 데이터 손실 위험, 중요 로직 오류
+            - ⚡ **보통**: 코드 품질 이슈, 가독성 문제, 경미한 버그
+            - ✅ **낮음**: 스타일 이슈, 최적화 제안, 베스트 프랙티스
 
-                    **검토 항목:**
-                    - ✅ 코드 품질 및 가독성
-                    - 🔒 보안 및 안정성 검사
-                    - ⚡ 성능 영향 분석
-                    - 🛠️ 베스트 프랙티스 준수
-                    - 💡 개선 제안사항
-                    - 📝 **실제 코드 개선 예시 제공**
+            **검토 항목:**
+            - ✅ 코드 품질 및 가독성
+            - 🔒 보안 및 안정성 검사
+            - ⚡ 성능 영향 분석
+            - 🛠️ 베스트 프랙티스 준수
+            - 💡 개선 제안사항
+            - 📝 **실제 코드 개선 예시 제공**
 
-                    </details>
+            </details>
 
-                    > ⚠️ **주의사항**: 이는 AI 자동 리뷰입니다. 최종 코드 검토는 반드시 사람이 수행해주세요.
+            > ⚠️ **주의사항**: 이는 AI 자동 리뷰입니다. 최종 코드 검토는 반드시 사람이 수행해주세요.
 
-                    ---
-                    *Generated by GitHub Actions • ${reviewDate} • ${actualProcessed}/${totalFiles} files processed in ${reviewDuration}s*`;
-                        
-                        if (botComment) {
-                          await github.rest.issues.updateComment({
-                            comment_id: botComment.id,
-                            owner: context.repo.owner,
-                            repo: context.repo.repo,
-                            body: commentBody
-                          });
-                          console.log('기존 리뷰 댓글을 업데이트했습니다.');
-                        } else {
-                          await github.rest.issues.createComment({
-                            issue_number: prNumber,
-                            owner: context.repo.owner,
-                            repo: context.repo.repo,
-                            body: commentBody
-                          });
-                          console.log('새 리뷰 댓글을 작성했습니다.');
-                        }
-                        
-                        // 높은 위험도 알림
-                        if (highestRisk.includes('긴급') || highestRisk.includes('높음')) {
-                          core.warning(`⚠️ 높은 위험도 감지: ${highestRisk}`);
-                        }
-                        
-                        // 처리 효율성 알림
-                        if (efficiency < 90) {
-                          core.warning(`⚠️ 처리 효율성: ${efficiency}% (${actualProcessed}/${totalFiles} 파일 처리완료)`);
-                        }
-                        
-                      } catch (error) {
-                        console.error('댓글 작성 실패:', error.message);
-                        core.setFailed(`댓글 작성에 실패했습니다: ${error.message}`);
-                      }
+            ---
+            *Generated by GitHub Actions • ${reviewDate} • ${analysis.actualProcessed}/${analysis.totalFiles} files processed in ${analysis.duration}s*`;
+                
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  comment_id: botComment.id,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: commentBody
+                });
+                console.log('기존 리뷰 댓글을 업데이트했습니다.');
+              } else {
+                await github.rest.issues.createComment({
+                  issue_number: prNumber,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: commentBody
+                });
+                console.log('새 리뷰 댓글을 작성했습니다.');
+              }
+              
+              // 높은 위험도 알림
+              if (analysis.highestRisk.includes('긴급') || analysis.highestRisk.includes('높음')) {
+                core.warning(`⚠️ 높은 위험도 감지: ${analysis.highestRisk}`);
+              }
+              
+              // 처리 효율성 알림
+              if (efficiency < 90) {
+                core.warning(`⚠️ 처리 효율성: ${efficiency}% (${analysis.actualProcessed}/${analysis.totalFiles} 파일 처리완료)`);
+              }
+              
+            } catch (error) {
+              console.error('댓글 작성 실패:', error.message);
+              core.setFailed(`댓글 작성에 실패했습니다: ${error.message}`);
+            }
 
       - name: 리뷰 결과 및 성능 분석
         run: |
-          if [ -f "review.txt" ]; then
+          if [ -f "review_analysis.json" ]; then
             echo "=== 최종 리뷰 분석 ==="
             
-            # 위험도 분석 (대소문자 구분 없이)
-            if grep -qi "긴급" review.txt; then
+            # JSON 파일에서 분석 결과 읽기
+            analysis=$(cat review_analysis.json)
+            
+            # 위험도 분석
+            if echo "$analysis" | grep -q '"highestRisk": "긴급"'; then
               echo "::error title=긴급 위험도 감지::코드에서 긴급 수정이 필요한 이슈가 발견되었습니다."
-              echo "FINAL_RISK_LEVEL=긴급" >> $GITHUB_ENV
-            elif grep -qi "높음" review.txt; then
+            elif echo "$analysis" | grep -q '"highestRisk": "높음"'; then
               echo "::warning title=높은 위험도 감지::코드에서 주의가 필요한 이슈가 발견되었습니다."
-              echo "FINAL_RISK_LEVEL=높음" >> $GITHUB_ENV
-            elif grep -qi "보통" review.txt; then
+            elif echo "$analysis" | grep -q '"highestRisk": "보통"'; then
               echo "::notice title=보통 위험도::일반적인 개선사항이 발견되었습니다."
-              echo "FINAL_RISK_LEVEL=보통" >> $GITHUB_ENV
             else
               echo "::notice title=낮은 위험도::코드 품질이 양호합니다."
-              echo "FINAL_RISK_LEVEL=낮음" >> $GITHUB_ENV
             fi
             
             # 상세 성능 통계
             echo "=== 처리 성능 통계 ==="
-            echo "- 총 파일 수: ${TOTAL_FILES:-0}"
-            echo "- 계획된 처리 파일: ${PROCESSED_FILES:-0}"
-            echo "- 실제 처리된 파일: ${ACTUAL_PROCESSED:-0}"
-            echo "- 건너뛴 파일: ${SKIPPED_FILES:-0}"
-            echo "- 총 처리 시간: ${REVIEW_DURATION:-0}초"
-            echo "- 리뷰 모드: ${REVIEW_MODE:-unknown}"
+            total_files=$(echo "$analysis" | grep -o '"totalFiles": [0-9]*' | grep -o '[0-9]*')
+            actual_processed=$(echo "$analysis" | grep -o '"actualProcessed": [0-9]*' | grep -o '[0-9]*')
+            skipped_files=$(echo "$analysis" | grep -o '"skippedFiles": [0-9]*' | grep -o '[0-9]*')
+            duration=$(echo "$analysis" | grep -o '"duration": [0-9]*' | grep -o '[0-9]*')
+            review_mode=$(echo "$analysis" | grep -o '"reviewMode": "[^"]*"' | cut -d'"' -f4)
+            
+            echo "- 총 파일 수: ${total_files:-0}"
+            echo "- 실제 처리된 파일: ${actual_processed:-0}"
+            echo "- 건너뛴 파일: ${skipped_files:-0}"
+            echo "- 총 처리 시간: ${duration:-0}초"
+            echo "- 리뷰 모드: ${review_mode:-unknown}"
             
             # 처리 효율성 계산
-            if [ "${TOTAL_FILES:-0}" -gt 0 ]; then
-              efficiency=$(( (${ACTUAL_PROCESSED:-0} * 100) / ${TOTAL_FILES:-1} ))
+            if [ "${total_files:-0}" -gt 0 ]; then
+              efficiency=$(( (${actual_processed:-0} * 100) / ${total_files:-1} ))
               echo "- 처리 효율성: ${efficiency}%"
               
               if [ "$efficiency" -lt 80 ]; then
@@ -622,22 +286,24 @@ jobs:
             fi
             
             # 시간 제한 체크
-            if [ "${TIME_LIMIT_REACHED:-false}" = "true" ]; then
+            if echo "$analysis" | grep -q '"timeLimitReached": true'; then
               echo "::warning title=시간 제한 도달::일부 파일의 처리가 시간 제한으로 중단되었습니다."
             fi
             
             # 리뷰 품질 확인
-            review_lines=$(wc -l < review.txt)
-            review_size=$(wc -c < review.txt)
-            echo "- 리뷰 결과 크기: ${review_lines}줄, ${review_size}바이트"
-            
-            if [ "$review_lines" -lt 20 ] && [ "${ACTUAL_PROCESSED:-0}" -gt 0 ]; then
-              echo "::warning title=리뷰 결과 부족::리뷰 내용이 예상보다 적습니다. AI 모델 응답 확인이 필요합니다."
+            if [ -f "review.txt" ]; then
+              review_lines=$(wc -l < review.txt)
+              review_size=$(wc -c < review.txt)
+              echo "- 리뷰 결과 크기: ${review_lines}줄, ${review_size}바이트"
+              
+              if [ "$review_lines" -lt 20 ] && [ "${actual_processed:-0}" -gt 0 ]; then
+                echo "::warning title=리뷰 결과 부족::리뷰 내용이 예상보다 적습니다. AI 모델 응답 확인이 필요합니다."
+              fi
             fi
             
             echo "=== 리뷰 완료 ==="
             
           else
-            echo "::error title=리뷰 실패::리뷰 파일이 생성되지 않았습니다."
+            echo "::error title=리뷰 실패::리뷰 분석 파일이 생성되지 않았습니다."
             exit 1
           fi
