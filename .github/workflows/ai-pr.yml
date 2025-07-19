@@ -24,222 +24,60 @@ jobs:
           free -h
           df -h
           
-      - name: Ollama 설치 및 설정
+      - name: 시스템 정보 확인
         run: |
-          echo "Ollama 설치 중..."
-          curl -fsSL https://ollama.ai/install.sh | sh
+          echo "=== 시스템 정보 ==="
+          uname -a
+          free -h
+          df -h
           
-          echo "Ollama 서버 시작..."
-          ollama serve &
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
           
-          # 서버 시작 대기
-          echo "서버 시작 대기 중..."
-          for i in {1..30}; do
-            if curl -s http://localhost:11434/api/version >/dev/null 2>&1; then
-              echo "Ollama 서버가 준비되었습니다."
-              break
-            fi
-            echo "대기 중... ($i/30)"
-            sleep 2
-          done
-          
-          # 연결 확인
-          echo "Ollama 연결 테스트..."
-          curl -s http://localhost:11434/api/version || exit 1
-          
-          # 경량 모델 사용
-          echo "모델 다운로드 중..."
-          ollama pull qwen2.5-coder:1.5b
-          
-      - name: 변경사항 분석 및 카테고리 분류
+      - name: 의존성 설치
+        run: pnpm install
+        
+      - name: AI PR 자동 생성
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          echo "변경사항 분석 시작..."
-          git fetch origin ${{ github.base_ref }}
+          echo "AI PR 자동 생성 시작..."
+          node scripts/ai-pr.mjs ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
           
-          # 모든 변경된 파일 찾기
-          all_changed_files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.(py|js|ts|jsx|tsx|java|cpp|c|h|php|rb|go|rs|kt|swift|dart|scala|json|yml|yaml|md|sql|css|html|xml|sh)$' || true)
-          
-          echo "변경된 파일 목록:"
-          echo "$all_changed_files"
-          
-          if [ -n "$all_changed_files" ]; then
-            > file_changes.txt
-            > code_changes.txt
-            > config_changes.txt
-            > doc_changes.txt
-            
-            # 파일별 변경사항 분석
-            for file in $all_changed_files; do
-              if [ -f "$file" ]; then
-                echo "=== $file 분석 ===" >> file_changes.txt
-                
-                # 파일 타입 분류
-                case "$file" in
-                  *.py|*.js|*.ts|*.jsx|*.tsx|*.java|*.cpp|*.c|*.h|*.php|*.rb|*.go|*.rs|*.kt|*.swift|*.dart|*.scala)
-                    echo "코드 파일: $file" >> code_changes.txt
-                    category="code"
-                    ;;
-                  *.json|*.yml|*.yaml|*.xml|*.sh)
-                    echo "설정 파일: $file" >> config_changes.txt
-                    category="config"
-                    ;;
-                  *.md|*.txt|*.rst)
-                    echo "문서 파일: $file" >> doc_changes.txt
-                    category="doc"
-                    ;;
-                  *)
-                    echo "기타 파일: $file" >> file_changes.txt
-                    category="other"
-                    ;;
-                esac
-                
-                # 변경사항 추출 (파일 크기에 따라 조정)
-                file_size=$(wc -l < "$file" 2>/dev/null || echo "0")
-                
-                if [ "$file_size" -gt 500 ]; then
-                  # 대용량 파일: 핵심 변경사항만
-                  diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -100)
-                  echo "대용량 파일 (${file_size}줄) - 핵심 변경사항:" >> file_changes.txt
-                else
-                  # 일반 파일: 전체 변경사항
-                  diff_content=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- "$file" | head -200)
-                  echo "파일 크기: ${file_size}줄" >> file_changes.txt
-                fi
-                
-                echo "$diff_content" >> file_changes.txt
-                echo "" >> file_changes.txt
-                echo "---" >> file_changes.txt
-                echo "" >> file_changes.txt
-              else
-                echo "삭제된 파일: $file" >> file_changes.txt
-              fi
-            done
-            
-            # 통계 정보 생성
-            total_files=$(echo "$all_changed_files" | wc -l | tr -d ' ')
-            code_files=$(grep -c "코드 파일" code_changes.txt 2>/dev/null || echo "0")
-            config_files=$(grep -c "설정 파일" config_changes.txt 2>/dev/null || echo "0")
-            doc_files=$(grep -c "문서 파일" doc_changes.txt 2>/dev/null || echo "0")
-            
-            echo "=== 변경사항 통계 ==="
-            if [ "$total_files" != "0" ]; then
-              echo "총 파일: $total_files"
-            fi
-            if [ "$code_files" != "0" ]; then
-              echo "코드 파일: $code_files"
-            fi
-            if [ "$config_files" != "0" ]; then
-              echo "설정 파일: $config_files"
-            fi
-            if [ "$doc_files" != "0" ]; then
-              echo "문서 파일: $doc_files"
-            fi
-            
+          # 결과 파일 확인
+          if [ -f "pr_title.txt" ] && [ -f "pr_body.txt" ] && [ -f "change_summary.txt" ]; then
+            echo "✅ PR 내용 생성 완료"
+            echo "제목: $(cat pr_title.txt)"
+            echo "요약: $(cat change_summary.txt)"
           else
-            echo "변경된 파일이 없습니다."
+            echo "❌ PR 내용 생성 실패"
+            exit 1
           fi
           
-      - name: AI를 통한 PR 내용 생성
+      - name: 결과 파일 확인
         run: |
-          if [ -f "file_changes.txt" ] && [ -s "file_changes.txt" ]; then
-            echo "AI PR 내용 생성 시작..."
-            
-            # 변경사항 읽기
-            changes_content=$(cat file_changes.txt)
-            
-            # PR 제목 생성
-            title_prompt="다음 코드 변경사항을 분석하여 간결한 PR 제목을 한국어로 생성해주세요. 
-            
-          변경사항:
-              $changes_content
-
-          다음 형식 중 하나를 선택하여 간결하고 명확한 제목을 만들어주세요:
-          - feat: 새로운 기능 추가
-          - fix: 버그 수정
-          - docs: 문서 수정
-          - style: 코드 스타일 변경
-          - refactor: 코드 리팩토링
-          - test: 테스트 추가/수정
-          - chore: 빌드 관련 변경사항
-
-          간결한 제목만 응답해주세요 (50자 이내):"
-
-            echo "PR 제목 생성 중..."
-            pr_title=$(echo "$title_prompt" | timeout 120s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-            
-            if [ -z "$pr_title" ]; then
-              pr_title="코드 변경사항 업데이트"
-            fi
-            
-            echo "생성된 제목: $pr_title"
-            echo "$pr_title" > pr_title.txt
-            
-            # PR 본문 생성 (간소화)
-            body_prompt="다음 코드 변경사항을 분석하여 간단한 PR 설명을 한국어로 작성해주세요.
-
-          변경사항:
-          $changes_content
-
-          다음 형식으로 간단히 작성해주세요:
-
-          ## 📝 작업 내용
-          - 이번 PR에서 수행한 주요 작업들
-
-          ## 🔄 주요 변경사항
-          - 추가된 기능이나 수정된 내용
-
-          ## 🧪 테스트 방법
-          - 변경사항 확인 방법
-
-          간결하고 실용적인 내용으로 작성해주세요."
-
-            echo "PR 본문 생성 중..."
-            pr_body=$(echo "$body_prompt" | timeout 300s ollama run qwen2.5-coder:1.5b 2>/dev/null)
-            
-            if [ -z "$pr_body" ]; then
-              pr_body="## 📝 작업 내용
-          이번 PR에서는 다음과 같은 변경사항이 있습니다.
-
-          ## 🔄 주요 변경사항
-          변경된 파일들을 검토하여 세부사항을 확인해주세요.
-
-          ## 🧪 테스트 방법
-          변경사항에 대한 적절한 테스트를 수행해주세요."
-            fi
-            
-            echo "PR 본문 생성 완료"
-            echo "$pr_body" > pr_body.txt
-            
-            # 변경사항 요약 생성
-            summary_prompt="다음 변경사항을 간단히 요약해주세요 (1-2줄로):
-
-          $changes_content
-
-          핵심 변경사항만 간결하게 한국어로 설명해주세요:"
-
-            echo "변경사항 요약 생성 중..."
-            change_summary=$(echo "$summary_prompt" | timeout 120s ollama run qwen2.5-coder:1.5b 2>/dev/null | head -2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-            
-            if [ -z "$change_summary" ]; then
-              change_summary="코드 변경사항 업데이트"
-            fi
-            
-            echo "생성된 요약: $change_summary"
-            echo "$change_summary" > change_summary.txt
-            
+          echo "=== 생성된 결과 확인 ==="
+          if [ -f "pr_title.txt" ]; then
+            echo "✅ 제목 파일 생성됨"
+            echo "제목: $(cat pr_title.txt)"
           else
-            echo "변경사항이 없어 기본 PR 내용을 생성합니다."
-            echo "문서 또는 설정 파일 업데이트" > pr_title.txt
-            echo "## 📝 작업 내용
-          이번 PR에서는 프로젝트 파일들이 업데이트되었습니다.
-
-          ## 🔄 주요 변경사항
-          세부 변경사항을 확인해주세요.
-
-          ## 📋 체크리스트
-          - [ ] 변경사항 검토 완료
-          - [ ] 테스트 확인" > pr_body.txt
-          echo "일반적인 프로젝트 파일 업데이트" > change_summary.txt
+            echo "❌ 제목 파일 없음"
+          fi
+          
+          if [ -f "pr_body.txt" ]; then
+            echo "✅ 본문 파일 생성됨"
+            echo "본문 길이: $(wc -c < pr_body.txt) 문자"
+          else
+            echo "❌ 본문 파일 없음"
+          fi
+          
+          if [ -f "change_summary.txt" ]; then
+            echo "✅ 요약 파일 생성됨"
+            echo "요약: $(cat change_summary.txt)"
+          else
+            echo "❌ 요약 파일 없음"
           fi
                     
       - name: PR 제목 및 본문 업데이트
@@ -274,7 +112,7 @@ jobs:
 
             **생성 시간**: ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}
             **분석된 파일**: ${totalFiles}개 (코드: ${codeFiles}, 설정: ${configFiles}, 문서: ${docFiles})
-            **AI 모델**: qwen2.5-coder:1.5b
+            **AI 모델**: gemini-2.5-pro
             **변경사항 요약**: ${changeSummary}
 
             > ⚠️ 이 PR 내용은 AI가 자동으로 생성했습니다. 
