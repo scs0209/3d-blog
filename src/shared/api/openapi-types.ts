@@ -1517,6 +1517,90 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/summarize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 블로그 포스트 요약 생성
+         * @description AI를 사용하여 블로그 포스트의 내용을 간결하게 요약합니다
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description 요약할 블로그 포스트 내용
+                         * @example 이 글에서는 React와 Next.js를 사용한 웹 개발에 대해 다룹니다...
+                         */
+                        content: string;
+                        /**
+                         * @description 블로그 포스트 제목
+                         * @example React와 Next.js로 현대적인 웹 애플리케이션 구축하기
+                         */
+                        title: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description 요약 생성 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /**
+                             * @description 생성된 요약 텍스트
+                             * @example React와 Next.js를 활용한 웹 개발 방법론과 실제 구현 과정을 다룬 글입니다.
+                             */
+                            summary?: string;
+                        };
+                    };
+                };
+                /** @description 필수 필드 누락 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example 콘텐츠와 제목이 필요합니다. */
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description 서버 오류 또는 AI 요약 생성 실패 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example 요약 생성에 실패했습니다. */
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/tags/{id}": {
         parameters: {
             query?: never;

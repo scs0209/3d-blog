@@ -7,6 +7,7 @@ import { Menu, Search, X, Home, Globe, Navigation } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dropdown } from '@/shared/ui';
+import Image from 'next/image';
 
 const SearchBar = dynamic(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), {
   ssr: false,
@@ -59,9 +60,9 @@ export default function BlogHeader() {
           <motion.button
             type='button'
             whileHover={{ scale: 1.02 }}
-            className='font-extrabold text-2xl text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:text-white bg-transparent border-none p-0 m-0 focus:outline-none transition-colors duration-300'
+            className='font-extrabold text-lg text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:text-white bg-transparent border-none p-0 m-0 focus:outline-none transition-colors duration-300'
           >
-            🪐 3D Tech Blog
+            <Image src='/logo.png' alt='logo' width={24} height={24} /> 3D Tech Blog
           </motion.button>
         </div>
 
@@ -221,7 +222,7 @@ export default function BlogHeader() {
               whileHover={{ scale: 1.02 }}
               className='font-extrabold text-lg text-blue-100 flex items-center gap-2 cursor-pointer select-none hover:text-white bg-transparent border-none p-0 m-0 focus:outline-none transition-colors duration-300 flex-1 justify-center'
             >
-              🪐 3D Tech Blog
+              <Image src='/logo.png' alt='logo' width={24} height={24} /> 3D Tech Blog
             </motion.button>
 
             {/* 우측 버튼들 */}

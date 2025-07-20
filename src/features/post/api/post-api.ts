@@ -1,6 +1,7 @@
 import { type ApiRequest, fetcher } from '@/shared/api';
 import type { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
+import type { GetPostSummaryRequest } from '../model';
 
 export const getPostList = () => fetcher({ url: '/api/posts', method: 'get' });
 
@@ -66,4 +67,11 @@ export const getPostBySlug = (slug: string) =>
     url: '/api/posts/{slug}',
     path: { slug },
     method: 'get',
+  });
+
+export const getPostSummary = (body: GetPostSummaryRequest) =>
+  fetcher({
+    url: '/api/summarize',
+    method: 'post',
+    body,
   });

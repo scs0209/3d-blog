@@ -10,3 +10,5 @@ export type BlogPost = {
 };
 
 export type PostResponse = ApiResponse<'/api/posts/{slug}', 'get'>;
+
+export type PostSummaryResponse = ApiResponse<'/api/summarize', 'post'>;

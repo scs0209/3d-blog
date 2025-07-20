@@ -105,7 +105,7 @@ const starterKit = StarterKit.configure({
   },
   code: {
     HTMLAttributes: {
-      class: cx('rounded-md bg-muted  px-1.5 py-1 font-mono font-medium'),
+      class: cx('rounded-md bg-gray-800 px-1.5 py-1 font-mono font-medium'),
       spellcheck: 'false',
     },
   },

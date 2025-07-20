@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
@@ -168,6 +168,10 @@ export default function PortfolioPage() {
     setCameraAnimationDone,
     focusedGroup,
   });
+
+  useEffect(() => {
+    document.title = 'Portfolio';
+  }, []);
 
   return (
     <FPSProvider>
