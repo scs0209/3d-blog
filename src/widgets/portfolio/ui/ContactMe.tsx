@@ -15,10 +15,11 @@ const purpleNeonMaterial = new three.MeshStandardMaterial({
 
 type ContactMeProps = {
   triggerAnimation?: boolean;
+  onAnimationComplete?: () => void;
 } & any;
 
 export function ContactMe(props: ContactMeProps) {
-  const { triggerAnimation, ...otherProps } = props;
+  const { triggerAnimation, onAnimationComplete, ...otherProps } = props;
   const group = useRef<three.Group>(null);
   const isAnimationRunning = useRef(false);
   const { nodes, materials, animations } = useGLTF('/sci-fi_door..glb');
@@ -55,6 +56,11 @@ export function ContactMe(props: ContactMeProps) {
                     action.stop(); // 애니메이션 정지 (reset 대신 stop 사용)
                     isAnimationRunning.current = false; // 애니메이션 완료
                     mixer.removeEventListener('finished', handleReverseFinished);
+
+                    // 애니메이션 완료 후 콜백 호출
+                    if (onAnimationComplete) {
+                      onAnimationComplete();
+                    }
                   }
                 };
                 mixer.addEventListener('finished', handleReverseFinished);

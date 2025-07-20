@@ -141,6 +141,10 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           onPointerOver={handlePointerOver([-5, 0, -0.1])}
           onPointerOut={handlePointerOut}
           triggerAnimation={focusedGroup === 'contactMe' && cameraAnimationDone}
+          onAnimationComplete={() => {
+            // 홈으로 이동
+            window.location.href = '/';
+          }}
         />
       )}
 

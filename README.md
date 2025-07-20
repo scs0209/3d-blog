@@ -1,14 +1,47 @@
-# 블로깅 플랫폼 (Blogging Platform)
+# 블로그 및 포트폴리오
 
-Next.js, TypeScript, Prisma, Tailwind CSS를 사용하여 구축된 블로깅 플랫폼입니다.
+개인 포트폴리오 겸 블로그 사이트
 
-## 주요 기술 (Key Technologies)
+## 📋 목차 (Table of Contents)
 
-*   **Next.js:** 서버 사이드 렌더링 및 정적 생성을 지원하는 React 프레임워크입니다. (App Router 사용)
-*   **TypeScript:** JavaScript의 상위 집합으로, 정적 타입을 제공하여 코드 안정성을 높입니다.
-*   **Prisma:** 현대적인 데이터베이스 툴킷으로, 데이터베이스와의 상호작용을 쉽게 만듭니다.
-*   **Tailwind CSS:** 유틸리티 우선 CSS 프레임워크로, 사용자 인터페이스를 빠르게 구축할 수 있습니다.
-*   **React Three Fiber:** React 애플리케이션에서 Three.js를 사용하여 3D 그래픽을 렌더링하기 위한 라이브러리입니다.
+- [블로그 및 포트폴리오](#블로그-및-포트폴리오)
+  - [📋 목차 (Table of Contents)](#-목차-table-of-contents)
+  - [기술 스택 (Skills)](#기술-스택-skills)
+  - [API 타입 자동 생성 (openapi-typescript)](#api-타입-자동-생성-openapi-typescript)
+  - [주요 기능 (Project Features)](#주요-기능-project-features)
+    - [AI 기술 스택](#ai-기술-스택)
+  - [아키텍처 패턴: Feature-Sliced Design (FSD)](#아키텍처-패턴-feature-sliced-design-fsd)
+    - [FSD 레이어 구조 및 Next.js App Router와의 통합](#fsd-레이어-구조-및-nextjs-app-router와의-통합)
+    - [FSD 규칙](#fsd-규칙)
+  - [`react-three-fiber` 활용 (Usage of `react-three-fiber`)](#react-three-fiber-활용-usage-of-react-three-fiber)
+  - [시작하기 (Getting Started)](#시작하기-getting-started)
+    - [사전 요구 사항 (Prerequisites)](#사전-요구-사항-prerequisites)
+    - [설치 (Installation)](#설치-installation)
+    - [프로젝트 실행 (Running the Project)](#프로젝트-실행-running-the-project)
+  - [프로젝트 구조 (Project Structure)](#프로젝트-구조-project-structure)
+  - [사용 가능한 스크립트 (Available Scripts)](#사용-가능한-스크립트-available-scripts)
+  - [AI PR 자동 작성 (AI PR Auto Writer)](#ai-pr-자동-작성-ai-pr-auto-writer)
+    - [설정 방법](#설정-방법)
+    - [기능](#기능)
+  - [개인 프로젝트 노트 (Personal Project Note)](#개인-프로젝트-노트-personal-project-note)
+  - [기여하기 (Contributing)](#기여하기-contributing)
+  - [라이선스 (License)](#라이선스-license)
+
+## 기술 스택 (Skills)
+
+<div align="center">
+
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-000000?style=flat-square&logo=react&logoColor=61DAFB)
+![OpenRouter](https://img.shields.io/badge/OpenRouter-000000?style=flat-square&logo=openai&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-4285F4?style=flat-square&logo=google&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
+
+</div>
 
 ## API 타입 자동 생성 (openapi-typescript)
 
@@ -16,7 +49,7 @@ Next.js, TypeScript, Prisma, Tailwind CSS를 사용하여 구축된 블로깅 �
 
 *   **타입 생성 스크립트:** 다음 명령어를 사용하여 타입을 생성할 수 있습니다.
     ```sh
-    pnpm generate-types
+    pnpm run generate-types
     ```
     (내부적으로 `sh scripts/generate-types.sh` 스크립트를 실행할 수 있습니다.)
 
@@ -30,16 +63,15 @@ Next.js, TypeScript, Prisma, Tailwind CSS를 사용하여 구축된 블로깅 �
 *   **블로그 관리:**
     *   게시물 생성, 조회, 수정 및 삭제 (CRUD) 기능
     *   마크다운 또는 위지윅 에디터를 사용한 콘텐츠 작성
+    *   AI 요약 기능 (AI Summary Feature):
+        * **자동 요약 생성:** 블로그 포스트의 제목과 내용을 분석하여 AI가 핵심 내용을 2-3문장으로 요약
 *   **콘텐츠 조직화:**
     *   게시물 분류를 위한 카테고리 기능
     *   세부 주제별 분류를 위한 태그 기능
 *   **사용자 인증:**
     *   회원가입, 로그인 및 로그아웃 기능
-    *   (선택 사항) 소셜 로그인 지원
-*   **검색:**
+*   **검색:** (지원 예정)
     *   게시물 제목 및 내용 검색 기능
-*   **(선택 사항) 3D 요소 통합:**
-    *   `react-three-fiber`를 활용하여 블로그 게시물 내에 인터랙티브 3D 모델 또는 시각화 포함 가능
 *   **관리자 페이지 (Admin Page):**
     *   **목적:** 플랫폼의 전반적인 콘텐츠, 사용자 및 설정을 관리하기 위한 전용 인터페이스입니다.
     *   **주요 기능:**
@@ -49,6 +81,14 @@ Next.js, TypeScript, Prisma, Tailwind CSS를 사용하여 구축된 블로깅 �
         *   **카테고리 및 태그 관리:** 카테고리 및 태그 생성, 수정, 삭제.
         *   **(선택 사항) 댓글 관리:** 댓글 승인, 스팸 처리, 삭제.
         *   **(선택 사항) 사이트 설정:** 사이트 제목, 테마, 플러그인 등 일반 설정 변경.
+*   AI 요약 기능 (AI Summary Feature)
+    * **자동 요약 생성:** 블로그 포스트의 제목과 내용을 분석하여 AI가 핵심 내용을 2-3문장으로 요약
+
+### AI 기술 스택
+
+*   **OpenRouter API:** 다양한 AI 모델에 접근할 수 있는 통합 API 플랫폼
+*   **DeepSeek Chat:** 현재 사용 중인 AI 모델 (`deepseek/deepseek-chat-v3-0324:free`)
+
 
 ## 아키텍처 패턴: Feature-Sliced Design (FSD)
 
