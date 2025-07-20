@@ -20,8 +20,8 @@ export default function PortfolioPage() {
   const initialAnimation = useInitialAnimation();
 
   // 타이틀 상태 추가
-  const [currentTitle, setCurrentTitle] = useState('Ayaan');
-  const [currentSubtitle, setCurrentSubtitle] = useState('Frontend Developer');
+  const [currentTitle, setCurrentTitle] = useState('');
+  const [currentSubtitle, setCurrentSubtitle] = useState('');
   const [titleAnimation, setTitleAnimation] = useState<'idle' | 'changing' | 'exiting'>('idle');
 
   const {
@@ -95,13 +95,14 @@ export default function PortfolioPage() {
     // 그룹에 따른 타이틀 매핑 (HoloText와 동일한 텍스트)
     const titleMap: Record<string, { title: string; subtitle: string }> = {
       work: { title: 'ABOUT ME', subtitle: 'Personal Information' },
-      contactMe: { title: 'CONTACT', subtitle: 'Get In Touch' },
+      contactMe: { title: 'HOME', subtitle: 'Welcome Back' },
       server: { title: 'WORKS', subtitle: 'Portfolio Projects' },
       resumeConsole: { title: 'RESUME', subtitle: 'Professional Experience' },
       experience: { title: 'EXPERIENCE', subtitle: 'Work History' },
       skill: { title: 'SKILLS', subtitle: 'Technical Expertise' },
-      platform: { title: 'HOME', subtitle: 'Welcome Back' },
+      platform: { title: 'PLAYGROUND', subtitle: 'Creative Space' },
       holoTable: { title: 'PLAYGROUND', subtitle: 'Creative Space' },
+      radar: { title: 'CONTACT ME', subtitle: 'Get In Touch' },
     };
 
     const newTitle = titleMap[group] || { title: group.toUpperCase(), subtitle: 'Section' };
@@ -120,8 +121,8 @@ export default function PortfolioPage() {
   const handleBackWithTitleReset = () => {
     setTitleAnimation('exiting');
     setTimeout(() => {
-      setCurrentTitle('Ayaan');
-      setCurrentSubtitle('Frontend Developer');
+      setCurrentTitle('');
+      setCurrentSubtitle('');
       setTitleAnimation('idle');
     }, 300);
     handleBack();
