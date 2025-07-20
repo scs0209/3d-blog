@@ -2,8 +2,8 @@ import type React from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Blog',
+  title: 'Home',
+  description: 'Home',
 };
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
