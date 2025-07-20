@@ -6,9 +6,9 @@ import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 
 const menuItems = [
-  { href: '/', label: 'Portfolio', isComingSoon: true },
+  { href: '/portfolio', label: 'Portfolio', isComingSoon: false },
   { href: '/blog', label: 'Blog', isComingSoon: false },
-  { href: '/', label: 'Contact', isComingSoon: true },
+  // { href: '/', label: 'Contact', isComingSoon: true },
 ];
 
 export const Navbar = () => {
