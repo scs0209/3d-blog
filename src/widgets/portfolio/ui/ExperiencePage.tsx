@@ -155,10 +155,8 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
                 initial='hidden'
                 animate={index <= currentCardIndex ? 'visible' : 'hidden'}
                 onAnimationComplete={() => handleCardAnimationComplete(index)}
-                className={`relative px-6 py-5 bg-black/20 text-white font-bold tracking-widest flex flex-col items-start justify-end cursor-pointer transition-all duration-300 ${
-                  selectedExp === exp.id
-                    ? 'shadow-[0_0_20px_#8b5cf6,0_0_10px_#a78bfa] border-violet-300'
-                    : 'shadow-[0_0_12px_#8b5cf6,0_0_4px_#a78bfa] border-violet-400/50'
+                className={`relative px-6 py-5 bg-white/10 backdrop-blur-md text-white font-bold tracking-widest flex flex-col items-start justify-end cursor-pointer transition-all duration-300 border border-white/60 ${
+                  selectedExp === exp.id ? 'shadow-lg border-white/80' : 'shadow border-white/40'
                 }`}
                 style={{
                   clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px)',
@@ -171,19 +169,17 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
                   }
                 }}
               >
-                <span className='text-xs font-mono text-violet-300 drop-shadow-[0_0_6px_#a78bfa] mb-2'>{exp.id}</span>
-                <span className='text-violet-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_#a78bfa]'>
-                  {exp.company}
-                </span>
-                <span className='text-violet-200 text-sm font-mono mt-2'>{exp.role}</span>
-                <div className='flex flex-col gap-1 w-full mt-4 text-xs font-mono text-violet-300'>
+                <span className='text-xs font-mono text-white/70 mb-2'>{exp.id}</span>
+                <span className='text-white text-lg font-extrabold tracking-widest'>{exp.company}</span>
+                <span className='text-white/90 text-sm font-mono mt-2'>{exp.role}</span>
+                <div className='flex flex-col gap-1 w-full mt-4 text-xs font-mono text-white/70'>
                   <span>{exp.period}</span>
                   <span>{exp.location}</span>
                 </div>
 
                 {/* 하단 강조선 */}
                 <motion.div
-                  className='absolute left-0 bottom-0 h-[2px] bg-violet-400 rounded shadow-[0_0_8px_#a78bfa]'
+                  className='absolute left-0 bottom-0 h-[2px] bg-white/80 rounded'
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
                   transition={{ duration: 0.28 }}
@@ -212,11 +208,14 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
                     transition={{ duration: slideDuration, ease: 'easeInOut' }}
                     onAnimationComplete={() => setSlideDone(true)}
                   >
-                    <div className='h-[3px] bg-violet-400 shadow-[0_0_8px_#a78bfa] rounded-t w-full' />
+                    <div className='h-[3px] bg-white/80 rounded-t w-full' />
                   </motion.div>
                 )}
                 {((slideDone && cardsAnimationDone) || contentClosing) && (
-                  <div className='w-full bg-black/25' style={{ borderBottom: '2px solid #8b5cf6' }}>
+                  <div
+                    className='w-full bg-white/10 backdrop-blur-md border border-white/60'
+                    style={{ borderBottom: '2px solid rgba(255,255,255,0.6)' }}
+                  >
                     <motion.div
                       key={contentKey}
                       className='w-full flex flex-col gap-4'
@@ -237,7 +236,7 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
                       {/* 설명 */}
                       <div className='space-y-4 p-6'>
                         {selectedExperience.description.map((desc) => (
-                          <p key={desc} className='text-violet-100 text-base font-mono leading-relaxed'>
+                          <p key={desc} className='text-white/90 text-base font-mono leading-relaxed'>
                             {desc}
                           </p>
                         ))}
@@ -245,12 +244,12 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
 
                       {/* 기술 스택 */}
                       <div className='mt-6 p-6'>
-                        <h3 className='text-violet-300 font-bold mb-3'>TECHNOLOGIES</h3>
+                        <h3 className='text-white font-bold mb-3'>TECHNOLOGIES</h3>
                         <div className='flex flex-wrap gap-2'>
                           {selectedExperience.skills.map((skill) => (
                             <span
                               key={skill}
-                              className='px-3 py-1 bg-violet-900/30 border border-violet-400 rounded-full text-violet-200 text-sm font-mono shadow-[0_0_8px_#8b5cf6]'
+                              className='px-3 py-1 bg-white/10 border border-white/60 rounded-full text-white/90 text-sm font-mono backdrop-blur-sm'
                             >
                               {skill}
                             </span>
@@ -267,7 +266,7 @@ export function ExperiencePage({ isClosing = false, onClose }: { isClosing?: boo
                     animate={{ width: 0 }}
                     transition={{ duration: slideDuration, delay: dropDuration, ease: 'easeInOut' }}
                   >
-                    <div className='h-[3px] bg-violet-400 shadow-[0_0_8px_#a78bfa] rounded-t w-full' />
+                    <div className='h-[3px] bg-white/80 rounded-t w-full' />
                   </motion.div>
                 )}
               </>
