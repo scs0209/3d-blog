@@ -60,7 +60,8 @@
         "useYield": "error"
       },
       "security": {
-        "noDangerouslySetInnerHtmlWithChildren": "error"
+        "noDangerouslySetInnerHtmlWithChildren": "error",
+        "noDangerouslySetInnerHtml": "warn"
       },
       "style": {
         "noInferrableTypes": "error",
