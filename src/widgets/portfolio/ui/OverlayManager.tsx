@@ -172,15 +172,15 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       {/* 오버레이 UI: 하단중앙 저작권/소셜 */}
       <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-6 items-center text-[#E5D6C4] font-mono text-xs'>
         <span>© 2025</span>
-        <AnimatedLink href='https://github.com/yourid' target='_blank' rel='noopener noreferrer'>
+        <AnimatedLink href='https://github.com/scs0209' target='_blank' rel='noopener noreferrer'>
           <GithubIcon className='w-4 h-4' />
           <span>GITHUB</span>
         </AnimatedLink>
-        <AnimatedLink href='https://linkedin.com/in/yourid' target='_blank' rel='noopener noreferrer'>
+        <AnimatedLink href='https://www.linkedin.com/in/창수-성-7663b9275' target='_blank' rel='noopener noreferrer'>
           <LinkedinIcon className='w-4 h-4' />
           <span>LINKEDIN</span>
         </AnimatedLink>
-        <AnimatedLink href='mailto:your@email.com'>
+        <AnimatedLink href='mailto:tjdckdtn2463@naver.com'>
           <Mail className='w-4 h-4' />
           <span>EMAIL</span>
         </AnimatedLink>
