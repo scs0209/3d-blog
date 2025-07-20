@@ -1,8 +1,14 @@
 import { SpaceBackground } from '@/widgets/post/ui';
+import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 
 const BlogHeader = dynamic(() => import('@/widgets/post/ui/BlogHeader'));
 const Sidebar = dynamic(() => import('@/widgets/post/ui/Sidebar'));
+
+export const metadata: Metadata = {
+  title: 'Blog',
+  description: 'Blog',
+};
 
 export default function PostsLayout({
   children,
