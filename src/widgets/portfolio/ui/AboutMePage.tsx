@@ -85,18 +85,15 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
           {aboutMeData.sections.map((section, i) => (
             <div
               key={section.key}
-              className='relative min-w-[180px] min-h-[70px] px-6 py-5 bg-white/5 text-white font-bold tracking-widest flex flex-col items-start justify-end mr-6 shadow-[0_0_12px_theme(colors.neon.cream),0_0_4px_theme(colors.neon.cream)] border border-neon-cream/80'
+              className='relative min-w-[180px] min-h-[70px] px-6 py-5 bg-white/10 backdrop-blur-xl border border-white/80 rounded-xl shadow-[0_0_12px_white,0_0_4px_white] text-white font-bold tracking-widest flex flex-col items-start justify-end mr-6'
               style={{
                 clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px)',
-                boxShadow: '0 0 12px theme(colors.neon.cream), 0 0 4px theme(colors.neon.cream)',
               }}
             >
-              <span className='text-xs font-mono text-cyan-300 drop-shadow-[0_0_6px_theme(colors.neon.cream)] mb-2'>
-                SEC-{i}
-              </span>
+              <span className='text-xs font-mono text-cyan-300 drop-shadow-[0_0_6px_white] mb-2'>SEC-{i}</span>
               {/* 하단 강조선 */}
               <motion.div
-                className='absolute left-0 bottom-0 h-[4px] bg-neon-cream rounded shadow-[0_0_8px_theme(colors.neon.cream)]'
+                className='absolute left-0 bottom-0 h-[4px] bg-white rounded shadow-[0_0_8px_white]'
                 initial={{ width: 0 }}
                 animate={{ width: '100%' }}
                 transition={{ duration: 0.28, delay: i * 0.5 }}
@@ -104,7 +101,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
               />
               {/* 오른쪽 border */}
               <motion.div
-                className='absolute right-0 bottom-0 w-[2px] bg-neon-cream'
+                className='absolute right-0 bottom-0 w-[2px] bg-white'
                 initial={{ height: 0 }}
                 animate={{ height: '100%' }}
                 transition={{ duration: 0.18, delay: i * 0.5 + 0.28 }}
@@ -112,7 +109,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
               />
               {/* 상단 border */}
               <motion.div
-                className='absolute right-0 top-0 h-[2px] bg-neon-cream'
+                className='absolute right-0 top-0 h-[2px] bg-white'
                 initial={{ width: 0 }}
                 animate={{ width: '100%' }}
                 transition={{ duration: 0.18, delay: i * 0.5 + 0.46 }}
@@ -120,7 +117,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
               />
               {/* 왼쪽 border */}
               <motion.div
-                className='absolute left-0 top-0 w-[2px] bg-neon-cream'
+                className='absolute left-0 top-0 w-[2px] bg-white'
                 initial={{ height: 0 }}
                 animate={{ height: '100%' }}
                 transition={{ duration: 0.18, delay: i * 0.5 + 0.64 }}
@@ -131,9 +128,9 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.5 + 0.82, duration: 0.22 }}
-                className='text-cyan-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_theme(colors.neon.cream)]'
+                className='text-cyan-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_white]'
                 style={{
-                  textShadow: '0 0 8px theme(colors.neon.cream), 0 0 2px #fff',
+                  textShadow: '0 0 8px #fff, 0 0 2px #fff',
                   letterSpacing: '0.15em',
                 }}
               >
@@ -155,7 +152,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                   transition={{ duration: slideDuration, delay: borderDelay, ease: 'easeInOut' }}
                   onAnimationComplete={() => setSlideDone(true)}
                 >
-                  <div className='h-[3px] bg-neon-cream shadow-[0_0_8px_theme(colors.neon.cream)] rounded-t w-full' />
+                  <div className='h-[3px] bg-white shadow-[0_0_8px_white] rounded-t w-full' />
                 </motion.div>
               )}
               {(slideDone || isClosing) && (
@@ -168,7 +165,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                     minHeight: 0,
                     boxSizing: 'border-box',
                     background: 'rgba(0,0,0,0.25)',
-                    borderBottom: '2px solid theme(colors.neon.cream)',
+                    borderBottom: '2px solid #fff',
                   }}
                   onAnimationComplete={() => {
                     if (isClosing) {
@@ -178,7 +175,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                 >
                   <div className='flex flex-row gap-8 items-start w-full pt-4 h-full'>
                     <div className='flex-1 min-w-0'>
-                      <div className='bg-transparent rounded-xl p-2'>
+                      <div className='bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl p-4 shadow-inner'>
                         {aboutMeData.bio.split('\n').map((line, idx) => (
                           <p key={line} className='text-cyan-100 text-base font-mono mb-2 leading-relaxed'>
                             {line}
@@ -202,7 +199,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                   animate={{ width: 0 }}
                   transition={{ duration: slideDuration, delay: dropDuration, ease: 'easeInOut' }}
                 >
-                  <div className='h-[3px] bg-neon-cream shadow-[0_0_8px_theme(colors.neon.cream)] rounded-t w-full' />
+                  <div className='h-[3px] bg-white shadow-[0_0_8px_white] rounded-t w-full' />
                 </motion.div>
               )}
             </>
