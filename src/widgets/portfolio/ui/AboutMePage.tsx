@@ -85,12 +85,12 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
           {aboutMeData.sections.map((section, i) => (
             <div
               key={section.key}
-              className='relative min-w-[180px] min-h-[70px] px-6 py-5 bg-white/10 backdrop-blur-xl border border-white/80 rounded-xl shadow-[0_0_12px_white,0_0_4px_white] text-white font-bold tracking-widest flex flex-col items-start justify-end mr-6'
+              className='relative min-w-[180px] min-h-[70px] px-6 py-5 bg-white/10 backdrop-blur-xl border border-white/80 rounded-xl shadow-[0_0_12px_white,0_0_4px_white] flex flex-col items-start justify-end mr-6'
               style={{
                 clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px)',
               }}
             >
-              <span className='text-xs font-mono text-cyan-300 drop-shadow-[0_0_6px_white] mb-2'>SEC-{i}</span>
+              <span className='text-xs font-mono text-white/70 drop-shadow-[0_0_6px_white] mb-2'>SEC-{i}</span>
               {/* 하단 강조선 */}
               <motion.div
                 className='absolute left-0 bottom-0 h-[4px] bg-white rounded shadow-[0_0_8px_white]'
@@ -128,7 +128,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.5 + 0.82, duration: 0.22 }}
-                className='text-cyan-100 text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_white]'
+                className='text-white text-lg font-extrabold tracking-widest drop-shadow-[0_0_6px_white]'
                 style={{
                   textShadow: '0 0 8px #fff, 0 0 2px #fff',
                   letterSpacing: '0.15em',
@@ -177,7 +177,7 @@ export function AboutMePage({ isClosing = false, onClose }: { isClosing?: boolea
                     <div className='flex-1 min-w-0'>
                       <div className='bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl p-4 shadow-inner'>
                         {aboutMeData.bio.split('\n').map((line, idx) => (
-                          <p key={line} className='text-cyan-100 text-base font-mono mb-2 leading-relaxed'>
+                          <p key={line} className='text-white/90 text-base font-mono leading-relaxed mb-2'>
                             {line}
                           </p>
                         ))}
