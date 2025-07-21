@@ -17,7 +17,7 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     lookAt: [4.2, 0, 0],
     pulse: [4.2, 0, 0],
     modelPosition: [4, 0, 0],
-    secondaryOffset: [1, 1, 3],
+    secondaryOffset: [0.7, 0.5, 2.7],
     secondaryLookAt: [0, 0, 0],
   },
   server: {
