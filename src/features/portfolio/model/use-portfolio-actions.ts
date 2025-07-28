@@ -57,7 +57,6 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     setShowExperienceOverlay,
     setExperienceClosing,
     setContactClosing,
-    setShowContactForm,
     setAboutMeAnimationDone,
     showPortfolioOverlay,
     showWorksLoading,
