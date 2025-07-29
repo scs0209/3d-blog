@@ -118,47 +118,50 @@ export function PortfolioOverlay({
                   <AnimatePresence>
                     {showCards &&
                       portfolioProjects.map((project, index) => (
-                        <GlassmorphismCard
+                        <motion.div
                           key={project.id}
-                          className='overflow-hidden'
-                          initial={{ opacity: 0, y: 100 }}
+                          initial={{ opacity: 0, y: 150 }}
                           animate={{
                             opacity: portfolioExiting ? 0 : 1,
-                            y: portfolioExiting ? -100 : 0,
+                            y: portfolioExiting ? -150 : 0,
                           }}
-                          exit={{ opacity: 0, y: -100 }}
+                          exit={{ opacity: 0, y: -150 }}
                           transition={{
                             duration: 0.6,
-                            delay: portfolioExiting ? (portfolioProjects.length - 1 - index) * 0.2 : index * 0.3,
-                            ease: 'easeInOut',
+                            delay: portfolioExiting ? (portfolioProjects.length - 1 - index) * 0.15 : 0.5 + index * 0.4,
+                            ease: [0.25, 0.46, 0.45, 0.94], // easeOutQuart
                           }}
                         >
-                          {/* 프로젝트 이미지 */}
-                          <div className='h-64 bg-gradient-to-br from-white/3 to-white/8 flex items-center justify-center border-b border-white/15 overflow-hidden'>
-                            <div className='text-center transform transition-transform duration-300 hover:scale-110'>
-                              <div className='text-white text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
-                                📁
+                          <GlassmorphismCard className='overflow-hidden h-[520px] w-full'>
+                            {/* 프로젝트 이미지 */}
+                            <div className='h-48 bg-gradient-to-br from-white/3 to-white/8 flex items-center justify-center border-b border-white/15 overflow-hidden'>
+                              <div className='text-center transform transition-transform duration-300 hover:scale-110'>
+                                <div className='text-white text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
+                                  📁
+                                </div>
+                                <div className='text-white/70'>PROJECT {index + 1}</div>
                               </div>
-                              <div className='text-white/70'>PROJECT {index + 1}</div>
                             </div>
-                          </div>
 
-                          {/* 프로젝트 정보 */}
-                          <div className='p-6'>
-                            <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
-                            <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
-                            <p className='text-white/80 text-sm mb-6 leading-relaxed'>{project.description}</p>
+                            {/* 프로젝트 정보 */}
+                            <div className='p-6 flex flex-col h-full'>
+                              <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
+                              <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
+                              <p className='text-white/80 text-sm mb-4 leading-relaxed flex-1 overflow-hidden'>
+                                <span className='line-clamp-6'>{project.description}</span>
+                              </p>
 
-                            <div className='flex gap-4'>
-                              <GlassmorphismButton variant='outline' size='sm' className='flex-1'>
-                                VIEW LIVE
-                              </GlassmorphismButton>
-                              <GlassmorphismButton variant='primary' size='sm' className='flex-1'>
-                                SOURCE CODE
-                              </GlassmorphismButton>
+                              <div className='flex gap-4 mt-auto'>
+                                <GlassmorphismButton variant='outline' size='sm' className='flex-1'>
+                                  VIEW LIVE
+                                </GlassmorphismButton>
+                                <GlassmorphismButton variant='primary' size='sm' className='flex-1'>
+                                  SOURCE CODE
+                                </GlassmorphismButton>
+                              </div>
                             </div>
-                          </div>
-                        </GlassmorphismCard>
+                          </GlassmorphismCard>
+                        </motion.div>
                       ))}
                   </AnimatePresence>
                 </div>
