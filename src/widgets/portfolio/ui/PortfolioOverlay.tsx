@@ -144,14 +144,16 @@ export function PortfolioOverlay({
                             </div>
 
                             {/* 프로젝트 정보 */}
-                            <div className='p-6 flex flex-col h-full'>
-                              <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
-                              <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
-                              <p className='text-white/80 text-sm mb-4 leading-relaxed flex-1 overflow-hidden'>
-                                <span className='line-clamp-6'>{project.description}</span>
-                              </p>
+                            <div className='p-6 relative h-full'>
+                              <div className='h-[280px] overflow-hidden'>
+                                <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
+                                <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
+                                <p className='text-white/80 text-sm leading-relaxed overflow-hidden'>
+                                  <span className='line-clamp-6'>{project.description}</span>
+                                </p>
+                              </div>
 
-                              <div className='flex gap-4 mt-auto'>
+                              <div className='absolute bottom-6 left-6 right-6 flex gap-4'>
                                 <GlassmorphismButton variant='outline' size='sm' className='flex-1'>
                                   VIEW LIVE
                                 </GlassmorphismButton>
