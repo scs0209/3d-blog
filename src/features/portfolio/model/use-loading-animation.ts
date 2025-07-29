@@ -23,7 +23,9 @@ export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
 
   // 로딩 애니메이션 시작
   useEffect(() => {
+    console.log('useLoadingAnimation 실행:', { showWorksLoading, showPortfolioOverlay });
     if (showWorksLoading && !showPortfolioOverlay) {
+      console.log('로딩 애니메이션 시작!');
       setLoadingProgress(0);
       setLoadingBarFullExpand(false);
 

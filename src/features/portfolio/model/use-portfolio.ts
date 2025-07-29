@@ -39,8 +39,10 @@ export const usePortfolio = () => {
 
     // 2단계: 카드가 모두 사라진 후 창 닫기
     setTimeout(() => {
+      console.log('포트폴리오 오버레이 닫기 및 로딩 상태 해제');
       loadingState.setShowPortfolioOverlay(false);
       loadingState.setLoadingBarFullExpand(false);
+      loadingState.setShowWorksLoading(false); // 명시적으로 로딩 상태 해제
 
       setTimeout(() => {
         loadingState.setShowExitLoading(true);
@@ -51,6 +53,7 @@ export const usePortfolio = () => {
             if (prev <= 0) {
               clearInterval(exitInterval);
               setTimeout(() => {
+                console.log('로딩 상태 초기화 및 카메라 리셋');
                 loadingState.resetLoadingState();
                 cameraState.resetToInitialPosition();
                 setTimeout(() => {

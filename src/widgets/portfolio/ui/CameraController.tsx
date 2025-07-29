@@ -73,7 +73,6 @@ export const CameraController = (props: CameraControllerProps) => {
     isInitialAnimation,
     // server 애니메이션용
     setShowWorksLoading,
-    setShowCards,
   } = props;
 
   const { camera, clock } = useThree();
@@ -152,13 +151,13 @@ export const CameraController = (props: CameraControllerProps) => {
   }, [
     targetPos,
     targetLook,
-    clock,
     camera,
     aboutMeAnimationDone,
     aboutMeClosing,
     secondaryAnimation,
     setCameraAnimationDone,
-    isInitialAnimation, // 의존성 추가
+    isInitialAnimation,
+    clock,
   ]);
 
   // 카메라 애니메이션 업데이트
@@ -264,8 +263,30 @@ export const CameraController = (props: CameraControllerProps) => {
           // Work 모델의 종료 처리
           workAnimation.handleWorkExit();
           return;
+        } else if (animRef.current.isSecondary && focusedGroup === 'server') {
+          // Server 모델의 보조 애니메이션 완료 처리
+          console.log(`${focusedGroup}: 보조 애니메이션 완료, 포트폴리오 오버레이 표시`);
+          setSecondaryAnimation(false);
+          setShowWorksLoading(true);
+          return;
+        } else if (animRef.current.isSecondary && focusedGroup === 'contactMe') {
+          // ContactMe 모델의 보조 애니메이션 완료 처리
+          console.log(`${focusedGroup}: 보조 애니메이션 완료`);
+          setSecondaryAnimation(false);
+          return;
+        } else if (animRef.current.isSecondary && focusedGroup === 'resumeConsole') {
+          // ResumeConsole 모델의 보조 애니메이션 완료 처리
+          console.log(`${focusedGroup}: 보조 애니메이션 완료`);
+          setSecondaryAnimation(false);
+          return;
+        } else if (animRef.current.isSecondary && focusedGroup === 'skill') {
+          // Skill 모델의 보조 애니메이션 완료 처리
+          console.log(`${focusedGroup}: 보조 애니메이션 완료`);
+          setSecondaryAnimation(false);
+          return;
         } else if (animRef.current.isSecondary) {
-          // 다른 그룹들의 보조 애니메이션 완료 처리
+          // 기타 모델들의 보조 애니메이션 완료 처리
+          console.log(`${focusedGroup}: 보조 애니메이션 완료`);
           setSecondaryAnimation(false);
           return;
         }

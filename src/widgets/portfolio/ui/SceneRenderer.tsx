@@ -1,4 +1,3 @@
-import { OrbitControls } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
 import {
@@ -302,9 +301,6 @@ export const SceneRenderer = (props: SceneRendererProps) => {
       <EffectComposer>
         <Bloom luminanceThreshold={0} mipmapBlur luminanceSmoothing={0.0} intensity={1} />
       </EffectComposer>
-
-      {/* OrbitControls는 전체 뷰에서만 허용하고 초기 애니메이션 중에는 비활성화 */}
-      <OrbitControls />
 
       <FPSMeasurer />
     </>
