@@ -45,6 +45,7 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
     const target = GROUP_CAMERA_TARGETS.work;
     if (target?.secondaryOffset && target?.secondaryLookAt) {
       setSecondaryAnimation(true);
+      // 처음 모델 위치 + secondaryOffset 위치로 이동
       const newPos: Position3D = [
         target.modelPosition[0] + target.secondaryOffset[0],
         target.modelPosition[1] + target.secondaryOffset[1],
