@@ -214,7 +214,7 @@ export const CameraController = (props: CameraControllerProps) => {
         ) {
           const target = GROUP_CAMERA_TARGETS[focusedGroup];
           if (target?.secondaryOffset && target?.secondaryLookAt) {
-            console.log(`${focusedGroup}: 보조 애니메이션 트리거`);
+            // 보조 애니메이션 로직
             if (focusedGroup === 'work') {
               workAnimation.triggerSecondaryAnimation();
             } else if (
@@ -225,7 +225,6 @@ export const CameraController = (props: CameraControllerProps) => {
               focusedGroup === 'server'
             ) {
               // Contact, Resume, Skill, Server 모델의 보조 애니메이션 트리거
-              console.log(`${focusedGroup}: ${focusedGroup} 보조 애니메이션 시작`);
               setSecondaryAnimation(true);
               const newPos: Position3D = [
                 target.modelPosition[0] + target.secondaryOffset[0],
