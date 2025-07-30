@@ -74,6 +74,7 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
 
   // Work 모델 클릭 시 카메라 애니메이션 완료 후 처리
   useEffect(() => {
+    // focusedGroup === 'work' 이고 첫 번째 애니메이션이 완료되었고, AboutMe가 닫히지 않았고, 보조 애니메이션이 진행중이지 않고, 뒤로가기 버튼이 클릭되지 않았다면 aboutMeOverlay 표시
     if (focusedGroup === 'work' && cameraAnimationDone && !aboutMeClosing && !secondaryAnimation && !hasClickedBack) {
       setShowAboutMeOverlay(true);
     }
@@ -81,8 +82,10 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
 
   // AboutMePage 애니메이션 완료 후 호출될 핸들러
   const handleAboutMeAnimationComplete = useCallback(() => {
+    // AboutMePage 애니메이션 완료 후 처리
     setShowAboutMeOverlay(false);
 
+    // 원래 줌인 위치로
     const target = GROUP_CAMERA_TARGETS.work;
     if (target?.secondaryOffset && target?.secondaryLookAt) {
       setSecondaryAnimation(true);
@@ -99,8 +102,11 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
 
   // Work 모델의 완전한 종료 처리
   const handleWorkExit = useCallback(() => {
+    // 초기 위치로
     setTargetPos(INITIAL_CAMERA_POS);
     setTargetLook(INITIAL_CAMERA_LOOK);
+
+    // 초기 위치로 이동 후 처리
     setTimeout(() => {
       setFocusedGroup(null);
       setAboutMeClosing(false);
