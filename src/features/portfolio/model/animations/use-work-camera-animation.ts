@@ -1,6 +1,11 @@
 import { useEffect, useCallback } from 'react';
 import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
-import { GROUP_CAMERA_TARGETS, CAMERA_ANIMATION_DELAY } from '@/entities/portfolio/model/constants';
+import {
+  GROUP_CAMERA_TARGETS,
+  CAMERA_ANIMATION_DELAY,
+  INITIAL_CAMERA_POS,
+  INITIAL_CAMERA_LOOK,
+} from '@/entities/portfolio/model/constants';
 
 type UseWorkCameraAnimationProps = {
   focusedGroup: FocusedGroup;
@@ -39,7 +44,6 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
   const triggerSecondaryAnimation = useCallback(() => {
     const target = GROUP_CAMERA_TARGETS.work;
     if (target?.secondaryOffset && target?.secondaryLookAt) {
-      console.log('Work: 보조 애니메이션 시작');
       setSecondaryAnimation(true);
       const newPos: Position3D = [
         target.modelPosition[0] + target.secondaryOffset[0],
@@ -53,7 +57,6 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
 
   // Work 모델의 AboutMe 닫힘 처리
   const handleWorkAboutMeClose = useCallback(() => {
-    console.log('Work: AboutMe 닫힘 처리 시작');
     const target = GROUP_CAMERA_TARGETS.work;
 
     if (target?.secondaryOffset && target?.secondaryLookAt) {
@@ -72,14 +75,12 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
   // Work 모델 클릭 시 카메라 애니메이션 완료 후 처리
   useEffect(() => {
     if (focusedGroup === 'work' && cameraAnimationDone && !aboutMeClosing && !secondaryAnimation && !hasClickedBack) {
-      console.log('Work: 카메라 애니메이션 완료, AboutMe 오버레이 표시');
       setShowAboutMeOverlay(true);
     }
   }, [focusedGroup, cameraAnimationDone, aboutMeClosing, secondaryAnimation, hasClickedBack, setShowAboutMeOverlay]);
 
   // AboutMePage 애니메이션 완료 후 호출될 핸들러
   const handleAboutMeAnimationComplete = useCallback(() => {
-    console.log('Work: AboutMePage 애니메이션 완료, 오버레이 닫고 카메라 애니메이션 시작');
     setShowAboutMeOverlay(false);
 
     const target = GROUP_CAMERA_TARGETS.work;
@@ -98,9 +99,8 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
 
   // Work 모델의 완전한 종료 처리
   const handleWorkExit = useCallback(() => {
-    console.log('Work: 완전한 종료 처리');
-    setTargetPos([2, 5, 2]); // INITIAL_CAMERA_POS
-    setTargetLook([0, 0, 0]); // INITIAL_CAMERA_LOOK
+    setTargetPos(INITIAL_CAMERA_POS);
+    setTargetLook(INITIAL_CAMERA_LOOK);
     setTimeout(() => {
       setFocusedGroup(null);
       setAboutMeClosing(false);
