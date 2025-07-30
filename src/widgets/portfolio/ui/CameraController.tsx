@@ -120,14 +120,6 @@ export const CameraController = (props: CameraControllerProps) => {
     }
   }, [focusedGroup, cameraAnimationDone, secondaryAnimation, hasClickedBack, setShowExperienceOverlay]);
 
-  // ResumeConsole 모델 클릭 시 카메라 애니메이션 완료 후 처리
-  useEffect(() => {
-    if (focusedGroup === 'resumeConsole' && cameraAnimationDone && !secondaryAnimation && !hasClickedBack) {
-      console.log('ResumeConsole: 카메라 애니메이션 완료, 뒤로가기 버튼으로 복귀 가능');
-      // 자동 복귀 없이 사용자가 직접 뒤로가기 버튼을 누를 때까지 유지
-    }
-  }, [focusedGroup, cameraAnimationDone, secondaryAnimation, hasClickedBack]);
-
   // 카메라 애니메이션 시작
   useEffect(() => {
     // 초기 애니메이션 중에는 카메라 애니메이션 실행하지 않음
