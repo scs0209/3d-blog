@@ -121,22 +121,25 @@ export const CameraController = (props: CameraControllerProps) => {
   }, [focusedGroup, cameraAnimationDone, secondaryAnimation, hasClickedBack, setShowExperienceOverlay]);
 
   // 카메라 애니메이션 시작
+  // 언제 애니메이션을 시작할지 담당
   useEffect(() => {
     // 초기 애니메이션 중에는 카메라 애니메이션 실행하지 않음
     if (isInitialAnimation) {
       return;
     }
 
-    if (targetPos && targetLook && (aboutMeAnimationDone || !aboutMeClosing)) {
+    if (targetPos && targetLook && (aboutMeAnimationDone || !aboutMeClosing) && !animRef.current.running) {
       console.log('카메라 애니메이션 시작:', { targetPos, targetLook, secondaryAnimation });
       animRef.current.start = clock.getElapsedTime();
+      // 애니메이션 시작 시 현재 카메라 위치를 시작점으로 설정
       animRef.current.fromPos = [camera.position.x, camera.position.y, camera.position.z];
       animRef.current.toPos = targetPos;
+      // 카메라가 현재 바라보고 있는 방향 계산
       const dir = new three.Vector3();
       camera.getWorldDirection(dir);
       animRef.current.fromLook = [camera.position.x + dir.x, camera.position.y + dir.y, camera.position.z + dir.z];
       animRef.current.toLook = targetLook;
-      animRef.current.running = true;
+      animRef.current.running = true; // 애니메이션 실행 플래그 설정
       animRef.current.isSecondary = secondaryAnimation;
       setCameraAnimationDone(false);
     }
@@ -153,6 +156,7 @@ export const CameraController = (props: CameraControllerProps) => {
   ]);
 
   // 카메라 애니메이션 업데이트
+  // 어떻게 애니메이션을 실행하는지 담당
   useFrame(() => {
     if (animRef.current.running) {
       const elapsed = clock.getElapsedTime() - animRef.current.start;
@@ -163,6 +167,7 @@ export const CameraController = (props: CameraControllerProps) => {
       // position 보간
       const from = animRef.current.fromPos;
       const to = animRef.current.toPos;
+      // useFrame에서 카메라 위치 업데이트
       camera.position.set(
         from[0] + (to[0] - from[0]) * eased,
         from[1] + (to[1] - from[1]) * eased,
@@ -172,6 +177,7 @@ export const CameraController = (props: CameraControllerProps) => {
       // lookAt 보간
       const fromL = animRef.current.fromLook;
       const toL = animRef.current.toLook;
+      // 카메라가 바라보는 지점 변경
       camera.lookAt(
         fromL[0] + (toL[0] - fromL[0]) * eased,
         fromL[1] + (toL[1] - fromL[1]) * eased,
@@ -184,12 +190,7 @@ export const CameraController = (props: CameraControllerProps) => {
         camera.lookAt(...animRef.current.toLook);
 
         animRef.current.running = false;
-        console.log('카메라 애니메이션 완료:', {
-          focusedGroup,
-          isSecondary: animRef.current.isSecondary,
-          contactClosing,
-          hasClickedBack,
-        });
+        // 카메라 애니메이션 완료 플래그 설정
         setCameraAnimationDone(true);
 
         // 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar, Resume, Skill)
@@ -223,6 +224,7 @@ export const CameraController = (props: CameraControllerProps) => {
                 target.modelPosition[1] + target.secondaryOffset[1],
                 target.modelPosition[2] + target.secondaryOffset[2],
               ];
+              // 보조 애니메이션 위치 설정 후 useEffect에서 카메라 애니메이션 다시 시작
               setTargetPos(newPos);
               setTargetLook(target.secondaryLookAt);
               setCameraAnimationDone(false);
