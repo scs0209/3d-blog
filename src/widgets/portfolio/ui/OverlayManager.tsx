@@ -238,7 +238,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       />
 
       {/* 뒤로가기 버튼 */}
-      {focusedGroup && !showPortfolioOverlay && !showExitLoading && (
+      {focusedGroup && (
         <button
           type='button'
           onClick={() => {
@@ -250,12 +250,14 @@ export const OverlayManager = (props: OverlayManagerProps) => {
             } else if (showContactForm) {
               // Contact Form 닫기 (역순 애니메이션 시작)
               onContactClose();
+            } else if (showPortfolioOverlay) {
+              onPortfolioExit();
             } else {
               // 다른 상태에서는 기본 onBack 호출
               onBack();
             }
           }}
-          className='absolute top-6 right-6 z-10 px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
+          className='absolute top-6 right-6 z-[9999] px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
         >
           ← EXIT
         </button>
