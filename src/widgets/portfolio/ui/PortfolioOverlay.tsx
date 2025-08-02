@@ -78,29 +78,6 @@ export function PortfolioOverlay({
         >
           {showPortfolioContent && (
             <div className='min-h-screen p-4'>
-              {/* 헤더 */}
-              <motion.div
-                className='flex justify-between items-center p-8 mb-8'
-                initial={{ opacity: 0, y: -50 }}
-                animate={{
-                  opacity: portfolioExiting ? 0 : 1,
-                  y: portfolioExiting ? -50 : 0,
-                }}
-                transition={{
-                  duration: 0.6,
-                  delay: portfolioExiting ? 1.0 : 0,
-                }}
-              >
-                <GlassmorphismButton
-                  variant='outline'
-                  size='lg'
-                  onClick={onExit}
-                  className='transform hover:scale-110 hover:shadow-lg hover:shadow-white/30'
-                >
-                  EXIT
-                </GlassmorphismButton>
-              </motion.div>
-
               {/* 프로젝트 그리드 */}
               <motion.div
                 className='mb-8'

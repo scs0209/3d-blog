@@ -120,11 +120,6 @@ export default function PortfolioPage() {
   // 뒤로가기 시 원래 타이틀로 복원
   const handleBackWithTitleReset = () => {
     setTitleAnimation('exiting');
-    setTimeout(() => {
-      setCurrentTitle('');
-      setCurrentSubtitle('');
-      setTitleAnimation('idle');
-    }, 300);
     handleBack();
   };
 
@@ -242,6 +237,8 @@ export default function PortfolioPage() {
             // server 애니메이션용
             setShowWorksLoading={setShowWorksLoading}
             setShowCards={setShowCards}
+            // 포트폴리오 EXIT 상태
+            portfolioExiting={portfolioExiting}
           />
 
           <SceneRenderer
