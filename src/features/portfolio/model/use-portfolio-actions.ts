@@ -134,7 +134,6 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
       }, 2000);
     } else if (focusedGroup === 'radar') {
       // Radar 모델인 경우 - Contact Form 역순 애니메이션 시작
-      console.log(`handleBack: ${focusedGroup} 모델 닫기 - Contact Form 역순 애니메이션 시작`);
       setContactClosing(true);
       // Contact Form은 바로 닫지 않음 - 역순 애니메이션 완료 후 처리
     } else {
