@@ -23,9 +23,7 @@ export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
 
   // 로딩 애니메이션 시작
   useEffect(() => {
-    console.log('useLoadingAnimation 실행:', { showWorksLoading, showPortfolioOverlay });
     if (showWorksLoading && !showPortfolioOverlay) {
-      console.log('로딩 애니메이션 시작!');
       setLoadingProgress(0);
       setLoadingBarFullExpand(false);
 
@@ -33,19 +31,16 @@ export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
         setLoadingProgress((prev) => {
           if (prev >= 100) {
             clearInterval(interval);
-            console.log('로딩 완료!');
             // 로딩 완료 후 로딩바를 전체 화면으로 확장
             setTimeout(() => {
-              console.log('로딩바 전체 화면 확장!');
               setLoadingBarFullExpand(true);
               setTimeout(() => {
-                console.log('포트폴리오 갤러리 표시!');
                 setShowPortfolioOverlay(true);
                 // LoadingOverlay가 전체 화면 확장 애니메이션을 완료한 후에 사라지도록 추가 지연
                 setTimeout(() => {
                   setShowWorksLoading(false);
-                }, 1500); // 전체 화면 확장 애니메이션 완료 후 추가 지연
-              }, 1000); // 전체 화면 확장 애니메이션 시간
+                }, 1500);
+              }, 1000);
             }, 300);
             return 100;
           }
