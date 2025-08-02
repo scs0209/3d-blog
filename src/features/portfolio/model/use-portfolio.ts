@@ -5,6 +5,7 @@ import { useLoadingState } from './use-loading-state';
 import { usePortfolioActions } from './use-portfolio-actions';
 import { useLoadingAnimation } from './use-loading-animation';
 
+// 1. handleGroupClick을 하면 애니메이션이 시작됨
 export const usePortfolio = () => {
   // 상태 관리 훅들
   const portfolioState = usePortfolioState();
@@ -32,14 +33,11 @@ export const usePortfolio = () => {
 
   // 포트폴리오 EXIT 핸들러
   const handlePortfolioExit = () => {
-    console.log('EXIT 버튼 클릭됨');
-
     // 1단계: 카드들만 사라지는 애니메이션 시작
     loadingState.setPortfolioExiting(true);
 
     // 2단계: 카드가 모두 사라진 후 창 닫기
     setTimeout(() => {
-      console.log('포트폴리오 오버레이 닫기 및 로딩 상태 해제');
       loadingState.setShowPortfolioOverlay(false);
       loadingState.setLoadingBarFullExpand(false);
       loadingState.setShowWorksLoading(false); // 명시적으로 로딩 상태 해제
@@ -53,7 +51,6 @@ export const usePortfolio = () => {
             if (prev <= 0) {
               clearInterval(exitInterval);
               setTimeout(() => {
-                console.log('로딩 상태 초기화 및 카메라 리셋');
                 loadingState.resetLoadingState();
                 cameraState.resetToInitialPosition();
                 setTimeout(() => {
