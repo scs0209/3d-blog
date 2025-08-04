@@ -11,6 +11,7 @@ import {
   INITIAL_CAMERA_LOOK,
 } from '@/entities/portfolio/model/constants';
 import { useWorkCameraAnimation } from '@/features/portfolio/model/animations/use-work-camera-animation';
+import { SECONDARY_ANIMATION_TARGETS } from '../consts';
 
 type CameraControllerProps = {
   targetPos: Position3D | null;
@@ -192,18 +193,16 @@ export const CameraController = (props: CameraControllerProps) => {
         // 카메라 애니메이션 완료 플래그 설정
         setCameraAnimationDone(true);
 
+        const needSecondaryAnimation = SECONDARY_ANIMATION_TARGETS.includes(focusedGroup);
+
         // 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar, Resume, Skill)
         // portfolioExiting 중일 때는 server 제외
         if (
           !animRef.current.isSecondary &&
-          (focusedGroup === 'work' ||
-            (focusedGroup === 'server' && !portfolioExiting) ||
-            focusedGroup === 'contactMe' ||
-            focusedGroup === 'radar' ||
-            focusedGroup === 'resumeConsole' ||
-            focusedGroup === 'skill') &&
+          (needSecondaryAnimation || (focusedGroup === 'server' && !portfolioExiting)) &&
           !aboutMeClosing &&
-          !hasClickedBack
+          !hasClickedBack &&
+          focusedGroup
         ) {
           const target = GROUP_CAMERA_TARGETS[focusedGroup];
           if (target?.secondaryOffset && target?.secondaryLookAt) {
