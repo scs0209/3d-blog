@@ -1,6 +1,12 @@
 import type React from 'react';
 import { useEffect } from 'react';
-import { LOADING_PROGRESS_STEP, LOADING_PROGRESS_INTERVAL } from '@/entities/portfolio/model/constants';
+import {
+  LOADING_PROGRESS_STEP,
+  LOADING_PROGRESS_INTERVAL,
+  BAR_EXPAND_ANIMATION_DURATION,
+  OVERLAY_TRANSITION_DELAY,
+  INITIAL_DELAY,
+} from '@/entities/portfolio/model/constants';
 
 type UseLoadingAnimationProps = {
   showWorksLoading: boolean;
@@ -39,9 +45,9 @@ export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
                 // LoadingOverlay가 전체 화면 확장 애니메이션을 완료한 후에 사라지도록 추가 지연
                 setTimeout(() => {
                   setShowWorksLoading(false);
-                }, 1500);
-              }, 1000);
-            }, 300);
+                }, OVERLAY_TRANSITION_DELAY);
+              }, BAR_EXPAND_ANIMATION_DURATION);
+            }, INITIAL_DELAY);
             return 100;
           }
           return prev + LOADING_PROGRESS_STEP; // 4%씩 증가
