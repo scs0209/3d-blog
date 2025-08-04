@@ -257,7 +257,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
               onBack();
             }
           }}
-          className='absolute top-6 right-6 z-[9999] px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
+          className='absolute top-6 right-6 z-escape-hatch px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
         >
           ← EXIT
         </button>
