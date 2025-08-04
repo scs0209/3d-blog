@@ -56,7 +56,6 @@ export function PortfolioOverlay({
   portfolioExiting,
   showPortfolioContent,
   showCards,
-  onExit,
   onAnimationComplete,
 }: PortfolioOverlayProps) {
   return (
@@ -77,10 +76,9 @@ export function PortfolioOverlay({
           onAnimationComplete={onAnimationComplete}
         >
           {showPortfolioContent && (
-            <div className='min-h-screen p-4'>
+            <div className='min-h-screen p-4 flex items-center justify-center'>
               {/* 프로젝트 그리드 */}
               <motion.div
-                className='mb-8'
                 initial={{ opacity: 0, y: 30 }}
                 animate={{
                   opacity: portfolioExiting ? 0 : 1,
