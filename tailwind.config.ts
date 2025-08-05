@@ -10,6 +10,13 @@ export default {
 	],
 	theme: {
 		extend: {
+			zIndex: {
+        'base': '1',
+        'dropdown': '1000',
+        'overlay': '2000',
+        'modal': '3000',
+        'escape-hatch': '9999',
+      },
 			colors: {
 				background: "hsl(var(--background))",
 				foreground: "hsl(var(--foreground))",

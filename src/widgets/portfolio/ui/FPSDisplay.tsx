@@ -30,7 +30,7 @@ const FPSDisplayComponent = () => {
   }, [fps]);
 
   return (
-    <div className='fixed top-5 right-5 z-[9999] pointer-events-none'>
+    <div className='fixed top-5 right-5 z-20 pointer-events-none'>
       <div className='border border-[#E5D6C4]/20 rounded-lg px-4 py-3 shadow-lg shadow-[#E5D6C4]/5 min-w-[100px]'>
         {/* FPS 텍스트 */}
         <div className='flex items-center justify-between mb-2'>

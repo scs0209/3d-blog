@@ -5,6 +5,7 @@ import { useLoadingState } from './use-loading-state';
 import { usePortfolioActions } from './use-portfolio-actions';
 import { useLoadingAnimation } from './use-loading-animation';
 
+// 1. handleGroupClick을 하면 애니메이션이 시작됨
 export const usePortfolio = () => {
   // 상태 관리 훅들
   const portfolioState = usePortfolioState();
@@ -30,52 +31,53 @@ export const usePortfolio = () => {
     setShowWorksLoading: loadingState.setShowWorksLoading,
   });
 
-  // 포트폴리오 EXIT 핸들러
-  const handlePortfolioExit = () => {
-    console.log('EXIT 버튼 클릭됨');
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  // 포트폴리오 EXIT 핸들러
+  const handlePortfolioExit = async () => {
     // 1단계: 카드들만 사라지는 애니메이션 시작
     loadingState.setPortfolioExiting(true);
 
-    // 2단계: 카드가 모두 사라진 후 창 닫기
-    setTimeout(() => {
-      console.log('포트폴리오 오버레이 닫기 및 로딩 상태 해제');
-      loadingState.setShowPortfolioOverlay(false);
-      loadingState.setLoadingBarFullExpand(false);
-      loadingState.setShowWorksLoading(false); // 명시적으로 로딩 상태 해제
+    // 2단계: 카드가 모두 사라진 후 창 닫기 (1100ms 대기)
+    await delay(1100);
 
-      setTimeout(() => {
-        loadingState.setShowExitLoading(true);
-        loadingState.setExitLoadingProgress(100);
+    loadingState.setShowPortfolioOverlay(false);
+    loadingState.setLoadingBarFullExpand(false);
+    loadingState.setShowWorksLoading(false); // 명시적으로 로딩 상태 해제
 
-        const exitInterval = setInterval(() => {
-          loadingState.setExitLoadingProgress((prev: number) => {
-            if (prev <= 0) {
-              clearInterval(exitInterval);
-              setTimeout(() => {
-                console.log('로딩 상태 초기화 및 카메라 리셋');
-                loadingState.resetLoadingState();
-                cameraState.resetToInitialPosition();
-                setTimeout(() => {
-                  portfolioState.setFocusedGroup(null);
-                }, 3000);
-              }, 300);
-              return 0;
-            }
-            return prev - 4;
+    // 3단계: Exit 로딩 시작 (300ms 대기)
+    await delay(300);
+
+    loadingState.setShowExitLoading(true);
+    loadingState.setExitLoadingProgress(100);
+
+    // 4단계: Exit 로딩 진행 (50ms 간격으로 4씩 감소)
+    const exitInterval = setInterval(() => {
+      loadingState.setExitLoadingProgress((prev: number) => {
+        if (prev <= 0) {
+          clearInterval(exitInterval);
+          // 5단계: 최종 상태 리셋 (300ms 대기 후)
+          delay(300).then(() => {
+            loadingState.resetLoadingState();
+            cameraState.resetToInitialPosition();
+            // 6단계: focusedGroup 리셋 (3000ms 대기 후)
+            delay(3000).then(() => {
+              portfolioState.setFocusedGroup(null);
+            });
           });
-        }, 50);
-      }, 300);
-    }, 1100); // 카드가 모두 사라진 후
+          return 0;
+        }
+        return prev - 4;
+      });
+    }, 50);
   };
 
   // 포트폴리오 애니메이션 완료 핸들러
-  const handlePortfolioAnimationComplete = () => {
+  const handlePortfolioAnimationComplete = async () => {
     // 창이 완전히 뜬 후 카드 표시
     if (!loadingState.portfolioExiting) {
-      setTimeout(() => {
-        loadingState.setShowCards(true);
-      }, 200);
+      await delay(200);
+      loadingState.setShowCards(true);
     }
   };
 
