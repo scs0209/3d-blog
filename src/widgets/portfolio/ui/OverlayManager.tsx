@@ -89,9 +89,9 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     showCards,
     onPortfolioExit,
     onPortfolioAnimationComplete,
-    currentTitle = 'Ayaan',
-    currentSubtitle = 'Frontend Developer',
-    titleAnimation = 'idle',
+    currentTitle,
+    currentSubtitle,
+    titleAnimation,
   } = props;
 
   return (
