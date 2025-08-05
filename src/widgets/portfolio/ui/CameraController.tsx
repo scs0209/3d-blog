@@ -193,18 +193,20 @@ export const CameraController = (props: CameraControllerProps) => {
         // 카메라 애니메이션 완료 플래그 설정
         setCameraAnimationDone(true);
 
-        const needSecondaryAnimation = SECONDARY_ANIMATION_TARGETS.includes(focusedGroup);
+        const serverAnimation = focusedGroup === 'server' && !portfolioExiting;
+        const needSecondaryAnimation = SECONDARY_ANIMATION_TARGETS.includes(
+          focusedGroup as (typeof SECONDARY_ANIMATION_TARGETS)[number],
+        );
 
         // 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar, Resume, Skill)
         // portfolioExiting 중일 때는 server 제외
         if (
           !animRef.current.isSecondary &&
-          (needSecondaryAnimation || (focusedGroup === 'server' && !portfolioExiting)) &&
+          (serverAnimation || needSecondaryAnimation) &&
           !aboutMeClosing &&
-          !hasClickedBack &&
-          focusedGroup
+          !hasClickedBack
         ) {
-          const target = GROUP_CAMERA_TARGETS[focusedGroup];
+          const target = GROUP_CAMERA_TARGETS[focusedGroup as keyof typeof GROUP_CAMERA_TARGETS];
           if (target?.secondaryOffset && target?.secondaryLookAt) {
             {
               // Contact, Resume, Skill, Server 모델의 보조 애니메이션 트리거
