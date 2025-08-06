@@ -3,6 +3,8 @@ import { useCallback } from 'react';
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { GROUP_CAMERA_TARGETS, PULSE_DURATION, CAMERA_ANIMATION_DELAY } from '@/entities/portfolio/model/constants';
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 type UsePortfolioActionsProps = {
   focusedGroup: FocusedGroup;
   setFocusedGroup: (group: FocusedGroup) => void;
@@ -22,6 +24,8 @@ type UsePortfolioActionsProps = {
   setAboutMeClosing: (closing: boolean) => void;
   setShowExperienceOverlay: (show: boolean) => void;
   setExperienceClosing: (closing: boolean) => void;
+  setShowSkillsOverlay: (show: boolean) => void;
+  setSkillsClosing: (closing: boolean) => void;
   setContactClosing: (closing: boolean) => void;
   setShowContactForm: (show: boolean) => void;
   setAboutMeAnimationDone: (done: boolean) => void;
@@ -56,6 +60,8 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     setAboutMeClosing,
     setShowExperienceOverlay,
     setExperienceClosing,
+    setShowSkillsOverlay,
+    setSkillsClosing,
     setContactClosing,
     setAboutMeAnimationDone,
     showPortfolioOverlay,
@@ -173,12 +179,12 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
       // 다른 모델들은 바로 초기 위치로 복귀
       setShowAboutMeOverlay(false);
       resetToInitialPosition();
-      setTimeout(() => {
+      delay(CAMERA_ANIMATION_DELAY).then(() => {
         setFocusedGroup(null);
         setAboutMeClosing(false);
         setAboutMeAnimationDone(false);
         setCameraAnimationDone(false);
-      }, CAMERA_ANIMATION_DELAY);
+      });
     }
   }, [
     setAboutMeAnimationDone,
@@ -202,11 +208,11 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
       // 다른 모델들은 바로 초기 위치로 복귀
       setShowExperienceOverlay(false);
       resetToInitialPosition();
-      setTimeout(() => {
+      delay(CAMERA_ANIMATION_DELAY).then(() => {
         setFocusedGroup(null);
         setExperienceClosing(false);
         setCameraAnimationDone(false);
-      }, CAMERA_ANIMATION_DELAY);
+      });
     }
   }, [
     setShowExperienceOverlay,
@@ -218,9 +224,24 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
   ]);
 
   const handleContactClose = useCallback(() => {
-    console.log('handleContactClose 호출됨 - Contact Form 역순 애니메이션 시작');
     setContactClosing(true);
   }, [setContactClosing]);
+
+  const handleSkillsClose = useCallback(async () => {
+    console.log('handleSkillsClose 호출됨');
+
+    // Skills 오버레이 바로 닫기
+    setShowSkillsOverlay(false);
+
+    // 카메라 초기 위치로 복귀
+    resetToInitialPosition();
+
+    // 상태 리셋 (카메라 애니메이션 완료 대기)
+    await delay(CAMERA_ANIMATION_DELAY);
+    setFocusedGroup(null);
+    setSkillsClosing(false);
+    setCameraAnimationDone(false);
+  }, [setShowSkillsOverlay, setSkillsClosing, resetToInitialPosition, setFocusedGroup, setCameraAnimationDone]);
 
   return {
     handleGroupClick,
@@ -228,5 +249,6 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     handleAboutMeClose,
     handleExperienceClose,
     handleContactClose,
+    handleSkillsClose,
   };
 };

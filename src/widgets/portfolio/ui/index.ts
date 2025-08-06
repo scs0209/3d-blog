@@ -31,3 +31,4 @@ export * from './AboutMePage';
 export * from './ExperiencePage';
 export * from './NeonToggle';
 export * from './WorkChair';
+export * from './SkillsOverlay';
