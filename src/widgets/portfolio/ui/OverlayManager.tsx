@@ -7,6 +7,7 @@ import {
   ExperiencePage,
   CyberpunkContactForm,
   PortfolioOverlay,
+  SkillsOverlay,
   NeonToggle,
   AnimatedLink,
 } from '@/widgets/portfolio/ui';
@@ -30,6 +31,12 @@ interface OverlayManagerProps {
   experienceClosing: boolean;
   onExperienceClose: () => void;
   onExperienceAnimationComplete?: () => void;
+
+  // Skills
+  showSkillsOverlay: boolean;
+  skillsClosing: boolean;
+  onSkillsClose: () => void;
+  onSkillsAnimationComplete?: () => void;
 
   // Contact
   showContactForm: boolean;
@@ -74,6 +81,10 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     experienceClosing,
     onExperienceClose,
     onExperienceAnimationComplete,
+    showSkillsOverlay,
+    skillsClosing,
+    onSkillsClose,
+    onSkillsAnimationComplete,
     showContactForm,
     contactClosing,
     onContactClose,
@@ -206,6 +217,21 @@ export const OverlayManager = (props: OverlayManagerProps) => {
         </div>
       )}
 
+      {/* Skills Overlay */}
+      {showSkillsOverlay && (
+        <div className='fixed right-0 top-0 h-full w-1/2 max-w-4xl min-w-[600px] z-50 flex items-start justify-center'>
+          <SkillsOverlay
+            skillsClosing={skillsClosing}
+            onAnimationComplete={
+              onSkillsAnimationComplete ||
+              (() => {
+                // 기본 애니메이션 완료 처리
+              })
+            }
+          />
+        </div>
+      )}
+
       {/* Contact Form */}
       {showContactForm && (
         <div className='fixed left-[100px] top-1/2 transform -translate-y-1/2 z-50'>
@@ -247,6 +273,8 @@ export const OverlayManager = (props: OverlayManagerProps) => {
               onAboutMeClose();
             } else if (showExperienceOverlay) {
               onExperienceClose();
+            } else if (showSkillsOverlay) {
+              onSkillsClose();
             } else if (showContactForm) {
               // Contact Form 닫기 (역순 애니메이션 시작)
               onContactClose();

@@ -41,7 +41,9 @@ export default function PortfolioPage() {
     hasClickedBack,
     showAboutMeOverlay,
     showExperienceOverlay,
+    showSkillsOverlay,
     experienceClosing,
+    skillsClosing,
     contactClosing,
     showContactForm,
     showWorksLoading,
@@ -64,11 +66,13 @@ export default function PortfolioPage() {
     setTargetLook,
     setShowAboutMeOverlay,
     setShowExperienceOverlay,
+    setShowSkillsOverlay,
     setShowContactForm,
     setFocusedGroup,
     setAboutMeClosing,
     setAboutMeAnimationDone,
     setExperienceClosing,
+    setSkillsClosing,
     setContactClosing,
     setShowWorksLoading,
     setShowCards,
@@ -79,6 +83,7 @@ export default function PortfolioPage() {
     handleBack,
     handleAboutMeClose,
     handleExperienceClose,
+    handleSkillsClose,
     handleContactClose,
     handlePortfolioExit,
     handlePortfolioAnimationComplete,
@@ -165,6 +170,13 @@ export default function PortfolioPage() {
     focusedGroup,
   });
 
+  // Skills 모델 클릭 시 스킬 오버레이 표시
+  useEffect(() => {
+    if (focusedGroup === 'skill' && cameraAnimationDone && !skillsClosing && !hasClickedBack) {
+      setShowSkillsOverlay(true);
+    }
+  }, [focusedGroup, cameraAnimationDone, skillsClosing, hasClickedBack, setShowSkillsOverlay]);
+
   useEffect(() => {
     document.title = 'Portfolio';
   }, []);
@@ -187,6 +199,12 @@ export default function PortfolioPage() {
           experienceClosing={experienceClosing}
           onExperienceClose={handleExperienceClose}
           onExperienceAnimationComplete={experienceAnimation.handleExperienceAnimationComplete}
+          showSkillsOverlay={showSkillsOverlay}
+          skillsClosing={skillsClosing}
+          onSkillsClose={handleSkillsClose}
+          onSkillsAnimationComplete={() => {
+            // 기본 스킬 애니메이션 완료 처리
+          }}
           showContactForm={showContactForm}
           contactClosing={contactClosing}
           onContactClose={handleContactClose}
