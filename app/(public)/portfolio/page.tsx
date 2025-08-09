@@ -6,12 +6,7 @@ import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
 import { useInitialAnimation } from '@/features/portfolio/model/use-initial-animation';
-import {
-  useExperienceCameraAnimation,
-  useWorkCameraAnimation,
-  useContactCameraAnimation,
-} from '@/features/portfolio/model/animations';
-import { SceneRenderer, OverlayManager, FPSDisplay, CameraController, FPSProvider } from '@/widgets/portfolio/ui';
+import { SceneRenderer, FPSDisplay, CameraController, FPSProvider, OverlayManager } from '@/widgets/portfolio/ui';
 
 export default function PortfolioPage() {
   const portfolio = usePortfolio();
@@ -35,58 +30,23 @@ export default function PortfolioPage() {
     targetPos,
     targetLook,
     secondaryAnimation,
-    aboutMeAnimationDone,
-    aboutMeClosing,
     cameraAnimationDone,
     hasClickedBack,
-    showAboutMeOverlay,
-    showExperienceOverlay,
-    showSkillsOverlay,
-    experienceClosing,
-    skillsClosing,
-    contactClosing,
-    showContactForm,
-    showWorksLoading,
-    showPortfolioOverlay,
-    showExitLoading,
-    loadingProgress,
-    loadingBarFullExpand,
-    exitLoadingProgress,
-    portfolioExiting,
-    showPortfolioContent,
-    showCards,
 
     // Setters
     setHoveredPosition,
-    setQuality,
-    setSound,
     setCameraAnimationDone,
     setSecondaryAnimation,
     setTargetPos,
     setTargetLook,
-    setShowAboutMeOverlay,
-    setShowExperienceOverlay,
-    setShowSkillsOverlay,
-    setShowContactForm,
     setFocusedGroup,
-    setAboutMeClosing,
-    setAboutMeAnimationDone,
-    setExperienceClosing,
-    setSkillsClosing,
-    setContactClosing,
-    setShowWorksLoading,
-    setShowCards,
+    setQuality,
+    setSound,
 
     // 액션들
     isShow,
     handleGroupClick,
     handleBack,
-    handleAboutMeClose,
-    handleExperienceClose,
-    handleSkillsClose,
-    handleContactClose,
-    handlePortfolioExit,
-    handlePortfolioAnimationComplete,
   } = portfolio;
 
   // 모델 클릭 시 타이틀 변경 핸들러
@@ -128,55 +88,6 @@ export default function PortfolioPage() {
     handleBack();
   };
 
-  // Work 애니메이션 훅 사용
-  const workAnimation = useWorkCameraAnimation({
-    focusedGroup,
-    cameraAnimationDone,
-    aboutMeClosing,
-    secondaryAnimation,
-    hasClickedBack,
-    setShowAboutMeOverlay,
-    setSecondaryAnimation,
-    setTargetPos,
-    setTargetLook,
-    setFocusedGroup,
-    setAboutMeClosing,
-    setAboutMeAnimationDone,
-    setCameraAnimationDone,
-  });
-
-  // Experience 애니메이션 훅 사용
-  const experienceAnimation = useExperienceCameraAnimation({
-    focusedGroup,
-    cameraAnimationDone,
-    experienceClosing,
-    secondaryAnimation,
-    hasClickedBack,
-    setShowExperienceOverlay,
-    setTargetPos,
-    setTargetLook,
-    setFocusedGroup,
-    setExperienceClosing,
-    setCameraAnimationDone,
-  });
-
-  // Contact 애니메이션 훅 사용
-  const contactAnimation = useContactCameraAnimation({
-    setShowContactForm,
-    setTargetPos,
-    setTargetLook,
-    setSecondaryAnimation,
-    setCameraAnimationDone,
-    focusedGroup,
-  });
-
-  // Skills 모델 클릭 시 스킬 오버레이 표시
-  useEffect(() => {
-    if (focusedGroup === 'skill' && cameraAnimationDone && !skillsClosing && !hasClickedBack) {
-      setShowSkillsOverlay(true);
-    }
-  }, [focusedGroup, cameraAnimationDone, skillsClosing, hasClickedBack, setShowSkillsOverlay]);
-
   useEffect(() => {
     document.title = 'Portfolio';
   }, []);
@@ -191,35 +102,6 @@ export default function PortfolioPage() {
           onQualityChange={setQuality}
           onSoundChange={setSound}
           onBack={handleBackWithTitleReset}
-          showAboutMeOverlay={showAboutMeOverlay}
-          aboutMeClosing={aboutMeClosing}
-          onAboutMeClose={handleAboutMeClose}
-          onAboutMeAnimationComplete={workAnimation.handleAboutMeAnimationComplete}
-          showExperienceOverlay={showExperienceOverlay}
-          experienceClosing={experienceClosing}
-          onExperienceClose={handleExperienceClose}
-          onExperienceAnimationComplete={experienceAnimation.handleExperienceAnimationComplete}
-          showSkillsOverlay={showSkillsOverlay}
-          skillsClosing={skillsClosing}
-          onSkillsClose={handleSkillsClose}
-          onSkillsAnimationComplete={() => {
-            // 기본 스킬 애니메이션 완료 처리
-          }}
-          showContactForm={showContactForm}
-          contactClosing={contactClosing}
-          onContactClose={handleContactClose}
-          onContactAnimationComplete={contactAnimation.handleContactAnimationComplete}
-          showWorksLoading={showWorksLoading}
-          showPortfolioOverlay={showPortfolioOverlay}
-          showExitLoading={showExitLoading}
-          loadingProgress={loadingProgress}
-          loadingBarFullExpand={loadingBarFullExpand}
-          exitLoadingProgress={exitLoadingProgress}
-          portfolioExiting={portfolioExiting}
-          showPortfolioContent={showPortfolioContent}
-          showCards={showCards}
-          onPortfolioExit={handlePortfolioExit}
-          onPortfolioAnimationComplete={handlePortfolioAnimationComplete}
           currentTitle={currentTitle}
           currentSubtitle={currentSubtitle}
           titleAnimation={titleAnimation}
@@ -230,33 +112,16 @@ export default function PortfolioPage() {
             targetPos={targetPos}
             targetLook={targetLook}
             secondaryAnimation={secondaryAnimation}
-            aboutMeAnimationDone={aboutMeAnimationDone}
-            aboutMeClosing={aboutMeClosing}
             setCameraAnimationDone={setCameraAnimationDone}
             setSecondaryAnimation={setSecondaryAnimation}
             setTargetPos={setTargetPos}
             setTargetLook={setTargetLook}
-            cameraAnimationDone={cameraAnimationDone}
             hasClickedBack={hasClickedBack}
             focusedGroup={focusedGroup}
-            setShowAboutMeOverlay={setShowAboutMeOverlay}
-            setShowExperienceOverlay={setShowExperienceOverlay}
-            setShowContactForm={setShowContactForm}
             // workAnimation에서만 사용되는 props들
             setFocusedGroup={setFocusedGroup}
-            setAboutMeClosing={setAboutMeClosing}
-            setAboutMeAnimationDone={setAboutMeAnimationDone}
-            onAboutMeAnimationComplete={workAnimation.handleAboutMeAnimationComplete}
-            // contact 역순 애니메이션용
-            contactClosing={contactClosing}
-            setContactClosing={setContactClosing}
             // 초기 애니메이션 관련
             isInitialAnimation={!initialAnimation.isAnimationComplete}
-            // server 애니메이션용
-            setShowWorksLoading={setShowWorksLoading}
-            setShowCards={setShowCards}
-            // 포트폴리오 EXIT 상태
-            portfolioExiting={portfolioExiting}
           />
 
           <SceneRenderer
