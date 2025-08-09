@@ -10,41 +10,21 @@ import {
   INITIAL_CAMERA_POS,
   INITIAL_CAMERA_LOOK,
 } from '@/entities/portfolio/model/constants';
-import { useWorkCameraAnimation } from '@/features/portfolio/model/animations/use-work-camera-animation';
 import { SECONDARY_ANIMATION_TARGETS } from '../consts';
 
 type CameraControllerProps = {
   targetPos: Position3D | null;
   targetLook: Position3D | null;
   secondaryAnimation: boolean;
-  aboutMeAnimationDone: boolean;
-  aboutMeClosing: boolean;
   setCameraAnimationDone: (done: boolean) => void;
   setSecondaryAnimation: (animation: boolean) => void;
   setTargetPos: (pos: Position3D) => void;
   setTargetLook: (look: Position3D) => void;
+  setFocusedGroup: (group: FocusedGroup | null) => void;
   // 오버레이 관련
-  cameraAnimationDone: boolean;
   hasClickedBack: boolean;
   focusedGroup: FocusedGroup;
-  setShowAboutMeOverlay: (show: boolean) => void;
-  setShowExperienceOverlay: (show: boolean) => void;
-  setShowContactForm: (show: boolean) => void;
-  // workAnimation에서만 사용되는 props들
-  setFocusedGroup: (group: FocusedGroup) => void;
-  setAboutMeClosing: (closing: boolean) => void;
-  setAboutMeAnimationDone: (done: boolean) => void;
-  onAboutMeAnimationComplete: () => void;
-  // contact 역순 애니메이션용
-  contactClosing: boolean;
-  setContactClosing: (closing: boolean) => void;
-  // 초기 애니메이션 관련
-  isInitialAnimation?: boolean;
-  // server 애니메이션용
-  setShowWorksLoading: (show: boolean) => void;
-  setShowCards: (show: boolean) => void;
-  // 포트폴리오 EXIT 상태
-  portfolioExiting: boolean;
+  isInitialAnimation: boolean;
 };
 
 export const CameraController = (props: CameraControllerProps) => {
@@ -52,31 +32,14 @@ export const CameraController = (props: CameraControllerProps) => {
     targetPos,
     targetLook,
     secondaryAnimation,
-    aboutMeAnimationDone,
-    aboutMeClosing,
     setCameraAnimationDone,
     setSecondaryAnimation,
     setTargetPos,
     setTargetLook,
-    cameraAnimationDone,
     hasClickedBack,
     focusedGroup,
-    setShowAboutMeOverlay,
-    setShowExperienceOverlay,
-    setShowContactForm,
-    // workAnimation에서만 사용되는 props들
     setFocusedGroup,
-    setAboutMeClosing,
-    setAboutMeAnimationDone,
-    // contact 역순 애니메이션용
-    contactClosing,
-    setContactClosing,
-    // 초기 애니메이션 관련
     isInitialAnimation,
-    // server 애니메이션용
-    setShowWorksLoading,
-    // 포트폴리오 EXIT 상태
-    portfolioExiting,
   } = props;
 
   const { camera, clock } = useThree();
@@ -91,28 +54,19 @@ export const CameraController = (props: CameraControllerProps) => {
   });
 
   // 각 모델별 애니메이션 훅들
-  const workAnimation = useWorkCameraAnimation({
-    focusedGroup,
-    cameraAnimationDone,
-    aboutMeClosing,
-    secondaryAnimation,
-    hasClickedBack,
-    setShowAboutMeOverlay,
-    setSecondaryAnimation,
-    setTargetPos,
-    setTargetLook,
-    setFocusedGroup,
-    setAboutMeClosing,
-    setAboutMeAnimationDone,
-    setCameraAnimationDone,
-  });
-
-  // Experience 모델 클릭 시 카메라 애니메이션 완료 후 처리
-  useEffect(() => {
-    if (focusedGroup === 'experience' && cameraAnimationDone && !secondaryAnimation && !hasClickedBack) {
-      setShowExperienceOverlay(true);
-    }
-  }, [focusedGroup, cameraAnimationDone, secondaryAnimation, hasClickedBack, setShowExperienceOverlay]);
+  // const workAnimation = useWorkCameraAnimation({
+  //   focusedGroup,
+  //   cameraAnimationDone,
+  //   secondaryAnimation,
+  //   hasClickedBack,
+  //   setSecondaryAnimation,
+  //   setTargetPos,
+  //   setTargetLook,
+  //   setFocusedGroup,
+  //   setAboutMeClosing,
+  //   setAboutMeAnimationDone,
+  //   setCameraAnimationDone,
+  // });
 
   // 카메라 애니메이션 시작
   // 언제 애니메이션을 시작할지 담당
@@ -122,13 +76,9 @@ export const CameraController = (props: CameraControllerProps) => {
       return;
     }
 
-    // portfolioExiting 중이거나 기존 aboutMe 조건 만족 시 애니메이션 시작
-    if (
-      targetPos &&
-      targetLook &&
-      !animRef.current.running &&
-      (portfolioExiting || aboutMeAnimationDone || !aboutMeClosing)
-    ) {
+    // hasClickedBack이 true면 기존 애니메이션을 강제로 중단하고 새로운 애니메이션 시작
+    // 그렇지 않으면 기존대로 실행 중이 아닐 때만 시작
+    if (targetPos && targetLook && (!animRef.current.running || hasClickedBack)) {
       animRef.current.start = clock.getElapsedTime();
       // 애니메이션 시작 시 현재 카메라 위치를 시작점으로 설정
       animRef.current.fromPos = [camera.position.x, camera.position.y, camera.position.z];
@@ -146,14 +96,14 @@ export const CameraController = (props: CameraControllerProps) => {
     targetPos,
     targetLook,
     camera,
-    aboutMeAnimationDone,
-    aboutMeClosing,
     secondaryAnimation,
     setCameraAnimationDone,
     isInitialAnimation,
     clock,
-    portfolioExiting,
+    hasClickedBack,
   ]);
+
+  console.log(animRef.current.running);
 
   // 카메라 애니메이션 업데이트
   // 어떻게 애니메이션을 실행하는지 담당
@@ -193,19 +143,14 @@ export const CameraController = (props: CameraControllerProps) => {
         // 카메라 애니메이션 완료 플래그 설정
         setCameraAnimationDone(true);
 
-        const serverAnimation = focusedGroup === 'server' && !portfolioExiting;
+        const serverAnimation = focusedGroup === 'server';
         const needSecondaryAnimation = SECONDARY_ANIMATION_TARGETS.includes(
           focusedGroup as (typeof SECONDARY_ANIMATION_TARGETS)[number],
         );
 
         // 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar, Resume, Skill)
         // portfolioExiting 중일 때는 server 제외
-        if (
-          !animRef.current.isSecondary &&
-          (serverAnimation || needSecondaryAnimation) &&
-          !aboutMeClosing &&
-          !hasClickedBack
-        ) {
+        if (!animRef.current.isSecondary && (serverAnimation || needSecondaryAnimation) && !hasClickedBack) {
           const target = GROUP_CAMERA_TARGETS[focusedGroup as keyof typeof GROUP_CAMERA_TARGETS];
           if (target?.secondaryOffset && target?.secondaryLookAt) {
             {
@@ -223,7 +168,7 @@ export const CameraController = (props: CameraControllerProps) => {
             }
             return;
           }
-        } else if (animRef.current.isSecondary && focusedGroup === 'radar' && contactClosing) {
+        } else if (animRef.current.isSecondary && focusedGroup === 'radar') {
           // Radar 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
           setSecondaryAnimation(false);
           setTargetPos(INITIAL_CAMERA_POS);
@@ -233,22 +178,15 @@ export const CameraController = (props: CameraControllerProps) => {
           // 초기 위치 복귀 완료 후 완전 초기화 플래그 설정
           setTimeout(() => {
             setFocusedGroup(null);
-            setContactClosing(false);
           }, CAMERA_ANIMATION_DURATION * 1000);
           return;
         } else if (animRef.current.isSecondary && focusedGroup === 'radar' && !hasClickedBack) {
           // Radar 모델의 보조 애니메이션 완료 시 Contact Form 표시
-          setShowContactForm(true);
           setSecondaryAnimation(false);
           return;
-        } else if (animRef.current.isSecondary && focusedGroup === 'work' && !hasClickedBack) {
-          // Work 모델의 종료 처리
-          workAnimation.handleWorkExit();
-          return;
-        } else if (animRef.current.isSecondary && focusedGroup === 'server' && !portfolioExiting) {
+        } else if (animRef.current.isSecondary && focusedGroup === 'server') {
           // Server 모델의 보조 애니메이션 완료 처리 (portfolioExiting이 아닐 때만)
           setSecondaryAnimation(false);
-          setShowWorksLoading(true);
           return;
         } else if (animRef.current.isSecondary && focusedGroup === 'contactMe') {
           // ContactMe 모델의 보조 애니메이션 완료 처리
