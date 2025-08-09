@@ -7,29 +7,24 @@ import {
   OVERLAY_TRANSITION_DELAY,
   INITIAL_DELAY,
 } from '@/entities/portfolio/model/constants';
+import type { OverlayKey, OverlayState } from './use-overlay-state';
 
 type UseLoadingAnimationProps = {
+  overlays: OverlayState;
+  openOverlay: (key: OverlayKey) => void;
   showWorksLoading: boolean;
-  showPortfolioOverlay: boolean;
   setLoadingProgress: React.Dispatch<React.SetStateAction<number>>;
   setLoadingBarFullExpand: (expand: boolean) => void;
-  setShowPortfolioOverlay: (show: boolean) => void;
   setShowWorksLoading: (show: boolean) => void;
 };
 
 export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
-  const {
-    showWorksLoading,
-    showPortfolioOverlay,
-    setLoadingProgress,
-    setLoadingBarFullExpand,
-    setShowPortfolioOverlay,
-    setShowWorksLoading,
-  } = props;
+  const { overlays, openOverlay, showWorksLoading, setLoadingProgress, setLoadingBarFullExpand, setShowWorksLoading } =
+    props;
 
   // 로딩 애니메이션 시작
   useEffect(() => {
-    if (showWorksLoading && !showPortfolioOverlay) {
+    if (showWorksLoading && !overlays.portfolio?.isOpen) {
       setLoadingProgress(0);
       setLoadingBarFullExpand(false);
 
@@ -41,7 +36,7 @@ export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
             setTimeout(() => {
               setLoadingBarFullExpand(true);
               setTimeout(() => {
-                setShowPortfolioOverlay(true);
+                openOverlay('portfolio');
                 // LoadingOverlay가 전체 화면 확장 애니메이션을 완료한 후에 사라지도록 추가 지연
                 setTimeout(() => {
                   setShowWorksLoading(false);
@@ -58,10 +53,10 @@ export const useLoadingAnimation = (props: UseLoadingAnimationProps) => {
     }
   }, [
     showWorksLoading,
-    showPortfolioOverlay,
     setLoadingProgress,
     setLoadingBarFullExpand,
-    setShowPortfolioOverlay,
     setShowWorksLoading,
+    overlays.portfolio?.isOpen,
+    openOverlay,
   ]);
 };
