@@ -1,16 +1,7 @@
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { Mail, LinkedinIcon, GithubIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  LoadingOverlay,
-  AboutMePage,
-  ExperiencePage,
-  CyberpunkContactForm,
-  PortfolioOverlay,
-  SkillsOverlay,
-  NeonToggle,
-  AnimatedLink,
-} from '@/widgets/portfolio/ui';
+import { NeonToggle, AnimatedLink } from '@/widgets/portfolio/ui';
 
 interface OverlayManagerProps {
   focusedGroup: FocusedGroup;
@@ -19,45 +10,6 @@ interface OverlayManagerProps {
   onQualityChange: (quality: boolean) => void;
   onSoundChange: (sound: boolean) => void;
   onBack: () => void;
-
-  // About Me
-  showAboutMeOverlay: boolean;
-  aboutMeClosing: boolean;
-  onAboutMeClose: () => void;
-  onAboutMeAnimationComplete?: () => void;
-
-  // Experience
-  showExperienceOverlay: boolean;
-  experienceClosing: boolean;
-  onExperienceClose: () => void;
-  onExperienceAnimationComplete?: () => void;
-
-  // Skills
-  showSkillsOverlay: boolean;
-  skillsClosing: boolean;
-  onSkillsClose: () => void;
-  onSkillsAnimationComplete?: () => void;
-
-  // Contact
-  showContactForm: boolean;
-  contactClosing: boolean;
-  onContactClose: () => void;
-  onContactAnimationComplete?: () => void;
-
-  // Loading
-  showWorksLoading: boolean;
-  showPortfolioOverlay: boolean;
-  showExitLoading: boolean;
-  loadingProgress: number;
-  loadingBarFullExpand: boolean;
-  exitLoadingProgress: number;
-
-  // Portfolio
-  portfolioExiting: boolean;
-  showPortfolioContent: boolean;
-  showCards: boolean;
-  onPortfolioExit: () => void;
-  onPortfolioAnimationComplete: () => void;
 
   // Title
   currentTitle?: string;
@@ -73,33 +25,6 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     onQualityChange,
     onSoundChange,
     onBack,
-    showAboutMeOverlay,
-    aboutMeClosing,
-    onAboutMeClose,
-    onAboutMeAnimationComplete,
-    showExperienceOverlay,
-    experienceClosing,
-    onExperienceClose,
-    onExperienceAnimationComplete,
-    showSkillsOverlay,
-    skillsClosing,
-    onSkillsClose,
-    onSkillsAnimationComplete,
-    showContactForm,
-    contactClosing,
-    onContactClose,
-    onContactAnimationComplete,
-    showWorksLoading,
-    showPortfolioOverlay,
-    showExitLoading,
-    loadingProgress,
-    loadingBarFullExpand,
-    exitLoadingProgress,
-    portfolioExiting,
-    showPortfolioContent,
-    showCards,
-    onPortfolioExit,
-    onPortfolioAnimationComplete,
     currentTitle,
     currentSubtitle,
     titleAnimation,
@@ -198,30 +123,30 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       </div>
 
       {/* 오버레이 AboutMePage */}
-      {showAboutMeOverlay && (
+      {/* {overlays.aboutMe?.isOpen && (
         <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
           <AboutMePage
-            isClosing={aboutMeClosing}
-            onClose={aboutMeClosing ? onAboutMeAnimationComplete : onAboutMeClose}
+            isClosing={overlays.aboutMe?.isClosing}
+            onClose={overlays.aboutMe?.isClosing ? onAboutMeAnimationComplete : closeOverlay('aboutMe')}
           />
         </div>
-      )}
+      )} */}
 
       {/* 오버레이 ExperiencePage */}
-      {showExperienceOverlay && (
+      {/* {overlays.experience?.isOpen && (
         <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
           <ExperiencePage
-            isClosing={experienceClosing}
-            onClose={experienceClosing ? onExperienceAnimationComplete : onExperienceClose}
+            isClosing={overlays.experience?.isClosing}
+            onClose={overlays.experience?.isClosing ? onExperienceAnimationComplete : closeOverlay('experience')}
           />
         </div>
-      )}
+      )} */}
 
       {/* Skills Overlay */}
-      {showSkillsOverlay && (
+      {/* {overlays.skills?.isOpen && (
         <div className='fixed right-0 top-0 h-full w-1/2 max-w-4xl min-w-[600px] z-50 flex items-start justify-center'>
           <SkillsOverlay
-            skillsClosing={skillsClosing}
+            skillsClosing={overlays.skills?.isClosing}
             onAnimationComplete={
               onSkillsAnimationComplete ||
               (() => {
@@ -230,61 +155,44 @@ export const OverlayManager = (props: OverlayManagerProps) => {
             }
           />
         </div>
-      )}
+      )} */}
 
       {/* Contact Form */}
-      {showContactForm && (
+      {/* {overlays.contact?.isOpen && (
         <div className='fixed left-[100px] top-1/2 transform -translate-y-1/2 z-50'>
           <CyberpunkContactForm
-            show={showContactForm}
-            isClosing={contactClosing}
-            onClose={contactClosing ? onContactAnimationComplete : onContactClose}
+            show={overlays.contact?.isOpen}
+            isClosing={overlays.contact?.isClosing}
+            onClose={overlays.contact?.isClosing ? onContactAnimationComplete : closeOverlay('contact')}
           />
         </div>
-      )}
+      )} */}
 
       {/* 로딩 오버레이들 */}
-      <LoadingOverlay
+      {/* <LoadingOverlay
         showWorksLoading={showWorksLoading}
-        showPortfolioOverlay={showPortfolioOverlay}
+        showPortfolioOverlay={overlays.portfolio?.isOpen}
         showExitLoading={showExitLoading}
         loadingProgress={loadingProgress}
         loadingBarFullExpand={loadingBarFullExpand}
         exitLoadingProgress={exitLoadingProgress}
-      />
+      /> */}
 
       {/* 포트폴리오 오버레이 */}
-      <PortfolioOverlay
-        showPortfolioOverlay={showPortfolioOverlay}
+      {/* <PortfolioOverlay
+        showPortfolioOverlay={overlays.portfolio?.isOpen}
         portfolioExiting={portfolioExiting}
         showPortfolioContent={showPortfolioContent}
         showCards={showCards}
         onExit={onPortfolioExit}
         onAnimationComplete={onPortfolioAnimationComplete}
-      />
+      /> */}
 
       {/* 뒤로가기 버튼 */}
       {focusedGroup && (
         <button
           type='button'
-          onClick={() => {
-            // 각 오버레이별 닫기 핸들러 호출
-            if (showAboutMeOverlay) {
-              onAboutMeClose();
-            } else if (showExperienceOverlay) {
-              onExperienceClose();
-            } else if (showSkillsOverlay) {
-              onSkillsClose();
-            } else if (showContactForm) {
-              // Contact Form 닫기 (역순 애니메이션 시작)
-              onContactClose();
-            } else if (showPortfolioOverlay) {
-              onPortfolioExit();
-            } else {
-              // 다른 상태에서는 기본 onBack 호출
-              onBack();
-            }
-          }}
+          onClick={onBack}
           className='absolute top-6 right-6 z-escape-hatch px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
         >
           ← EXIT

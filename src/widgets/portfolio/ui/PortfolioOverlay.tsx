@@ -13,7 +13,7 @@ interface PortfolioProject {
 }
 
 interface PortfolioOverlayProps {
-  showPortfolioOverlay: boolean;
+  showPortfolioOverlay?: boolean;
   portfolioExiting: boolean;
   showPortfolioContent: boolean;
   showCards: boolean;
