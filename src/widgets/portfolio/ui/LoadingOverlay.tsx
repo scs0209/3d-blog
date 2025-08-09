@@ -2,7 +2,7 @@
 
 interface LoadingOverlayProps {
   showWorksLoading: boolean;
-  showPortfolioOverlay: boolean;
+  showPortfolioOverlay?: boolean;
   showExitLoading: boolean;
   loadingProgress: number;
   loadingBarFullExpand: boolean;
