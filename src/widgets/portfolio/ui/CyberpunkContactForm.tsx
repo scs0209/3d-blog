@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 type CyberpunkContactFormProps = {
-  show: boolean;
+  show?: boolean;
   isClosing?: boolean;
   onClose?: () => void;
   style?: React.CSSProperties;
