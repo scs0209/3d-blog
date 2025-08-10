@@ -32,3 +32,5 @@ export * from './ExperiencePage';
 export * from './NeonToggle';
 export * from './WorkChair';
 export * from './SkillsOverlay';
+export * from './TitleBox';
+export * from './LoadingProgressbar';
