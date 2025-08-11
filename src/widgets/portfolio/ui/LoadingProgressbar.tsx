@@ -1,70 +1,61 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-export const LoadingProgressBar = () => {
-  const [progress, setProgress] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
+type LoadingProgressBarProps = {
+  onComplete: () => void;
+  isReversing: boolean;
+};
+
+export const LoadingProgressBar = ({ onComplete, isReversing = false }: LoadingProgressBarProps) => {
+  const [progress, setProgress] = useState(isReversing ? 100 : 0);
   const progressBarRef = useRef(null);
 
   useEffect(() => {
+    if (isReversing) {
+      // 역순 애니메이션
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev <= 0) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 2; // 조금 더 빠르게 감소
+        });
+      }, 30);
+
+      return () => clearInterval(interval);
+    }
+
+    // 정순 애니메이션
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           setTimeout(() => {
-            setIsExpanded(true);
-          }, 100);
+            onComplete();
+          }, 300);
           return 100;
         }
         return prev + 1;
       });
-    }, 50);
+    }, 30);
 
     return () => clearInterval(interval);
-  }, []);
-
-  const handleRestart = () => {
-    setProgress(0);
-    setIsExpanded(false);
-  };
+  }, [onComplete, isReversing]);
 
   return (
-    <div className='relative min-h-screen bg-gray-100 overflow-hidden'>
-      {/* 확장되는 검정 화면 */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: isExpanded ? 100 : 0 }}
-        transition={{ duration: 1.2, ease: 'easeInOut' }}
-        className='absolute top-1/2 left-1/2 w-4 h-4 bg-black origin-center'
-        style={{ transform: 'translate(-50%, -50%)' }}
-      />
-
-      {/* 완료 메시지 */}
-      {isExpanded && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.5 }}
-          className='absolute inset-0 z-50 flex items-center justify-center'
-        >
-          <div className='text-center'>
-            <h2 className='text-2xl font-bold text-white mb-4'>완료!</h2>
-            <button
-              type='button'
-              onClick={handleRestart}
-              className='px-6 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors'
-            >
-              다시 로딩하기
-            </button>
-          </div>
-        </motion.div>
-      )}
-
+    <motion.div
+      key='loading-page'
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className='relative min-h-screen bg-gray-100 overflow-hidden'
+    >
       <div className='flex flex-col items-center justify-center min-h-screen'>
         <div className='w-80 p-8'>
           {/* Loading 텍스트 */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='text-center mb-6'>
-            <h1 className='text-2xl font-semibold text-gray-700'>Loading...</h1>
+            <h1 className='text-2xl font-semibold text-gray-700'>{isReversing ? 'Closing...' : 'Loading...'}</h1>
           </motion.div>
 
           {/* 프로그래스바 컨테이너 */}
@@ -73,7 +64,7 @@ export const LoadingProgressBar = () => {
               <motion.div
                 ref={progressBarRef}
                 className='h-full bg-black'
-                initial={{ width: 0 }}
+                initial={{ width: isReversing ? '100%' : 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.1, ease: 'linear' }}
               />
@@ -106,6 +97,6 @@ export const LoadingProgressBar = () => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
