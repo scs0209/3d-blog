@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GlassmorphismCard, GlassmorphismButton } from '@/shared/ui/glassmorphism';
 import { cardVariants, containerVariants } from '@/shared/animation';
 import { portfolioProjects } from '../consts';
+import { TitleBox } from './TitleBox';
 
-export function PortfolioOverlay() {
+export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
   const [animationKey, setAnimationKey] = useState(0);
 
   const handleResetAnimation = () => {
@@ -16,12 +17,15 @@ export function PortfolioOverlay() {
   return (
     <AnimatePresence mode='wait'>
       <motion.div
-        key={animationKey}
-        className='fixed inset-0 z-[9999] bg-black/10 backdrop-blur-xl text-white font-mono overflow-auto'
-        variants={containerVariants}
-        initial='hidden'
-        animate='visible'
-        exit='exit'
+        key={`portfolio-${animationKey}`}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0 }}
+        transition={{
+          duration: 1.2,
+          ease: 'easeInOut',
+        }}
+        className='fixed inset-0 z-escape-hatch bg-black backdrop-blur-xl text-white font-mono overflow-auto'
       >
         {/* 애니메이션 재시작 버튼 */}
         <motion.div
@@ -31,7 +35,7 @@ export function PortfolioOverlay() {
           transition={{ delay: 1.5, duration: 0.3 }}
         >
           <GlassmorphismButton
-            onClick={handleResetAnimation}
+            onClick={onRestart}
             variant='outline'
             size='sm'
             className='flex items-center gap-2 text-white border-white/30 hover:border-white/50 backdrop-blur-md'
@@ -40,9 +44,18 @@ export function PortfolioOverlay() {
             애니메이션 재시작
           </GlassmorphismButton>
         </motion.div>
+
+        <TitleBox />
+
         <div className='min-h-screen p-4 flex items-center justify-center'>
           {/* 프로젝트 그리드 */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
+          <motion.div
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'
+            variants={containerVariants}
+            initial='hidden'
+            animate='visible'
+            exit='exit'
+          >
             <AnimatePresence>
               {portfolioProjects.map((project, index) => (
                 <motion.div key={`${project.id}-${animationKey}`} variants={cardVariants}>
@@ -80,7 +93,7 @@ export function PortfolioOverlay() {
                 </motion.div>
               ))}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
       </motion.div>
     </AnimatePresence>
