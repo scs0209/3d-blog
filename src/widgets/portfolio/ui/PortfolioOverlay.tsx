@@ -9,9 +9,22 @@ import { TitleBox } from './TitleBox';
 
 export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
   const [animationKey, setAnimationKey] = useState(0);
+  const [isExiting, setIsExiting] = useState(false);
+  const [isScaleExiting, setIsScaleExiting] = useState(false);
 
   const handleResetAnimation = () => {
-    setAnimationKey((prev) => prev + 1);
+    // 먼저 카드들을 exit 상태로 만든다
+    setIsExiting(true);
+
+    // 카드 exit 애니메이션이 완료된 후 화면 축소 애니메이션 시작
+    setTimeout(() => {
+      setIsScaleExiting(true);
+
+      // 화면 축소 애니메이션이 완료된 후 onRestart 호출
+      setTimeout(() => {
+        onRestart();
+      }, 1200); // scale 애니메이션 duration과 맞춤
+    }, 2000); // 카드 exit 시간
   };
 
   return (
@@ -19,7 +32,7 @@ export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
       <motion.div
         key={`portfolio-${animationKey}`}
         initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
+        animate={{ scale: isScaleExiting ? 0 : 1 }}
         exit={{ scale: 0 }}
         transition={{
           duration: 1.2,
@@ -35,7 +48,7 @@ export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
           transition={{ delay: 1.5, duration: 0.3 }}
         >
           <GlassmorphismButton
-            onClick={onRestart}
+            onClick={handleResetAnimation}
             variant='outline'
             size='sm'
             className='flex items-center gap-2 text-white border-white/30 hover:border-white/50 backdrop-blur-md'
@@ -53,7 +66,7 @@ export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
             className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'
             variants={containerVariants}
             initial='hidden'
-            animate='visible'
+            animate={isExiting ? 'exit' : 'visible'}
             exit='exit'
           >
             <AnimatePresence>
