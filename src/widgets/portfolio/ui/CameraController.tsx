@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as three from 'three';
 import type { CameraAnimationRef, Position3D, FocusedGroup } from '@/entities/portfolio/model/types';
+import type { OverlayKey } from '@/features/portfolio/model/use-overlay-state';
 import {
   CAMERA_ANIMATION_DURATION,
   SECONDARY_ANIMATION_DURATION,
@@ -11,6 +12,28 @@ import {
   INITIAL_CAMERA_LOOK,
 } from '@/entities/portfolio/model/constants';
 import { SECONDARY_ANIMATION_TARGETS } from '../consts';
+
+// FocusedGroup을 OverlayKey로 매핑하는 함수
+const getOverlayKeyFromGroup = (group: FocusedGroup): OverlayKey | null => {
+  switch (group) {
+    case 'holoTable':
+    case 'work':
+      return 'aboutMe';
+    case 'experience':
+      return 'experience';
+    case 'skill':
+      return 'skills';
+    case 'contactMe':
+      return 'contact';
+    case 'server':
+    case 'resumeConsole':
+    case 'radar':
+    case 'platform':
+      return 'portfolio';
+    default:
+      return null;
+  }
+};
 
 type CameraControllerProps = {
   targetPos: Position3D | null;
@@ -25,6 +48,7 @@ type CameraControllerProps = {
   hasClickedBack: boolean;
   focusedGroup: FocusedGroup;
   isInitialAnimation: boolean;
+  openOverlay: (key: OverlayKey) => void;
 };
 
 export const CameraController = (props: CameraControllerProps) => {
@@ -40,6 +64,7 @@ export const CameraController = (props: CameraControllerProps) => {
     focusedGroup,
     setFocusedGroup,
     isInitialAnimation,
+    openOverlay,
   } = props;
 
   const { camera, clock } = useThree();
@@ -53,21 +78,6 @@ export const CameraController = (props: CameraControllerProps) => {
     isSecondary: false,
   });
 
-  // 각 모델별 애니메이션 훅들
-  // const workAnimation = useWorkCameraAnimation({
-  //   focusedGroup,
-  //   cameraAnimationDone,
-  //   secondaryAnimation,
-  //   hasClickedBack,
-  //   setSecondaryAnimation,
-  //   setTargetPos,
-  //   setTargetLook,
-  //   setFocusedGroup,
-  //   setAboutMeClosing,
-  //   setAboutMeAnimationDone,
-  //   setCameraAnimationDone,
-  // });
-
   // 카메라 애니메이션 시작
   // 언제 애니메이션을 시작할지 담당
   useEffect(() => {
@@ -78,7 +88,7 @@ export const CameraController = (props: CameraControllerProps) => {
 
     // hasClickedBack이 true면 기존 애니메이션을 강제로 중단하고 새로운 애니메이션 시작
     // 그렇지 않으면 기존대로 실행 중이 아닐 때만 시작
-    if (targetPos && targetLook && (!animRef.current.running || hasClickedBack)) {
+    if (targetPos && targetLook && !animRef.current.running) {
       animRef.current.start = clock.getElapsedTime();
       // 애니메이션 시작 시 현재 카메라 위치를 시작점으로 설정
       animRef.current.fromPos = [camera.position.x, camera.position.y, camera.position.z];
@@ -92,16 +102,7 @@ export const CameraController = (props: CameraControllerProps) => {
       animRef.current.isSecondary = secondaryAnimation;
       setCameraAnimationDone(false);
     }
-  }, [
-    targetPos,
-    targetLook,
-    camera,
-    secondaryAnimation,
-    setCameraAnimationDone,
-    isInitialAnimation,
-    clock,
-    hasClickedBack,
-  ]);
+  }, [targetPos, targetLook, camera, secondaryAnimation, setCameraAnimationDone, isInitialAnimation, clock]);
 
   console.log(animRef.current.running);
 
@@ -143,14 +144,13 @@ export const CameraController = (props: CameraControllerProps) => {
         // 카메라 애니메이션 완료 플래그 설정
         setCameraAnimationDone(true);
 
-        const serverAnimation = focusedGroup === 'server';
         const needSecondaryAnimation = SECONDARY_ANIMATION_TARGETS.includes(
           focusedGroup as (typeof SECONDARY_ANIMATION_TARGETS)[number],
         );
 
         // 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar, Resume, Skill)
         // portfolioExiting 중일 때는 server 제외
-        if (!animRef.current.isSecondary && (serverAnimation || needSecondaryAnimation) && !hasClickedBack) {
+        if (!animRef.current.isSecondary && needSecondaryAnimation && !hasClickedBack) {
           const target = GROUP_CAMERA_TARGETS[focusedGroup as keyof typeof GROUP_CAMERA_TARGETS];
           if (target?.secondaryOffset && target?.secondaryLookAt) {
             {
@@ -168,7 +168,13 @@ export const CameraController = (props: CameraControllerProps) => {
             }
             return;
           }
-        } else if (animRef.current.isSecondary && focusedGroup === 'radar') {
+        } else if (animRef.current.isSecondary) {
+          // 보조 애니메이션 완료 시 오버레이 열기
+          const overlayKey = getOverlayKeyFromGroup(focusedGroup);
+          if (overlayKey) {
+            openOverlay(overlayKey);
+          }
+
           // Radar 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
           setSecondaryAnimation(false);
           setTargetPos(INITIAL_CAMERA_POS);
@@ -179,30 +185,6 @@ export const CameraController = (props: CameraControllerProps) => {
           setTimeout(() => {
             setFocusedGroup(null);
           }, CAMERA_ANIMATION_DURATION * 1000);
-          return;
-        } else if (animRef.current.isSecondary && focusedGroup === 'radar' && !hasClickedBack) {
-          // Radar 모델의 보조 애니메이션 완료 시 Contact Form 표시
-          setSecondaryAnimation(false);
-          return;
-        } else if (animRef.current.isSecondary && focusedGroup === 'server') {
-          // Server 모델의 보조 애니메이션 완료 처리 (portfolioExiting이 아닐 때만)
-          setSecondaryAnimation(false);
-          return;
-        } else if (animRef.current.isSecondary && focusedGroup === 'contactMe') {
-          // ContactMe 모델의 보조 애니메이션 완료 처리
-          setSecondaryAnimation(false);
-          return;
-        } else if (animRef.current.isSecondary && focusedGroup === 'resumeConsole') {
-          // ResumeConsole 모델의 보조 애니메이션 완료 처리
-          setSecondaryAnimation(false);
-          return;
-        } else if (animRef.current.isSecondary && focusedGroup === 'skill') {
-          // Skill 모델의 보조 애니메이션 완료 처리
-          setSecondaryAnimation(false);
-          return;
-        } else if (animRef.current.isSecondary) {
-          // 기타 모델들의 보조 애니메이션 완료 처리
-          setSecondaryAnimation(false);
           return;
         }
         setSecondaryAnimation(false);
