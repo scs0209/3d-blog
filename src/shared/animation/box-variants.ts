@@ -1,4 +1,6 @@
-export const boxVariants = {
+import type { Variants } from 'framer-motion';
+
+export const boxVariants: Variants = {
   hidden: {
     scaleX: 0,
     x: -100,
