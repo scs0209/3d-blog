@@ -1,8 +1,9 @@
-export const textVariants = {
-  hidden: {
-    y: 30,
-    opacity: 0,
-  },
+import type { Variants } from 'framer-motion';
+
+const offscreen = { y: 30, opacity: 0 };
+
+export const textVariants: Variants = {
+  hidden: offscreen,
   visible: {
     y: 0,
     opacity: 1,
@@ -13,8 +14,7 @@ export const textVariants = {
     },
   },
   exit: {
-    y: 30,
-    opacity: 0,
+    ...offscreen,
     transition: {
       duration: 0.3,
       ease: 'easeIn',
