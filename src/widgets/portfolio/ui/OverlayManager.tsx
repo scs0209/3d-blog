@@ -1,7 +1,8 @@
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { Mail, LinkedinIcon, GithubIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NeonToggle, AnimatedLink } from '@/widgets/portfolio/ui';
+import { NeonToggle, AnimatedLink, LoadingProgressBar } from '@/widgets/portfolio/ui';
+import type { OverlayKey, OverlayState } from '@/features/portfolio/model/use-overlay-state';
 
 interface OverlayManagerProps {
   focusedGroup: FocusedGroup;
@@ -15,6 +16,10 @@ interface OverlayManagerProps {
   currentTitle?: string;
   currentSubtitle?: string;
   titleAnimation?: 'idle' | 'changing' | 'exiting';
+
+  // Overlay
+  overlays: OverlayState;
+  closeOverlay: (key: OverlayKey) => void;
 }
 
 export const OverlayManager = (props: OverlayManagerProps) => {
@@ -28,7 +33,11 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     currentTitle,
     currentSubtitle,
     titleAnimation,
+    overlays,
+    closeOverlay,
   } = props;
+
+  console.log(overlays.portfolio?.isOpen);
 
   return (
     <>
@@ -179,20 +188,21 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       /> */}
 
       {/* 포트폴리오 오버레이 */}
-      {/* <PortfolioOverlay
-        showPortfolioOverlay={overlays.portfolio?.isOpen}
-        portfolioExiting={portfolioExiting}
-        showPortfolioContent={showPortfolioContent}
-        showCards={showCards}
-        onExit={onPortfolioExit}
-        onAnimationComplete={onPortfolioAnimationComplete}
-      /> */}
+      {overlays.portfolio?.isOpen && (
+        <LoadingProgressBar key='loading-portfolio' isReversing={overlays.portfolio?.isClosing} />
+      )}
 
       {/* 뒤로가기 버튼 */}
       {focusedGroup && (
         <button
           type='button'
-          onClick={onBack}
+          onClick={() => {
+            if (overlays.portfolio?.isOpen) {
+              return closeOverlay('portfolio');
+            }
+
+            onBack();
+          }}
           className='absolute top-6 right-6 z-escape-hatch px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
         >
           ← EXIT
