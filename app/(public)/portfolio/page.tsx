@@ -32,6 +32,7 @@ export default function PortfolioPage() {
     secondaryAnimation,
     cameraAnimationDone,
     hasClickedBack,
+    overlays,
 
     // Setters
     setHoveredPosition,
@@ -47,6 +48,8 @@ export default function PortfolioPage() {
     isShow,
     handleGroupClick,
     handleBack,
+    openOverlay,
+    closeOverlay,
   } = portfolio;
 
   // 모델 클릭 시 타이틀 변경 핸들러
@@ -105,10 +108,13 @@ export default function PortfolioPage() {
           currentTitle={currentTitle}
           currentSubtitle={currentSubtitle}
           titleAnimation={titleAnimation}
+          overlays={overlays}
+          closeOverlay={closeOverlay}
         />
 
         <Canvas camera={{ position: INITIAL_CAMERA_POS, fov: 75, near: 0.1, far: 100 }}>
           <CameraController
+            openOverlay={openOverlay}
             targetPos={targetPos}
             targetLook={targetLook}
             secondaryAnimation={secondaryAnimation}
