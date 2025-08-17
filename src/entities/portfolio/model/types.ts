@@ -38,28 +38,7 @@ export type CameraAnimationState = {
   hasClickedBack: boolean;
 };
 
-export type OverlayState = {
-  showAboutMeOverlay: boolean;
-  showExperienceOverlay: boolean;
-  aboutMeClosing: boolean;
-  experienceClosing: boolean;
-  showContactForm: boolean;
-  aboutMeAnimationDone: boolean;
-};
-
-export interface LoadingState {
-  showWorksLoading: boolean;
-  showPortfolioOverlay: boolean;
-  loadingProgress: number;
-  loadingBarFullExpand: boolean;
-  showExitLoading: boolean;
-  exitLoadingProgress: number;
-  showPortfolioContent: boolean;
-  portfolioExiting: boolean;
-  showCards: boolean;
-}
-
-export interface CameraAnimationRef {
+export type CameraAnimationRef = {
   start: number;
   fromPos: Position3D;
   toPos: Position3D;
@@ -67,4 +46,13 @@ export interface CameraAnimationRef {
   toLook: Position3D;
   running: boolean;
   isSecondary: boolean;
-}
+};
+
+export type PortfolioProject = {
+  id: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  liveUrl: string;
+};

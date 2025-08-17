@@ -1,11 +1,4 @@
-interface PortfolioProject {
-  id: number;
-  title: string;
-  subtitle: string;
-  description: string;
-  image: string;
-  liveUrl: string;
-}
+import type { PortfolioProject } from '@/entities/portfolio/model';
 
 export const portfolioProjects: PortfolioProject[] = [
   {
