@@ -38,7 +38,7 @@ export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
           duration: 1.2,
           ease: 'easeInOut',
         }}
-        className='fixed inset-0 z-escape-hatch bg-black backdrop-blur-xl text-white font-mono overflow-auto'
+        className='fixed inset-0 z-overlay bg-black backdrop-blur-xl text-white font-mono overflow-auto'
       >
         {/* 애니메이션 재시작 버튼 */}
         <motion.div
