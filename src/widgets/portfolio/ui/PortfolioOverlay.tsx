@@ -42,7 +42,7 @@ export function PortfolioOverlay({
         }}
         className='fixed inset-0 z-overlay bg-black backdrop-blur-xl text-white font-mono overflow-auto'
       >
-        <TitleBox />
+        <TitleBox title='PORTFOLIO' />
 
         <div className='min-h-screen p-4 flex items-center justify-center'>
           {/* 프로젝트 그리드 */}
