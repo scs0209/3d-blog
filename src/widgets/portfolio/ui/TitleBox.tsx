@@ -2,7 +2,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { boxVariants, textVariants } from '@/shared/animation';
 
-export const TitleBox = () => {
+type TitleBoxProps = {
+  title: string;
+};
+
+export const TitleBox = ({ title = 'Title' }: TitleBoxProps) => {
   return (
     <AnimatePresence>
       <motion.div
@@ -14,7 +18,7 @@ export const TitleBox = () => {
         style={{ originX: 0 }}
       >
         <motion.div variants={textVariants} initial='hidden' animate='visible' exit='exit'>
-          <p className='text-xs opacity-90'>Title</p>
+          <p className='text-xs opacity-90'>{title}</p>
         </motion.div>
       </motion.div>
     </AnimatePresence>
