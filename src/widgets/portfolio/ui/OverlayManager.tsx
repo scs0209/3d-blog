@@ -37,8 +37,6 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     closeOverlay,
   } = props;
 
-  console.log(overlays.portfolio?.isOpen);
-
   return (
     <>
       {/* 오버레이 UI: 상단좌측 타이틀/직함 */}

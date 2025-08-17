@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, animate, useTransform, useMotionValueEvent } from 'framer-motion';
 import { PortfolioOverlay } from './PortfolioOverlay';
 
 type LoadingProgressBarProps = {
@@ -7,11 +7,18 @@ type LoadingProgressBarProps = {
 };
 
 export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarProps) => {
-  const [progress, setProgress] = useState(isReversing ? 100 : 0);
   const [showPortfolio, setShowPortfolio] = useState(false);
   const [portfolioExiting, setPortfolioExiting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [displayProgress, setDisplayProgress] = useState(isReversing ? 100 : 0);
   const progressBarRef = useRef(null);
+  const motionProgress = useMotionValue(isReversing ? 100 : 0);
+  const progressWidth = useTransform(motionProgress, (value) => `${value}%`);
+
+  // motionValue 변화를 감지하여 display용 state 업데이트
+  useMotionValueEvent(motionProgress, 'change', (latest) => {
+    setDisplayProgress(Math.round(latest));
+  });
 
   // 역순 애니메이션 처리
   useEffect(() => {
@@ -26,36 +33,37 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
     setShowPortfolio(false);
     setPortfolioExiting(false);
 
-    // LoadingProgressBar 역순 애니메이션 시작
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev <= 0) {
-          clearInterval(interval);
-          setIsComplete(true);
-          return 0;
-        }
-        return prev - 2;
-      });
-    }, 30);
+    // LoadingProgressBar 역순 애니메이션을 useMotionValue와 animate로 처리
+    const controls = animate(motionProgress, 0, {
+      duration: 3, // 100% -> 0%까지 3초 (30ms * 100 / 1000)
+      ease: 'linear',
+      onComplete: () => {
+        setIsComplete(true);
+      },
+    });
+
+    return () => controls.stop();
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!isReversing) {
-      // 정순 애니메이션
-      const interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
+      // 정순 애니메이션을 useMotionValue와 animate로 처리
+      const controls = animate(motionProgress, 100, {
+        duration: 3, // 0% -> 100%까지 3초 (30ms * 100 / 1000)
+        ease: 'linear',
+        onComplete: () => {
+          // setTimeout 대신 animate를 사용하여 딜레이 처리
+          animate(0, 1, {
+            duration: 0.3,
+            onComplete: () => {
               setShowPortfolio(true);
-            }, 300);
-            return 100;
-          }
-          return prev + 1;
-        });
-      }, 30);
+            },
+          });
+        },
+      });
 
-      return () => clearInterval(interval);
+      return () => controls.stop();
     }
   }, [isReversing]);
 
@@ -72,7 +80,7 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className='fixed inset-0 z-overlay bg-black/50 backdrop-blur-sm overflow-hidden'
+          className='fixed inset-0 z-overlay bg-transparent overflow-hidden'
         >
           <div className='flex flex-col items-center justify-center min-h-screen'>
             <div className='w-80 p-8'>
@@ -84,13 +92,7 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
               {/* 프로그래스바 컨테이너 */}
               <div className='space-y-4'>
                 <div className='w-full h-3 bg-white/20 rounded-full overflow-hidden'>
-                  <motion.div
-                    ref={progressBarRef}
-                    className='h-full bg-white'
-                    initial={{ width: isReversing ? '100%' : 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.1, ease: 'linear' }}
-                  />
+                  <motion.div ref={progressBarRef} className='h-full bg-white' style={{ width: progressWidth }} />
                 </div>
               </div>
 
@@ -100,7 +102,7 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }}
               >
-                <span className='text-lg font-medium text-white'>{progress}%</span>
+                <span className='text-lg font-medium text-white'>{displayProgress}%</span>
               </motion.div>
 
               {/* 로딩 도트 애니메이션 */}
