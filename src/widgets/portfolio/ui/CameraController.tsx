@@ -171,8 +171,9 @@ export const CameraController = (props: CameraControllerProps) => {
         } else if (animRef.current.isSecondary) {
           // 보조 애니메이션 완료 시 오버레이 열기
           const overlayKey = getOverlayKeyFromGroup(focusedGroup);
+
           if (overlayKey) {
-            openOverlay(overlayKey);
+            return openOverlay(overlayKey);
           }
 
           // Radar 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
