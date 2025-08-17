@@ -10,7 +10,6 @@ export * from './ExperiencePerson';
 export * from './ExperienceDesk';
 export * from './Computer';
 export * from './WorkPerson';
-export * from './LoadingOverlay';
 export * from './PortfolioOverlay';
 export * from './RobotArm';
 export * from './InspectingPerson';
