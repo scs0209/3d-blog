@@ -10,6 +10,7 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
   const [progress, setProgress] = useState(isReversing ? 100 : 0);
   const [showPortfolio, setShowPortfolio] = useState(false);
   const [portfolioExiting, setPortfolioExiting] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
   const progressBarRef = useRef(null);
 
   // 역순 애니메이션 처리
@@ -30,6 +31,7 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
       setProgress((prev) => {
         if (prev <= 0) {
           clearInterval(interval);
+          setIsComplete(true);
           return 0;
         }
         return prev - 2;
@@ -56,6 +58,11 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
       return () => clearInterval(interval);
     }
   }, [isReversing]);
+
+  // 완료되면 아무것도 렌더링하지 않음
+  if (isComplete) {
+    return null;
+  }
 
   return (
     <AnimatePresence mode='wait'>

@@ -189,7 +189,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
 
       {/* 포트폴리오 오버레이 */}
       {overlays.portfolio?.isOpen && (
-        <LoadingProgressBar key='loading-portfolio' isReversing={overlays.portfolio?.isClosing} />
+        <LoadingProgressBar key='loading-portfolio' isReversing={overlays.portfolio?.isClosing ?? false} />
       )}
 
       {/* 뒤로가기 버튼 */}
