@@ -1,31 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlassmorphismCard, GlassmorphismButton } from '@/shared/ui/glassmorphism';
 import { cardVariants, containerVariants } from '@/shared/animation';
 import { portfolioProjects } from '../consts';
 import { TitleBox } from './TitleBox';
 
-export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
-  const [animationKey, setAnimationKey] = useState(0);
-  const [isExiting, setIsExiting] = useState(false);
+export function PortfolioOverlay({ isExiting }: { isExiting: boolean }) {
+  const [animationKey] = useState(0);
   const [isScaleExiting, setIsScaleExiting] = useState(false);
+  const [cardExitComplete, setCardExitComplete] = useState(false);
 
-  const handleResetAnimation = () => {
-    // 먼저 카드들을 exit 상태로 만든다
-    setIsExiting(true);
-
-    // 카드 exit 애니메이션이 완료된 후 화면 축소 애니메이션 시작
-    setTimeout(() => {
+  useEffect(() => {
+    if (isExiting && cardExitComplete) {
       setIsScaleExiting(true);
-
-      // 화면 축소 애니메이션이 완료된 후 onRestart 호출
-      setTimeout(() => {
-        onRestart();
-      }, 1200); // scale 애니메이션 duration과 맞춤
-    }, 2000); // 카드 exit 시간
-  };
+    }
+  }, [isExiting, cardExitComplete]);
 
   return (
     <AnimatePresence mode='wait'>
@@ -40,24 +31,6 @@ export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
         }}
         className='fixed inset-0 z-overlay bg-black backdrop-blur-xl text-white font-mono overflow-auto'
       >
-        {/* 애니메이션 재시작 버튼 */}
-        <motion.div
-          className='fixed top-6 right-6 z-10'
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.5, duration: 0.3 }}
-        >
-          <GlassmorphismButton
-            onClick={handleResetAnimation}
-            variant='outline'
-            size='sm'
-            className='flex items-center gap-2 text-white border-white/30 hover:border-white/50 backdrop-blur-md'
-          >
-            <span className='animate-spin'>🔄</span>
-            애니메이션 재시작
-          </GlassmorphismButton>
-        </motion.div>
-
         <TitleBox />
 
         <div className='min-h-screen p-4 flex items-center justify-center'>
@@ -68,6 +41,11 @@ export function PortfolioOverlay({ onRestart }: { onRestart: () => void }) {
             initial='hidden'
             animate={isExiting ? 'exit' : 'visible'}
             exit='exit'
+            onAnimationComplete={(definition) => {
+              if (definition === 'exit' && isExiting) {
+                setCardExitComplete(true);
+              }
+            }}
           >
             <AnimatePresence>
               {portfolioProjects.map((project, index) => (
