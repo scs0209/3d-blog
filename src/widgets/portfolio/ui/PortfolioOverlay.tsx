@@ -7,7 +7,13 @@ import { cardVariants, containerVariants } from '@/shared/animation';
 import { portfolioProjects } from '../consts';
 import { TitleBox } from './TitleBox';
 
-export function PortfolioOverlay({ isExiting }: { isExiting: boolean }) {
+export function PortfolioOverlay({
+  isExiting,
+  onExitComplete,
+}: {
+  isExiting?: boolean;
+  onExitComplete?: () => void;
+}) {
   const [animationKey] = useState(0);
   const [isScaleExiting, setIsScaleExiting] = useState(false);
   const [cardExitComplete, setCardExitComplete] = useState(false);
@@ -28,6 +34,11 @@ export function PortfolioOverlay({ isExiting }: { isExiting: boolean }) {
         transition={{
           duration: 1.2,
           ease: 'easeInOut',
+        }}
+        onAnimationComplete={() => {
+          if (isScaleExiting && onExitComplete) {
+            onExitComplete();
+          }
         }}
         className='fixed inset-0 z-overlay bg-black backdrop-blur-xl text-white font-mono overflow-auto'
       >
