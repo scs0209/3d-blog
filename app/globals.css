@@ -411,3 +411,153 @@ pre {
 .loading-bar-expand {
   animation: loadingBarExpand 1.5s ease-out forwards;
 }
+
+/* Novel Editor Content Styles */
+.ProseMirror {
+  outline: none;
+  color: rgb(191 219 254); /* text-blue-200 */
+}
+
+.ProseMirror h1 {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  color: rgb(219 234 254); /* text-blue-100 */
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 600;
+  color: rgb(219 234 254); /* text-blue-100 */
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.ProseMirror h3 {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;
+  color: rgb(219 234 254); /* text-blue-100 */
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.ProseMirror p {
+  color: rgb(239 246 255); /* text-blue-50 */
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.ProseMirror strong {
+  color: rgb(191 219 254); /* text-blue-200 */
+  font-weight: 600;
+}
+
+.ProseMirror em {
+  color: rgb(147 197 253); /* text-blue-300 */
+  font-style: italic;
+}
+
+.ProseMirror a {
+  color: rgb(96 165 250); /* text-blue-400 */
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ProseMirror a:hover {
+  color: rgb(147 197 253); /* text-blue-300 */
+  text-decoration: underline;
+}
+
+.ProseMirror blockquote {
+  border-left: 4px solid rgb(96 165 250); /*
+  padding: 1rem;
+  margin: 1.5rem 0;
+  color: rgb(191 219 254); /* text-blue-200 */
+  font-style: italic;
+  background: rgba(96, 165, 250, 0.05);
+  border-radius: 0.5rem;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  color: rgb(239 246 255); /* text-blue-50 */
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25rem;
+  line-height: 1.6;
+}
+
+.ProseMirror code {
+  color: rgb(147 197 253); /* text-blue-300 */
+  background: rgba(30, 58, 138, 0.5); /* bg-blue-900/50 */
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+  font-size: 0.875rem;
+}
+
+.ProseMirror pre {
+  background: rgb(30 41 59); /* bg-slate-800 */
+  border: 1px solid rgba(96, 165, 250, 0.3); /* border-blue-400/30 */
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+}
+
+.ProseMirror pre code {
+  color: rgb(239 246 255); /* text-blue-50 */
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+  margin: 1.5rem 0;
+}
+
+/* Novel Editor 특정 클래스들 */
+.ProseMirror .highlight {
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.ProseMirror .highlight.default {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ProseMirror .highlight.purple {
+  background: rgba(147, 51, 234, 0.2);
+}
+
+.ProseMirror .highlight.red {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.ProseMirror .highlight.yellow {
+  background: rgba(251, 191, 36, 0.2);
+}
+
+.ProseMirror .highlight.blue {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.ProseMirror .highlight.green {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.ProseMirror .highlight.orange {
+  background: rgba(249, 115, 22, 0.2);
+}
