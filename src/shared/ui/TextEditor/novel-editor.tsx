@@ -23,7 +23,7 @@ const NovelEditor = ({
   onChange: (val: string) => void;
 }) => {
   return (
-    <div className='relative w-full max-w-screen-lg min-h-[500px]'>
+    <div className='relative w-[1000px] max-w-screen-lg min-h-[500px]'>
       <EditorRoot>
         <EditorContent
           className='min-h-[400px] rounded-xl border p-4'
