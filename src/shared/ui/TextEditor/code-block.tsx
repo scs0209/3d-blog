@@ -3,7 +3,6 @@ import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import mermaid from 'mermaid';
 import { useSession } from 'next-auth/react';
 
-console.log(mermaid);
 mermaid.initialize({
   startOnLoad: false,
   theme: 'dark',
