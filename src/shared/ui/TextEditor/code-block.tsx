@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import mermaid from 'mermaid';
+import { useSession } from 'next-auth/react';
 
 console.log(mermaid);
 mermaid.initialize({
@@ -25,6 +26,8 @@ export enum MODE {
 }
 
 export default function CodeBlock(props: any) {
+  const { data: session } = useSession();
+  const isAdmin = session?.user.role === 'ADMIN';
   const { node, updateAttributes, extension } = props;
   const {
     attrs: { language: defaultLanguage, mode = MODE.EDIT },
@@ -36,7 +39,6 @@ export default function CodeBlock(props: any) {
   useEffect(() => {
     if (mode === MODE.PREVIEW && previewer.current && isMermaid && textContent.trim()) {
       try {
-        console.log('Rendering mermaid:', textContent);
         const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
         mermaid
@@ -60,7 +62,7 @@ export default function CodeBlock(props: any) {
 
   return (
     <NodeViewWrapper className='code-block relative'>
-      {isMermaid && (
+      {isMermaid && isAdmin && (
         <button
           type='button'
           contentEditable={false}
