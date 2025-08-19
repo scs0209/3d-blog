@@ -21,6 +21,8 @@ import {
   UpdatedImage,
   Youtube,
 } from 'novel/extensions';
+import { ReactNodeViewRenderer } from '@tiptap/react';
+import CodeBlock from './code-block';
 import { UploadImagesPlugin } from 'novel/plugins';
 
 import { cx } from 'class-variance-authority';
@@ -119,12 +121,25 @@ const starterKit = StarterKit.configure({
 
 const lowlight = createLowlight(all);
 
-const codeBlockLowlight = CodeBlockLowlight.configure({
-  // configure lowlight: common /  all / use highlightJS in case there is a need to specify certain language grammars only
-  // common: covers 37 language grammars which should be good enough in most cases
-  lowlight,
-  defaultLanguage: 'planetext',
-});
+const codeBlockLowlight = CodeBlockLowlight.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      mode: {
+        default: 0, // MODE.EDIT
+        parseHTML: (element) => Number.parseInt(element.getAttribute('data-mode') || '0'),
+        renderHTML: (attributes) => {
+          return {
+            'data-mode': attributes.mode,
+          };
+        },
+      },
+    };
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(CodeBlock);
+  },
+}).configure({ lowlight });
 
 const youtube = Youtube.configure({
   HTMLAttributes: {
