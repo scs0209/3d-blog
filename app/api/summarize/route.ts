@@ -64,7 +64,6 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 export async function POST(request: NextRequest) {
   try {
     const { content, title } = await request.json();
-    console.log('요약 요청:', title);
 
     if (!content || !title) {
       return NextResponse.json({ error: '콘텐츠와 제목이 필요합니다.' }, { status: 400 });
@@ -105,10 +104,8 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log(data.choices[0].message.content);
     const summary = data.choices[0].message.content || '요약을 생성할 수 없습니다.';
 
-    console.log('요약 완료:', summary);
     return NextResponse.json({ summary });
   } catch (error) {
     console.error('AI 요약 생성 실패:', error);

@@ -24,10 +24,10 @@ export const usePortfolio = () => {
   // 로딩 애니메이션 훅
   useLoadingAnimation({
     showWorksLoading: loadingState.showWorksLoading,
-    showPortfolioOverlay: loadingState.showPortfolioOverlay,
+    overlays: overlayState.overlays,
+    openOverlay: overlayState.openOverlay,
     setLoadingProgress: loadingState.setLoadingProgress,
     setLoadingBarFullExpand: loadingState.setLoadingBarFullExpand,
-    setShowPortfolioOverlay: loadingState.setShowPortfolioOverlay,
     setShowWorksLoading: loadingState.setShowWorksLoading,
   });
 
@@ -41,7 +41,7 @@ export const usePortfolio = () => {
     // 2단계: 카드가 모두 사라진 후 창 닫기 (1100ms 대기)
     await delay(1100);
 
-    loadingState.setShowPortfolioOverlay(false);
+    overlayState.closeOverlay('portfolio');
     loadingState.setLoadingBarFullExpand(false);
     loadingState.setShowWorksLoading(false); // 명시적으로 로딩 상태 해제
 

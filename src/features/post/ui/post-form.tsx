@@ -1,6 +1,4 @@
 'use client';
-
-import type { Category } from '@/entities/category/model';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import {
   Form,
@@ -15,10 +13,10 @@ import { Input } from '@/shadcn-ui/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { type PostFormSchema, postFormSchema } from '../model/post-form-schema';
-import { getCategories } from '@/features/category/api/category-api';
+import { useCategories } from '@/features/category/model';
 
 type PostFormProps = {
   onSubmit: (data: PostFormSchema) => Promise<void>;
@@ -26,7 +24,7 @@ type PostFormProps = {
 
 const PostForm = ({ onSubmit }: PostFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { data: categories } = useCategories();
 
   const form = useForm<PostFormSchema>({
     resolver: zodResolver(postFormSchema),
@@ -34,22 +32,20 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
       title: '',
       content: '',
       categoryId: '',
+      categoryName: '',
     },
   });
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const fetchedCategories = await getCategories;
-      setCategories(fetchedCategories as any);
-    };
-    fetchCategories();
-  }, []);
-
   const handleFormSubmit = async (data: PostFormSchema) => {
     setIsLoading(true);
-    console.log(data);
+    const serverData = {
+      title: data.title,
+      content: data.content,
+      categoryId: data.categoryId,
+    };
+
     try {
-      await onSubmit(data);
+      await onSubmit(serverData);
       form.reset();
     } catch (error) {
       console.error('Failed to create blog post:', error);
@@ -90,22 +86,26 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
         />
         <FormField
           control={form.control}
-          name='categoryId'
+          name='categoryName'
           render={({ field }) => {
             return (
               <FormItem>
                 <FormLabel>카테고리</FormLabel>
                 <FormControl>
-                  <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      const categoryId = categories?.find((c) => c.name === value)?.id;
+                      form.setValue('categoryId', categoryId ? categoryId.toString() : '');
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue
-                        placeholder='카테고리를 선택하세요'
-                        defaultValue={categories.find((c) => c.id === field.value)?.name}
-                      />
+                      <SelectValue placeholder='카테고리를 선택하세요' defaultValue={field.value} />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
+                      {categories?.map((category) => (
+                        <SelectItem key={category.id} value={category.name}>
                           {category.name}
                         </SelectItem>
                       ))}

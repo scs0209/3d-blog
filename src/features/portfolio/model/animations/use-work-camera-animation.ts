@@ -6,37 +6,38 @@ import {
   INITIAL_CAMERA_POS,
   INITIAL_CAMERA_LOOK,
 } from '@/entities/portfolio/model/constants';
+import type { OverlayState, OverlayKey } from '../use-overlay-state';
 
 type UseWorkCameraAnimationProps = {
+  overlays: OverlayState;
+  openOverlay: (key: OverlayKey) => void;
+  closeOverlay: (key: OverlayKey) => void;
+  finishClosing: (key: OverlayKey) => void;
   focusedGroup: FocusedGroup;
   cameraAnimationDone: boolean;
-  aboutMeClosing: boolean;
   secondaryAnimation: boolean;
   hasClickedBack: boolean;
-  setShowAboutMeOverlay: (show: boolean) => void;
   setSecondaryAnimation: (animation: boolean) => void;
   setTargetPos: (pos: Position3D) => void;
   setTargetLook: (look: Position3D) => void;
   setFocusedGroup: (group: FocusedGroup) => void;
-  setAboutMeClosing: (closing: boolean) => void;
-  setAboutMeAnimationDone: (done: boolean) => void;
   setCameraAnimationDone: (done: boolean) => void;
 };
 
 export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
   const {
+    overlays,
+    openOverlay,
+    closeOverlay,
+    finishClosing,
     focusedGroup,
     cameraAnimationDone,
-    aboutMeClosing,
     secondaryAnimation,
     hasClickedBack,
-    setShowAboutMeOverlay,
     setSecondaryAnimation,
     setTargetPos,
     setTargetLook,
     setFocusedGroup,
-    setAboutMeClosing,
-    setAboutMeAnimationDone,
     setCameraAnimationDone,
   } = props;
 
@@ -76,15 +77,21 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
   // Work 모델 클릭 시 카메라 애니메이션 완료 후 처리
   useEffect(() => {
     // focusedGroup === 'work' 이고 첫 번째 애니메이션이 완료되었고, AboutMe가 닫히지 않았고, 보조 애니메이션이 진행중이지 않고, 뒤로가기 버튼이 클릭되지 않았다면 aboutMeOverlay 표시
-    if (focusedGroup === 'work' && cameraAnimationDone && !aboutMeClosing && !secondaryAnimation && !hasClickedBack) {
-      setShowAboutMeOverlay(true);
+    if (
+      focusedGroup === 'work' &&
+      cameraAnimationDone &&
+      !overlays.aboutMe?.isClosing &&
+      !secondaryAnimation &&
+      !hasClickedBack
+    ) {
+      openOverlay('aboutMe');
     }
-  }, [focusedGroup, cameraAnimationDone, aboutMeClosing, secondaryAnimation, hasClickedBack, setShowAboutMeOverlay]);
+  }, [focusedGroup, cameraAnimationDone, overlays.aboutMe?.isClosing, secondaryAnimation, hasClickedBack, openOverlay]);
 
   // AboutMePage 애니메이션 완료 후 호출될 핸들러
   const handleAboutMeAnimationComplete = useCallback(() => {
     // AboutMePage 애니메이션 완료 후 처리
-    setShowAboutMeOverlay(false);
+    closeOverlay('aboutMe');
 
     // 원래 줌인 위치로
     const target = GROUP_CAMERA_TARGETS.work;
@@ -99,7 +106,7 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
       setTargetPos(newPos);
       setTargetLook(target.lookAt);
     }
-  }, [setShowAboutMeOverlay, setSecondaryAnimation, setTargetPos, setTargetLook]);
+  }, [closeOverlay, setSecondaryAnimation, setTargetPos, setTargetLook]);
 
   // Work 모델의 완전한 종료 처리
   const handleWorkExit = useCallback(() => {
@@ -110,18 +117,12 @@ export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) => {
     // 초기 위치로 이동 후 처리
     setTimeout(() => {
       setFocusedGroup(null);
-      setAboutMeClosing(false);
-      setAboutMeAnimationDone(false);
+
+      closeOverlay('aboutMe');
+      finishClosing('aboutMe');
       setCameraAnimationDone(false);
     }, CAMERA_ANIMATION_DELAY);
-  }, [
-    setTargetPos,
-    setTargetLook,
-    setFocusedGroup,
-    setAboutMeClosing,
-    setAboutMeAnimationDone,
-    setCameraAnimationDone,
-  ]);
+  }, [setTargetPos, setTargetLook, setFocusedGroup, closeOverlay, finishClosing, setCameraAnimationDone]);
 
   return {
     triggerSecondaryAnimation,

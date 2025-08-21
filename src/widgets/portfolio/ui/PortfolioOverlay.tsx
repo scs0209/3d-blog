@@ -1,152 +1,103 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlassmorphismCard, GlassmorphismButton } from '@/shared/ui/glassmorphism';
-
-interface PortfolioProject {
-  id: number;
-  title: string;
-  subtitle: string;
-  description: string;
-  image: string;
-  liveUrl: string;
-}
-
-interface PortfolioOverlayProps {
-  showPortfolioOverlay: boolean;
-  portfolioExiting: boolean;
-  showPortfolioContent: boolean;
-  showCards: boolean;
-  onExit: () => void;
-  onAnimationComplete: () => void;
-}
-
-const portfolioProjects: PortfolioProject[] = [
-  {
-    id: 1,
-    title: 'PAWSITIVE DOG FOOD',
-    subtitle: 'International e-commerce platform',
-    description:
-      'A custom-made, responsive, fully-fledged e-commerce platform for a UK company, serving over 13K monthly visitors across the UK and Ireland. It includes a public e-commerce portal and a private customer portal, a POS, Shopify store integration, a payment gateway, detailed analytics, and more.',
-    image: '/assets/images/project1.jpg',
-    liveUrl: 'https://example.com',
-  },
-  {
-    id: 2,
-    title: "MERCHIANE BALI'S PORTFOLIO V1",
-    subtitle: 'Personal portfolio website',
-    description:
-      'The first version of my portfolio website, showcasing my skills, projects, and experience as a developer. It features a 3D design and smooth navigation, emphasizing responsiveness across devices.',
-    image: '/assets/images/project2.jpg',
-    liveUrl: 'https://example.com',
-  },
-  {
-    id: 3,
-    title: "ZIME FUMUDOH'S PORTFOLIO",
-    subtitle: 'Creative personal website',
-    description:
-      "A remake of Fumudoh's personal website, inspired by an award-winning Squarespace template. Built using standard web technologies, it features engaging animations created with GSAP and WebGL, enhancing the site's visual appeal and interactivity.",
-    image: '/assets/images/project3.jpg',
-    liveUrl: 'https://example.com',
-  },
-];
+import { cardVariants, containerVariants } from '@/shared/animation';
+import { portfolioProjects } from '../consts';
+import { TitleBox } from './TitleBox';
 
 export function PortfolioOverlay({
-  showPortfolioOverlay,
-  portfolioExiting,
-  showPortfolioContent,
-  showCards,
-  onAnimationComplete,
-}: PortfolioOverlayProps) {
+  isExiting,
+  onExitComplete,
+}: {
+  isExiting?: boolean;
+  onExitComplete?: () => void;
+}) {
+  const [animationKey] = useState(0);
+  const [isScaleExiting, setIsScaleExiting] = useState(false);
+  const [cardExitComplete, setCardExitComplete] = useState(false);
+
+  useEffect(() => {
+    if (isExiting && cardExitComplete) {
+      setIsScaleExiting(true);
+    }
+  }, [isExiting, cardExitComplete]);
+
   return (
-    <AnimatePresence>
-      {showPortfolioOverlay && (
-        <motion.div
-          className='fixed inset-0 z-[9999] bg-black/10 backdrop-blur-xl text-white font-mono overflow-auto'
-          initial={{ opacity: 0, scale: 0.1 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-          }}
-          exit={{ opacity: 0, scale: 0.1 }}
-          transition={{
-            duration: 0.8,
-            ease: 'easeInOut',
-          }}
-          onAnimationComplete={onAnimationComplete}
-        >
-          {showPortfolioContent && (
-            <div className='min-h-screen p-4 flex items-center justify-center'>
-              {/* 프로젝트 그리드 */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{
-                  opacity: portfolioExiting ? 0 : 1,
-                  y: portfolioExiting ? 30 : 0,
-                }}
-                transition={{
-                  duration: 0.6,
-                  delay: portfolioExiting ? 0.6 : 0.2,
-                }}
-              >
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'>
-                  <AnimatePresence>
-                    {showCards &&
-                      portfolioProjects.map((project, index) => (
-                        <motion.div
-                          key={project.id}
-                          initial={{ opacity: 0, y: 150 }}
-                          animate={{
-                            opacity: portfolioExiting ? 0 : 1,
-                            y: portfolioExiting ? -150 : 0,
-                          }}
-                          exit={{ opacity: 0, y: -150 }}
-                          transition={{
-                            duration: 0.6,
-                            delay: portfolioExiting ? (portfolioProjects.length - 1 - index) * 0.15 : 0.5 + index * 0.4,
-                            ease: [0.25, 0.46, 0.45, 0.94], // easeOutQuart
-                          }}
-                        >
-                          <GlassmorphismCard className='overflow-hidden h-[520px] w-full'>
-                            {/* 프로젝트 이미지 */}
-                            <div className='h-48 bg-gradient-to-br from-white/3 to-white/8 flex items-center justify-center border-b border-white/15 overflow-hidden'>
-                              <div className='text-center transform transition-transform duration-300 hover:scale-110'>
-                                <div className='text-white text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
-                                  📁
-                                </div>
-                                <div className='text-white/70'>PROJECT {index + 1}</div>
-                              </div>
-                            </div>
+    <AnimatePresence mode='wait'>
+      <motion.div
+        key={`portfolio-${animationKey}`}
+        initial={{ scale: 0 }}
+        animate={{ scale: isScaleExiting ? 0 : 1 }}
+        exit={{ scale: 0 }}
+        transition={{
+          duration: 1.2,
+          ease: 'easeInOut',
+        }}
+        onAnimationComplete={() => {
+          if (isScaleExiting && onExitComplete) {
+            onExitComplete();
+          }
+        }}
+        className='fixed inset-0 z-overlay bg-black backdrop-blur-xl text-white font-mono overflow-auto'
+      >
+        <TitleBox title='PORTFOLIO' />
 
-                            {/* 프로젝트 정보 */}
-                            <div className='p-6 relative h-full'>
-                              <div className='h-[280px] overflow-hidden'>
-                                <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
-                                <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
-                                <p className='text-white/80 text-sm leading-relaxed overflow-hidden'>
-                                  <span className='line-clamp-6'>{project.description}</span>
-                                </p>
-                              </div>
+        <div className='min-h-screen p-4 flex items-center justify-center'>
+          {/* 프로젝트 그리드 */}
+          <motion.div
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'
+            variants={containerVariants}
+            initial='hidden'
+            animate={isExiting ? 'exit' : 'visible'}
+            exit='exit'
+            onAnimationComplete={(definition) => {
+              if (definition === 'exit' && isExiting) {
+                setCardExitComplete(true);
+              }
+            }}
+          >
+            <AnimatePresence>
+              {portfolioProjects.map((project, index) => (
+                <motion.div key={`${project.id}-${animationKey}`} variants={cardVariants}>
+                  <GlassmorphismCard className='overflow-hidden h-[520px] w-full'>
+                    {/* 프로젝트 이미지 */}
+                    <div className='h-48 bg-gradient-to-br from-white/3 to-white/8 flex items-center justify-center border-b border-white/15 overflow-hidden'>
+                      <div className='text-center transform transition-transform duration-300 hover:scale-110'>
+                        <div className='text-white text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
+                          📁
+                        </div>
+                        <div className='text-white/70'>PROJECT {index + 1}</div>
+                      </div>
+                    </div>
 
-                              <div className='absolute bottom-6 left-6 right-6 flex gap-4'>
-                                <GlassmorphismButton variant='outline' size='sm' className='flex-1'>
-                                  VIEW LIVE
-                                </GlassmorphismButton>
-                                <GlassmorphismButton variant='primary' size='sm' className='flex-1'>
-                                  SOURCE CODE
-                                </GlassmorphismButton>
-                              </div>
-                            </div>
-                          </GlassmorphismCard>
-                        </motion.div>
-                      ))}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </motion.div>
-      )}
+                    {/* 프로젝트 정보 */}
+                    <div className='p-6 relative h-full'>
+                      <div className='h-[280px] overflow-hidden'>
+                        <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
+                        <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
+                        <p className='text-white/80 text-sm leading-relaxed overflow-hidden'>
+                          <span className='line-clamp-6'>{project.description}</span>
+                        </p>
+                      </div>
+
+                      <div className='absolute bottom-6 left-6 right-6 flex gap-4'>
+                        <GlassmorphismButton variant='outline' size='sm' className='flex-1'>
+                          VIEW LIVE
+                        </GlassmorphismButton>
+                        <GlassmorphismButton variant='primary' size='sm' className='flex-1'>
+                          SOURCE CODE
+                        </GlassmorphismButton>
+                      </div>
+                    </div>
+                  </GlassmorphismCard>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </div>
+      </motion.div>
     </AnimatePresence>
   );
 }
