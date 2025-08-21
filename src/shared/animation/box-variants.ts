@@ -1,11 +1,13 @@
 import type { Variants } from 'framer-motion';
 
+const closedState = {
+  scaleX: 0,
+  x: -100,
+  opacity: 0,
+};
+
 export const boxVariants: Variants = {
-  hidden: {
-    scaleX: 0,
-    x: -100,
-    opacity: 0,
-  },
+  hidden: closedState,
   visible: {
     scaleX: 1,
     x: 0,
@@ -16,9 +18,7 @@ export const boxVariants: Variants = {
     },
   },
   exit: {
-    scaleX: 0,
-    x: -100,
-    opacity: 0,
+    ...closedState,
     transition: {
       delay: 0.3,
       duration: 0.4,
