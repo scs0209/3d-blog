@@ -4,6 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import type * as React from 'react';
 import { QueryClient, defaultShouldDehydrateQuery, isServer } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
+import { BlurCursor } from '@/shared/ui';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -37,7 +38,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        {/* <PlanetCursor /> */}
+        <BlurCursor />
         {children}
       </SessionProvider>
     </QueryClientProvider>
