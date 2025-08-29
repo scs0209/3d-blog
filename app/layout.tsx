@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   creator: 'Ayaan',
   publisher: 'Ayaan Company',
 
-  metadataBase: new URL(baseUrl || 'http://localhost:3000'),
+  metadataBase: new URL(baseUrl),
   alternates: {
     canonical: '/',
   },
