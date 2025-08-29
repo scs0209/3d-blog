@@ -7,7 +7,7 @@ type AuthPageProps = {
 
 const AuthPage = ({ type }: AuthPageProps) => {
   return (
-    <div className='w-full h-screen flex justify-center items-center bg-black'>
+    <div className='w-full min-h-screen flex justify-center items-center bg-black py-8'>
       <div style={{ width: '400px' }}>
         <SpacePortal />
         {type === 'login' ? <LoginForm /> : <SignupForm />}

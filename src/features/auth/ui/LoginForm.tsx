@@ -36,6 +36,10 @@ const LoginForm = () => {
     }
   };
 
+  const handleSignupClick = () => {
+    router.push('/sign-up');
+  };
+
   if (!mounted) {
     return null;
   }
@@ -79,6 +83,19 @@ const LoginForm = () => {
             로그인
           </button>
         </form>
+
+        <div className='w-full mt-4 text-center'>
+          <span className='text-sm text-slate-400'>
+            계정이 없으신가요?{' '}
+            <button
+              type='button'
+              onClick={handleSignupClick}
+              className='text-cyan-300 hover:text-cyan-100 hover:underline underline-offset-2 transition-colors duration-200'
+            >
+              회원가입
+            </button>
+          </span>
+        </div>
 
         <Meteors number={20} />
       </div>
