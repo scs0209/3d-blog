@@ -353,6 +353,8 @@ export interface paths {
                             createdAt?: string;
                             author?: {
                                 name?: string;
+                                id?: number;
+                                parentId?: number;
                             };
                             likes?: number;
                             dislikes?: number;
@@ -362,6 +364,8 @@ export interface paths {
                                 createdAt?: string;
                                 author?: {
                                     name?: string;
+                                    id?: number;
+                                    parentId?: number;
                                 };
                                 likes?: number;
                                 dislikes?: number;

@@ -37,6 +37,10 @@ import prisma from '@/shared/lib/db';
  *                     properties:
  *                       name:
  *                         type: string
+ *                       id:
+ *                         type: integer
+ *                       parentId:
+ *                         type: integer
  *                   likes:
  *                     type: integer
  *                   dislikes:
@@ -57,6 +61,10 @@ import prisma from '@/shared/lib/db';
  *                           properties:
  *                             name:
  *                               type: string
+ *                             id:
+ *                               type: integer
+ *                             parentId:
+ *                               type: integer
  *                         likes:
  *                           type: integer
  *                         dislikes:
@@ -93,6 +101,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
       include: {
         author: {
           select: {
+            id: true,
             name: true,
           },
         },
@@ -105,6 +114,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
           include: {
             author: {
               select: {
+                id: true,
                 name: true,
               },
             },
@@ -130,6 +140,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
         content: comment.content,
         createdAt: comment.createdAt,
         author: comment.author,
+        parentId: comment.parentId,
         likes: comment.commentLikes.filter((like) => like.type === 'LIKE').length,
         dislikes: comment.commentLikes.filter((like) => like.type === 'DISLIKE').length,
         replies: comment.replies.map((reply) => ({
@@ -137,6 +148,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ postId: 
           content: reply.content,
           createdAt: reply.createdAt,
           author: reply.author,
+          parentId: reply.parentId,
           likes: reply.commentLikes.filter((like) => like.type === 'LIKE').length,
           dislikes: reply.commentLikes.filter((like) => like.type === 'DISLIKE').length,
         })),
