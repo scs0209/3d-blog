@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { CommentSection } from '@/features/comment/ui';
 import { PostSummary } from '@/shared/ui/PostSummary';
 import type { Metadata } from 'next';
+import type { PostResponse } from '@/entities/post/model/post';
 
 const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
 
@@ -28,6 +29,8 @@ export async function generateMetadata({ params }: { params: Promise<{ postSlug:
   const description = extractDescription(post.content ?? '');
   const publishedDate = post.createdAt ? new Date(post.createdAt).toISOString() : '';
   const modifiedDate = post.updatedAt ? new Date(post.updatedAt).toISOString() : publishedDate;
+  const postUrl = `${process.env.NEXT_PUBLIC_APP_URL}/blog/category/${post.category?.slug || 'uncategorized'}/post/${postSlug}`;
+  const imageUrl = '/logo.png';
 
   return {
     title: post.title,
@@ -44,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ postSlug:
       tags: post.tags?.map((tag) => tag.name).filter((name): name is string => name !== undefined) || [],
       images: [
         {
-          url: '/logo.png', // 기본 이미지 또는 포스트 대표 이미지
+          url: imageUrl, // 기본 이미지 또는 포스트 대표 이미지
           width: 1200,
           height: 630,
           alt: post.title,
@@ -71,7 +74,7 @@ export async function generateMetadata({ params }: { params: Promise<{ postSlug:
       },
     },
     alternates: {
-      canonical: `/blog/category/${post.category?.slug || 'uncategorized'}/post/${postSlug}`,
+      canonical: postUrl,
     },
   };
 }
@@ -80,7 +83,7 @@ export async function generateMetadata({ params }: { params: Promise<{ postSlug:
 const PostStructuredData = ({
   post,
 }: {
-  post: any; // Use any to match the actual API response type
+  post: PostResponse;
 }) => {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -108,7 +111,7 @@ const PostStructuredData = ({
     },
     ...(post.tags &&
       post.tags.length > 0 && {
-        keywords: post.tags.map((tag: { name: string }) => tag.name).join(', '),
+        keywords: post.tags.map((tag) => tag.name).join(', '),
       }),
   };
 
