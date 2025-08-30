@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { LikeDislikeButtons } from '@/features/like/ui';
 import { Reply } from './Reply';
 import { ReplyForm } from './ReplyForm';
@@ -16,6 +17,8 @@ type CommentProps = {
 };
 
 export function Comment({ comment, replies = [], postId }: CommentProps) {
+  const { data: session } = useSession();
+
   const { deleteComment } = useDeleteComment();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -26,6 +29,10 @@ export function Comment({ comment, replies = [], postId }: CommentProps) {
   if (!comment) {
     return null;
   }
+
+  const isAuthor = Number(session?.user?.id) === comment.author?.id;
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const canManage = isAuthor || isAdmin;
 
   return (
     <li>
@@ -58,22 +65,28 @@ export function Comment({ comment, replies = [], postId }: CommentProps) {
                 <span>답글</span>
                 <span aria-hidden>▼</span>
               </button>
-              <button
-                className='text-xs text-cyan-400 hover:text-cyan-300 hover:underline'
-                type='button'
-                aria-label='댓글 수정'
-                onClick={() => setIsEditing(true)}
-              >
-                수정
-              </button>
-              <button
-                className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
-                type='button'
-                aria-label='댓글 삭제'
-                onClick={() => handleDelete(comment.id ?? 0)}
-              >
-                삭제
-              </button>
+              {canManage && (
+                <button
+                  className='text-xs text-cyan-400 hover:text-cyan-300 hover:underline'
+                  type='button'
+                  aria-label='댓글 수정'
+                  onClick={() => setIsEditing(true)}
+                  disabled={!canManage}
+                >
+                  수정
+                </button>
+              )}
+              {canManage && (
+                <button
+                  className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
+                  type='button'
+                  aria-label='댓글 삭제'
+                  onClick={() => handleDelete(comment.id ?? 0)}
+                  disabled={!canManage}
+                >
+                  삭제
+                </button>
+              )}
             </div>
             <div className='flex items-center gap-1'>
               <LikeDislikeButtons id={comment.id ?? 0} />
