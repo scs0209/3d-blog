@@ -3,7 +3,7 @@
 import { MobileNavbar } from './MobileNavbar';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Search, X, Home, Globe, Navigation } from 'lucide-react';
+import { Menu, Search, X, Home, Globe, Navigation, User } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dropdown } from '@/shared/ui';
@@ -20,12 +20,8 @@ export default function BlogHeader() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleGoToMain = () => {
-    router.push('/');
-  };
-
-  const handleGoToBlog = () => {
-    router.push('/blog');
+  const handleNavigation = (path: string) => {
+    router.push(path);
   };
 
   const toggleSearch = () => {
@@ -90,7 +86,7 @@ export default function BlogHeader() {
           >
             <motion.button
               type='button'
-              onClick={handleGoToMain}
+              onClick={() => handleNavigation('/')}
               whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
               className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
             >
@@ -99,12 +95,21 @@ export default function BlogHeader() {
             </motion.button>
             <motion.button
               type='button'
-              onClick={handleGoToBlog}
+              onClick={() => handleNavigation('/blog')}
               whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
               className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
             >
               <Home size={14} />
               <span className='text-sm'>블로그로</span>
+            </motion.button>
+            <motion.button
+              type='button'
+              onClick={() => handleNavigation('/login')}
+              whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+              className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
+            >
+              <User size={14} />
+              <span className='text-sm'>로그인</span>
             </motion.button>
           </Dropdown>
 
@@ -196,7 +201,7 @@ export default function BlogHeader() {
             >
               <motion.button
                 type='button'
-                onClick={handleGoToMain}
+                onClick={() => handleNavigation('/')}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
                 className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
               >
@@ -205,12 +210,21 @@ export default function BlogHeader() {
               </motion.button>
               <motion.button
                 type='button'
-                onClick={handleGoToBlog}
+                onClick={() => handleNavigation('/blog')}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
                 className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
               >
                 <Home size={12} />
                 <span className='text-xs'>블로그</span>
+              </motion.button>
+              <motion.button
+                type='button'
+                onClick={() => handleNavigation('/login')}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
+              >
+                <User size={12} />
+                <span className='text-xs'>로그인</span>
               </motion.button>
             </Dropdown>
           </div>
