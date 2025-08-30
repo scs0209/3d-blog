@@ -3,7 +3,8 @@
 import { MobileNavbar } from './MobileNavbar';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Search, X, Home, Globe, Navigation, User } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
+import { Menu, Search, X, Home, Globe, Navigation, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dropdown } from '@/shared/ui';
@@ -19,9 +20,15 @@ export default function BlogHeader() {
   const [searchExpanded, setSearchExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session } = useSession();
+  const isAuthenticated = !!session?.user;
 
   const handleNavigation = (path: string) => {
     router.push(path);
+  };
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
   const toggleSearch = () => {
@@ -102,15 +109,27 @@ export default function BlogHeader() {
               <Home size={14} />
               <span className='text-sm'>블로그로</span>
             </motion.button>
-            <motion.button
-              type='button'
-              onClick={() => handleNavigation('/login')}
-              whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
-              className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
-            >
-              <User size={14} />
-              <span className='text-sm'>로그인</span>
-            </motion.button>
+            {isAuthenticated ? (
+              <motion.button
+                type='button'
+                onClick={handleLogout}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-red-300 hover:text-red-200 transition-colors'
+              >
+                <LogOut size={14} />
+                <span className='text-sm'>로그아웃</span>
+              </motion.button>
+            ) : (
+              <motion.button
+                type='button'
+                onClick={() => handleNavigation('/login')}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
+              >
+                <User size={14} />
+                <span className='text-sm'>로그인</span>
+              </motion.button>
+            )}
           </Dropdown>
 
           {/* 검색 영역 */}
@@ -217,15 +236,27 @@ export default function BlogHeader() {
                 <Home size={12} />
                 <span className='text-xs'>블로그</span>
               </motion.button>
-              <motion.button
-                type='button'
-                onClick={() => handleNavigation('/login')}
-                whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
-                className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
-              >
-                <User size={12} />
-                <span className='text-xs'>로그인</span>
-              </motion.button>
+              {isAuthenticated ? (
+                <motion.button
+                  type='button'
+                  onClick={handleLogout}
+                  whileHover={{ scale: 1.02, backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                  className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-red-300 hover:text-red-200 transition-colors'
+                >
+                  <LogOut size={12} />
+                  <span className='text-xs'>로그아웃</span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  type='button'
+                  onClick={() => handleNavigation('/login')}
+                  whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                  className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
+                >
+                  <User size={12} />
+                  <span className='text-xs'>로그인</span>
+                </motion.button>
+              )}
             </Dropdown>
           </div>
 
