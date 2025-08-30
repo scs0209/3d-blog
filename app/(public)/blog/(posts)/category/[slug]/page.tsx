@@ -13,7 +13,7 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='max-w-4xl mx-auto w-full'>
       {categoryPosts?.posts?.map((post) => (
         <PostListCard key={post.id} post={post} categoryName={categoryPosts?.name} categorySlug={categoryPosts?.slug} />
       ))}
