@@ -19,7 +19,9 @@ export default function Sidebar() {
   const { data: tags } = useTags();
 
   // pathname에서 category slug 추출 (/blog/category/react -> react)
-  const currentCategorySlug = pathname.startsWith('/blog/category/') ? pathname.split('/blog/category/')[1] : null;
+  const currentCategorySlug = pathname.startsWith('/blog/category/')
+    ? decodeURIComponent(pathname.split('/blog/category/')[1] ?? '')
+    : null;
   const isAllPage = pathname === '/blog/all';
 
   if (isLoading) {
