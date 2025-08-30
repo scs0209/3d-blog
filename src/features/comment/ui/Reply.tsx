@@ -6,6 +6,7 @@ import { LikeDislikeButtons } from '@/features/like/ui';
 import { formatDateToYMD } from '@/shared/utils';
 import { useDeleteComment } from '../model';
 import { ReplyEditForm } from './ReplyEditForm';
+import { useSession } from 'next-auth/react';
 
 type ReplyProps = {
   reply: ReplyType;
@@ -13,7 +14,11 @@ type ReplyProps = {
 
 export function Reply({ reply }: ReplyProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const { data: session } = useSession();
   const { deleteComment } = useDeleteComment();
+  const isAuthor = Number(session?.user?.id) === reply.author?.id;
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const canManage = isAuthor || isAdmin;
 
   const handleDelete = () => {
     deleteComment({ commentId: reply.id ?? 0 });
@@ -41,29 +46,33 @@ export function Reply({ reply }: ReplyProps) {
         ) : (
           <>
             <p className='text-slate-100 mb-2'>{reply.content}</p>
-            <div className='flex gap-2 items-center justify-between mt-2'>
-              <div className='flex gap-2 items-center'>
-                <button
-                  className='text-xs text-cyan-400 hover:text-cyan-300 hover:underline'
-                  type='button'
-                  aria-label='대댓글 수정'
-                  onClick={handleEdit}
-                >
-                  수정
-                </button>
-                <button
-                  className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
-                  type='button'
-                  aria-label='대댓글 삭제'
-                  onClick={handleDelete}
-                >
-                  삭제
-                </button>
+            {canManage && (
+              <div className='flex gap-2 items-center justify-between mt-2'>
+                <div className='flex gap-2 items-center'>
+                  <button
+                    className='text-xs text-cyan-400 hover:text-cyan-300 hover:underline'
+                    type='button'
+                    aria-label='대댓글 수정'
+                    onClick={handleEdit}
+                    disabled={!canManage}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className='text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline'
+                    type='button'
+                    aria-label='대댓글 삭제'
+                    onClick={handleDelete}
+                    disabled={!canManage}
+                  >
+                    삭제
+                  </button>
+                </div>
+                <div className='flex items-center gap-1'>
+                  <LikeDislikeButtons id={reply.id ?? 0} size={15} />
+                </div>
               </div>
-              <div className='flex items-center gap-1'>
-                <LikeDislikeButtons id={reply.id ?? 0} size={15} />
-              </div>
-            </div>
+            )}
           </>
         )}
       </article>
