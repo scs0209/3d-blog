@@ -6,6 +6,11 @@ import { useToastContext } from './ToastProvider';
 import { Toast } from './Toast';
 import type { ToastContainerProps, ToastPosition } from './types';
 
+// 개선 후
+const STACK_Y_OFFSET = 6;
+const STACK_SCALE_STEP = 0.03;
+const MIN_SCALE = 0.95;
+
 // 위치별 스타일 클래스
 const positionClasses: Record<ToastPosition, string> = {
   'top-right': 'top-4 right-4',
@@ -60,23 +65,23 @@ export const ToastContainer = memo(function ToastContainer({
           {displayToasts.map((toast, index) => {
             // sonner 스타일: 최신 토스트가 맨 앞에, 나머지는 뒤로 쌓임
             const stackIndex = displayToasts.length - 1 - index;
-            const scale = Math.max(0.95, 1 - stackIndex * 0.03);
+            const scale = Math.max(MIN_SCALE, 1 - stackIndex * STACK_SCALE_STEP);
 
             // position에 따른 스택 방향 설정
             let yOffset: number;
             let xOffset: number;
 
             if (isTopPosition) {
-              yOffset = stackIndex * 6;
+              yOffset = stackIndex * STACK_Y_OFFSET;
             } else {
-              yOffset = stackIndex * -6;
+              yOffset = stackIndex * -STACK_Y_OFFSET;
             }
 
             // 위치별 스택 오프셋 (오른쪽은 왼쪽으로, 왼쪽은 오른쪽으로, 센터는 그대로)
             if (position.includes('right')) {
-              xOffset = stackIndex * -6;
+              xOffset = stackIndex * -STACK_Y_OFFSET;
             } else if (position.includes('left')) {
-              xOffset = stackIndex * 6;
+              xOffset = stackIndex * STACK_Y_OFFSET;
             } else {
               xOffset = 0; // center
             }
