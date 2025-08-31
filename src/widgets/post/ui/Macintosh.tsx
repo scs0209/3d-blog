@@ -3,11 +3,28 @@
 import { Html, useGLTF } from '@react-three/drei';
 import type * as three from 'three';
 import { motion } from 'framer-motion';
-import { post } from './BlogMainPage';
 import { PostCard } from '@/features/blog/ui';
 import { Tag } from '@/shared/ui';
 import { Eye } from 'lucide-react';
 import { formatDateToYMD } from '@/shared/utils';
+
+const post = [
+  {
+    id: 1,
+    slug: 'test',
+    title: 'test',
+    category: {
+      id: 1,
+      name: 'test',
+      slug: 'test',
+    },
+    content: 'test',
+    createdAt: 'test',
+    updatedAt: 'test',
+    views: 1,
+    summary: 'test',
+  },
+];
 
 export const Macintosh = (props: any) => {
   const { nodes, materials } = useGLTF('/vintage_computer.glb');
@@ -108,7 +125,7 @@ export const Macintosh = (props: any) => {
                         <div key={post.id} className='rounded-lg px-4 py-3 transition cursor-pointer'>
                           <div className='flex items-center justify-between'>
                             <Tag color='neon' spacing='tight'>
-                              #{post.category}
+                              #{post.category?.name}
                             </Tag>
                             <span className='flex items-center justify-center gap-1 text-blue-300 text-xs'>
                               <Eye size={15} className='inline-block' />
@@ -118,7 +135,7 @@ export const Macintosh = (props: any) => {
                           <h2 className='text-lg font-extrabold text-blue-100 mt-1'>{post?.title}</h2>
                           <div className='flex items-center justify-between mt-2 text-xs text-blue-200'>
                             <span>{'관리자'}</span>
-                            <span>{formatDateToYMD(post?.date ?? '')}</span>
+                            <span>{formatDateToYMD(post?.createdAt ?? '')}</span>
                           </div>
                           <hr className='my-6 border-blue-900/40' />
                         </div>

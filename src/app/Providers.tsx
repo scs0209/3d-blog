@@ -5,6 +5,8 @@ import type * as React from 'react';
 import { QueryClient, defaultShouldDehydrateQuery, isServer } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
 import { BlurCursor } from '@/shared/ui';
+import { ToastProvider } from '@/shared/ui/toast';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -37,10 +39,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider>
-        <BlurCursor />
-        {children}
-      </SessionProvider>
+      <NuqsAdapter>
+        <ToastProvider maxToasts={5}>
+          <SessionProvider>
+            <BlurCursor />
+            {children}
+          </SessionProvider>
+        </ToastProvider>
+      </NuqsAdapter>
     </QueryClientProvider>
   );
 }

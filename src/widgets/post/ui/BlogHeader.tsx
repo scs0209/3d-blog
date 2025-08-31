@@ -3,29 +3,38 @@
 import { MobileNavbar } from './MobileNavbar';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Search, X, Home, Globe, Navigation } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
+import { Menu, Search, X, Home, Globe, Navigation, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dropdown } from '@/shared/ui';
 import Image from 'next/image';
+import { useQueryState } from 'nuqs';
 
 const SearchBar = dynamic(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), {
   ssr: false,
 });
 
 export default function BlogHeader() {
+  const [search, setSearch] = useQueryState('search', {
+    limitUrlUpdates: {
+      method: 'debounce',
+      timeMs: 500,
+    },
+  });
   const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session } = useSession();
+  const isAuthenticated = !!session?.user;
 
-  const handleGoToMain = () => {
-    router.push('/');
+  const handleNavigation = (path: string) => {
+    router.push(path);
   };
 
-  const handleGoToBlog = () => {
-    router.push('/blog');
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
   const toggleSearch = () => {
@@ -90,7 +99,7 @@ export default function BlogHeader() {
           >
             <motion.button
               type='button'
-              onClick={handleGoToMain}
+              onClick={() => handleNavigation('/')}
               whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
               className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
             >
@@ -99,13 +108,34 @@ export default function BlogHeader() {
             </motion.button>
             <motion.button
               type='button'
-              onClick={handleGoToBlog}
+              onClick={() => handleNavigation('/blog')}
               whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
               className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
             >
               <Home size={14} />
               <span className='text-sm'>블로그로</span>
             </motion.button>
+            {isAuthenticated ? (
+              <motion.button
+                type='button'
+                onClick={handleLogout}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-red-300 hover:text-red-200 transition-colors'
+              >
+                <LogOut size={14} />
+                <span className='text-sm'>로그아웃</span>
+              </motion.button>
+            ) : (
+              <motion.button
+                type='button'
+                onClick={() => handleNavigation('/login')}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
+              >
+                <User size={14} />
+                <span className='text-sm'>로그인</span>
+              </motion.button>
+            )}
           </Dropdown>
 
           {/* 검색 영역 */}
@@ -126,7 +156,7 @@ export default function BlogHeader() {
                   className='flex items-center gap-2 overflow-hidden bg-black/10 rounded-lg px-2'
                 >
                   <div className='flex-1'>
-                    <SearchBar value={search} onChange={setSearch} />
+                    <SearchBar value={search ?? ''} onChange={setSearch} />
                   </div>
                   <motion.button
                     type='button'
@@ -196,7 +226,7 @@ export default function BlogHeader() {
             >
               <motion.button
                 type='button'
-                onClick={handleGoToMain}
+                onClick={() => handleNavigation('/')}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
                 className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
               >
@@ -205,13 +235,34 @@ export default function BlogHeader() {
               </motion.button>
               <motion.button
                 type='button'
-                onClick={handleGoToBlog}
+                onClick={() => handleNavigation('/blog')}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
                 className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
               >
                 <Home size={12} />
                 <span className='text-xs'>블로그</span>
               </motion.button>
+              {isAuthenticated ? (
+                <motion.button
+                  type='button'
+                  onClick={handleLogout}
+                  whileHover={{ scale: 1.02, backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                  className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-red-300 hover:text-red-200 transition-colors'
+                >
+                  <LogOut size={12} />
+                  <span className='text-xs'>로그아웃</span>
+                </motion.button>
+              ) : (
+                <motion.button
+                  type='button'
+                  onClick={() => handleNavigation('/login')}
+                  whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                  className='w-full flex items-center gap-2 px-3 py-2 rounded text-left text-blue-100 hover:text-white transition-colors'
+                >
+                  <User size={12} />
+                  <span className='text-xs'>로그인</span>
+                </motion.button>
+              )}
             </Dropdown>
           </div>
 
@@ -270,7 +321,7 @@ export default function BlogHeader() {
               >
                 <div className='flex items-center gap-2 bg-black/10 rounded-lg px-3 py-2'>
                   <div className='flex-1'>
-                    <SearchBar value={search} onChange={setSearch} />
+                    <SearchBar value={search ?? ''} onChange={setSearch} />
                   </div>
                   <motion.button
                     type='button'

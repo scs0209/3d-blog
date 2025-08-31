@@ -28,3 +28,4 @@ export { Dropdown } from './Dropdown';
 export { Button } from './Button';
 export { BaseModal } from './BaseModal';
 export * from './glassmorphism';
+export * from './toast';

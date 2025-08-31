@@ -3,7 +3,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/shared/ui';
+import { Button, useToast } from '@/shared/ui';
 import { useUpdateComment } from '../model';
 import type { ReplyType } from '@/entities/comment/model/types';
 
@@ -21,6 +21,7 @@ type ReplyEditFormProps = {
 
 export function ReplyEditForm({ reply, onCancel }: ReplyEditFormProps) {
   const { updateComment, isPending: isUpdating } = useUpdateComment();
+  const toast = useToast();
 
   const {
     control,
@@ -38,9 +39,12 @@ export function ReplyEditForm({ reply, onCancel }: ReplyEditFormProps) {
     updateComment(
       { params: { commentId: reply.id ?? 0 }, body: { content: data.content } },
       {
-        onSuccess: onCancel,
+        onSuccess: () => {
+          toast.success('수정 성공');
+          onCancel();
+        },
         onError: () => {
-          alert('대댓글 수정 실패');
+          toast.error('대댓글 수정 실패');
         },
       },
     );
