@@ -1301,35 +1301,77 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Retrieve all posts */
+        /**
+         * 게시물 목록 조회
+         * @description 검색어와 페이지네이션 옵션을 이용해 게시물 목록을 가져옵니다.
+         */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    /** @description 게시물 검색어 (title, content) */
+                    search?: string;
+                    /** @description 페이지 번호 */
+                    page?: number;
+                    /** @description 한 페이지 당 아이템 개수 */
+                    limit?: number;
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description 게시물 목록 */
+                /** @description 게시물 목록과 메타데이터 반환 */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         "application/json": {
-                            id?: number;
-                            title?: string;
-                            content?: string;
-                            /** Format: date-time */
-                            createdAt?: string;
-                            views?: number;
-                            category?: {
-                                name?: string;
-                                slug?: string;
+                            data?: {
+                                id?: number;
+                                title?: string;
+                                content?: string;
+                                /** Format: date-time */
+                                createdAt?: string;
+                                category?: {
+                                    name?: string;
+                                    slug?: string;
+                                };
+                                author?: {
+                                    name?: string;
+                                };
+                                tags?: {
+                                    id?: number;
+                                    name?: string;
+                                }[];
+                            }[];
+                            meta?: {
+                                pagination?: {
+                                    currentPage?: number;
+                                    totalPages?: number;
+                                    totalItems?: number;
+                                    itemsPerPage?: number;
+                                    hasNextPage?: boolean;
+                                    hasPrevPage?: boolean;
+                                };
                             };
-                        }[];
+                        };
                     };
+                };
+                /** @description 잘못된 페이지네이션 파라미터 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
             };
         };

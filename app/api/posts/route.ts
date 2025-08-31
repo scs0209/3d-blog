@@ -1,53 +1,144 @@
+import { createSlug } from '@/shared/utils/create-slug';
 import { type NextRequest, NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
-import { createSlug } from '@/shared/utils/create-slug';
 
 /**
  * @swagger
  * /api/posts:
  *   get:
- *     description: Retrieve all posts
+ *     summary: 게시물 목록 조회
+ *     description: 검색어와 페이지네이션 옵션을 이용해 게시물 목록을 가져옵니다.
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: 게시물 검색어 (title, content)
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           minimum: 1
+ *         description: 페이지 번호
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *           maximum: 100
+ *         description: 한 페이지 당 아이템 개수
  *     responses:
  *       200:
- *         description: 게시물 목록
+ *         description: 게시물 목록과 메타데이터 반환
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   title:
- *                     type: string
- *                   content:
- *                     type: string
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                   views:
- *                     type: integer
- *                   category:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
  *                     type: object
  *                     properties:
- *                       name:
+ *                       id:
+ *                         type: integer
+ *                       title:
  *                         type: string
- *                       slug:
+ *                       content:
  *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       category:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           slug:
+ *                             type: string
+ *                       author:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                       tags:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: integer
+ *                             name:
+ *                               type: string
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         currentPage: { type: integer }
+ *                         totalPages: { type: integer }
+ *                         totalItems: { type: integer }
+ *                         itemsPerPage: { type: integer }
+ *                         hasNextPage: { type: boolean }
+ *                         hasPrevPage: { type: boolean }
+ *       400:
+ *         description: 잘못된 페이지네이션 파라미터
+ *       500:
+ *         description: 서버 에러
  */
-export async function GET() {
-  const posts = await prisma.post.findMany({
-    include: {
-      category: {
-        select: {
-          name: true,
-          slug: true,
-        },
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get('search') ?? '';
+    const page = Number.parseInt(searchParams.get('page') ?? '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') ?? '10', 10);
+
+    if (page < 1 || limit < 1 || limit > 100) {
+      return NextResponse.json({ error: 'Invalid pagination parameters' }, { status: 400 });
+    }
+
+    const skip = (page - 1) * limit;
+
+    const whereClause: any = {};
+    if (search) {
+      whereClause.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { content: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const totalItems = await prisma.post.count({ where: whereClause });
+
+    const posts = await prisma.post.findMany({
+      where: whereClause,
+      include: {
+        category: { select: { name: true, slug: true } },
+        author: { select: { name: true } },
+        tags: { select: { id: true, name: true } },
       },
-    },
-  });
-  return NextResponse.json(posts, { status: 200 });
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+    });
+
+    return NextResponse.json({
+      data: posts,
+      meta: {
+        currentPage: page,
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems,
+        itemsPerPage: limit,
+        hasNextPage: page < Math.ceil(totalItems / limit),
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
+  }
 }
 
 /**
