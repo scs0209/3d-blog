@@ -4,35 +4,24 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 import type { Toast as ToastType } from './types';
+import { toastVariants } from './utils';
 
 // 토스트 타입별 아이콘과 색상
-const toastConfig = {
+const iconConfig = {
   success: {
     icon: CheckCircle,
-    bgColor: 'bg-green-500/20',
-    borderColor: 'border-green-400/40',
-    textColor: 'text-green-200',
     iconColor: 'text-green-400',
   },
   error: {
     icon: AlertCircle,
-    bgColor: 'bg-red-500/20',
-    borderColor: 'border-red-400/40',
-    textColor: 'text-red-200',
     iconColor: 'text-red-400',
   },
   warning: {
     icon: AlertTriangle,
-    bgColor: 'bg-yellow-500/20',
-    borderColor: 'border-yellow-400/40',
-    textColor: 'text-yellow-200',
     iconColor: 'text-yellow-400',
   },
   info: {
     icon: Info,
-    bgColor: 'bg-blue-500/20',
-    borderColor: 'border-blue-400/40',
-    textColor: 'text-blue-200',
     iconColor: 'text-blue-400',
   },
 };
@@ -43,7 +32,7 @@ interface ToastProps {
 }
 
 export const Toast = memo(function Toast({ toast, onRemove }: ToastProps) {
-  const config = toastConfig[toast.type];
+  const config = iconConfig[toast.type];
   const Icon = config.icon;
 
   const handleRemove = () => {
@@ -51,16 +40,7 @@ export const Toast = memo(function Toast({ toast, onRemove }: ToastProps) {
   };
 
   return (
-    <div
-      className={`
-        relative w-full max-w-sm p-4 rounded-lg border backdrop-blur-md
-        ${config.bgColor} ${config.borderColor} ${config.textColor}
-        shadow-lg shadow-black/20
-      `}
-      role='alert'
-      aria-live='polite'
-      aria-atomic='true'
-    >
+    <div className={toastVariants({ type: toast.type })} role='alert' aria-live='polite' aria-atomic='true'>
       {/* 닫기 버튼 */}
       <button
         type='button'
