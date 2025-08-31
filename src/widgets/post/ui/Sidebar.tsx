@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { SparklesCore } from '@/shared/ui/sparkles';
+import { SidebarSkeleton } from '@/shared/ui/skeleton';
 
 export default function Sidebar() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function Sidebar() {
   const isAllPage = pathname === '/blog/all';
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <SidebarSkeleton />;
   }
 
   return (
