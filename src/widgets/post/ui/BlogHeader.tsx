@@ -9,14 +9,20 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dropdown } from '@/shared/ui';
 import Image from 'next/image';
+import { useQueryState } from 'nuqs';
 
 const SearchBar = dynamic(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), {
   ssr: false,
 });
 
 export default function BlogHeader() {
+  const [search, setSearch] = useQueryState('search', {
+    limitUrlUpdates: {
+      method: 'debounce',
+      timeMs: 500,
+    },
+  });
   const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -150,7 +156,7 @@ export default function BlogHeader() {
                   className='flex items-center gap-2 overflow-hidden bg-black/10 rounded-lg px-2'
                 >
                   <div className='flex-1'>
-                    <SearchBar value={search} onChange={setSearch} />
+                    <SearchBar value={search ?? ''} onChange={setSearch} />
                   </div>
                   <motion.button
                     type='button'
@@ -315,7 +321,7 @@ export default function BlogHeader() {
               >
                 <div className='flex items-center gap-2 bg-black/10 rounded-lg px-3 py-2'>
                   <div className='flex-1'>
-                    <SearchBar value={search} onChange={setSearch} />
+                    <SearchBar value={search ?? ''} onChange={setSearch} />
                   </div>
                   <motion.button
                     type='button'
