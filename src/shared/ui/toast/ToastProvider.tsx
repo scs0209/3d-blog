@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useReducer, useCallback, type ReactNode } from 'react';
-import type { Toast, ToastOptions, ToastContextType } from './types';
+import type { Toast, ToastOptions, ToastContextType, ToastPosition } from './types';
 import { ToastContainer } from './ToastContainer';
 
 // 토스트 액션 타입
@@ -128,6 +128,18 @@ export function ToastProvider({ children, maxToasts = 5 }: ToastProviderProps) {
     dispatch({ type: 'CLEAR_TOASTS' });
   }, []);
 
+  const toastsByPosition = state.toasts.reduce(
+    (acc, toast) => {
+      const { position = 'top-right' } = toast;
+      if (!acc[position]) {
+        acc[position] = [];
+      }
+      acc[position].push(toast);
+      return acc;
+    },
+    {} as Record<Toast['position'], Toast[]>,
+  );
+
   const contextValue: ToastContextType = {
     toasts: state.toasts,
     addToast,
@@ -140,12 +152,9 @@ export function ToastProvider({ children, maxToasts = 5 }: ToastProviderProps) {
     <ToastContext.Provider value={contextValue}>
       {children}
       {/* 모든 position을 자동으로 지원하는 ToastContainer들 */}
-      <ToastContainer position='top-right' maxToasts={maxToasts} />
-      <ToastContainer position='top-left' maxToasts={maxToasts} />
-      <ToastContainer position='top-center' maxToasts={maxToasts} />
-      <ToastContainer position='bottom-right' maxToasts={maxToasts} />
-      <ToastContainer position='bottom-left' maxToasts={maxToasts} />
-      <ToastContainer position='bottom-center' maxToasts={maxToasts} />
+      {Object.entries(toastsByPosition).map(([position, toasts]) => (
+        <ToastContainer key={position} position={position as ToastPosition} maxToasts={maxToasts} />
+      ))}
     </ToastContext.Provider>
   );
 }
