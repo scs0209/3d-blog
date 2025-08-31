@@ -17,6 +17,11 @@ import { auth } from '@/shared/utils/auth';
  *           type: string
  *         description: Category slug
  *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search keyword for post title or content
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer
@@ -104,8 +109,18 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
   try {
     const { slug } = await params;
     const { searchParams } = new URL(request.url);
+    const search = searchParams.get('search') || '';
     const page = Number.parseInt(searchParams.get('page') || '1');
     const limit = Number.parseInt(searchParams.get('limit') || '10');
+
+    // 검색 조건 구성
+    const whereClause: any = {};
+    if (search) {
+      whereClause.OR = [
+        { title: { contains: search, mode: 'insensitive' as const } },
+        { content: { contains: search, mode: 'insensitive' as const } },
+      ];
+    }
 
     const category = await prisma.category.findUnique({
       where: {
@@ -113,6 +128,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       },
       include: {
         posts: {
+          where: whereClause,
           skip: (page - 1) * limit,
           take: limit,
           orderBy: {
@@ -145,13 +161,23 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
 
+    // 검색된 포스트 개수 계산
+    const totalPosts = search
+      ? await prisma.post.count({
+          where: {
+            categoryId: category.id,
+            ...whereClause,
+          },
+        })
+      : category._count.posts;
+
     return NextResponse.json({
       ...category,
       pagination: {
         page,
         limit,
-        total: category._count.posts,
-        totalPages: Math.ceil(category._count.posts / limit),
+        total: totalPosts,
+        totalPages: Math.ceil(totalPosts / limit),
       },
     });
   } catch (error) {

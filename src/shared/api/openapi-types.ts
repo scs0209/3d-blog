@@ -15,6 +15,8 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @description Search keyword for post title or content */
+                    search?: string;
                     /** @description Page number for pagination */
                     page?: number;
                     /** @description Number of items per page */
