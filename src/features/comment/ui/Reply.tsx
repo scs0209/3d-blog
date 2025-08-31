@@ -54,7 +54,6 @@ export function Reply({ reply }: ReplyProps) {
                     type='button'
                     aria-label='대댓글 수정'
                     onClick={handleEdit}
-                    disabled={!canManage}
                   >
                     수정
                   </button>
@@ -63,7 +62,6 @@ export function Reply({ reply }: ReplyProps) {
                     type='button'
                     aria-label='대댓글 삭제'
                     onClick={handleDelete}
-                    disabled={!canManage}
                   >
                     삭제
                   </button>
