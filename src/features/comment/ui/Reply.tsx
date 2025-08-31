@@ -46,8 +46,8 @@ export function Reply({ reply }: ReplyProps) {
         ) : (
           <>
             <p className='text-slate-100 mb-2'>{reply.content}</p>
-            {canManage && (
-              <div className='flex gap-2 items-center justify-between mt-2'>
+            <div className='flex gap-2 items-center justify-between mt-2'>
+              {canManage && (
                 <div className='flex gap-2 items-center'>
                   <button
                     className='text-xs text-cyan-400 hover:text-cyan-300 hover:underline'
@@ -68,11 +68,11 @@ export function Reply({ reply }: ReplyProps) {
                     삭제
                   </button>
                 </div>
-                <div className='flex items-center gap-1'>
-                  <LikeDislikeButtons id={reply.id ?? 0} size={15} />
-                </div>
+              )}
+              <div className='flex items-center gap-1'>
+                <LikeDislikeButtons id={reply.id ?? 0} size={15} />
               </div>
-            )}
+            </div>
           </>
         )}
       </article>
