@@ -31,8 +31,8 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
     <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
       {recentPosts.map((post, idx) => (
         <a
-          href={`/blog/${post.id}`}
-          key={post.id}
+          href={`/blog/category/${post.category?.slug}/post/${post.slug}`}
+          key={post.createdAt}
           className='relative group block p-2 h-full w-full'
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
