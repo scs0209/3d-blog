@@ -24,3 +24,4 @@ export const PostCardSkeleton = () => {
     </motion.div>
   );
 };
+

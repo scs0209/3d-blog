@@ -4,6 +4,7 @@ import { motion, useMotionValue, animate } from 'framer-motion';
 import { CardPattern } from './CardPattern';
 import { useEffect, useRef, useState } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
+import { formatDateToYMD } from '@/shared/utils';
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 export const generateRandomString = (length: number) => {
@@ -58,7 +59,7 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
         )} */}
         <span className='text-xs font-bold text-blue-200 mb-1'>{post.category?.name}</span>
         <h2 className='text-base font-extrabold text-blue-100 text-center line-clamp-2 mb-1'>{post.title}</h2>
-        <span className='text-xs text-blue-300 mt-auto'>{post.createdAt}</span>
+        <span className='text-xs text-blue-300 mt-auto'>{formatDateToYMD(post.createdAt ?? '')}</span>
       </div>
     </motion.div>
   );
