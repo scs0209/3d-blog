@@ -1,8 +1,8 @@
 'use client';
 
-import { Category } from '@/entities/category/model';
+import type { Category } from '@/entities/category/model';
 import { createCategory, updateCategory } from '@/features/category/api/category-api';
-import { CategoryFormSchema } from '@/features/category/model/category-schema';
+import type { CategoryFormSchema } from '@/features/category/model/category-schema';
 import CategoryForm from '@/features/category/ui/category-form';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import Modal from '@/shared/ui/modal';
