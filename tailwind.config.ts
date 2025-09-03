@@ -17,6 +17,20 @@ export default {
         'modal': '3000',
         'escape-hatch': '9999',
       },
+			// Add glassmorphism-specific utilities
+			backdropBlur: {
+				'glass': '12px',
+				'glass-strong': '16px',
+				'glass-subtle': '8px',
+			},
+			
+			boxShadow: {
+				'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
+				'glass-dark': '0 8px 32px rgba(0, 0, 0, 0.5)',
+				'glass-hover': '0 12px 48px rgba(31, 38, 135, 0.5)',
+				'glass-hover-dark': '0 12px 48px rgba(0, 0, 0, 0.7)',
+			},
+			
 			colors: {
 				background: "hsl(var(--background))",
 				foreground: "hsl(var(--foreground))",
@@ -93,13 +107,21 @@ export default {
 				lg: "var(--radius)",
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
+				glass: '20px',
+				'glass-sm': '12px',
+				'glass-lg': '24px',
 			},
 			animation: {
 				"meteor-effect": "meteor 5s linear infinite",
 				"gradient-border": "gradientBorder 3s linear infinite",
+				'float': 'float 6s ease-in-out infinite',
+				'glass-shimmer': 'glass-shimmer 2s linear infinite',
 			},
 			backgroundImage: {
 				'warm-sunset': 'linear-gradient(90deg, #f7e6d4, #e2b8a1, #d89e88, #c77c6b, #a65d54)',
+				'glass-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				'glass-gradient-dark': 'linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%)',
+				'glass-shimmer': 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
 			},
 			keyframes: {
 				meteor: {
@@ -123,6 +145,14 @@ export default {
 						boxShadow:
 							"0 0 10px rgba(255,0,0,0.3), 0 0 20px rgba(0,255,255,0.3), 0 0 30px rgba(255,0,255,0.3)",
 					},
+				},
+				float: {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'glass-shimmer': {
+					'0%': { backgroundPosition: '-200px 0' },
+					'100%': { backgroundPosition: 'calc(200px + 100%) 0' },
 				},
 			},
 		},
