@@ -13,20 +13,25 @@ const ProtectLayout = ({ children }: { children: React.ReactNode }) => {
 
       <SidebarProvider className='relative z-10'>
         <AuthSidebar />
-        <SidebarInset className='relative bg-transparent rounded-lg m-2 min-h-full'>
+        <SidebarInset className='relative bg-transparent rounded-lg m-2 min-h-[calc(100vh-1rem)] max-h-[calc(100vh-1rem)] overflow-hidden'>
           {/* Enhanced Glassmorphism Background */}
           <div className='absolute inset-0 bg-gradient-to-br from-white/15 via-white/8 to-white/3 backdrop-blur-xl border-l border-white/25 rounded-3xl h-full' />
 
           {/* Content Area */}
-          <div className='relative z-10 p-6 rounded-lg m-4'>
-            <div className='flex items-center gap-4 mb-8'>
+          <div className='relative z-10 h-full flex flex-col min-h-0'>
+            {/* Header - Fixed */}
+            <div className='flex items-center gap-4 p-6 pb-4 flex-shrink-0'>
               <SidebarTrigger className='text-white/90 hover:text-white hover:bg-white/20 transition-all duration-300 rounded-lg p-2' />
               <div className='h-6 w-px bg-white/30' />
               <h1 className='text-2xl font-semibold text-white/95 drop-shadow-lg'>관리자 대시보드</h1>
             </div>
-            <ScrollArea className='w-full m-4 max-h-[calc(100vh-3rem)]'>
-              <div className='text-white/90'>{children}</div>
-            </ScrollArea>
+
+            {/* Scrollable Content */}
+            <div className='flex-1 min-h-0 px-6 pb-6'>
+              <ScrollArea className='h-full'>
+                <div className='text-white/90'>{children}</div>
+              </ScrollArea>
+            </div>
           </div>
         </SidebarInset>
       </SidebarProvider>
