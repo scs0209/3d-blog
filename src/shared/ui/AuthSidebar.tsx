@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Sidebar,
   SidebarContent,
@@ -12,6 +14,7 @@ import { CategoryModal } from '@/widgets/category';
 import { CreateTagModal } from '@/widgets/tag';
 import { Plus, FileText, Tag, Home, Settings, Folder, Hash } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 import { Tooltip } from './Tooltip';
 
 // 스타일 객체들 분리
@@ -33,7 +36,7 @@ const styles = {
       'bg-gradient-to-br from-purple-500/80 to-blue-500/70 border border-purple-400/50 hover:bg-gradient-to-br hover:from-purple-500/90 hover:to-blue-500/80 hover:border-purple-400/70',
   },
   quickAction:
-    'w-10 h-10 rounded-xl bg-gradient-to-br from-white/8 to-white/4 border border-white/20 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-gradient-to-br hover:from-white/15 hover:to-white/8 hover:border-white/40 shadow-lg hover:shadow-2xl flex items-center justify-center cursor-pointer active:scale-95 hover:shadow-white/20',
+    'w-10 h-10 rounded-xl bg-gradient-to-br from-white/8 to-white/4 border border-white/20 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-gradient-to-br hover:from-white/12 hover:to-white/6 hover:border-white/30 flex items-center justify-center cursor-pointer active:scale-95',
 } as const;
 
 const boxShadows = {
@@ -42,10 +45,31 @@ const boxShadows = {
   tags: '0 0 10px rgba(251, 191, 36, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
   newPost: '0 0 15px rgba(139, 69, 255, 0.4), 0 0 30px rgba(139, 69, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
   quickAction:
-    '0 0 15px rgba(255, 255, 255, 0.15), 0 0 30px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+    'inset 2px 2px 6px rgba(0, 0, 0, 0.3), inset -2px -2px 6px rgba(255, 255, 255, 0.1), 0 0 8px rgba(255, 255, 255, 0.1)',
+  quickActionHover:
+    'inset 3px 3px 8px rgba(0, 0, 0, 0.4), inset -3px -3px 8px rgba(255, 255, 255, 0.15), 0 0 12px rgba(255, 255, 255, 0.2)',
+  quickActionActive:
+    'inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -2px -2px 6px rgba(255, 255, 255, 0.05), 0 0 6px rgba(255, 255, 255, 0.1)',
 } as const;
 
 const AuthSidebar = () => {
+  const [categoryHover, setCategoryHover] = useState(false);
+  const [categoryActive, setCategoryActive] = useState(false);
+  const [tagHover, setTagHover] = useState(false);
+  const [tagActive, setTagActive] = useState(false);
+
+  const getCategoryBoxShadow = () => {
+    if (categoryActive) return boxShadows.quickActionActive;
+    if (categoryHover) return boxShadows.quickActionHover;
+    return boxShadows.quickAction;
+  };
+
+  const getTagBoxShadow = () => {
+    if (tagActive) return boxShadows.quickActionActive;
+    if (tagHover) return boxShadows.quickActionHover;
+    return boxShadows.quickAction;
+  };
+
   return (
     <Sidebar collapsible='offcanvas' variant='floating' className='h-full'>
       <div className={styles.sidebarContainer.className} style={styles.sidebarContainer.style}>
@@ -133,24 +157,40 @@ const AuthSidebar = () => {
             </div>
             <div className='flex gap-3 justify-center'>
               {/* Category Modal Icon */}
-              <Tooltip content='카테고리 관리' position='top' neonIntensity='low' neon={true}>
-                <div className={styles.quickAction} style={{ boxShadow: boxShadows.quickAction }}>
-                  <Folder className='w-5 h-5 text-white/70 hover:text-white/90 transition-colors' />
-                </div>
-                <div className='absolute inset-0 opacity-0 pointer-events-none'>
+              <div
+                className='relative'
+                onMouseEnter={() => setCategoryHover(true)}
+                onMouseLeave={() => setCategoryHover(false)}
+                onMouseDown={() => setCategoryActive(true)}
+                onMouseUp={() => setCategoryActive(false)}
+              >
+                <Tooltip content='카테고리 관리' position='top' neonIntensity='low' neon={true}>
+                  <div className={styles.quickAction} style={{ boxShadow: getCategoryBoxShadow() }}>
+                    <Folder className='w-5 h-5 text-white/70 hover:text-white/90 transition-colors' />
+                  </div>
+                </Tooltip>
+                <div className='absolute inset-0 pointer-events-auto z-10'>
                   <CategoryModal />
                 </div>
-              </Tooltip>
+              </div>
 
               {/* Tag Modal Icon */}
-              <Tooltip content='태그 관리' position='top' neonIntensity='low' neon={true}>
-                <div className={styles.quickAction} style={{ boxShadow: boxShadows.quickAction }}>
-                  <Hash className='w-5 h-5 text-white/70 hover:text-white/90 transition-colors' />
-                </div>
-                <div className='absolute inset-0 opacity-0 pointer-events-none'>
+              <div
+                className='relative'
+                onMouseEnter={() => setTagHover(true)}
+                onMouseLeave={() => setTagHover(false)}
+                onMouseDown={() => setTagActive(true)}
+                onMouseUp={() => setTagActive(false)}
+              >
+                <Tooltip content='태그 관리' position='top' neonIntensity='low' neon={true}>
+                  <div className={styles.quickAction} style={{ boxShadow: getTagBoxShadow() }}>
+                    <Hash className='w-5 h-5 text-white/70 hover:text-white/90 transition-colors' />
+                  </div>
+                </Tooltip>
+                <div className='absolute inset-0 pointer-events-auto z-10'>
                   <CreateTagModal />
                 </div>
-              </Tooltip>
+              </div>
             </div>
           </SidebarGroup>
         </SidebarContent>
