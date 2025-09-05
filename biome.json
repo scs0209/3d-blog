@@ -70,7 +70,6 @@
         "noParameterProperties": "off",
         "noVar": "error",
         "useAsConstAssertion": "error",
-        "useBlockStatements": "error",
         "useConsistentArrayType": {
           "level": "error",
           "options": { "syntax": "shorthand" }
