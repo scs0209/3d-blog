@@ -128,7 +128,7 @@ body {
 @layer base {
   * {
     @apply border-border;
-    /* cursor: none !important; 모든 요소의 기본 커서 숨김 */
+    /* cursor: none !important; */
   }
   body {
     @apply bg-background text-foreground;
