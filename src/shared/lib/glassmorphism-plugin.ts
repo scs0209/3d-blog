@@ -239,7 +239,6 @@ export const glassmorphismPlugin = function ({ addComponents }: { addComponents:
       border: '1px solid rgba(255, 255, 255, 0.2)',
       borderRadius: '20px',
       transform: 'translateY(-8px)',
-      boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25), 0 10px 20px rgba(0, 0, 0, 0.15)',
       transition: 'all 0.2s ease',
       position: 'relative',
       overflow: 'hidden',
@@ -296,6 +295,27 @@ export const glassmorphismPlugin = function ({ addComponents }: { addComponents:
         background: 'rgba(147, 51, 234, 0.15)',
         transform: 'translateY(-2px)',
         boxShadow: '0 6px 16px rgba(147, 51, 234, 0.15)',
+      },
+    },
+
+    // 호버 효과 없는 정적 글래스 카드 (테이블용)
+    '.glass-card-static': {
+      background: 'rgba(255, 255, 255, 0.1)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      borderRadius: '20px',
+      transform: 'translateY(-8px)',
+      boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25), 0 10px 20px rgba(0, 0, 0, 0.15)',
+    },
+
+    // 테이블 행용 호버 효과
+    '.glass-row-hover': {
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        background: 'rgba(255, 255, 255, 0.12)',
+        transform: 'translateY(-3px)',
+        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(8px)',
       },
     },
 
