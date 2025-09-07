@@ -158,7 +158,6 @@ const AuthSidebar = () => {
             <div className='flex gap-3 justify-center'>
               {/* Category Modal Icon */}
               <div
-                className='relative'
                 onMouseEnter={() => setCategoryHover(true)}
                 onMouseLeave={() => setCategoryHover(false)}
                 onMouseDown={() => setCategoryActive(true)}
@@ -176,7 +175,6 @@ const AuthSidebar = () => {
 
               {/* Tag Modal Icon */}
               <div
-                className='relative'
                 onMouseEnter={() => setTagHover(true)}
                 onMouseLeave={() => setTagHover(false)}
                 onMouseDown={() => setTagActive(true)}
