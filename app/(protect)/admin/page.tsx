@@ -1,4 +1,97 @@
-import { SectionCards } from '@/widgets/admin/home/ui';
+import { SectionCards, PostTable } from '@/widgets/admin/home/ui';
+
+const data = [
+  {
+    id: 1,
+    header: 'Cover page',
+    type: 'Cover page',
+    status: 'In Process',
+    target: '18',
+    limit: '5',
+    reviewer: 'Eddie Lake',
+  },
+  {
+    id: 2,
+    header: 'Table of contents',
+    type: 'Table of contents',
+    status: 'Done',
+    target: '29',
+    limit: '24',
+    reviewer: 'Eddie Lake',
+  },
+  {
+    id: 3,
+    header: 'Executive summary',
+    type: 'Narrative',
+    status: 'Done',
+    target: '10',
+    limit: '13',
+    reviewer: 'Eddie Lake',
+  },
+  {
+    id: 4,
+    header: 'Technical approach',
+    type: 'Narrative',
+    status: 'Done',
+    target: '27',
+    limit: '23',
+    reviewer: 'Jamik Tashpulatov',
+  },
+  {
+    id: 5,
+    header: 'Design',
+    type: 'Narrative',
+    status: 'In Process',
+    target: '2',
+    limit: '16',
+    reviewer: 'Jamik Tashpulatov',
+  },
+  {
+    id: 6,
+    header: 'Capabilities',
+    type: 'Narrative',
+    status: 'In Process',
+    target: '20',
+    limit: '8',
+    reviewer: 'Jamik Tashpulatov',
+  },
+  {
+    id: 7,
+    header: 'Integration with existing systems',
+    type: 'Narrative',
+    status: 'In Process',
+    target: '19',
+    limit: '21',
+    reviewer: 'Jamik Tashpulatov',
+  },
+  {
+    id: 8,
+    header: 'Innovation and Advantages',
+    type: 'Narrative',
+    status: 'Done',
+    target: '25',
+    limit: '26',
+    reviewer: 'Assign reviewer',
+  },
+  {
+    id: 9,
+    header: "Overview of EMR's Innovative Solutions",
+    type: 'Technical content',
+    status: 'Done',
+    target: '7',
+    limit: '23',
+    reviewer: 'Assign reviewer',
+  },
+  {
+    id: 10,
+    header: 'Advanced Algorithms and Machine Learning',
+    type: 'Narrative',
+    status: 'Done',
+    target: '30',
+    limit: '28',
+    reviewer: 'Assign reviewer',
+  },
+];
 
 export default async function PostPage() {
   return (
@@ -6,6 +99,7 @@ export default async function PostPage() {
       <div className='@container/main flex flex-1 flex-col gap-2'>
         <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6'>
           <SectionCards />
+          <PostTable data={data} />
         </div>
       </div>
     </div>
