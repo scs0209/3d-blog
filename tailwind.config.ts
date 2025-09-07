@@ -26,7 +26,7 @@ export default {
 			},
 			
 			boxShadow: {
-				'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
+				'glass': '10px 18px 6px 0px rgba(0, 0, 0, 0.1)',
 				'glass-dark': '0 8px 32px rgba(0, 0, 0, 0.5)',
 				'glass-hover': '0 12px 48px rgba(31, 38, 135, 0.5)',
 				'glass-hover-dark': '0 12px 48px rgba(0, 0, 0, 0.7)',
