@@ -191,7 +191,7 @@ export const Tooltip = ({
 
   return (
     <div
-      className='relative inline-block'
+      className='relative inline-block z-50'
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleFocus}
