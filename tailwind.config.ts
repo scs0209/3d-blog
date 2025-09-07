@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { glassmorphismPlugin } from "./src/shared/lib/glassmorphism-plugin";
 
 export default {
 	darkMode: ["class"],
@@ -154,8 +155,21 @@ export default {
 					'0%': { backgroundPosition: '-200px 0' },
 					'100%': { backgroundPosition: 'calc(200px + 100%) 0' },
 				},
+				shimmer: {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(200%)' },
+				},
+				'shimmer-diagonal': {
+					'0%': { transform: 'translate(-100%, -100%) rotate(45deg)' },
+					'50%': { transform: 'translate(0%, 0%) rotate(45deg)' },
+					'100%': { transform: 'translate(100%, 100%) rotate(45deg)' },
+				},
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		require("@tailwindcss/container-queries"),
+		glassmorphismPlugin,
+	],
 } satisfies Config;
