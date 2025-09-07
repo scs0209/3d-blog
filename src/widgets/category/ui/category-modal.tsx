@@ -1,8 +1,8 @@
 'use client';
 
-import { Category } from '@/entities/category/model';
+import type { Category } from '@/entities/category/model';
 import { createCategory, updateCategory } from '@/features/category/api/category-api';
-import { CategoryFormSchema } from '@/features/category/model/category-schema';
+import type { CategoryFormSchema } from '@/features/category/model/category-schema';
 import CategoryForm from '@/features/category/ui/category-form';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import Modal from '@/shared/ui/modal';
@@ -31,7 +31,7 @@ export const CategoryModal = ({ category }: CategoryModalProps) => {
 
   return (
     <Modal
-      trigger={<Button variant={category ? 'outline' : 'default'}>{category ? '수정' : '새 카테고리'}</Button>}
+      trigger={<Button variant='ghost' className='w-full h-full opacity-0 absolute inset-0 cursor-pointer' />}
       title={category ? '카테고리 수정' : '새 카테고리 생성'}
       description={category ? '카테고리 정보를 수정하세요.' : '새 카테고리의 정보를 입력하세요.'}
       open={open}

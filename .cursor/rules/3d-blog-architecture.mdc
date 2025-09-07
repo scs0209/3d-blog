@@ -9,15 +9,36 @@ alwaysApply: true
 
 이 프로젝트는 Next.js와 React Three Fiber를 사용한 3D 블로그입니다. FSD (Feature-Sliced Design) 아키텍처를 따릅니다.
 
+### Next.js App Router 구조
+- **app/(protect)/** - 인증이 필요한 페이지 (admin 관리자 페이지)
+- **app/(public)/** - 공개 접근 페이지 (blog, portfolio, login 등)
+- **app/api/** - 백엔드 API 엔드포인트 (REST API, NextAuth 등)
+
+### FSD 레이어 구조 (src/ 내부)
+- **src/app/** - 애플리케이션 설정 (Providers, 글로벌 설정)
+- **entities/** - 비즈니스 엔티티 (도메인 모델, 타입 정의)
+- **features/** - 사용자 시나리오 (인증, 댓글, 좋아요 등)
+- **widgets/** - 페이지 블록 (복합 UI 컴포넌트)
+- **views/** - 페이지별 뷰 컴포넌트
+- **shared/** - 재사용 가능한 공용 코드
+- **shadcn-ui/** - UI 컴포넌트 라이브러리
+
 ### 주요 디렉토리 구조
 
 ```
-src/
-├── app/              # Next.js App Router
-├── views/            # 페이지별 뷰 컴포넌트
-├── widgets/          # 복합 UI 위젯
-├── shared/           # 공용 컴포넌트 및 유틸리티
-└── features/         # 기능별 모듈
+3d-blog/
+├── app/              # Next.js App Router (페이지 라우팅 & API)
+│   ├── (protect)/    # 보호된 라우트 (admin 페이지)
+│   ├── (public)/     # 공개 라우트 (blog, portfolio, login 등)
+│   └── api/          # 백엔드 API 엔드포인트
+└── src/
+    ├── app/          # 애플리케이션 설정 (Providers)
+    ├── entities/     # 도메인 엔티티 (category, comment, post, tag, user 등)
+    ├── features/     # 기능별 모듈 (auth, blog, comment, like, portfolio 등)
+    ├── widgets/      # 복합 UI 위젯 (admin, home, portfolio, post 등)
+    ├── views/        # 페이지별 뷰 컴포넌트 (home, login)
+    ├── shared/       # 공용 컴포넌트 및 유틸리티
+    └── shadcn-ui/    # Shadcn UI 컴포넌트 시스템
 ```
 
 ## 핵심 3D 컴포넌트들

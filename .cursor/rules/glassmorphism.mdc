@@ -1,0 +1,200 @@
+# 3D Blog Project - Glassmorphism Design System Rules
+
+## 🎨 Glassmorphism Design System
+
+### Core Principles
+- Use existing glassmorphism utility classes from `src/shared/lib/glassmorphism-plugin.ts`
+- Maintain consistency across all UI components
+- Apply glassmorphism effects through Tailwind CSS utility classes
+- Ensure proper layering with z-index and backdrop-blur
+
+### Available Glassmorphism Classes
+
+#### Basic Glass Effects
+- `.bg-glass` - Basic glassmorphism background
+- `.glass-card` - Standard glass card with hover effects
+- `.glass-card-static` - Static glass card without animations
+- `.glass-card-float-shimmer` - Floating glass card with shimmer animation
+
+#### Button Variants
+- `.btn-glass` - Standard glass button with white/transparent styling
+- `.btn-glass-primary` - Primary glass button with blue accent
+- `.btn-glass-secondary` - Secondary glass button with purple accent
+- `.btn-glass-success` - Success glass button with green accent
+- `.btn-glass-warning` - Warning glass button with yellow accent
+- `.btn-glass-danger` - Danger glass button with red accent
+
+#### Colored Glass Cards
+- `.glass-blue-float` - Blue-tinted floating glass card
+- `.glass-purple-float` - Purple-tinted floating glass card
+- `.glass-green-float` - Green-tinted floating glass card
+- `.glass-red-float` - Red-tinted floating glass card
+
+#### Special Effects
+- `.glass-shimmer` - Adds shimmer animation to glass elements
+- `.glass-glow-blue` - Blue glow effect for glass elements
+- `.glass-glow-purple` - Purple glow effect for glass elements
+
+### Implementation Guidelines
+
+#### 1. Component Integration
+```tsx
+// ✅ Correct - Use existing utility classes
+<Button variant="glass">Glass Button</Button>
+<Card className="glass-card-float-shimmer">Content</Card>
+
+// ❌ Avoid - Creating custom glassmorphism styles
+<div className="bg-white/10 backdrop-blur-sm border border-white/20">
+```
+
+#### 2. Component Variants
+
+##### Button Components
+- **Custom Button** (`src/shared/ui/Button/Button.tsx`):
+  ```tsx
+  variant?: 'primary' | 'secondary' | 'comment' | 'reply' | 'glass' | 'glass-primary'
+  ```
+- **Shadcn Button** (`src/shadcn-ui/components/ui/button.tsx`):
+  ```tsx
+  variant: 'glass' | 'glass-primary'
+  ```
+
+##### Tag Components
+- **Tag Component** (`src/shared/ui/Tag/tag.tsx`):
+  ```tsx
+  type?: 'solid' | 'glass' | 'outline' | 'gradient'
+  color?: 'blue' | 'purple' | 'green' | 'red' | 'yellow' | 'pink' | 'cyan' | ...
+  ```
+
+##### DropdownMenu Components
+- **DropdownMenu** uses `.glass-card` utility class
+- **DropdownMenuItem** has custom glassmorphism hover effects
+
+#### 3. Layering and Z-Index Rules
+```css
+/* Z-Index Hierarchy */
+z-[9999] - Tooltips (highest priority)
+z-50     - Modal overlays
+z-40     - Dropdown menus
+z-30     - Floating elements
+z-20     - Glass cards with shimmer
+z-10     - Standard glass cards
+z-0      - Base elements
+```
+
+#### 4. Animation Guidelines
+- Use `.glass-shimmer` for subtle shimmer effects
+- Apply `glass-card-float-shimmer` for premium card components
+- Shimmer animations should have 4s duration with ease-in-out timing
+- Hover effects should include scale transformations (1.02-1.05)
+
+#### 5. Color System Integration
+```tsx
+// Glass backgrounds should match color tokens
+glassColorStyles = {
+  blue: 'bg-blue-500/10 backdrop-blur-md border border-blue-400/30 text-blue-200',
+  purple: 'bg-purple-500/10 backdrop-blur-md border border-purple-400/30 text-purple-200',
+  // ... other colors
+}
+```
+
+### Development Workflow
+
+#### 1. Before Adding New Glassmorphism Styles
+1. Check `src/shared/lib/glassmorphism-plugin.ts` for existing utilities
+2. Use existing classes when possible
+3. Only extend the plugin for new, reusable patterns
+
+#### 2. Component Updates
+1. Always prefer existing glassmorphism variants over custom styles
+2. Update both custom and shadcn components when adding new variants
+3. Test glassmorphism effects across different themes (light/dark)
+
+#### 3. Performance Considerations
+- Use `backdrop-filter: blur()` sparingly to maintain performance
+- Prefer static glass effects over animated ones for large lists
+- Apply `will-change: transform` for animated glass elements
+
+### File Structure
+
+#### Core Files
+- `src/shared/lib/glassmorphism-plugin.ts` - Main glassmorphism utility definitions
+- `tailwind.config.ts` - Plugin registration and keyframe animations
+- `src/shared/ui/Button/Button.tsx` - Custom button with glass variants
+- `src/shadcn-ui/components/ui/button.tsx` - Shadcn button with glass variants
+- `src/shared/ui/Tag/tag.tsx` - Tag component with glass type support
+
+#### Implementation Examples
+- `src/widgets/admin/home/ui/card-section.tsx` - Glass cards usage
+- `src/widgets/admin/home/ui/post-table.tsx` - Glass buttons in tables
+- `src/shadcn-ui/components/ui/dropdown-menu.tsx` - Glass dropdown styling
+
+### Common Patterns
+
+#### Glass Card with Content
+```tsx
+<Card className="glass-card-float-shimmer">
+  <CardHeader>
+    <CardTitle>Glass Card Title</CardTitle>
+  </CardHeader>
+  <CardContent>
+    Content goes here
+  </CardContent>
+</Card>
+```
+
+#### Glass Button Group
+```tsx
+<div className="flex gap-2">
+  <Button variant="glass" size="sm">Cancel</Button>
+  <Button variant="glass-primary" size="sm">Confirm</Button>
+</div>
+```
+
+#### Glass Tag Collection
+```tsx
+<div className="flex flex-wrap gap-2">
+  <Tag type="glass" color="blue">React</Tag>
+  <Tag type="glass" color="purple">TypeScript</Tag>
+  <Tag type="glass" color="green">Node.js</Tag>
+</div>
+```
+
+### Debugging Guidelines
+
+#### Common Issues
+1. **Shimmer not visible**: Check if parent has `overflow: hidden`
+2. **Blur effect clipped**: Ensure adequate padding/margin around glass elements
+3. **Z-index conflicts**: Follow the established z-index hierarchy
+4. **Performance issues**: Reduce number of backdrop-blur elements
+
+#### Testing Checklist
+- [ ] Glass effects work in both light and dark themes
+- [ ] Hover states provide appropriate feedback
+- [ ] Animations are smooth and not janky
+- [ ] Elements are properly layered (z-index)
+- [ ] Mobile responsiveness maintained
+- [ ] Accessibility standards met (focus states, contrast)
+
+### Best Practices
+
+#### Do's ✅
+- Use consistent glassmorphism classes across the project
+- Apply glass effects to enhance UI hierarchy
+- Test glassmorphism effects across different backgrounds
+- Maintain proper contrast ratios for accessibility
+- Use subtle animations that enhance UX
+
+#### Don'ts ❌
+- Don't create inline glassmorphism styles
+- Don't overuse shimmer effects (can be distracting)
+- Don't apply glassmorphism to every element
+- Don't ignore performance implications of backdrop-filter
+- Don't sacrifice accessibility for visual effects
+
+### Future Considerations
+- Monitor browser support for backdrop-filter
+- Consider fallbacks for older browsers
+- Evaluate performance impact on mobile devices
+- Plan for potential CSS-in-JS migration
+- Maintain consistency with design system evolution

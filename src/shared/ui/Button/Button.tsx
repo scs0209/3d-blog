@@ -8,7 +8,7 @@ type ButtonProps = {
   children?: ReactNode;
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'comment' | 'reply';
+  variant?: 'primary' | 'secondary' | 'comment' | 'reply' | 'glass' | 'glass-primary';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   disabled?: boolean;
@@ -54,8 +54,14 @@ export function Button({
   // 하위 호환성 처리
   const isLoading = loading || isPending || false;
   const buttonVariant = submitType ? submitType : variant;
-  const colorClasses = variantColors[buttonVariant];
-  const glowColor = glowColors[buttonVariant];
+
+  // glassmorphism 버튼인지 확인
+  const isGlassButton = buttonVariant === 'glass' || buttonVariant === 'glass-primary';
+
+  const colorClasses = isGlassButton ? '' : variantColors[buttonVariant as keyof typeof variantColors];
+  const glowColor = isGlassButton
+    ? '0 0 15px rgba(255, 255, 255, 0.3)'
+    : glowColors[buttonVariant as keyof typeof glowColors];
 
   // Submit 버튼인 경우 기본 children 설정
   const defaultChildren = submitType ? (
@@ -88,17 +94,27 @@ export function Button({
       <span>버튼</span>
     ));
 
-  const baseClasses = `
-    bg-gradient-to-r ${colorClasses}
-    backdrop-blur-sm border
-    text-white/90 font-medium rounded-md shadow-lg
-    transition-all duration-300 
-    disabled:opacity-50 disabled:cursor-not-allowed 
-    flex items-center gap-1.5 justify-center
-    ${sizeClasses[size]}
-    dark:text-white/95
-    ${className}
-  `;
+  const baseClasses = isGlassButton
+    ? `
+      ${buttonVariant === 'glass-primary' ? 'btn-glass-primary' : 'btn-glass'}
+      font-medium
+      transition-all duration-300 
+      disabled:opacity-50 disabled:cursor-not-allowed 
+      flex items-center gap-1.5 justify-center
+      ${sizeClasses[size]}
+      ${className}
+    `
+    : `
+      bg-gradient-to-r ${colorClasses}
+      backdrop-blur-sm border
+      text-white/90 font-medium rounded-md shadow-lg
+      transition-all duration-300 
+      disabled:opacity-50 disabled:cursor-not-allowed 
+      flex items-center gap-1.5 justify-center
+      ${sizeClasses[size]}
+      dark:text-white/95
+      ${className}
+    `;
 
   // Submit 버튼인 경우 absolute 위치 클래스 추가
   const submitClasses = submitType ? 'absolute bottom-4 right-2' : '';

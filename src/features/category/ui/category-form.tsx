@@ -1,6 +1,6 @@
 'use client';
 
-import { Category } from '@/entities/category/model';
+import type { Category } from '@/entities/category/model';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shadcn-ui/components/ui/form';
 import { Input } from '@/shadcn-ui/components/ui/input';
@@ -8,8 +8,7 @@ import { Textarea } from '@/shadcn-ui/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { createCategory } from '../api/category-api';
-import { CategoryFormSchema, categoryFormSchema } from '../model/category-schema';
+import { type CategoryFormSchema, categoryFormSchema } from '../model/category-schema';
 
 type CategoryFormProps = {
   onSubmit: (data: CategoryFormSchema) => Promise<void>;
@@ -39,8 +38,12 @@ const CategoryForm = ({ onSubmit, initialData }: CategoryFormProps) => {
   };
 
   const getButtonText = (loading: boolean, initData?: Category): string => {
-    if (loading) return '처리 중...';
-    if (initData) return '수정';
+    if (loading) {
+      return '처리 중...';
+    }
+    if (initData) {
+      return '수정';
+    }
     return '생성';
   };
 

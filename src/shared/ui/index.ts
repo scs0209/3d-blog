@@ -29,3 +29,4 @@ export { Button } from './Button';
 export { BaseModal } from './BaseModal';
 export * from './glassmorphism';
 export * from './toast';
+export * from './Tooltip';
