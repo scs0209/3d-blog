@@ -53,6 +53,7 @@ import { Label } from '@/shadcn-ui/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shadcn-ui/components/ui/table';
 import { type GetPostListResponse, usePostList } from '@/features/post/model';
+import { useRouter } from 'next/navigation';
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
@@ -110,7 +111,6 @@ const columns = [
     id: 'header',
     header: 'Header',
     cell: ({ row }) => {
-      console.log(row.original);
       return <div>{row.original?.title ?? ''}</div>;
     },
     enableHiding: false,
@@ -144,6 +144,7 @@ const columns = [
 ];
 
 function DraggableRow({ row }: { row: Row<PostItem> }) {
+  const router = useRouter();
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original?.id ?? 0,
   });
@@ -157,6 +158,9 @@ function DraggableRow({ row }: { row: Row<PostItem> }) {
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
+      }}
+      onClick={() => {
+        router.push(`/admin/post/${row.original?.id}`);
       }}
     >
       {row.getVisibleCells().map((cell) => (
@@ -172,7 +176,6 @@ export function PostTable() {
     page: 1,
     limit: 10,
   });
-  console.log(posts);
   const [data, setData] = React.useState(posts);
 
   const [rowSelection, setRowSelection] = React.useState({});
@@ -190,8 +193,6 @@ export function PostTable() {
     () => posts?.map((item) => item.id || 0).filter((id): id is number => id !== undefined) || [],
     [posts],
   );
-
-  console.log(dataIds);
 
   const table = useReactTable({
     data,
