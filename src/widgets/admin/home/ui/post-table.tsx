@@ -17,18 +17,16 @@ import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import {
   ChevronDown,
-  CircleCheck,
   EllipsisVertical,
   GripVertical,
   Columns2,
-  Loader,
   ChevronsLeft,
   ChevronsRight,
   ChevronRight,
 } from 'lucide-react';
 import {
-  type ColumnDef,
   type ColumnFiltersState,
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -41,7 +39,6 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { z } from 'zod';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { Checkbox } from '@/shadcn-ui/components/ui/checkbox';
 import {
@@ -52,21 +49,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shadcn-ui/components/ui/dropdown-menu';
-import { Input } from '@/shadcn-ui/components/ui/input';
 import { Label } from '@/shadcn-ui/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shadcn-ui/components/ui/table';
-import { Tag } from '@/shared/ui';
-
-export const schema = z.object({
-  id: z.number(),
-  header: z.string(),
-  type: z.string(),
-  status: z.string(),
-  target: z.string(),
-  limit: z.string(),
-  reviewer: z.string(),
-});
+import { type GetPostListResponse, usePostList } from '@/features/post/model';
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
@@ -88,13 +74,16 @@ function DragHandle({ id }: { id: number }) {
   );
 }
 
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
+type PostItem = NonNullable<GetPostListResponse['data']>[number];
+const columnHelper = createColumnHelper<PostItem>();
+
+const columns = [
+  columnHelper.accessor('id', {
     id: 'drag',
     header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
-  {
+    cell: ({ row }) => <DragHandle id={row.original?.id ?? 0} />,
+  }),
+  columnHelper.display({
     id: 'select',
     header: ({ table }) => (
       <div className='flex items-center justify-center'>
@@ -116,109 +105,23 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-  },
-  {
-    accessorKey: 'header',
+  }),
+  columnHelper.display({
+    id: 'header',
     header: 'Header',
     cell: ({ row }) => {
-      return <div>{row.original.header}</div>;
+      console.log(row.original);
+      return <div>{row.original?.title ?? ''}</div>;
     },
     enableHiding: false,
-  },
-  {
-    accessorKey: 'type',
-    header: 'Section Type',
-    cell: ({ row }) => (
-      <div className='w-32'>
-        <Tag color='orange' type='glass' className='text-muted-foreground px-1.5'>
-          {row.original.type}
-        </Tag>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => (
-      <Tag className='text-muted-foreground px-1.5'>
-        {row.original.status === 'Done' ? <CircleCheck className='fill-green-500 dark:fill-green-400' /> : <Loader />}
-        {row.original.status}
-      </Tag>
-    ),
-  },
-  {
-    accessorKey: 'target',
-    header: () => <div className='w-full text-right'>Target</div>,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-target`} className='sr-only'>
-          Target
-        </Label>
-        <Input
-          className='hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent'
-          defaultValue={row.original.target}
-          id={`${row.original.id}-target`}
-        />
-      </form>
-    ),
-  },
-  {
-    accessorKey: 'limit',
-    header: () => <div className='w-full text-right'>Limit</div>,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-limit`} className='sr-only'>
-          Limit
-        </Label>
-        <Input
-          className='hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent'
-          defaultValue={row.original.limit}
-          id={`${row.original.id}-limit`}
-        />
-      </form>
-    ),
-  },
-  {
-    accessorKey: 'reviewer',
-    header: 'Reviewer',
-    cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== 'Assign reviewer';
-
-      if (isAssigned) {
-        return row.original.reviewer;
-      }
-
-      return (
-        <>
-          <Label htmlFor={`${row.original.id}-reviewer`} className='sr-only'>
-            Reviewer
-          </Label>
-          <Select>
-            <SelectTrigger
-              className='w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate'
-              size='sm'
-              id={`${row.original.id}-reviewer`}
-            >
-              <SelectValue placeholder='Assign reviewer' />
-            </SelectTrigger>
-            <SelectContent align='end'>
-              <SelectItem value='Eddie Lake'>Eddie Lake</SelectItem>
-              <SelectItem value='Jamik Tashpulatov'>Jamik Tashpulatov</SelectItem>
-            </SelectContent>
-          </Select>
-        </>
-      );
+  }),
+  columnHelper.accessor('author.name', {
+    header: 'Author',
+    cell: ({ getValue }) => {
+      return <div>{getValue() ?? ''}</div>;
     },
-  },
-  {
+  }),
+  columnHelper.display({
     id: 'actions',
     cell: () => (
       <DropdownMenu>
@@ -237,12 +140,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         </DropdownMenuContent>
       </DropdownMenu>
     ),
-  },
+  }),
 ];
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
+function DraggableRow({ row }: { row: Row<PostItem> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
+    id: row.original?.id ?? 0,
   });
 
   return (
@@ -263,12 +166,15 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   );
 }
 
-export function PostTable({
-  data: initialData,
-}: {
-  data: z.infer<typeof schema>[];
-}) {
-  const [data, setData] = React.useState(() => initialData);
+export function PostTable() {
+  const { posts, isLoading } = usePostList({
+    search: '',
+    page: 1,
+    limit: 10,
+  });
+  console.log(posts);
+  const [data, setData] = React.useState(posts);
+
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -280,7 +186,12 @@ export function PostTable({
   const sortableId = React.useId();
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
-  const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
+  const dataIds = React.useMemo<UniqueIdentifier[]>(
+    () => posts?.map((item) => item.id || 0).filter((id): id is number => id !== undefined) || [],
+    [posts],
+  );
+
+  console.log(dataIds);
 
   const table = useReactTable({
     data,
@@ -292,7 +203,10 @@ export function PostTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.id.toString(),
+    manualSorting: true,
+    manualPagination: true,
+    manualFiltering: true,
+    getRowId: (row) => row.id?.toString() ?? '',
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -317,6 +231,12 @@ export function PostTable({
       });
     }
   }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  React.useEffect(() => {
+    if (isLoading) return;
+    setData(posts);
+  }, [isLoading]);
 
   return (
     <>

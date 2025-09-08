@@ -1,4 +1,4 @@
-import { useInfiniteQuery, keepPreviousData } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, keepPreviousData } from '@tanstack/react-query';
 import { getPostList } from '../api/post-api';
 import { queryKeys } from '@/shared/queryKeys';
 import type { GetPostListResponse } from './post-types';
@@ -32,6 +32,20 @@ export const usePost = <T extends GetPostListResponse>(params: GetPostListParams
 
   return {
     posts: data,
+    ...rest,
+  };
+};
+
+export const usePostList = (params: GetPostListParams) => {
+  const { data, ...rest } = useQuery<GetPostListResponse>({
+    queryKey: queryKeys.post.all(params).queryKey,
+    queryFn: () => getPostList(params),
+    placeholderData: keepPreviousData,
+  });
+
+  return {
+    posts: data?.data ?? [],
+    meta: data?.meta,
     ...rest,
   };
 };
