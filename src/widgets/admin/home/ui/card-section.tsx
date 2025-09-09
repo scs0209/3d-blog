@@ -13,7 +13,7 @@ export function SectionCards() {
           <CardDescription>Total Revenue</CardDescription>
           <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>$1,250.00</CardTitle>
           <CardAction>
-            <Tag color='blue' size='sm' className='flex items-center gap-2'>
+            <Tag color='blue' size='sm' type='glass' className='flex items-center gap-2 border-white/30'>
               <TrendingUp />
               +12.5%
             </Tag>
@@ -31,7 +31,7 @@ export function SectionCards() {
           <CardDescription>New Customers</CardDescription>
           <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>1,234</CardTitle>
           <CardAction>
-            <Tag color='blue' size='sm' className='flex items-center gap-2'>
+            <Tag color='amber' size='sm' type='glass' className='flex items-center gap-2'>
               <TrendingDown />
               -20%
             </Tag>
@@ -49,7 +49,7 @@ export function SectionCards() {
           <CardDescription>Active Accounts</CardDescription>
           <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>45,678</CardTitle>
           <CardAction>
-            <Tag color='blue' size='sm' className='flex items-center gap-2'>
+            <Tag color='purple' size='sm' type='glass' className='flex items-center gap-2'>
               <TrendingUp />
               +12.5%
             </Tag>
@@ -67,7 +67,7 @@ export function SectionCards() {
           <CardDescription>Growth Rate</CardDescription>
           <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>4.5%</CardTitle>
           <CardAction>
-            <Tag color='blue' size='sm' className='flex items-center gap-2'>
+            <Tag color='green' size='sm' type='glass' className='flex items-center gap-2'>
               <TrendingUp />
               +4.5%
             </Tag>
