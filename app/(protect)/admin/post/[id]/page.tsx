@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shadcn-ui/components
 import { Tag as TagComponent, useToast } from '@/shared/ui';
 import { Save, Trash2, Calendar, User, Tag, Loader2 } from 'lucide-react';
 
-export default function TestPage({
+export default function PostUpdatePage({
   params,
 }: {
   params: Promise<{ id: string }>;
