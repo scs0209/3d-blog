@@ -40,8 +40,13 @@ export default function CodeBlock(props: any) {
       try {
         const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
+        // HTML 엔티티 디코딩
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = textContent;
+        const decodedTextContent = textarea.value;
+
         mermaid
-          .render(id, textContent)
+          .render(id, decodedTextContent)
           .then(({ svg }) => {
             if (previewer.current) {
               previewer.current.innerHTML = svg;
@@ -60,62 +65,63 @@ export default function CodeBlock(props: any) {
   }, [mode, textContent, isMermaid]);
 
   return (
-    <NodeViewWrapper className='code-block relative'>
-      {isMermaid && isAdmin && (
-        <button
-          type='button'
-          contentEditable={false}
-          onClick={() => {
-            updateAttributes({
-              language: defaultLanguage,
-              mode: mode === Mode.Edit ? Mode.Preview : Mode.Edit,
-            });
-          }}
-          className='absolute top-2 left-2 btn-glass-float text-xs font-medium z-20 p-2'
-        >
-          {mode === Mode.Edit ? '미리보기' : '편집'}
-        </button>
-      )}
+    <NodeViewWrapper>
+      <pre>
+        {/* 상단 컨트롤 바 */}
+        <div className='flex items-center justify-between bg-gray-800 px-3 py-2'>
+          <div className='flex items-center gap-2'>
+            {isMermaid && isAdmin && (
+              <button
+                type='button'
+                contentEditable={false}
+                onClick={() => {
+                  updateAttributes({
+                    language: defaultLanguage,
+                    mode: mode === Mode.Edit ? Mode.Preview : Mode.Edit,
+                  });
+                }}
+                className='text-xs font-medium px-3 py-1.5 rounded-md bg-gray-700 hover:bg-gray-600 transition-colors text-white'
+              >
+                {mode === Mode.Edit ? '미리보기' : '편집'}
+              </button>
+            )}
+          </div>
 
-      <select
-        contentEditable={false}
-        defaultValue={defaultLanguage}
-        onChange={(event) =>
-          updateAttributes({
-            language: event.target.value,
-            mode: mode,
-          })
-        }
-        className='absolute top-2 right-2 btn-glass text-xs px-2 py-1 z-10'
-      >
-        <option value='null' className='bg-gray-800 text-white'>
-          auto
-        </option>
-        <option value='mermaid' className='bg-gray-800 text-white'>
-          mermaid
-        </option>
-        <option disabled className='bg-gray-800 text-white'>
-          —
-        </option>
-        {extension.options.lowlight.listLanguages().map((lang: string) => (
-          <option key={lang} value={lang} className='bg-gray-800 text-white'>
-            {lang}
-          </option>
-        ))}
-      </select>
+          <select
+            contentEditable={false}
+            defaultValue={defaultLanguage}
+            onChange={(event) =>
+              updateAttributes({
+                language: event.target.value,
+                mode: mode,
+              })
+            }
+            className='text-xs px-3 py-1.5 rounded-md bg-gray-700 border border-gray-600 hover:bg-gray-600 transition-colors text-white'
+          >
+            <option value='null' className='bg-gray-800 text-white'>
+              auto
+            </option>
+            <option value='mermaid' className='bg-gray-800 text-white'>
+              mermaid
+            </option>
+            <option disabled className='bg-gray-800 text-white'>
+              —
+            </option>
+            {extension.options.lowlight.listLanguages().map((lang: string) => (
+              <option key={lang} value={lang} className='bg-gray-800 text-white'>
+                {lang}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <pre hidden={isMermaid && mode === Mode.Preview}>
-        <NodeViewContent as='code' />
+        {/* 코드 블록 컨텐츠 */}
+        <pre hidden={isMermaid && mode === Mode.Preview} className='text-sm text-gray-100 overflow-x-auto'>
+          <NodeViewContent as='code' />
+        </pre>
+
+        {isMermaid && <pre contentEditable={false} hidden={mode === Mode.Edit} ref={previewer} />}
       </pre>
-
-      {isMermaid && (
-        <pre
-          className='preview bg-white p-4 rounded-lg overflow-auto'
-          contentEditable={false}
-          hidden={mode === Mode.Edit}
-          ref={previewer}
-        />
-      )}
     </NodeViewWrapper>
   );
 }
