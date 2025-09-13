@@ -55,12 +55,10 @@ test('should throw an error if required fields for update are missing', async ()
 
 test('should throw an error if user ID is missing for update', async () => {
   const user = {
-    id: 1,
+    // id가 없는 경우
     name: 'Rich Haines',
     email: 'hello@prisma.io',
     password: 'securepassword',
-    createdAt: new Date(),
-    role: Role.USER,
   };
 
   await expect(updateUsername(user)).rejects.toThrowError('User ID is required for update!');
