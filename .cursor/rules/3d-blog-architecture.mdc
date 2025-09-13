@@ -31,6 +31,7 @@ alwaysApply: true
 │   ├── (protect)/    # 보호된 라우트 (admin 페이지)
 │   ├── (public)/     # 공개 라우트 (blog, portfolio, login 등)
 │   └── api/          # 백엔드 API 엔드포인트
+│       └── users/    # 사용자 정보 API
 └── src/
     ├── app/          # 애플리케이션 설정 (Providers)
     ├── entities/     # 도메인 엔티티 (category, comment, post, tag, user 등)
