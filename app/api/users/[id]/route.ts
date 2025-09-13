@@ -56,15 +56,16 @@ import { getUserById } from '@/features/user/api/user-api';
  *       500:
  *         description: 서버 에러
  */
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
-    const user = await getUserById(Number(params.id));
+    const user = await getUserById(Number(id));
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     return NextResponse.json(user);
   } catch (error) {
-    console.error(`Failed to get user with id ${params.id}:`, error);
+    console.error(`Failed to get user with id ${id}:`, error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
