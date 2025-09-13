@@ -1474,7 +1474,37 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * 모든 사용자 목록 조회
+         * @description 모든 사용자 목록을 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 사용자 목록 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"][];
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         put?: never;
         /** Create a new user (User Registration) */
         post: {
@@ -1559,6 +1589,90 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 사이트 통계 조회
+         * @description 게시물, 사용자, 댓글, 조회수의 월별 통계를 조회합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 통계 데이터 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            posts?: {
+                                /** @description 전체 게시물 수 */
+                                total?: number;
+                                /** @description 이번달 게시물 수 */
+                                thisMonth?: number;
+                                /** @description 저번달 게시물 수 */
+                                lastMonth?: number;
+                            };
+                            users?: {
+                                /** @description 전체 사용자 수 */
+                                total?: number;
+                                /** @description 이번달 가입자 수 */
+                                thisMonth?: number;
+                                /** @description 저번달 가입자 수 */
+                                lastMonth?: number;
+                            };
+                            comments?: {
+                                /** @description 전체 댓글 수 */
+                                total?: number;
+                                /** @description 이번달 댓글 수 */
+                                thisMonth?: number;
+                                /** @description 저번달 댓글 수 */
+                                lastMonth?: number;
+                            };
+                            views?: {
+                                /** @description 전체 조회수 */
+                                total?: number;
+                                /** @description 이번달 조회수 */
+                                thisMonth?: number;
+                                /** @description 저번달 조회수 */
+                                lastMonth?: number;
+                            };
+                        };
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Failed to fetch stats */
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1911,6 +2025,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    schema: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 사용자 정보 조회
+         * @description ID를 사용하여 특정 사용자 정보를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 사용자 ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 사용자 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description 사용자를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 전체 사용자 수 조회
+         * @description 전체 사용자 수를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 사용자 수 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            count?: number;
+                        };
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/visitor": {
         parameters: {
             query?: never;
@@ -2017,6 +2251,7 @@ export interface components {
                 posts?: number;
             };
         };
+        User: never;
     };
     responses: never;
     parameters: never;
