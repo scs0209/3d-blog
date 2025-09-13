@@ -158,6 +158,7 @@ const AuthSidebar = () => {
             <div className='flex gap-3 justify-center'>
               {/* Category Modal Icon */}
               <div
+                className='relative'
                 onMouseEnter={() => setCategoryHover(true)}
                 onMouseLeave={() => setCategoryHover(false)}
                 onMouseDown={() => setCategoryActive(true)}
@@ -168,13 +169,14 @@ const AuthSidebar = () => {
                     <Folder className='w-5 h-5 text-white/70 hover:text-white/90 transition-colors' />
                   </div>
                 </Tooltip>
-                <div className='absolute inset-0 pointer-events-auto z-10'>
+                <div className='absolute inset-0 z-[51]'>
                   <CategoryModal />
                 </div>
               </div>
 
               {/* Tag Modal Icon */}
               <div
+                className='relative'
                 onMouseEnter={() => setTagHover(true)}
                 onMouseLeave={() => setTagHover(false)}
                 onMouseDown={() => setTagActive(true)}
@@ -185,7 +187,7 @@ const AuthSidebar = () => {
                     <Hash className='w-5 h-5 text-white/70 hover:text-white/90 transition-colors' />
                   </div>
                 </Tooltip>
-                <div className='absolute inset-0 pointer-events-auto z-10'>
+                <div className='absolute inset-0 z-[51]'>
                   <CreateTagModal />
                 </div>
               </div>

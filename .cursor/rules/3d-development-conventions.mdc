@@ -1,7 +1,5 @@
 ---
-description: 
-globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 # 3D 개발 컨벤션 및 베스트 프랙티스
 
