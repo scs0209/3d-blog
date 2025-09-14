@@ -12,209 +12,191 @@ jobs:
   ai-pr-writer:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # steps:
-    #   - uses: actions/checkout@v4
-    #     with:
-    #       fetch-depth: 0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
           
-    #   - name: 시스템 정보 확인
-    #     run: |
-    #       echo "=== 시스템 정보 ==="
-    #       uname -a
-    #       free -h
-    #       df -h
+      - name: 시스템 정보 확인
+        run: |
+          echo "=== 시스템 정보 ==="
+          uname -a
+          free -h
+          df -h
           
-    #   - name: 시스템 정보 확인
-    #     run: |
-    #       echo "=== 시스템 정보 ==="
-    #       uname -a
-    #       free -h
-    #       df -h
+      - name: 시스템 정보 확인
+        run: |
+          echo "=== 시스템 정보 ==="
+          uname -a
+          free -h
+          df -h
           
-    #   - name: Node.js 설정
-    #     uses: actions/setup-node@v4
-    #     with:
-    #       node-version: '18'
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
           
-    #   - name: pnpm 설치
-    #     run: npm install -g pnpm
+      - name: pnpm 설치
+        run: npm install -g pnpm
         
-    #   - name: 의존성 설치
-    #     run: pnpm install
+      - name: 의존성 설치
+        run: pnpm install
         
-    #   - name: AI PR 자동 생성
-    #     env:
-    #       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-    #     run: |
-    #       echo "AI PR 자동 생성 시작..."
-    #       node scripts/ai-pr.mjs ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
+      - name: AI PR 자동 생성
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "AI PR 자동 생성 시작..."
+          node scripts/ai-pr.mjs ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
           
-    #       # 결과 파일 확인
-    #       if [ -f "pr_title.txt" ] && [ -f "pr_body.txt" ] && [ -f "change_summary.txt" ]; then
-    #         echo "✅ PR 내용 생성 완료"
-    #         echo "제목: $(cat pr_title.txt)"
-    #         echo "요약: $(cat change_summary.txt)"
-    #       else
-    #         echo "❌ PR 내용 생성 실패"
-    #         exit 1
-    #       fi
+          # 결과 파일 확인
+          if [ -f "pr_title.txt" ] && [ -f "pr_body.txt" ] && [ -f "change_summary.txt" ]; then
+            echo "✅ PR 내용 생성 완료"
+            echo "제목: $(cat pr_title.txt)"
+            echo "요약: $(cat change_summary.txt)"
+          else
+            echo "❌ PR 내용 생성 실패"
+            exit 1
+          fi
           
-    #   - name: 결과 파일 확인
-    #     run: |
-    #       echo "=== 생성된 결과 확인 ==="
-    #       if [ -f "pr_title.txt" ]; then
-    #         echo "✅ 제목 파일 생성됨"
-    #         echo "제목: $(cat pr_title.txt)"
-    #       else
-    #         echo "❌ 제목 파일 없음"
-    #       fi
+      - name: 결과 파일 확인
+        run: |
+          echo "=== 생성된 결과 확인 ==="
+          if [ -f "pr_title.txt" ]; then
+            echo "✅ 제목 파일 생성됨"
+            echo "제목: $(cat pr_title.txt)"
+          else
+            echo "❌ 제목 파일 없음"
+          fi
           
-    #       if [ -f "pr_body.txt" ]; then
-    #         echo "✅ 본문 파일 생성됨"
-    #         echo "본문 길이: $(wc -c < pr_body.txt) 문자"
-    #       else
-    #         echo "❌ 본문 파일 없음"
-    #       fi
+          if [ -f "pr_body.txt" ]; then
+            echo "✅ 본문 파일 생성됨"
+            echo "본문 길이: $(wc -c < pr_body.txt) 문자"
+          else
+            echo "❌ 본문 파일 없음"
+          fi
           
-    #       if [ -f "change_summary.txt" ]; then
-    #         echo "✅ 요약 파일 생성됨"
-    #         echo "요약: $(cat change_summary.txt)"
-    #       else
-    #         echo "❌ 요약 파일 없음"
-    #       fi
+          if [ -f "change_summary.txt" ]; then
+            echo "✅ 요약 파일 생성됨"
+            echo "요약: $(cat change_summary.txt)"
+          else
+            echo "❌ 요약 파일 없음"
+          fi
                     
-    #   - name: PR 제목 및 본문 업데이트
-    #     uses: actions/github-script@v7
-    #     with:
-    #       github-token: ${{ secrets.GITHUB_TOKEN }}
-    #       script: |
-    #         const fs = require('fs');
+      - name: PR 제목 및 본문 업데이트
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
             
-    #         try {
-    #           // 생성된 PR 정보 읽기
-    #           const prTitle = fs.readFileSync('pr_title.txt', 'utf8').trim();
-    #           const prBody = fs.readFileSync('pr_body.txt', 'utf8').trim();
-    #           const changeSummary = fs.readFileSync('change_summary.txt', 'utf8').trim();
+            try {
+              // 생성된 PR 정보 읽기
+              const prTitle = fs.readFileSync('pr_title.txt', 'utf8').trim();
+              const prBody = fs.readFileSync('pr_body.txt', 'utf8').trim();
+              const changeSummary = fs.readFileSync('change_summary.txt', 'utf8').trim();
               
-    #           const prNumber = context.payload.pull_request.number;
-    #           const currentPr = context.payload.pull_request;
+              const prNumber = context.payload.pull_request.number;
+              const currentPr = context.payload.pull_request;
               
-    #           // 환경변수에서 통계 정보 가져오기
-    #           const totalFiles = process.env.TOTAL_FILES || '0';
-    #           const codeFiles = process.env.CODE_FILES || '0';
-    #           const configFiles = process.env.CONFIG_FILES || '0';
-    #           const docFiles = process.env.DOC_FILES || '0';
+              // 환경변수에서 통계 정보 가져오기
+              const totalFiles = process.env.TOTAL_FILES || '0';
+              const codeFiles = process.env.CODE_FILES || '0';
+              const configFiles = process.env.CONFIG_FILES || '0';
+              const docFiles = process.env.DOC_FILES || '0';
               
-    #           // 자동 생성 표시 추가
-    #           const autoGeneratedNote = `
+              // 자동 생성 표시 추가
+              const autoGeneratedNote = `
 
-    #         ---
+            ---
 
-    #         <details>
-    #         <summary>🤖 AI 자동 생성 정보</summary>
+            <details>
+            <summary>🤖 AI 자동 생성 정보</summary>
 
-    #         **생성 시간**: ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}
-    #         **분석된 파일**: ${totalFiles}개 (코드: ${codeFiles}, 설정: ${configFiles}, 문서: ${docFiles})
-    #         **AI 모델**: gemini-2.5-pro
-    #         **변경사항 요약**: ${changeSummary}
+            **생성 시간**: ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}
+            **분석된 파일**: ${totalFiles}개 (코드: ${codeFiles}, 설정: ${configFiles}, 문서: ${docFiles})
+            **AI 모델**: gemini-2.5-pro
+            **변경사항 요약**: ${changeSummary}
 
-    #         > ⚠️ 이 PR 내용은 AI가 자동으로 생성했습니다. 
-    #         > 내용을 검토하고 필요에 따라 수정해주세요.
+            > ⚠️ 이 PR 내용은 AI가 자동으로 생성했습니다. 
+            > 내용을 검토하고 필요에 따라 수정해주세요.
 
-    #         </details>`;
+            </details>`;
           
-    #           const finalPrBody = prBody + autoGeneratedNote;
+              const finalPrBody = prBody + autoGeneratedNote;
               
-    #           // PR 제목이 현재 제목과 다르고, 기본 제목이 아닌 경우에만 업데이트
-    #           const shouldUpdateTitle = prTitle && 
-    #             prTitle !== currentPr.title && 
-    #             !currentPr.title.startsWith('feat:') && 
-    #             !currentPr.title.startsWith('fix:') && 
-    #             !currentPr.title.startsWith('docs:') && 
-    #             !currentPr.title.startsWith('style:') && 
-    #             !currentPr.title.startsWith('refactor:') && 
-    #             !currentPr.title.startsWith('test:') && 
-    #             !currentPr.title.startsWith('chore:');
+              // PR 제목이 현재 제목과 다르고, 기본 제목이 아닌 경우에만 업데이트
+              const shouldUpdateTitle = prTitle && 
+                prTitle !== currentPr.title && 
+                !currentPr.title.startsWith('feat:') && 
+                !currentPr.title.startsWith('fix:') && 
+                !currentPr.title.startsWith('docs:') && 
+                !currentPr.title.startsWith('style:') && 
+                !currentPr.title.startsWith('refactor:') && 
+                !currentPr.title.startsWith('test:') && 
+                !currentPr.title.startsWith('chore:');
               
-    #           // PR 본문은 무조건 업데이트
-    #           await github.rest.pulls.update({
-    #             owner: context.repo.owner,
-    #             repo: context.repo.repo,
-    #             pull_number: prNumber,
-    #             title: shouldUpdateTitle ? prTitle : currentPr.title,
-    #             body: finalPrBody // 본문은 항상 업데이트
-    #           });
+              // PR 본문은 무조건 업데이트
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                title: shouldUpdateTitle ? prTitle : currentPr.title,
+                body: finalPrBody // 본문은 항상 업데이트
+              });
               
-    #           console.log('✅ PR 본문 무조건 업데이트 완료');
+              console.log('✅ PR 본문 무조건 업데이트 완료');
               
-    #           // 업데이트 결과 코멘트 추가
-    #           const updateComment = `## 🤖 AI PR 자동 작성 완료
+              // 업데이트 결과 코멘트 추가
+              const updateComment = `## 🤖 AI PR 자동 작성 완료
 
-    #         **업데이트 내용:**
-    #         ${shouldUpdateTitle ? `- ✅ 제목 자동 생성: "${prTitle}"` : '- ⏭️ 제목 유지 (기존 제목 보존)'}
-    #         - ✅ 본문 무조건 자동 생성 및 업데이트
+            **업데이트 내용:**
+            ${shouldUpdateTitle ? `- ✅ 제목 자동 생성: "${prTitle}"` : '- ⏭️ 제목 유지 (기존 제목 보존)'}
+            - ✅ 본문 무조건 자동 생성 및 업데이트
 
-    #         **분석 결과:**
-    #         - 📁 총 변경 파일: ${totalFiles}개
-    #         - 💻 코드 파일: ${codeFiles}개
-    #         - ⚙️ 설정 파일: ${configFiles}개
-    #         - 📚 문서 파일: ${docFiles}개
+            **분석 결과:**
+            - 📁 총 변경 파일: ${totalFiles}개
+            - 💻 코드 파일: ${codeFiles}개
+            - ⚙️ 설정 파일: ${configFiles}개
+            - 📚 문서 파일: ${docFiles}개
 
-    #         **핵심 변경사항:**
-    #         ${changeSummary}
+            **핵심 변경사항:**
+            ${changeSummary}
 
-    #         > 💡 **참고**: PR 제목은 조건부, 본문은 항상 자동으로 생성 및 업데이트됩니다. 필요에 따라 수정해주세요.
+            > 💡 **참고**: PR 제목은 조건부, 본문은 항상 자동으로 생성 및 업데이트됩니다. 필요에 따라 수정해주세요.
 
-    #         ---
-    #         *Generated by AI PR Auto Writer • ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*`;
+            ---
+            *Generated by AI PR Auto Writer • ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*`;
 
-    #           await github.rest.issues.createComment({
-    #             issue_number: prNumber,
-    #             owner: context.repo.owner,
-    #             repo: context.repo.repo,
-    #             body: updateComment
-    #           });
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: updateComment
+              });
               
-    #         } catch (error) {
-    #           console.error('PR 업데이트 실패:', error.message);
-    #           core.setFailed(`PR 업데이트에 실패했습니다: ${error.message}`);
+            } catch (error) {
+              console.error('PR 업데이트 실패:', error.message);
+              core.setFailed(`PR 업데이트에 실패했습니다: ${error.message}`);
               
-    #           // 오류 발생 시 코멘트 작성
-    #           const errorComment = `## 🤖 AI PR 자동 작성 오류
+              // 오류 발생 시 코멘트 작성
+              const errorComment = `## 🤖 AI PR 자동 작성 오류
 
-    #         **오류 내용:** ${error.message}
+            **오류 내용:** ${error.message}
 
-    #         PR 자동 작성 중 오류가 발생했습니다. 수동으로 PR 내용을 작성해주세요.
+            PR 자동 작성 중 오류가 발생했습니다. 수동으로 PR 내용을 작성해주세요.
 
-    #         ---
-    #         *Generated by AI PR Auto Writer • ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*`;
+            ---
+            *Generated by AI PR Auto Writer • ${new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})}*`;
 
-    #           try {
-    #             await github.rest.issues.createComment({
-    #               issue_number: context.payload.pull_request.number,
-    #               owner: context.repo.owner,
-    #               repo: context.repo.repo,
-    #               body: errorComment
-    #             });
-    #           } catch (commentError) {
-    #             console.error('오류 코멘트 작성 실패:', commentError.message);
-    #           }
-    #         }
-            
-    #   - name: 처리 결과 분석
-    #     run: |
-    #       echo "=== AI PR 자동 작성 완료 ==="
-    #       echo "- 총 변경 파일: ${TOTAL_FILES:-0}개"
-    #       echo "- 코드 파일: ${CODE_FILES:-0}개"
-    #       echo "- 설정 파일: ${CONFIG_FILES:-0}개"
-    #       echo "- 문서 파일: ${DOC_FILES:-0}개"
-          
-    #       if [ -f "pr_title.txt" ]; then
-    #         echo "- 생성된 제목: $(cat pr_title.txt)"
-    #       fi
-          
-    #       if [ -f "change_summary.txt" ]; then
-    #         echo "- 변경사항 요약: $(cat change_summary.txt)"
-    #       fi
-          
-    #       echo "=== 처리 완료 ==="
+              try {
+                await github.rest.issues.createComment({
+                  issue_number: context.payload.pull_request.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: errorComment
+                });
+              } catch (commentError) {
+                console.error('오류 코멘트 작성 실패:', commentError.message);
+              }
+            }
