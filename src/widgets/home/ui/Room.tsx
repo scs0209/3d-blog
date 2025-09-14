@@ -72,5 +72,3 @@ export function RoomModel(props: any) {
     </group>
   );
 }
-
-useGLTF.preload('/challenge_isometric_room--kidnap.glb');
