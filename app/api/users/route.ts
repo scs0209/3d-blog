@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getUsers } from '@/features/user/api/user-api';
+import { getUsersOnServer } from '@/features/user/api/user-api';
 
 /**
  * @swagger
@@ -23,7 +23,7 @@ import { getUsers } from '@/features/user/api/user-api';
  */
 export async function GET() {
   try {
-    const users = await getUsers();
+    const users = await getUsersOnServer();
     return NextResponse.json(users);
   } catch (error) {
     console.error('Failed to get users:', error);
