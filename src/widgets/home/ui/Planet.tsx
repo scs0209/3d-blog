@@ -12,10 +12,10 @@ export function Planet(props: any) {
   const group = useRef<Group>(null);
   const { nodes, materials, animations } = useGLTF(
     '/earth_globe_hologram_2mb_looping_animation.glb',
+    true,
   ) as unknown as GLTFResult;
   const { actions } = useAnimations(animations, group);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // 모든 애니메이션 실행
     for (const action of Object.values(actions)) {
@@ -73,5 +73,3 @@ export function Planet(props: any) {
     </group>
   );
 }
-
-useGLTF.preload('/earth_globe_hologram_2mb_looping_animation.glb');

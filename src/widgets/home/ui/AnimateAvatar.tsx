@@ -13,7 +13,7 @@ type GLTFResult = GLTF & {
 
 export function AnimateAvatar(props: any) {
   const group = useRef<Group>(null);
-  const { nodes, materials, animations } = useGLTF('/floating_astronaut.glb') as unknown as GLTFResult;
+  const { nodes, materials, animations } = useGLTF('/floating_astronaut.glb', true) as unknown as GLTFResult;
   const { actions } = useAnimations(animations, group);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -94,5 +94,3 @@ export function AnimateAvatar(props: any) {
     </group>
   );
 }
-
-useGLTF.preload('/floating_astronaut.glb');

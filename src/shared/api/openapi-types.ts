@@ -2025,22 +2025,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    schema: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/users/{id}": {
         parameters: {
             query?: never;
@@ -2089,7 +2073,56 @@ export interface paths {
                 };
             };
         };
-        put?: never;
+        /**
+         * 사용자 정보 수정
+         * @description ID를 사용하여 특정 사용자 정보를 수정합니다.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 사용자 ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        email?: string;
+                        /** @enum {string} */
+                        role?: "USER" | "ADMIN";
+                    };
+                };
+            };
+            responses: {
+                /** @description 수정된 사용자 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description 사용자를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         post?: never;
         delete?: never;
         options?: never;
@@ -2251,7 +2284,19 @@ export interface components {
                 posts?: number;
             };
         };
-        User: never;
+        User: {
+            id?: number;
+            name?: string;
+            email?: string;
+            /** @enum {string} */
+            role?: "USER" | "ADMIN";
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
     };
     responses: never;
     parameters: never;

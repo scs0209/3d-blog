@@ -15,7 +15,7 @@ export function WalkingAvatar(props: any & { triggerSnp?: number }) {
   const { triggerSnp, ...restProps } = props;
   const group = useRef<Group>(null);
   const mixer = useRef<three.AnimationMixer | null>(null);
-  const { nodes, materials, animations: gltfAnimations } = useGLTF('/WalkingAstro.glb') as unknown as GLTFResult;
+  const { nodes, materials, animations: gltfAnimations } = useGLTF('/WalkingAstro.glb', true) as unknown as GLTFResult;
   const snpModel = useFBX('/snp.fbx');
   const typingModel = useFBX('/Typing.fbx');
 
@@ -290,5 +290,3 @@ export function WalkingAvatar(props: any & { triggerSnp?: number }) {
     </group>
   );
 }
-
-useGLTF.preload('/WalkingAstro.glb');

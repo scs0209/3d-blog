@@ -1,8 +1,9 @@
 'use client';
 
-import { createContext, useContext, useReducer, useCallback, type ReactNode, useMemo } from 'react';
+import { createContext, useContext, useReducer, useCallback, type ReactNode, useMemo, useEffect } from 'react';
 import type { Toast, ToastOptions, ToastContextType, ToastPosition } from './types';
 import { ToastContainer } from './ToastContainer';
+import { toastEmitter } from './useToast';
 
 // 토스트 액션 타입
 type ToastAction =
@@ -127,6 +128,21 @@ export function ToastProvider({ children, maxToasts = 5 }: ToastProviderProps) {
   const clearToasts = useCallback(() => {
     dispatch({ type: 'CLEAR_TOASTS' });
   }, []);
+
+  // toastEmitter 구독
+  useEffect(() => {
+    const unsubscribeAdd = toastEmitter.subscribe('add', addToast);
+    const unsubscribeRemove = toastEmitter.subscribe('remove', removeToast);
+    const unsubscribeUpdate = toastEmitter.subscribe('update', updateToast);
+    const unsubscribeClear = toastEmitter.subscribe('clear', clearToasts);
+
+    return () => {
+      unsubscribeAdd();
+      unsubscribeRemove();
+      unsubscribeUpdate();
+      unsubscribeClear();
+    };
+  }, [addToast, removeToast, updateToast, clearToasts]);
 
   const toastsByPosition = state.toasts.reduce(
     (acc, toast) => {

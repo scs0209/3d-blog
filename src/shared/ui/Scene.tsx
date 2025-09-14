@@ -1,12 +1,11 @@
 'use client';
 
 import { Model as RoomModel } from '@/shared/ui/Room';
-import { Float, useGLTF } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import type React from 'react';
 import { useRef, useEffect, useState } from 'react';
 import * as three from 'three';
-import { Atom } from './Atom';
 import { CubeModel } from './Cube';
 import { NeuralNetwork } from './NeutralNetwork';
 import { useTheme } from 'next-themes';
@@ -176,14 +175,11 @@ export const Scene = (props: React.ComponentProps<'group'> & { onCubeClick?: () 
               <fog attach='fog' args={['#202025', 0, 80]} />
 
               {theme === 'light' && !isCubeActive && (
-                <>
-                  <Float speed={4} rotationIntensity={1} floatIntensity={2}>
-                    <Atom />
-                  </Float>
+                
                   <EffectComposer>
                     <Bloom mipmapBlur luminanceThreshold={1} radius={0.7} intensity={0.5} />
                   </EffectComposer>
-                </>
+                  
               )}
             </group>
 
@@ -409,5 +405,3 @@ export const Scene = (props: React.ComponentProps<'group'> & { onCubeClick?: () 
     </>
   );
 };
-
-useGLTF.preload('/space_boi.glb');

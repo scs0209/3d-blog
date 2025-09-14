@@ -200,21 +200,3 @@ jobs:
                 console.error('오류 코멘트 작성 실패:', commentError.message);
               }
             }
-            
-      - name: 처리 결과 분석
-        run: |
-          echo "=== AI PR 자동 작성 완료 ==="
-          echo "- 총 변경 파일: ${TOTAL_FILES:-0}개"
-          echo "- 코드 파일: ${CODE_FILES:-0}개"
-          echo "- 설정 파일: ${CONFIG_FILES:-0}개"
-          echo "- 문서 파일: ${DOC_FILES:-0}개"
-          
-          if [ -f "pr_title.txt" ]; then
-            echo "- 생성된 제목: $(cat pr_title.txt)"
-          fi
-          
-          if [ -f "change_summary.txt" ]; then
-            echo "- 변경사항 요약: $(cat change_summary.txt)"
-          fi
-          
-          echo "=== 처리 완료 ==="

@@ -394,5 +394,3 @@ export function Earth(props: React.ComponentProps<'group'>) {
     </group>
   );
 }
-
-useGLTF.preload('/earth_cartoon.glb');

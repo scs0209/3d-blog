@@ -1,8 +1,14 @@
 'use client';
 
 import { Navbar } from '@/shared/ui';
-import { HomeCanvas } from '@/views/home';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+const HomeCanvas = dynamic(() => import('@/views/home').then(mod => mod.HomeCanvas), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const HomePage = () => {
   const [isCubeClicked, setIsCubeClicked] = useState(false);
@@ -11,7 +17,9 @@ const HomePage = () => {
     <div className={`w-screen h-screen ${isCubeClicked ? 'bg-slate-900' : 'scene-wrapper'} dark:bg-none`}>
       <Navbar />
 
-      <HomeCanvas onCubeClick={setIsCubeClicked} />
+      <Suspense fallback={<p>Loading...</p>}>
+        <HomeCanvas onCubeClick={setIsCubeClicked} />
+      </Suspense>
     </div>
   );
 };

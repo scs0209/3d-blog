@@ -35,6 +35,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   type Row,
+  type RowData,
   type SortingState,
   useReactTable,
   type VisibilityState,
@@ -54,6 +55,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shadcn-ui/components/ui/table';
 import { type GetPostListResponse, usePostList } from '@/features/post/model';
 import { useRouter } from 'next/navigation';
+import { deletePost } from '@/features/post/api/post-api';
+import { toast } from '@/shared/ui/toast/useToast';
+
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData> {
+    refetch?: () => void;
+  }
+}
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
@@ -123,7 +132,7 @@ const columns = [
   }),
   columnHelper.display({
     id: 'actions',
-    cell: () => (
+    cell: ({ row, table }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='data-[state=open]:bg-muted text-muted-foreground flex size-8' size='icon'>
@@ -133,10 +142,19 @@ const columns = [
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-32'>
           <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant='destructive'>Delete</DropdownMenuItem>
+          <DropdownMenuItem
+            variant='destructive'
+            onClick={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              await deletePost(row.original?.id ?? 0);
+              toast.success('Post deleted successfully');
+              table.options.meta?.refetch?.();
+            }}
+          >
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
@@ -171,7 +189,7 @@ function DraggableRow({ row }: { row: Row<PostItem> }) {
 }
 
 export function PostTable() {
-  const { posts, isLoading } = usePostList({
+  const { posts, isLoading, refetch } = usePostList({
     search: '',
     page: 1,
     limit: 10,
@@ -203,6 +221,9 @@ export function PostTable() {
       rowSelection,
       columnFilters,
       pagination,
+    },
+    meta: {
+      refetch,
     },
     manualSorting: true,
     manualPagination: true,
@@ -237,7 +258,7 @@ export function PostTable() {
   React.useEffect(() => {
     if (isLoading) return;
     setData(posts);
-  }, [isLoading]);
+  }, [isLoading, posts]);
 
   return (
     <>

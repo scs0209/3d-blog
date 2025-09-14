@@ -4,7 +4,7 @@ import type * as three from 'three';
 
 export function FallingAstronaut(props: any) {
   const group = useRef<three.Group>(null);
-  const { nodes, materials, animations } = useGLTF('/Falling.glb');
+  const { nodes, materials, animations } = useGLTF('/Falling.glb', true);
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
@@ -94,5 +94,3 @@ export function FallingAstronaut(props: any) {
     </group>
   );
 }
-
-useGLTF.preload('/Falling.glb');

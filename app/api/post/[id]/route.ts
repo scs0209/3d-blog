@@ -267,12 +267,23 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     }
 
     await prisma.$transaction([
+      // 1. CommentLike 먼저 삭제 (Comment를 참조하므로)
+      prisma.commentLike.deleteMany({
+        where: {
+          comment: {
+            postId,
+          },
+        },
+      }),
+      // 2. Comment 삭제
       prisma.comment.deleteMany({
         where: { postId },
       }),
+      // 3. Like 삭제
       prisma.like.deleteMany({
         where: { postId },
       }),
+      // 4. Post 삭제
       prisma.post.delete({
         where: { id: postId },
       }),
