@@ -127,6 +127,19 @@ export const glassmorphismPlugin = function ({ addComponents }: { addComponents:
         transform: 'scale(0.98)',
       },
     },
+    '.btn-glass-danger': {
+      background: 'rgba(239, 68, 68, 0.1)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(239, 68, 68, 0.2)',
+      borderRadius: '20px',
+      '&:hover': {
+        background: 'rgba(239, 68, 68, 0.15)',
+        transform: 'scale(1.02)',
+      },
+      '&:active': {
+        transform: 'scale(0.98)',
+      },
+    },
 
     // 사선 반짝이 효과 (Shimmer)
     '.glass-shimmer': {

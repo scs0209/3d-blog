@@ -4,10 +4,10 @@ import { queryKeys } from '@/shared/queryKeys';
 import type { UserResponse } from '@/entities/user/model/user';
 
 export const useUser = <T extends UserResponse>() => {
-  const { data, isLoading, isError } = useQuery<T>({
+  const { data, ...rest } = useQuery<T>({
     queryKey: queryKeys.user.all.queryKey,
     queryFn: getUsers,
   });
 
-  return { users: data, isLoading, isError };
+  return { users: data, ...rest };
 };
