@@ -51,7 +51,7 @@ export function UserEditForm({ user }: UserEditFormProps) {
     if (window.confirm('정말로 이 유저를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
       const formData = new FormData();
       formData.append('id', user.id.toString());
-      await deleteAction(formData);
+      deleteAction(formData);
     }
   };
 
