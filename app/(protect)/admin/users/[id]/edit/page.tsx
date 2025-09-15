@@ -4,9 +4,9 @@ import { UserEditForm } from '@/features/user/ui';
 import { Skeleton } from '@/shadcn-ui/components/ui/skeleton';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 function UserEditFormSkeleton() {
@@ -43,8 +43,8 @@ function UserEditFormSkeleton() {
 }
 
 async function UserEditPageContent({ params }: PageProps) {
-  const id = Number(params.id);
-  const user = await getUserById(id);
+  const { id } = await params;
+  const user = await getUserById(Number(id));
 
   if (!user) {
     return <div>User not found.</div>;
