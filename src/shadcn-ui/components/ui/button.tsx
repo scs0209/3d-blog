@@ -17,6 +17,7 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
         glass: 'btn-glass',
         'glass-primary': 'btn-glass-primary',
+        'glass-danger': 'btn-glass-danger',
       },
       size: {
         default: 'h-9 px-4 py-2',

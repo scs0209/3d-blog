@@ -23,6 +23,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 import {
   type ColumnFiltersState,
@@ -262,7 +263,7 @@ export function PostTable() {
 
   return (
     <>
-      <div className='flex items-center justify-between px-4 lg:px-6'>
+      <div className='flex items-center justify-between px-2'>
         <Label htmlFor='view-selector' className='sr-only'>
           View
         </Label>
@@ -347,7 +348,7 @@ export function PostTable() {
           </Table>
         </DndContext>
       </div>
-      <div className='flex items-center justify-between px-4'>
+      <div className='flex items-center justify-between mx-6'>
         <div className='text-muted-foreground hidden flex-1 text-sm lg:flex'>
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
           selected.
@@ -380,43 +381,43 @@ export function PostTable() {
           </div>
           <div className='ml-auto flex items-center gap-2 lg:ml-0'>
             <Button
-              variant='outline'
+              variant='glass'
               className='hidden h-8 w-8 p-0 lg:flex'
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
               <span className='sr-only'>Go to first page</span>
-              <ChevronsLeft />
+              <ChevronsLeft className='h-4 w-4' />
             </Button>
             <Button
-              variant='outline'
-              className='size-8'
+              variant='glass'
+              className='hidden size-8 h-8 w-8 p-0 lg:flex'
               size='icon'
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               <span className='sr-only'>Go to previous page</span>
-              <ChevronsLeft />
+              <ChevronLeft className='h-4 w-4' />
             </Button>
             <Button
-              variant='outline'
-              className='size-8'
+              variant='glass'
+              className='size-8 h-8 w-8 p-0'
               size='icon'
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
               <span className='sr-only'>Go to next page</span>
-              <ChevronRight />
+              <ChevronRight className='h-4 w-4' />
             </Button>
             <Button
-              variant='outline'
-              className='hidden size-8 lg:flex'
+              variant='glass'
+              className='hidden h-8 w-8 p-0 lg:flex'
               size='icon'
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
               <span className='sr-only'>Go to last page</span>
-              <ChevronsRight />
+              <ChevronsRight className='h-4 w-4' />
             </Button>
           </div>
         </div>

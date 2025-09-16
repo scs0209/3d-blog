@@ -36,7 +36,7 @@ export const getUserById = async (id: number) => {
   }
 };
 
-export const updateUser = async (id: number, data: { name?: string; email?: string; role?: Role }) => {
+export const updateUser = async (id: number, data: { name?: string; email?: string; role?: Role; password?: string }) => {
   try {
     const user = await prisma.user.update({
       where: { id },
@@ -46,5 +46,16 @@ export const updateUser = async (id: number, data: { name?: string; email?: stri
   } catch (error) {
     console.error(`Failed to update user with id ${id}:`, error);
     return null;
+  }
+};
+
+export const deleteUser = async (id: number) => {
+  try {
+    await prisma.user.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.error(`Failed to delete user with id ${id}:`, error);
+    throw new Error('Failed to delete user');
   }
 };
