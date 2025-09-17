@@ -12,6 +12,7 @@ import { handleCommandNavigation } from 'novel/extensions';
 import { defaultExtensions } from './extensions';
 
 import { slashCommand, suggestionItems } from './slash-command';
+import { preprocessHTML } from '@/shared/utils';
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -22,17 +23,8 @@ const NovelEditor = ({
   value?: string;
   onChange: (val: string) => void;
 }) => {
-  // HTML 문자열에서 코드블럭 내부의 \n 개행 문자를 <br> 태그로 변환
-  const preprocessHTML = (html: string) => {
-    return html.replace(/<pre[^>]*>([\s\S]*?)<\/pre>/g, (match, content) => {
-      // 코드블럭 내부의 \n 개행 문자를 <br> 태그로 변환
-      const processedContent = content.replace(/\n/g, '<br>');
-      return match.replace(content, processedContent);
-    });
-  };
-
   const processedValue = value ? preprocessHTML(value) : value;
-  console.log(processedValue);
+  
   return (
     <div className='relative w-[1000px] max-w-screen-lg min-h-[500px]'>
       <EditorRoot>
