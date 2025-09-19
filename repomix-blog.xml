@@ -1,0 +1,504 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where content has been compressed (code blocks are separated by ⋮---- delimiter).
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.ts, **/*.tsx, **/*.js, **/*.jsx, **/*.json, **/*.md, **/*.yml, **/*.yaml
+- Files matching these patterns are excluded: **/node_modules/**, **/.next/**, **/dist/**, **/build/**, **/*.log, **/coverage/**, **/.nyc_output/**, **/repomix-*.xml
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Content has been compressed - code blocks are separated by ⋮---- delimiter
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+(posts)/
+  all/
+    page.tsx
+  category/
+    [slug]/
+      post/
+        [postSlug]/
+          page.tsx
+      page.tsx
+  layout.tsx
+ui/
+  ComputerBackground/
+    ComputerBackground.tsx
+    ComputerScreen.tsx
+    ComputerScreenText.tsx
+    index.ts
+  PostCard/
+    CardPattern.tsx
+    PostCard.tsx
+  PostListCard/
+    PostListCard.tsx
+  BlogContent.tsx
+  BlogHeader.tsx
+  BlogMainPage.tsx
+  index.ts
+  Macintosh.tsx
+  MobileNavbar.tsx
+  PostList.tsx
+  RecentPosts.tsx
+  SearchBar.tsx
+  Sidebar.tsx
+  SpaceBackground.tsx
+  VisitorCounter.tsx
+layout.tsx
+loading.tsx
+page.tsx
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="(posts)/all/page.tsx">
+import { BlogMainPage } from '@/widgets/post/ui';
+⋮----
+export default function BlogAllPage()
+</file>
+
+<file path="(posts)/category/[slug]/post/[postSlug]/page.tsx">
+import { getPostBySlug } from '@/features/post/api/post-api';
+import { formatDateToYMD } from '@/shared/utils';
+import dynamic from 'next/dynamic';
+import { CommentSection } from '@/features/comment/ui';
+import { PostSummary } from '@/shared/ui/PostSummary';
+import type { Metadata } from 'next';
+import type { PostResponse } from '@/entities/post/model/post';
+⋮----
+// HTML 태그 제거 및 description 추출 함수
+const extractDescription = (content: string, maxLength = 160) =>
+⋮----
+.replace(/<[^>]*>/g, '') // HTML 태그 제거
+.replace(/\s+/g, ' ') // 연속 공백을 단일 공백으로
+⋮----
+export async function generateMetadata(
+⋮----
+url: imageUrl, // 기본 이미지 또는 포스트 대표 이미지
+⋮----
+images: ['/logo.png'], // 기본 이미지 또는 포스트 대표 이미지
+⋮----
+// JSON-LD 구조화 데이터 컴포넌트
+const PostStructuredData = ({
+  post,
+}: {
+  post: PostResponse;
+}) =>
+⋮----
+image: '/logo.png', // 기본 이미지 또는 포스트 대표 이미지
+⋮----
+{/* SEO를 위한 구조화 데이터 */}
+⋮----
+{/* 본문 영역 꾸밈 */}
+⋮----
+{/* 태그 표시 */}
+⋮----
+{/* AI 요약 표시 */}
+⋮----
+{/* 댓글 섹션 */}
+</file>
+
+<file path="(posts)/category/[slug]/page.tsx">
+import { PostListCard } from '@/features/blog/ui';
+import { useCategoryPosts } from '@/features/category/model';
+import { useParams } from 'next/navigation';
+</file>
+
+<file path="(posts)/layout.tsx">
+import { SpaceBackground } from '@/widgets/post/ui';
+import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+⋮----
+export default function PostsLayout({
+  children,
+}: {
+  children: React.ReactNode;
+})
+⋮----
+{/* Main Content (왼쪽) */}
+⋮----
+{/* 데스크톱 사이드바 */}
+</file>
+
+<file path="layout.tsx">
+import type { Metadata } from 'next';
+⋮----
+export default function BlogLayout({
+  children,
+}: {
+  children: React.ReactNode;
+})
+</file>
+
+<file path="loading.tsx">
+export default function Loading()
+⋮----
+{/* Core sphere */}
+⋮----
+{/* Ring 1 - 가장 큰 링 */}
+⋮----
+{/* Ring 2 - 중간 링 */}
+⋮----
+{/* Ring 3 - 작은 링 */}
+</file>
+
+<file path="page.tsx">
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Suspense, useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Bloom, DepthOfField, EffectComposer } from '@react-three/postprocessing';
+import { MeshReflectorMaterial } from '@react-three/drei';
+import { Macintosh, ComputerBackground } from '@/widgets/post/ui';
+import { CanvasLoader, AnimatedText, WatchRobot, HelloBot, MoveBot, FloatingActionButton } from '@/shared/ui';
+import { useRouter } from 'next/navigation';
+⋮----
+function AnimatedCamera(
+⋮----
+// 마우스 휠로 scale 조절 및 라우팅
+const handleWheel = (e: React.WheelEvent) =>
+⋮----
+// 스크롤이 끝까지 도달하면 /blog/all로 라우팅
+⋮----
+{/* 스크롤 힌트 */}
+</file>
+
+<file path="ui/PostCard/CardPattern.tsx">
+import { motion, useMotionTemplate, type MotionValue } from 'framer-motion';
+import { useMemo } from 'react';
+⋮----
+// 여러 색상 조합 중 하나를 랜덤으로 선택
+⋮----
+// 별 30개 랜덤 생성 (key는 uuid)
+⋮----
+const size = Math.random() * 1.2 + 0.6; // 0.6~1.8rem
+</file>
+
+<file path="ui/PostCard/PostCard.tsx">
+import { motion, useMotionValue, animate } from 'framer-motion';
+import { CardPattern } from './CardPattern';
+import { useEffect, useRef, useState } from 'react';
+import type { PostResponse } from '@/entities/post/model/post';
+import { formatDateToYMD } from '@/shared/utils';
+⋮----
+export const generateRandomString = (length: number) =>
+⋮----
+function onMouseMove(
+⋮----
+{/* {post.thumbnail && (
+          <img src={post.thumbnail} alt={post.title} className='w-full h-1/2 object-cover rounded-md mb-2' />
+        )} */}
+⋮----
+<span className='text-xs text-blue-300 mt-auto'>
+</file>
+
+<file path="ui/PostListCard/PostListCard.tsx">
+import type { PostResponse } from '@/entities/post/model/post';
+import { Tag } from '@/shared/ui';
+import { formatDateToYMD } from '@/shared/utils';
+import { motion } from 'framer-motion';
+import { Eye } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+⋮----
+type PostListCardProps = {
+  post: PostResponse;
+  categoryName?: string;
+  categorySlug?: string;
+};
+</file>
+
+<file path="ui/index.ts">
+
+</file>
+
+<file path="ui/index.ts">
+
+</file>
+
+<file path="ui/VisitorCounter.tsx">
+import { useRef, useEffect } from 'react';
+import { motion, useAnimate } from 'framer-motion';
+import { useVisitor } from '@/features/visitor/model';
+⋮----
+// 숫자가 변경될 때만 애니메이션 적용
+⋮----
+// 최소 3자리수로 포맷팅
+const formatNumber = (num: number | undefined) =>
+⋮----
+// 각 자리수 분리
+⋮----
+{/* 오늘 방문자 */}
+⋮----
+{/* 총 방문자 */}
+⋮----
+{/* LED 효과 */}
+</file>
+
+<file path="ui/ComputerBackground/ComputerBackground.tsx">
+import { useGLTF } from '@react-three/drei';
+import { ComputerScreenText } from './ComputerScreenText';
+⋮----
+{/* 바닥 */}
+{/* <mesh
+        castShadow
+        receiveShadow
+        geometry={(nodes?.Object_14 as three.Mesh)?.geometry}
+        material={materials['Material.001']}
+        scale={13}
+      /> */}
+</file>
+
+<file path="ui/ComputerBackground/ComputerScreen.tsx">
+import { useGLTF, RenderTexture } from '@react-three/drei';
+⋮----
+useGLTF.preload('/old_computers.glb');
+</file>
+
+<file path="ui/ComputerBackground/ComputerScreenText.tsx">
+import { Text, PerspectiveCamera } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { useRef } from 'react';
+import { ComputerScreen } from './ComputerScreen';
+⋮----
+export const ComputerScreenText = ({
+  invert,
+  x = 0,
+  y = 1.2,
+  frame,
+  panel,
+  ...props
+}:
+</file>
+
+<file path="ui/ComputerBackground/index.ts">
+
+</file>
+
+<file path="ui/BlogContent.tsx">
+import type React from 'react';
+⋮----
+interface BlogContentProps {
+  title: string;
+  children: React.ReactNode;
+}
+⋮----
+export const BlogContent = (
+⋮----
+{/* 맥 창 상단 바 */}
+⋮----
+{/* 컬러 버튼 */}
+⋮----
+{/* 내용 영역 */}
+</file>
+
+<file path="ui/BlogHeader.tsx">
+import { MobileNavbar } from './MobileNavbar';
+import dynamic from 'next/dynamic';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
+import { Menu, Search, X, Home, Globe, Navigation, User, LogOut } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Dropdown } from '@/shared/ui';
+import Image from 'next/image';
+import { useQueryState } from 'nuqs';
+⋮----
+const handleNavigation = (path: string) =>
+⋮----
+const handleLogout = async () =>
+⋮----
+const toggleSearch = () =>
+⋮----
+{/* 데스크톱 헤더 */}
+⋮----
+{/* 좌측: 로고 */}
+⋮----
+{/* 우측: 네비게이션 + 검색 */}
+⋮----
+{/* 네비게이션 드롭다운 */}
+⋮----
+{/* 검색 영역 */}
+⋮----
+{/* 모바일 헤더 */}
+⋮----
+{/* 네비게이션 버튼 - 좌측 상단 */}
+⋮----
+{/* 로고 - 중앙 */}
+⋮----
+{/* 우측 버튼들 */}
+⋮----
+{/* 검색 버튼 */}
+⋮----
+{/* 메뉴 버튼 */}
+⋮----
+{/* 모바일 검색 영역 */}
+⋮----
+{/* 모바일/태블릿 드로어 사이드바 */}
+</file>
+
+<file path="ui/BlogMainPage.tsx">
+import { usePost } from '@/features/post/model';
+import { useSearchParams } from 'next/navigation';
+import { RecentPosts } from './RecentPosts';
+import { PostList } from './PostList';
+⋮----
+export const BlogMainPage = () =>
+⋮----
+{/* 최근 포스트 섹션 */}
+⋮----
+{/* 포스트 리스트 섹션 */}
+</file>
+
+<file path="ui/index.ts">
+
+</file>
+
+<file path="ui/index.ts">
+
+</file>
+
+<file path="ui/Macintosh.tsx">
+import { Html, useGLTF } from '@react-three/drei';
+⋮----
+import { motion } from 'framer-motion';
+import { PostCard } from '@/features/blog/ui';
+import { Tag } from '@/shared/ui';
+import { Eye } from 'lucide-react';
+import { formatDateToYMD } from '@/shared/utils';
+⋮----
+{/* 맥OS 창 상단 바 */}
+⋮----
+{/* 컨텐츠 영역 */}
+⋮----
+{/* 최근 포스트 그리드 */}
+⋮----
+{/* 나머지 포스트 리스트 */}
+⋮----
+<span>
+</file>
+
+<file path="ui/MobileNavbar.tsx">
+import { useCategories } from '@/features/category/model';
+import { useTags } from '@/features/tag/model/use-tags';
+import { Tag } from '@/features/tag/ui';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter, usePathname } from 'next/navigation';
+</file>
+
+<file path="ui/PostList.tsx">
+import { PostListCardSkeleton } from '@/shared/ui/skeleton';
+import { PostListCard } from '@/features/blog/ui';
+import type { PostResponse } from '@/entities/post/model/post';
+⋮----
+type PostListProps = {
+  posts: PostResponse[];
+  isLoading: boolean;
+};
+</file>
+
+<file path="ui/RecentPosts.tsx">
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { PostCardSkeleton } from '@/shared/ui/skeleton';
+import { PostCard } from '@/features/blog/ui';
+import type { PostResponse } from '@/entities/post/model/post';
+⋮----
+type RecentPostsProps = {
+  posts: PostResponse[];
+  isLoading: boolean;
+};
+</file>
+
+<file path="ui/SearchBar.tsx">
+import { motion } from 'framer-motion';
+⋮----
+onChange=
+</file>
+
+<file path="ui/Sidebar.tsx">
+import { useTags } from '@/features/tag/model/use-tags';
+import { Tag } from '@/features/tag/ui';
+import { VisitorCounter } from '@/features/blog/ui';
+import { useCategories } from '@/features/category/model';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { SparklesCore } from '@/shared/ui/sparkles';
+import { SidebarSkeleton } from '@/shared/ui/skeleton';
+⋮----
+// pathname에서 category slug 추출 (/blog/category/react -> react)
+⋮----
+{/* SparklesCore - 데스크톱에서만 표시 */}
+⋮----
+{/* 접기 버튼 (사이드바 내부 오른쪽 상단) */}
+⋮----
+{/* 사이드바 내용 */}
+⋮----
+{/* 전체 메뉴 */}
+</file>
+
+<file path="ui/SpaceBackground.tsx">
+import { motion } from 'framer-motion';
+⋮----
+// Tailwind 색상 클래스 배열
+⋮----
+// 별 60개, 색상 랜덤
+⋮----
+// 행성 생성
+⋮----
+// 행성/은하수 등 추가
+⋮----
+{/* 별 */}
+⋮----
+{/* 행성들 */}
+⋮----
+{/* 행성 고리 */}
+⋮----
+{/* 행성 본체 */}
+⋮----
+{/* 행성 표면 특징 */}
+⋮----
+{/* 은하수 느낌의 그라데이션 */}
+⋮----
+{/* 여러 개의 큰 은하수 레이어 */}
+⋮----
+// 랜덤 위치, 각도, 색상, 투명도, 크기
+⋮----
+// Tailwind 지원 색상 조합
+</file>
+
+</files>

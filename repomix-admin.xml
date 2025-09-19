@@ -1,0 +1,429 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where content has been compressed (code blocks are separated by ⋮---- delimiter).
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.ts, **/*.tsx, **/*.js, **/*.jsx, **/*.json, **/*.md, **/*.yml, **/*.yaml
+- Files matching these patterns are excluded: **/node_modules/**, **/.next/**, **/dist/**, **/build/**, **/*.log, **/coverage/**, **/.nyc_output/**, **/repomix-*.xml
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Content has been compressed - code blocks are separated by ⋮---- delimiter
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+admin/
+  [slug]/
+    page.tsx
+  post/
+    [id]/
+      page.tsx
+    page.tsx
+  tags/
+    [id]/
+      page.tsx
+  users/
+    [id]/
+      edit/
+        page.tsx
+  page.tsx
+home/
+  api/
+    stats-api.ts
+  ui/
+    card-section.tsx
+    index.ts
+    post-table.tsx
+    PostsCard.tsx
+    TotalViewsCard.tsx
+    user-table.tsx
+    UsersCard.tsx
+    VisitorsCard.tsx
+layout.tsx
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="admin/[slug]/page.tsx">
+import { getCategoryPosts } from '@/features/category/api/category-api';
+import { CategoryModal } from '@/widgets/category';
+⋮----
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+})
+</file>
+
+<file path="admin/post/[id]/page.tsx">
+import { useState, useEffect, useActionState, useOptimistic } from 'react';
+import { motion } from 'framer-motion';
+import { deletePost, getPostDetail, updatePost } from '@/features/post/api/post-api';
+import { formatDateToYMD } from '@/shared/utils';
+import type { PostResponse } from '@/entities/post/model/post';
+import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
+import { Button } from '@/shadcn-ui/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
+import { Tag as TagComponent, useToast } from '@/shared/ui';
+import { Save, Trash2, Calendar, User, Tag, Loader2 } from 'lucide-react';
+⋮----
+// React 19: useOptimistic for optimistic UI updates
+⋮----
+// React 19: useActionState for update action
+⋮----
+return null; // Success
+⋮----
+// React 19: useActionState for delete action
+⋮----
+return null; // Success
+⋮----
+// React 19: Enhanced data fetching with better error handling
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+⋮----
+const fetchPost = async () =>
+⋮----
+// React 19: Optimistic update helper
+const handleOptimisticUpdate = () =>
+⋮----
+// Set optimistic state immediately
+⋮----
+// Use optimistic post for display, fallback to actual post
+⋮----
+{/* Header Card */}
+⋮----
+{/* Show if optimistic update is happening */}
+⋮----
+{/* Editor Card */}
+⋮----
+{/* React 19: Form Actions */}
+⋮----
+{/* Update Form with Action */}
+⋮----
+{/* Delete Form with Action */}
+⋮----
+{/* Error Messages */}
+</file>
+
+<file path="admin/post/page.tsx">
+// bcrypt를 사용하기 위해서는 서버 컴포넌트로 동작해야됨
+⋮----
+import { createPost } from '@/features/post/api/post-api';
+import type { PostFormSchema } from '@/features/post/model/post-form-schema';
+import PostForm from '@/features/post/ui/post-form';
+import { getSession } from 'next-auth/react';
+⋮----
+export default function NewBlogPostPage()
+⋮----
+const handleCreatePost = async (data: PostFormSchema) =>
+</file>
+
+<file path="admin/tags/[id]/page.tsx">
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { deleteTag, getTagDetail, updateTag } from '@/features/tag/api/tag-api';
+⋮----
+interface TagDetail {
+  id: number;
+  name: string;
+  createdAt: string;
+  _count: {
+    posts: number;
+  };
+  posts: Array<{
+    id: number;
+    title: string;
+  }>;
+}
+⋮----
+export default function TagDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+})
+⋮----
+const fetchTag = async () =>
+⋮----
+const handleSubmit = async (e: React.FormEvent) =>
+⋮----
+const handleDelete = async () =>
+⋮----
+onClick=
+⋮----
+onChange=
+</file>
+
+<file path="admin/users/[id]/edit/page.tsx">
+import { Suspense } from 'react';
+import { getUserById } from '@/features/user/api/user-api';
+import { UserEditForm } from '@/features/user/ui';
+import { Skeleton } from '@/shadcn-ui/components/ui/skeleton';
+⋮----
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+⋮----
+function UserEditFormSkeleton()
+⋮----
+async function UserEditPageContent(
+</file>
+
+<file path="admin/page.tsx">
+import { PostTable, SectionCards, UserTable } from '@/widgets/admin/home/ui';
+⋮----
+export default async function PostPage()
+</file>
+
+<file path="layout.tsx">
+import type React from 'react';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/shadcn-ui/components/ui/sidebar';
+import AuthSidebar from '@/shared/ui/AuthSidebar';
+import { ScrollArea } from '@/shadcn-ui/components/ui/scroll-area';
+⋮----
+const ProtectLayout = (
+⋮----
+{/* Global Decorative Elements */}
+⋮----
+{/* Enhanced Glassmorphism Background */}
+⋮----
+{/* Content Area */}
+⋮----
+{/* Header - Fixed */}
+⋮----
+{/* Scrollable Content */}
+</file>
+
+<file path="home/api/stats-api.ts">
+import prisma from '@/shared/lib/db';
+⋮----
+export const getStats = async () =>
+⋮----
+// 게시물 통계
+⋮----
+// 사용자 통계
+⋮----
+// 댓글 통계
+⋮----
+// 조회수 통계
+</file>
+
+<file path="home/ui/index.ts">
+
+</file>
+
+<file path="home/ui/index.ts">
+
+</file>
+
+<file path="home/ui/PostsCard.tsx">
+import { getStats } from '../api/stats-api';
+import { Card, CardHeader, CardTitle, CardAction, CardFooter, CardDescription } from '@/shadcn-ui/components/ui/card';
+import { Tag } from '@/shared/ui/Tag';
+import { TrendingUp, TrendingDown } from 'lucide-react';
+⋮----
+// 증감률 계산
+</file>
+
+<file path="home/ui/TotalViewsCard.tsx">
+import { getStats } from '../api/stats-api';
+import { Card, CardHeader, CardTitle, CardAction, CardFooter, CardDescription } from '@/shadcn-ui/components/ui/card';
+import { Tag } from '@/shared/ui/Tag';
+import { TrendingUp } from 'lucide-react';
+</file>
+
+<file path="home/ui/UsersCard.tsx">
+import { getUserCount } from '@/features/user/api/user-api';
+import { Card, CardHeader, CardTitle, CardFooter, CardDescription } from '@/shadcn-ui/components/ui/card';
+⋮----
+export async function UsersCard()
+</file>
+
+<file path="home/ui/VisitorsCard.tsx">
+import { getVisitor } from '@/features/visitor/api';
+import { Card, CardHeader, CardTitle, CardAction, CardFooter, CardDescription } from '@/shadcn-ui/components/ui/card';
+import { Tag } from '@/shared/ui/Tag';
+import { TrendingUp } from 'lucide-react';
+⋮----
+export async function VisitorsCard()
+</file>
+
+<file path="home/ui/card-section.tsx">
+import { UsersCard, VisitorsCard, PostsCard, TotalViewsCard } from '@/features/admin/home/ui';
+⋮----
+export function SectionCards()
+</file>
+
+<file path="home/ui/index.ts">
+
+</file>
+
+<file path="home/ui/index.ts">
+
+</file>
+
+<file path="home/ui/post-table.tsx">
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type UniqueIdentifier,
+} from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import {
+  ChevronDown,
+  EllipsisVertical,
+  GripVertical,
+  Columns2,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronRight,
+  ChevronLeft,
+} from 'lucide-react';
+import {
+  type ColumnFiltersState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type Row,
+  type RowData,
+  type SortingState,
+  useReactTable,
+  type VisibilityState,
+} from '@tanstack/react-table';
+import { Button } from '@/shadcn-ui/components/ui/button';
+import { Checkbox } from '@/shadcn-ui/components/ui/checkbox';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shadcn-ui/components/ui/dropdown-menu';
+import { Label } from '@/shadcn-ui/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shadcn-ui/components/ui/table';
+import { type GetPostListResponse, usePostList } from '@/features/post/model';
+import { useRouter } from 'next/navigation';
+import { deletePost } from '@/features/post/api/post-api';
+import { toast } from '@/shared/ui/toast/useToast';
+⋮----
+interface TableMeta<TData extends RowData> {
+    refetch?: () => void;
+  }
+⋮----
+// Create a separate component for the drag handle
+function DragHandle(
+⋮----
+type PostItem = NonNullable<GetPostListResponse['data']>[number];
+⋮----
+function handleDragEnd(event: DragEndEvent)
+⋮----
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+⋮----
+checked=
+</file>
+
+<file path="home/ui/user-table.tsx">
+import {
+  ChevronDown,
+  EllipsisVertical,
+  Columns2,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronRight,
+  ChevronLeft,
+} from 'lucide-react';
+import {
+  type ColumnFiltersState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type Row,
+  type RowData,
+  type SortingState,
+  useReactTable,
+  type VisibilityState,
+} from '@tanstack/react-table';
+import { Button } from '@/shadcn-ui/components/ui/button';
+import { Checkbox } from '@/shadcn-ui/components/ui/checkbox';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shadcn-ui/components/ui/dropdown-menu';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shadcn-ui/components/ui/table';
+import type { UserResponse } from '@/entities/user/model/user';
+import { useUser } from '@/features/user/model/use-user';
+import { useRouter } from 'next/navigation';
+import { deleteUser } from '@/features/user/api/user-api';
+import { toast } from '@/shared/ui/toast/useToast';
+import router from 'next/router';
+⋮----
+interface TableMeta<TData extends RowData> {
+    refetch?: () => void;
+  }
+⋮----
+type UserItem = NonNullable<UserResponse>[number];
+⋮----
+onCheckedChange=
+⋮----
+checked=
+</file>
+
+</files>
