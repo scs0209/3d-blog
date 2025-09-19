@@ -30,6 +30,27 @@
 - `src/features/admin/api/dashboard.ts` - 대시보드 API 함수
 - `src/entities/admin/model/types.ts` - 대시보드 타입 정의
 
+## 📦 Repomix 파일 구조
+프로젝트는 AI 도구 최적화를 위해 다음과 같이 분리된 repomix 파일들을 사용합니다:
+
+| 파일명 | 크기 | 설명 | 토큰 수 | 용도 |
+|--------|------|------|---------|------|
+| `repomix-src.xml` | 253K | 핵심 소스 코드 (src/) | 60,174 | 전체 코드베이스 분석 |
+| `repomix-api.xml` | 61K | API 엔드포인트 (app/api/) | 12,846 | API 개발 및 문서화 |
+| `repomix-api-types.xml` | 96K | API 타입 정의 (src/shared/api/) | 16,672 | 타입 시스템 분석 |
+| `repomix-3d-components.xml` | 44K | 3D 컴포넌트 (src/shared/ui/) | 12,160 | 3D 개발 및 최적화 |
+| `repomix-admin.xml` | 12K | 관리자 기능 | 3,071 | **관리자 대시보드 개발** |
+| `repomix-blog.xml` | 14K | 블로그 기능 | 3,546 | 블로그 관련 기능 |
+| `repomix-portfolio.xml` | 50K | 포트폴리오 기능 | 14,044 | 포트폴리오 관리 |
+
+### Repomix 설정
+- **설정 파일**: `repomix.config.json`
+- **생성 스크립트**: `scripts/generate-repomix.sh`
+- **문서화**: `README-repomix.md`
+- **포함 파일**: TypeScript, JavaScript, JSON, Markdown, YAML
+- **제외 파일**: node_modules, .next, dist, build, 로그 파일
+- **압축**: 토큰 수 최적화를 위한 압축 적용
+
 ## 🚀 구현 계획
 
 ### Phase 1: 기본 구조 및 레이아웃
@@ -56,6 +77,12 @@
 - [ ] 다크/라이트 모드 지원
 - [ ] 애니메이션 효과 추가
 
+### Phase 5: Repomix 통합 및 최적화
+- [ ] 관리자 기능 repomix 파일 업데이트 (`repomix-admin.xml`)
+- [ ] API 타입 정의 최적화 (`repomix-api-types.xml`)
+- [ ] 3D 컴포넌트 통합 (`repomix-3d-components.xml`)
+- [ ] AI 도구별 최적화된 컨텍스트 제공
+
 ## 🎨 UI/UX 요구사항
 - **사이버펑크 테마**: 네온 색상, 글리치 효과, 미래적 디자인
 - **반응형 디자인**: 모바일, 태블릿, 데스크톱 최적화
@@ -74,6 +101,8 @@
 - **데이터 새로고침**: 1초 이내
 - **메모리 사용량**: 100MB 이하
 - **3D 렌더링**: 60fps 유지
+- **Repomix 파일 크기**: 관리자 관련 파일 15KB 이하 유지
+- **AI 컨텍스트 최적화**: 토큰 수 5,000 이하로 관리
 
 ## 🧪 테스트 계획
 - [ ] 단위 테스트: 각 컴포넌트별 테스트
@@ -87,6 +116,8 @@
 - [ ] 3D 요소가 부드럽게 렌더링됨
 - [ ] 관리자 권한 검증이 올바르게 작동
 - [ ] 사용자 경험이 직관적이고 효율적임
+- [ ] `repomix-admin.xml` 파일이 최신 상태로 유지됨
+- [ ] AI 도구에서 관리자 기능을 효율적으로 분석할 수 있음
 
 ## 🔗 관련 이슈
 - 기존 개별 관리 페이지들 통합
@@ -99,3 +130,6 @@
 - **국제화**: 다국어 지원 준비
 - **모니터링**: 에러 추적 및 성능 모니터링
 - **백업**: 데이터 백업 및 복구 시스템
+- **Repomix 자동화**: Git Hook을 통한 자동 repomix 파일 업데이트
+- **AI 도구 최적화**: 각 AI 도구별 최적화된 컨텍스트 제공
+- **코드 분석 효율성**: 분리된 repomix 파일을 통한 빠른 코드 분석
