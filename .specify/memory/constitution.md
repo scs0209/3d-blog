@@ -1,25 +1,121 @@
-# 프로젝트 컨스티튜션
+<!-- Sync Impact Report -->
+<!-- Version change: 0.0.0 → 1.0.0 -->
+<!-- Modified principles: N/A (initial creation) -->
+<!-- Added sections: Core Principles, FSD Architecture, 3D Development, Quality Standards, Governance -->
+<!-- Templates requiring updates: ✅ plan-template.md, ✅ spec-template.md, ✅ tasks-template.md -->
+<!-- Follow-up TODOs: None -->
 
-## 아키텍처 원칙
-- **FSD (Feature-Sliced Design)**: 엔티티, 피처, 위젯, 뷰, 공유 레이어 구조 준수
-- **Next.js App Router**: (protect), (public) 라우트 그룹 활용
-- **3D 통합**: React Three Fiber를 활용한 사이버펑크 테마
-- **타입 안전성**: TypeScript 엄격 모드 사용
+# 3D 블로그 프로젝트 Constitution
 
-## 코딩 표준
-- **한국어 주석**: 모든 주석과 문서는 한국어로 작성
-- **컴포넌트 명명**: PascalCase 사용
-- **함수 명명**: camelCase, 이벤트 핸들러는 'handle' 접두사
-- **파일 구조**: FSD 레이어별 디렉토리 구조 준수
+## Core Principles
 
-## 성능 기준
-- **초기 로딩**: 3초 이내
-- **3D 렌더링**: 60fps 유지
-- **메모리 사용량**: 100MB 이하
-- **반응형**: 모바일, 태블릿, 데스크톱 지원
+### I. Feature-Sliced Design (FSD) Architecture (NON-NEGOTIABLE)
+모든 코드는 FSD 아키텍처 원칙을 따라야 합니다. 레이어 간 단방향 의존성을 유지하고, 각 슬라이스는 명확한 책임을 가져야 합니다. `src/` 디렉토리 내에서 `app/`, `views/`, `widgets/`, `features/`, `entities/`, `shared/` 레이어 구조를 엄격히 준수해야 합니다.
 
-## 보안 요구사항
-- **인증**: NextAuth.js 세션 기반
-- **권한**: 관리자 전용 접근 제어
-- **데이터 검증**: Prisma 스키마 기반
-- **XSS 방지**: 입력 데이터 sanitization
+### II. 3D-First Development
+React Three Fiber를 활용한 3D 요소는 프로젝트의 핵심 차별화 요소입니다. 모든 새로운 기능은 3D 요소와의 통합 가능성을 고려해야 하며, 60fps 성능을 유지해야 합니다. 3D 컴포넌트는 `src/shared/ui/` 내에서 재사용 가능하게 설계해야 합니다.
+
+### III. Type Safety & API-First (NON-NEGOTIABLE)
+모든 API는 OpenAPI 명세로 정의하고, `openapi-typescript`를 통해 타입을 자동 생성해야 합니다. TypeScript의 strict 모드를 사용하며, `any` 타입 사용을 금지합니다. API 변경 시 반드시 스키마를 먼저 업데이트하고 타입을 재생성해야 합니다.
+
+### IV. Test-Driven Development (TDD)
+모든 새로운 기능은 테스트를 먼저 작성해야 합니다. Contract 테스트, 통합 테스트, 단위 테스트를 단계적으로 구현하며, 테스트 커버리지 80% 이상을 유지해야 합니다. 테스트는 실패하는 상태에서 시작하여 구현을 통해 통과시켜야 합니다.
+
+### V. Performance & Accessibility
+초기 로딩 시간 3초 이내, 3D 렌더링 60fps 유지, 메모리 사용량 100MB 이하를 준수해야 합니다. WCAG 2.1 AA 수준의 접근성을 보장하며, 키보드 네비게이션과 스크린 리더를 지원해야 합니다.
+
+## FSD Architecture Standards
+
+### Layer Dependencies
+- `shared` → 의존성 없음 (최하위 레이어)
+- `entities` → `shared`만 의존 가능
+- `features` → `entities`, `shared` 의존 가능
+- `widgets` → `features`, `entities`, `shared` 의존 가능
+- `views` → `widgets`, `features`, `entities`, `shared` 의존 가능
+- `app` → 모든 레이어 의존 가능
+
+### File Naming Conventions
+- 컴포넌트: PascalCase (Button.tsx)
+- 훅: camelCase with 'use' prefix (useAuth.ts)
+- 유틸리티: camelCase (formatDate.ts)
+- 타입: PascalCase (User.ts)
+- 상수: UPPER_SNAKE_CASE (API_ENDPOINTS.ts)
+
+## 3D Development Standards
+
+### Performance Requirements
+- 3D 씬은 60fps 유지
+- 메모리 사용량 100MB 이하
+- 모바일에서도 부드러운 렌더링
+- LOD(Level of Detail) 적용
+
+### Component Structure
+- 3D 컴포넌트는 `src/shared/ui/` 내에 위치
+- `useRef`로 mesh/group 참조 관리
+- `useFrame`으로 애니메이션 업데이트
+- cleanup 함수에서 리소스 정리
+
+### Animation Standards
+- 애니메이션은 `AnimationMixer` 사용
+- `LoopOnce` vs `LoopRepeat` 적절히 선택
+- 이벤트 리스너로 애니메이션 완료 감지
+- 성능을 위해 불필요한 re-render 방지
+
+## Quality Standards
+
+### Code Quality
+- ESLint와 Prettier 설정 준수
+- Biome을 통한 코드 품질 검사
+- 모든 함수와 컴포넌트에 JSDoc 주석
+- 복잡도가 높은 함수는 분리
+
+### Security Requirements
+- NextAuth.js를 통한 인증 시스템
+- CSRF 보호 및 XSS 방지
+- API 엔드포인트 권한 검증
+- 사용자 입력 데이터 sanitization
+
+### Performance Monitoring
+- Web Vitals 지표 모니터링
+- 3D 렌더링 성능 추적
+- 메모리 사용량 모니터링
+- 번들 크기 최적화
+
+## Development Workflow
+
+### Git Workflow
+- Feature branch 기반 개발
+- 커밋 메시지는 한국어로 작성
+- PR 생성 시 자동 AI 리뷰 활용
+- 메인 브랜치 병합 전 코드 리뷰 필수
+
+### Testing Strategy
+- Contract 테스트: API 스키마 검증
+- 통합 테스트: 사용자 시나리오 검증
+- 단위 테스트: 개별 함수/컴포넌트 검증
+- E2E 테스트: 전체 사용자 플로우 검증
+
+### Documentation Requirements
+- README.md는 한국어로 작성
+- API 문서는 OpenAPI 명세 기반
+- 아키텍처 문서는 FSD 구조 반영
+- 코드 주석은 한국어로 작성
+
+## Governance
+
+### Constitution Authority
+이 Constitution은 프로젝트의 모든 개발 활동을 지배하는 최상위 규칙입니다. Constitution과 다른 문서 간 충돌 시 Constitution이 우선합니다.
+
+### Amendment Process
+- Constitution 수정은 별도의 이슈로 제기
+- 변경 사항은 문서화하고 승인 필요
+- 마이그레이션 계획과 함께 제시
+- 버전 관리: MAJOR.MINOR.PATCH 형식
+
+### Compliance Review
+- 모든 PR은 Constitution 준수 여부 검토
+- 복잡성 증가 시 정당성 입증 필요
+- 성능 기준 미달 시 개선 방안 제시
+- 아키텍처 위반 시 리팩토링 요구
+
+**Version**: 1.0.0 | **Ratified**: 2025-01-16 | **Last Amended**: 2025-01-16
