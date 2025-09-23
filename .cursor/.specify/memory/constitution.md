@@ -1,7 +1,7 @@
 <!-- Sync Impact Report -->
-<!-- Version change: 0.0.0 → 1.0.0 -->
-<!-- Modified principles: N/A (initial creation) -->
-<!-- Added sections: Core Principles, FSD Architecture, 3D Development, Quality Standards, Governance -->
+<!-- Version change: 1.0.0 → 1.1.0 -->
+<!-- Modified principles: Type Safety & API-First (enhanced with fetcher pattern) -->
+<!-- Added sections: API Development Standards, Type Generation Workflow -->
 <!-- Templates requiring updates: ✅ plan-template.md, ✅ spec-template.md, ✅ tasks-template.md -->
 <!-- Follow-up TODOs: None -->
 
@@ -16,7 +16,7 @@
 React Three Fiber를 활용한 3D 요소는 프로젝트의 핵심 차별화 요소입니다. 모든 새로운 기능은 3D 요소와의 통합 가능성을 고려해야 하며, 60fps 성능을 유지해야 합니다. 3D 컴포넌트는 `src/shared/ui/` 내에서 재사용 가능하게 설계해야 합니다.
 
 ### III. Type Safety & API-First (NON-NEGOTIABLE)
-모든 API는 OpenAPI 명세로 정의하고, `openapi-typescript`를 통해 타입을 자동 생성해야 합니다. TypeScript의 strict 모드를 사용하며, `any` 타입 사용을 금지합니다. API 변경 시 반드시 스키마를 먼저 업데이트하고 타입을 재생성해야 합니다.
+모든 API는 OpenAPI 명세로 정의하고, `openapi-typescript`를 통해 타입을 자동 생성해야 합니다. API 호출은 반드시 `fetcher.ts`의 유틸리티 함수를 사용하며, `types.ts`의 `ApiRequest`, `ApiResponse`, `ApiRequestParams` 타입을 활용해야 합니다. TypeScript의 strict 모드를 사용하며, `any` 타입 사용을 금지합니다. API 변경 시 반드시 스키마를 먼저 업데이트하고 `pnpm run generate-types`로 타입을 재생성해야 합니다.
 
 ### IV. Test-Driven Development (TDD)
 모든 새로운 기능은 테스트를 먼저 작성해야 합니다. Contract 테스트, 통합 테스트, 단위 테스트를 단계적으로 구현하며, 테스트 커버리지 80% 이상을 유지해야 합니다. 테스트는 실패하는 상태에서 시작하여 구현을 통해 통과시켜야 합니다.
@@ -60,6 +60,26 @@ React Three Fiber를 활용한 3D 요소는 프로젝트의 핵심 차별화 요
 - `LoopOnce` vs `LoopRepeat` 적절히 선택
 - 이벤트 리스너로 애니메이션 완료 감지
 - 성능을 위해 불필요한 re-render 방지
+
+## API Development Standards
+
+### Type Generation Workflow
+- API 스키마 변경 시 `npm run generate-types` 실행 필수
+- 생성된 `openapi-types.ts` 파일은 자동 커밋하지 않음
+- `src/shared/api/types.ts`의 유틸리티 타입만 사용
+- `fetcher.ts`의 `FetcherParams` 타입을 통한 타입 안전한 API 호출
+
+### API Implementation Pattern
+- 모든 API 함수는 `src/features/*/api/` 디렉토리에 위치
+- `fetcher` 함수를 사용한 일관된 API 호출 패턴
+- `ApiRequest`, `ApiResponse`, `ApiRequestParams` 타입 활용
+- Path parameter는 `{paramName}` 형식으로 URL에 포함
+
+### Type Safety Enforcement
+- API 호출 시 컴파일 타임 타입 검증 필수
+- 런타임 에러 방지를 위한 타입 가드 사용
+- API 응답 타입을 명시적으로 지정
+- Query parameter와 Path parameter 구분
 
 ## Quality Standards
 
@@ -118,4 +138,4 @@ React Three Fiber를 활용한 3D 요소는 프로젝트의 핵심 차별화 요
 - 성능 기준 미달 시 개선 방안 제시
 - 아키텍처 위반 시 리팩토링 요구
 
-**Version**: 1.0.0 | **Ratified**: 2025-01-16 | **Last Amended**: 2025-01-16
+**Version**: 1.1.0 | **Ratified**: 2025-01-16 | **Last Amended**: 2025-01-16

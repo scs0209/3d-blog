@@ -47,7 +47,26 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### FSD Architecture Compliance
+- [ ] All code follows Feature-Sliced Design layer structure
+- [ ] No circular dependencies between layers
+- [ ] Components placed in correct layer directories
+
+### Type Safety & API-First Compliance
+- [ ] API endpoints defined in OpenAPI specification
+- [ ] All API calls use `fetcher.ts` utility function
+- [ ] Type generation workflow (`npm run generate-types`) documented
+- [ ] `ApiRequest`, `ApiResponse`, `ApiRequestParams` types utilized
+
+### 3D Development Standards
+- [ ] 3D components maintain 60fps performance
+- [ ] Memory usage under 100MB limit
+- [ ] Components placed in `src/shared/ui/` directory
+
+### Quality Standards
+- [ ] Test coverage plan meets 80% requirement
+- [ ] Security requirements identified
+- [ ] Performance goals specified
 
 ## Project Structure
 
