@@ -1,8 +1,10 @@
-# 3d-blog Development Guidelines
+﻿# 3d-blog Development Guidelines
 
 Auto-generated from all feature plans. Last updated: 2025-09-23
 
 ## Active Technologies
+- PostgreSQL (Prisma ORM)   (feat/admin-dashboard)
+- TypeScript 5.0+, Next.js 15, React 19   + React Three Fiber, TanStack Query, TanStack Table, Recharts, NextAuth.js, Prisma   (feat/admin-dashboard)
 - TypeScript 5.0+, Next.js 15, React 19 + React Three Fiber, TanStack Query, TanStack Table, Recharts, NextAuth.js, Prisma (feat/admin-dashboard)
 
 ## Project Structure
@@ -19,6 +21,7 @@ npm test; npm run lint
 TypeScript 5.0+, Next.js 15, React 19: Follow standard conventions
 
 ## Recent Changes
+- feat/admin-dashboard: Added TypeScript 5.0+, Next.js 15, React 19   + React Three Fiber, TanStack Query, TanStack Table, Recharts, NextAuth.js, Prisma  
 - feat/admin-dashboard: Added TypeScript 5.0+, Next.js 15, React 19 + React Three Fiber, TanStack Query, TanStack Table, Recharts, NextAuth.js, Prisma
 
 <!-- MANUAL ADDITIONS START -->
