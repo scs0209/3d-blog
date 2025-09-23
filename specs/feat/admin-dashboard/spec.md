@@ -47,6 +47,27 @@
 - **테이블 라이브러리**: React Table (TanStack Table)
 - **아이콘**: Lucide React
 
+## 🔌 API 개발 표준
+Constitution v1.1.0에 따라 다음 API 개발 표준을 준수해야 합니다:
+
+### Type Safety & API-First 원칙
+- **OpenAPI 명세**: 모든 API 엔드포인트는 OpenAPI 명세로 정의
+- **자동 타입 생성**: `pnpm run generate-types` 명령어로 타입 자동 생성
+- **Fetcher 패턴**: 모든 API 호출은 `fetcher.ts` 유틸리티 함수 사용 필수
+- **타입 활용**: `types.ts`의 `ApiRequest`, `ApiResponse`, `ApiRequestParams` 타입 활용
+
+### API 구현 패턴
+- **API 함수 위치**: `src/features/admin/api/` 디렉토리에 위치
+- **일관된 호출 패턴**: `fetcher` 함수를 사용한 통일된 API 호출
+- **Path Parameter**: `{paramName}` 형식으로 URL에 포함
+- **타입 안전성**: 컴파일 타임 타입 검증 필수
+
+### 타입 생성 워크플로우
+- **스키마 우선**: API 변경 시 스키마를 먼저 업데이트
+- **자동 생성**: `pnpm run generate-types`로 타입 재생성
+- **파일 관리**: 생성된 `openapi-types.ts` 파일은 자동 커밋하지 않음
+- **유틸리티 타입**: `src/shared/api/types.ts`의 유틸리티 타입만 사용
+
 ## 📁 관련 파일
 - `app/(protect)/admin/page.tsx` - 메인 대시보드 페이지
 - `src/widgets/admin/ui/AdminDashboard.tsx` - 대시보드 메인 컴포넌트
@@ -54,8 +75,15 @@
 - `src/widgets/admin/ui/RecentPosts.tsx` - 최근 포스트 위젯
 - `src/widgets/admin/ui/RecentComments.tsx` - 최근 댓글 위젯
 - `src/widgets/admin/ui/UserActivity.tsx` - 사용자 활동 위젯
-- `src/features/admin/api/dashboard.ts` - 대시보드 API 함수
+- `src/features/admin/api/dashboard.ts` - 대시보드 API 함수 (fetcher 패턴 사용)
+- `src/features/admin/api/stats.ts` - 통계 API 함수 (fetcher 패턴 사용)
+- `src/features/admin/api/posts.ts` - 포스트 관리 API 함수 (fetcher 패턴 사용)
+- `src/features/admin/api/comments.ts` - 댓글 관리 API 함수 (fetcher 패턴 사용)
+- `src/features/admin/api/users.ts` - 사용자 관리 API 함수 (fetcher 패턴 사용)
 - `src/entities/admin/model/types.ts` - 대시보드 타입 정의
+- `src/shared/api/fetcher.ts` - API 호출 유틸리티 함수
+- `src/shared/api/types.ts` - API 타입 유틸리티
+- `src/shared/api/openapi-types.ts` - 자동 생성된 OpenAPI 타입
 
 ## 📦 Repomix 파일 구조
 프로젝트는 AI 도구 최적화를 위해 다음과 같이 분리된 repomix 파일들을 사용합니다:
@@ -85,18 +113,25 @@
 - [ ] 사이드바 네비게이션 메뉴 구성
 - [ ] 반응형 그리드 레이아웃 시스템 구축
 - [ ] 관리자 권한 검증 로직 구현
+- [ ] API 타입 생성 워크플로우 설정 (`pnpm run generate-types`)
+- [ ] Fetcher 패턴을 사용한 API 함수 구조 설계
 
 ### Phase 2: 통계 및 데이터 시각화
 - [ ] 포스트, 댓글, 사용자 통계 카드 구현
 - [ ] 차트 컴포넌트 (Recharts) 통합
 - [ ] 실시간 데이터 업데이트 기능
 - [ ] 날짜별 필터링 및 검색 기능
+- [ ] `src/features/admin/api/stats.ts` - 통계 API 함수 구현 (fetcher 패턴)
+- [ ] `src/features/admin/api/dashboard.ts` - 대시보드 API 함수 구현 (fetcher 패턴)
 
 ### Phase 3: 위젯 및 고급 기능
 - [ ] 최근 포스트 목록 위젯
 - [ ] 최근 댓글 목록 위젯
 - [ ] 사용자 활동 피드 위젯
 - [ ] 빠른 액션 버튼 (포스트 작성, 사용자 관리 등)
+- [ ] `src/features/admin/api/posts.ts` - 포스트 관리 API 함수 구현 (fetcher 패턴)
+- [ ] `src/features/admin/api/comments.ts` - 댓글 관리 API 함수 구현 (fetcher 패턴)
+- [ ] `src/features/admin/api/users.ts` - 사용자 관리 API 함수 구현 (fetcher 패턴)
 
 ### Phase 4: 3D 요소 및 테마
 - [ ] 3D 배경 요소 추가 (사이버펑크 테마)
@@ -162,6 +197,13 @@
 - [ ] `repomix-admin.xml` 파일이 최신 상태로 유지됨 (자동화 검증)
 - [ ] AI 도구에서 관리자 기능을 효율적으로 분석할 수 있음 (문서화 검증)
 
+### API 개발 표준 준수
+- [ ] 모든 API 호출이 `fetcher.ts` 패턴을 사용함 (코드 리뷰)
+- [ ] `ApiRequest`, `ApiResponse`, `ApiRequestParams` 타입이 올바르게 활용됨 (타입 검사)
+- [ ] `pnpm run generate-types` 명령어가 정상 작동함 (워크플로우 검증)
+- [ ] OpenAPI 스키마와 생성된 타입이 동기화됨 (스키마 검증)
+- [ ] API 함수들이 `src/features/admin/api/` 디렉토리에 올바르게 위치함 (구조 검증)
+
 ## 🔗 관련 이슈
 - 기존 개별 관리 페이지들 통합
 - 관리자 권한 시스템 개선
@@ -176,3 +218,6 @@
 - **Repomix 자동화**: Git Hook을 통한 자동 repomix 파일 업데이트
 - **AI 도구 최적화**: 각 AI 도구별 최적화된 컨텍스트 제공
 - **코드 분석 효율성**: 분리된 repomix 파일을 통한 빠른 코드 분석
+- **API 타입 관리**: OpenAPI 스키마 변경 시 자동 타입 재생성 워크플로우
+- **Fetcher 패턴 일관성**: 모든 API 호출에서 동일한 패턴 사용
+- **타입 안전성**: 컴파일 타임 타입 검증을 통한 런타임 에러 방지
