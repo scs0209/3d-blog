@@ -1,66 +1,120 @@
-# [FEATURE] {FEATURE_NAME}
+# Feature Specification: [FEATURE NAME]
 
-## 📋 개요
-{FEATURE_DESCRIPTION}
+**Feature Branch**: `[###-feature-name]`  
+**Created**: [DATE]  
+**Status**: Draft  
+**Input**: User description: "$ARGUMENTS"
 
-## 🎯 목표
-- {GOAL_1}
-- {GOAL_2}
-- {GOAL_3}
+## Execution Flow (main)
+```
+1. Parse user description from Input
+   → If empty: ERROR "No feature description provided"
+2. Extract key concepts from description
+   → Identify: actors, actions, data, constraints
+3. For each unclear aspect:
+   → Mark with [NEEDS CLARIFICATION: specific question]
+4. Fill User Scenarios & Testing section
+   → If no clear user flow: ERROR "Cannot determine user scenarios"
+5. Generate Functional Requirements
+   → Each requirement must be testable
+   → Mark ambiguous requirements
+6. Identify Key Entities (if data involved)
+7. Run Review Checklist
+   → If any [NEEDS CLARIFICATION]: WARN "Spec has uncertainties"
+   → If implementation details found: ERROR "Remove tech details"
+8. Return: SUCCESS (spec ready for planning)
+```
 
-## 🔧 기술 스펙
-- **프레임워크**: Next.js 15, React 19
-- **UI 라이브러리**: Shadcn UI, Tailwind CSS
-- **상태 관리**: React Query (TanStack Query), Zustand
-- **인증**: NextAuth.js
-- **데이터베이스**: Prisma + PostgreSQL
-- **3D 렌더링**: React Three Fiber
+---
 
-## 📁 관련 파일
-- {FILE_1}
-- {FILE_2}
-- {FILE_3}
+## ⚡ Quick Guidelines
+- ✅ Focus on WHAT users need and WHY
+- ❌ Avoid HOW to implement (no tech stack, APIs, code structure)
+- 👥 Written for business stakeholders, not developers
 
-## 🚀 구현 계획
+### Section Requirements
+- **Mandatory sections**: Must be completed for every feature
+- **Optional sections**: Include only when relevant to the feature
+- When a section doesn't apply, remove it entirely (don't leave as "N/A")
 
-### Phase 1: 기본 구조
-- [ ] {TASK_1}
-- [ ] {TASK_2}
-- [ ] {TASK_3}
+### For AI Generation
+When creating this spec from a user prompt:
+1. **Mark all ambiguities**: Use [NEEDS CLARIFICATION: specific question] for any assumption you'd need to make
+2. **Don't guess**: If the prompt doesn't specify something (e.g., "login system" without auth method), mark it
+3. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
+4. **Common underspecified areas**:
+   - User types and permissions
+   - Data retention/deletion policies  
+   - Performance targets and scale
+   - Error handling behaviors
+   - Integration requirements
+   - Security/compliance needs
 
-### Phase 2: 핵심 기능
-- [ ] {TASK_4}
-- [ ] {TASK_5}
-- [ ] {TASK_6}
+---
 
-### Phase 3: 고급 기능
-- [ ] {TASK_7}
-- [ ] {TASK_8}
-- [ ] {TASK_9}
+## User Scenarios & Testing *(mandatory)*
 
-## 🎨 UI/UX 요구사항
-- {UI_REQUIREMENT_1}
-- {UI_REQUIREMENT_2}
-- {UI_REQUIREMENT_3}
+### Primary User Story
+[Describe the main user journey in plain language]
 
-## 🔒 보안 요구사항
-- {SECURITY_REQUIREMENT_1}
-- {SECURITY_REQUIREMENT_2}
+### Acceptance Scenarios
+1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+2. **Given** [initial state], **When** [action], **Then** [expected outcome]
 
-## 📊 성능 요구사항
-- {PERFORMANCE_REQUIREMENT_1}
-- {PERFORMANCE_REQUIREMENT_2}
+### Edge Cases
+- What happens when [boundary condition]?
+- How does system handle [error scenario]?
 
-## 🧪 테스트 계획
-- [ ] 단위 테스트
-- [ ] 통합 테스트
-- [ ] E2E 테스트
+## Requirements *(mandatory)*
 
-## 📝 완료 기준
-- [ ] {COMPLETION_CRITERIA_1}
-- [ ] {COMPLETION_CRITERIA_2}
-- [ ] {COMPLETION_CRITERIA_3}
+### Functional Requirements
+- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
+- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
+- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
+- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
+- **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
-## 🔗 관련 이슈
-- {RELATED_ISSUE_1}
-- {RELATED_ISSUE_2}
+*Example of marking unclear requirements:*
+- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
+- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+
+### Key Entities *(include if feature involves data)*
+- **[Entity 1]**: [What it represents, key attributes without implementation]
+- **[Entity 2]**: [What it represents, relationships to other entities]
+
+---
+
+## Review & Acceptance Checklist
+*GATE: Automated checks run during main() execution*
+
+### Content Quality
+- [ ] No implementation details (languages, frameworks, APIs)
+- [ ] Focused on user value and business needs
+- [ ] Written for non-technical stakeholders
+- [ ] All mandatory sections completed
+- [ ] FSD 아키텍처 원칙을 고려한 요구사항 분류
+- [ ] 3D 요소 통합 가능성 검토
+
+### Requirement Completeness
+- [ ] No [NEEDS CLARIFICATION] markers remain
+- [ ] Requirements are testable and unambiguous  
+- [ ] Success criteria are measurable
+- [ ] Scope is clearly bounded
+- [ ] Dependencies and assumptions identified
+- [ ] 성능 요구사항이 구체적으로 명시됨 (로딩 시간, FPS, 메모리)
+- [ ] 접근성 요구사항이 포함됨 (WCAG 2.1 AA)
+
+---
+
+## Execution Status
+*Updated by main() during processing*
+
+- [ ] User description parsed
+- [ ] Key concepts extracted
+- [ ] Ambiguities marked
+- [ ] User scenarios defined
+- [ ] Requirements generated
+- [ ] Entities identified
+- [ ] Review checklist passed
+
+---
