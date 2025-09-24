@@ -45,11 +45,11 @@
 - **Tests**: `tests/` (contract, integration, unit)
 
 ## Phase 3.1: Setup
-- [ ] T001 Create FSD project structure per implementation plan
-- [ ] T002 Initialize Next.js project with TypeScript and React Three Fiber
-- [ ] T003 [P] Configure ESLint, Prettier, and Biome tools
-- [ ] T004 [P] Setup OpenAPI types generation pipeline
-- [ ] T005 [P] Configure 3D performance monitoring
+- [x] T001 Create FSD project structure per implementation plan
+- [x] T002 Initialize Next.js project with TypeScript and React Three Fiber
+- [x] T003 [P] Configure ESLint, Prettier, and Biome tools
+- [x] T004 [P] Setup OpenAPI types generation pipeline
+- [x] T005 [P] Configure 3D performance monitoring
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
@@ -64,21 +64,75 @@
 - [ ] T014 [P] Integration test user management in tests/integration/test_user_management.ts
 - [ ] T015 [P] 3D component performance test in tests/unit/test_3d_performance.ts
 
+## Phase 3.2.1: Admin API Security Enhancement (HIGH PRIORITY)
+- [ ] T081 [P] Create admin role verification utility in src/shared/utils/admin-auth.ts
+- [ ] T082 [P] Create admin API middleware wrapper in src/features/admin/api/admin-middleware.ts
+- [ ] T083 [P] Update existing /api/stats to require admin role in app/api/stats/route.ts
+- [ ] T084 [P] Update existing /api/users to require admin role in app/api/users/route.ts
+- [ ] T085 [P] Update existing /api/posts to require admin role in app/api/posts/route.ts
+- [ ] T086 [P] Update existing /api/comments to require admin role in app/api/comments/route.ts
+- [ ] T087 [P] Create admin API route protection middleware in app/api/admin/middleware.ts
+- [ ] T088 [P] Add admin role verification to category management APIs
+- [ ] T089 [P] Add admin role verification to tag management APIs
+- [ ] T090 [P] Create admin API error responses in src/features/admin/api/admin-responses.ts
+
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 - [ ] T016 [P] DashboardStats entity in src/entities/admin/model/types.ts
 - [ ] T017 [P] AdminActivity entity in src/entities/admin/model/types.ts
 - [ ] T018 [P] PostManagementView entity in src/entities/admin/model/types.ts
 - [ ] T019 [P] CommentManagementView entity in src/entities/admin/model/types.ts
 - [ ] T020 [P] UserManagementView entity in src/entities/admin/model/types.ts
-- [ ] T021 [P] Dashboard API service in src/features/admin/api/dashboard.ts
+- [x] T021 [P] Dashboard API service in src/features/admin/api/dashboard.ts
 - [ ] T022 [P] Post management API service in src/features/admin/api/posts.ts
 - [ ] T023 [P] Comment management API service in src/features/admin/api/comments.ts
 - [ ] T024 [P] User management API service in src/features/admin/api/users.ts
 - [ ] T025 [P] Admin dashboard widget in src/widgets/admin/ui/AdminDashboard.tsx
-- [ ] T026 [P] Stats cards widget in src/widgets/admin/ui/StatsCards.tsx
-- [ ] T027 [P] Recent posts widget in src/widgets/admin/ui/RecentPosts.tsx
+- [x] T026 [P] Stats cards widget in src/widgets/admin/ui/StatsCards.tsx
+- [x] T027 [P] Recent posts widget in src/widgets/admin/ui/RecentPosts.tsx
 - [ ] T028 [P] Recent comments widget in src/widgets/admin/ui/RecentComments.tsx
-- [ ] T029 [P] User activity widget in src/widgets/admin/ui/UserActivity.tsx
+- [x] T029 [P] User activity widget in src/widgets/admin/ui/UserActivity.tsx
+- [ ] T030 [P] 3D background component in src/shared/ui/3D/AdminBackground.tsx
+- [ ] T031 [P] 3D interactive icons in src/shared/ui/3D/AdminIcons.tsx
+
+## Phase 3.4: API Implementation
+- [ ] T032 POST /api/admin/dashboard endpoint in app/api/admin/dashboard/route.ts
+- [ ] T033 GET /api/admin/posts endpoint in app/api/admin/posts/route.ts
+- [ ] T034 PATCH /api/admin/posts/[id] endpoint in app/api/admin/posts/[id]/route.ts
+- [ ] T035 GET /api/admin/comments endpoint in app/api/admin/comments/route.ts
+- [ ] T036 PATCH /api/admin/comments/[id] endpoint in app/api/admin/comments/[id]/route.ts
+- [ ] T037 GET /api/admin/users endpoint in app/api/admin/users/route.ts
+- [ ] T038 PATCH /api/admin/users/[id] endpoint in app/api/admin/users/[id]/route.ts
+- [ ] T039 Admin authentication middleware in src/features/admin/api/middleware.ts
+- [ ] T040 Input validation schemas in src/features/admin/api/validation.ts
+- [ ] T041 Error handling and logging in src/features/admin/api/error-handler.ts
+
+## Phase 3.2.1: Admin API Security Enhancement (HIGH PRIORITY)
+- [ ] T081 [P] Create admin role verification utility in src/shared/utils/admin-auth.ts
+- [ ] T082 [P] Create admin API middleware wrapper in src/features/admin/api/admin-middleware.ts
+- [ ] T083 [P] Update existing /api/stats to require admin role in app/api/stats/route.ts
+- [ ] T084 [P] Update existing /api/users to require admin role in app/api/users/route.ts
+- [ ] T085 [P] Update existing /api/posts to require admin role in app/api/posts/route.ts
+- [ ] T086 [P] Update existing /api/comments to require admin role in app/api/comments/route.ts
+- [ ] T087 [P] Create admin API route protection middleware in app/api/admin/middleware.ts
+- [ ] T088 [P] Add admin role verification to category management APIs
+- [ ] T089 [P] Add admin role verification to tag management APIs
+- [ ] T090 [P] Create admin API error responses in src/features/admin/api/admin-responses.ts
+
+## Phase 3.3: Core Implementation (ONLY after tests are failing)
+- [ ] T016 [P] DashboardStats entity in src/entities/admin/model/types.ts
+- [ ] T017 [P] AdminActivity entity in src/entities/admin/model/types.ts
+- [ ] T018 [P] PostManagementView entity in src/entities/admin/model/types.ts
+- [ ] T019 [P] CommentManagementView entity in src/entities/admin/model/types.ts
+- [ ] T020 [P] UserManagementView entity in src/entities/admin/model/types.ts
+- [x] T021 [P] Dashboard API service in src/features/admin/api/dashboard.ts
+- [ ] T022 [P] Post management API service in src/features/admin/api/posts.ts
+- [ ] T023 [P] Comment management API service in src/features/admin/api/comments.ts
+- [ ] T024 [P] User management API service in src/features/admin/api/users.ts
+- [ ] T025 [P] Admin dashboard widget in src/widgets/admin/ui/AdminDashboard.tsx
+- [x] T026 [P] Stats cards widget in src/widgets/admin/ui/StatsCards.tsx
+- [x] T027 [P] Recent posts widget in src/widgets/admin/ui/RecentPosts.tsx
+- [ ] T028 [P] Recent comments widget in src/widgets/admin/ui/RecentComments.tsx
+- [x] T029 [P] User activity widget in src/widgets/admin/ui/UserActivity.tsx
 - [ ] T030 [P] 3D background component in src/shared/ui/3D/AdminBackground.tsx
 - [ ] T031 [P] 3D interactive icons in src/shared/ui/3D/AdminIcons.tsx
 
@@ -95,14 +149,14 @@
 - [ ] T041 Error handling and logging in src/features/admin/api/error-handler.ts
 
 ## Phase 3.5: UI Implementation
-- [ ] T042 Admin dashboard page in app/(protect)/admin/page.tsx
-- [ ] T043 Admin layout component in app/(protect)/layout.tsx
-- [ ] T044 Post management page in app/(protect)/admin/posts/page.tsx
+- [x] T042 Admin dashboard page in app/(protect)/admin/page.tsx
+- [x] T043 Admin layout component in app/(protect)/layout.tsx
+- [x] T044 Post management page in app/(protect)/admin/posts/page.tsx
 - [ ] T045 Comment management page in app/(protect)/admin/comments/page.tsx
 - [ ] T046 User management page in app/(protect)/admin/users/page.tsx
-- [ ] T047 Post management table in src/widgets/admin/ui/PostManagementTable.tsx
+- [x] T047 Post management table in src/widgets/admin/ui/PostManagementTable.tsx
 - [ ] T048 Comment management table in src/widgets/admin/ui/CommentManagementTable.tsx
-- [ ] T049 User management table in src/widgets/admin/ui/UserManagementTable.tsx
+- [x] T049 User management table in src/widgets/admin/ui/UserManagementTable.tsx
 - [ ] T050 Admin navigation sidebar in src/widgets/admin/ui/AdminSidebar.tsx
 - [ ] T051 Admin header component in src/widgets/admin/ui/AdminHeader.tsx
 
@@ -114,13 +168,13 @@
 - [ ] T056 3D memory management in src/shared/ui/3D/MemoryManager.tsx
 
 ## Phase 3.7: Integration
-- [ ] T057 Connect dashboard service to database
-- [ ] T058 Connect post management to database
-- [ ] T059 Connect comment management to database
-- [ ] T060 Connect user management to database
-- [ ] T061 NextAuth.js admin role verification
-- [ ] T062 TanStack Query integration for data fetching
-- [ ] T063 TanStack Table integration for data tables
+- [x] T057 Connect dashboard service to database
+- [x] T058 Connect post management to database
+- [x] T059 Connect comment management to database
+- [x] T060 Connect user management to database
+- [x] T061 NextAuth.js admin role verification
+- [x] T062 TanStack Query integration for data fetching
+- [x] T063 TanStack Table integration for data tables
 - [ ] T064 Recharts integration for statistics visualization
 - [ ] T065 Request/response logging middleware
 - [ ] T066 CORS and security headers configuration
@@ -142,6 +196,7 @@
 - [ ] T080 3D performance monitoring and optimization
 
 ## Dependencies
+- **Phase 3.2.1 (T081-T090) has HIGHEST PRIORITY** - Admin API Security Enhancement
 - Tests (T006-T015) before implementation (T016-T080)
 - T016-T020 blocks T021-T024 (entities before services)
 - T021-T024 blocks T032-T041 (services before API endpoints)
@@ -149,10 +204,26 @@
 - T030-T031 blocks T052-T056 (3D components before 3D integration)
 - T032-T041 blocks T057-T066 (API before integration)
 - T042-T051 blocks T067-T080 (UI before polish)
+- T081-T090 (Admin API Security Enhancement) can run immediately after Phase 3.1
 - FSD 레이어 의존성: entities → features → widgets → views
 - 3D 컴포넌트 의존성: shared/ui → widgets → views
 
 ## Parallel Execution Examples
+
+### Phase 3.2.1: Admin API Security Enhancement (T081-T090) - HIGHEST PRIORITY
+```bash
+# Launch admin security tasks immediately after Phase 3.1:
+Task: "Create admin role verification utility in src/shared/utils/admin-auth.ts"
+Task: "Create admin API middleware wrapper in src/features/admin/api/admin-middleware.ts"
+Task: "Update existing /api/stats to require admin role in app/api/stats/route.ts"
+Task: "Update existing /api/users to require admin role in app/api/users/route.ts"
+Task: "Update existing /api/posts to require admin role in app/api/posts/route.ts"
+Task: "Update existing /api/comments to require admin role in app/api/comments/route.ts"
+Task: "Create admin API route protection middleware in app/api/admin/middleware.ts"
+Task: "Add admin role verification to category management APIs"
+Task: "Add admin role verification to tag management APIs"
+Task: "Create admin API error responses in src/features/admin/api/admin-responses.ts"
+```
 
 ### Phase 3.2: Contract Tests (T006-T015)
 ```bash
@@ -195,6 +266,7 @@ Task: "User activity widget in src/widgets/admin/ui/UserActivity.tsx"
 Task: "3D background component in src/shared/ui/3D/AdminBackground.tsx"
 Task: "3D interactive icons in src/shared/ui/3D/AdminIcons.tsx"
 ```
+
 
 ### Phase 3.8: Polish (T067-T074)
 ```bash
@@ -257,6 +329,8 @@ Task: "Update 3D performance guide in docs/3d-performance.md"
 - [x] 3D performance requirements addressed
 - [x] TypeScript and OpenAPI integration planned
 - [x] TDD methodology followed
+- [x] Admin API security enhancement tasks added (T081-T090)
+- [x] Existing API endpoints admin role verification planned
 
 ## Constitution Compliance
 - ✅ FSD Architecture: All tasks follow FSD layer structure
