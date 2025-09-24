@@ -82,15 +82,15 @@
 - [ ] T018 [P] PostManagementView entity in src/entities/admin/model/types.ts
 - [ ] T019 [P] CommentManagementView entity in src/entities/admin/model/types.ts
 - [ ] T020 [P] UserManagementView entity in src/entities/admin/model/types.ts
-- [x] T021 [P] Dashboard API service in src/features/admin/api/dashboard.ts
+- [x] T021 [P] Dashboard API service in src/features/admin/home/api/stats-api.ts
 - [ ] T022 [P] Post management API service in src/features/admin/api/posts.ts
 - [ ] T023 [P] Comment management API service in src/features/admin/api/comments.ts
 - [ ] T024 [P] User management API service in src/features/admin/api/users.ts
-- [ ] T025 [P] Admin dashboard widget in src/widgets/admin/ui/AdminDashboard.tsx
-- [x] T026 [P] Stats cards widget in src/widgets/admin/ui/StatsCards.tsx
-- [x] T027 [P] Recent posts widget in src/widgets/admin/ui/RecentPosts.tsx
+- [x] T025 [P] Admin dashboard widget in src/widgets/admin/home/ui/card-section.tsx (SectionCards)
+- [x] T026 [P] Stats cards widget in src/features/admin/home/ui/ (PostsCard, UsersCard, VisitorsCard, TotalViewsCard)
+- [x] T027 [P] Recent posts widget in src/widgets/admin/home/ui/post-table.tsx (PostTable)
 - [ ] T028 [P] Recent comments widget in src/widgets/admin/ui/RecentComments.tsx
-- [x] T029 [P] User activity widget in src/widgets/admin/ui/UserActivity.tsx
+- [x] T029 [P] User activity widget in src/widgets/admin/home/ui/user-table.tsx (UserTable)
 - [ ] T030 [P] 3D background component in src/shared/ui/3D/AdminBackground.tsx
 - [ ] T031 [P] 3D interactive icons in src/shared/ui/3D/AdminIcons.tsx
 
@@ -124,15 +124,15 @@
 - [ ] T018 [P] PostManagementView entity in src/entities/admin/model/types.ts
 - [ ] T019 [P] CommentManagementView entity in src/entities/admin/model/types.ts
 - [ ] T020 [P] UserManagementView entity in src/entities/admin/model/types.ts
-- [x] T021 [P] Dashboard API service in src/features/admin/api/dashboard.ts
+- [x] T021 [P] Dashboard API service in src/features/admin/home/api/stats-api.ts
 - [ ] T022 [P] Post management API service in src/features/admin/api/posts.ts
 - [ ] T023 [P] Comment management API service in src/features/admin/api/comments.ts
 - [ ] T024 [P] User management API service in src/features/admin/api/users.ts
-- [ ] T025 [P] Admin dashboard widget in src/widgets/admin/ui/AdminDashboard.tsx
-- [x] T026 [P] Stats cards widget in src/widgets/admin/ui/StatsCards.tsx
-- [x] T027 [P] Recent posts widget in src/widgets/admin/ui/RecentPosts.tsx
+- [x] T025 [P] Admin dashboard widget in src/widgets/admin/home/ui/card-section.tsx (SectionCards)
+- [x] T026 [P] Stats cards widget in src/features/admin/home/ui/ (PostsCard, UsersCard, VisitorsCard, TotalViewsCard)
+- [x] T027 [P] Recent posts widget in src/widgets/admin/home/ui/post-table.tsx (PostTable)
 - [ ] T028 [P] Recent comments widget in src/widgets/admin/ui/RecentComments.tsx
-- [x] T029 [P] User activity widget in src/widgets/admin/ui/UserActivity.tsx
+- [x] T029 [P] User activity widget in src/widgets/admin/home/ui/user-table.tsx (UserTable)
 - [ ] T030 [P] 3D background component in src/shared/ui/3D/AdminBackground.tsx
 - [ ] T031 [P] 3D interactive icons in src/shared/ui/3D/AdminIcons.tsx
 
@@ -154,9 +154,9 @@
 - [x] T044 Post management page in app/(protect)/admin/posts/page.tsx
 - [ ] T045 Comment management page in app/(protect)/admin/comments/page.tsx
 - [ ] T046 User management page in app/(protect)/admin/users/page.tsx
-- [x] T047 Post management table in src/widgets/admin/ui/PostManagementTable.tsx
+- [x] T047 Post management table in src/widgets/admin/home/ui/post-table.tsx (PostTable)
 - [ ] T048 Comment management table in src/widgets/admin/ui/CommentManagementTable.tsx
-- [x] T049 User management table in src/widgets/admin/ui/UserManagementTable.tsx
+- [x] T049 User management table in src/widgets/admin/home/ui/user-table.tsx (UserTable)
 - [ ] T050 Admin navigation sidebar in src/widgets/admin/ui/AdminSidebar.tsx
 - [ ] T051 Admin header component in src/widgets/admin/ui/AdminHeader.tsx
 
