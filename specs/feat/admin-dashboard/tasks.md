@@ -64,25 +64,7 @@
 - [ ] T014 [P] Integration test user management in tests/integration/test_user_management.ts
 - [ ] T015 [P] 3D component performance test in tests/unit/test_3d_performance.ts
 
-## Phase 3.2.1: Fetcher Pattern Implementation (Constitution v1.1.0 Compliance)
-
-### Fetcher Pattern Requirements (Constitution v1.1.0)
-- 모든 API 호출은 `fetcher.ts` 유틸리티 함수 사용 필수
-- `ApiRequest`, `ApiResponse`, `ApiRequestParams` 타입 활용
-- `pnpm run generate-types` 명령어로 타입 자동 생성
-- `src/shared/api/types.ts`의 유틸리티 타입만 사용
-
-### 작업 목록
-- [ ] T091 [P] Create fetcher utility function in src/shared/api/fetcher.ts
-- [ ] T092 [P] Create API type utilities in src/shared/api/types.ts
-- [ ] T093 [P] Setup OpenAPI type generation pipeline (pnpm run generate-types)
-- [ ] T094 [P] Update all admin API calls to use fetcher pattern
-- [ ] T095 [P] Update all public API calls to use fetcher pattern
-- [ ] T096 [P] Add type safety validation for all API calls
-- [ ] T097 [P] Create API error handling with fetcher pattern
-- [ ] T098 [P] Update API documentation to reflect fetcher pattern usage
-
-## Phase 3.2.2: Admin API Security Enhancement (HIGH PRIORITY)
+## Phase 3.2.1: Admin API Security Enhancement (HIGH PRIORITY)
 
 ### API 경로 분리 전략
 - **Public API** (`/api/*`): 일반 사용자 접근 가능, 인증 불필요
@@ -252,8 +234,7 @@
 - [ ] T080 3D performance monitoring and optimization
 
 ## Dependencies
-- **Phase 3.2.1 (T091-T098) has HIGHEST PRIORITY** - Fetcher Pattern Implementation (Constitution v1.1.0 Compliance)
-- **Phase 3.2.2 (T081-T090) has HIGH PRIORITY** - Admin API Security Enhancement
+- **Phase 3.2.1 (T081-T090) has HIGHEST PRIORITY** - Admin API Security Enhancement
 - Tests (T006-T015) before implementation (T016-T080)
 - T016-T020 blocks T021-T024 (entities before services)
 - T021-T024 blocks T032-T041 (services before API endpoints)
@@ -267,20 +248,7 @@
 
 ## Parallel Execution Examples
 
-### Phase 3.2.1: Fetcher Pattern Implementation (T091-T098) - HIGHEST PRIORITY
-```bash
-# Launch fetcher pattern tasks immediately after Phase 3.1:
-Task: "Create fetcher utility function in src/shared/api/fetcher.ts"
-Task: "Create API type utilities in src/shared/api/types.ts"
-Task: "Setup OpenAPI type generation pipeline (pnpm run generate-types)"
-Task: "Update all admin API calls to use fetcher pattern"
-Task: "Update all public API calls to use fetcher pattern"
-Task: "Add type safety validation for all API calls"
-Task: "Create API error handling with fetcher pattern"
-Task: "Update API documentation to reflect fetcher pattern usage"
-```
-
-### Phase 3.2.2: Admin API Security Enhancement (T081-T090) - HIGH PRIORITY
+### Phase 3.2.1: Admin API Security Enhancement (T081-T090) - HIGHEST PRIORITY
 ```bash
 # Launch admin security tasks immediately after Phase 3.1:
 Task: "Create admin role verification utility in src/shared/utils/admin-auth.ts"
@@ -402,7 +370,6 @@ Task: "Update 3D performance guide in docs/3d-performance.md"
 - [x] 3D performance requirements addressed
 - [x] TypeScript and OpenAPI integration planned
 - [x] TDD methodology followed
-- [x] Fetcher pattern implementation tasks added (T091-T098)
 - [x] Admin API security enhancement tasks added (T081-T090)
 - [x] Existing API endpoints admin role verification planned
 
