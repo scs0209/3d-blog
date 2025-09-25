@@ -69,14 +69,20 @@ Constitution v1.1.0에 따라 다음 API 개발 표준을 준수해야 합니다
 - **유틸리티 타입**: `src/shared/api/types.ts`의 유틸리티 타입만 사용
 
 ## 📁 관련 파일
+
+### 실제 존재하는 파일들
 - `app/(protect)/admin/page.tsx` - 메인 대시보드 페이지
-- `src/widgets/admin/ui/AdminDashboard.tsx` - 대시보드 메인 컴포넌트
-- `src/widgets/admin/ui/StatsCards.tsx` - 통계 카드 컴포넌트
-- `src/widgets/admin/ui/RecentPosts.tsx` - 최근 포스트 위젯
-- `src/widgets/admin/ui/RecentComments.tsx` - 최근 댓글 위젯
-- `src/widgets/admin/ui/UserActivity.tsx` - 사용자 활동 위젯
+- `src/widgets/admin/home/ui/card-section.tsx` - 통계 카드 섹션 컴포넌트
+- `src/widgets/admin/home/ui/post-table.tsx` - 포스트 테이블 컴포넌트
+- `src/widgets/admin/home/ui/user-table.tsx` - 사용자 테이블 컴포넌트
+- `src/features/admin/home/api/stats-api.ts` - 통계 API 함수
+- `src/features/admin/home/ui/PostsCard.tsx` - 포스트 카드 컴포넌트
+- `src/features/admin/home/ui/TotalViewsCard.tsx` - 총 조회수 카드 컴포넌트
+- `src/features/admin/home/ui/UsersCard.tsx` - 사용자 카드 컴포넌트
+- `src/features/admin/home/ui/VisitorsCard.tsx` - 방문자 카드 컴포넌트
+
+### 생성해야 할 파일들
 - `src/features/admin/api/dashboard.ts` - 대시보드 API 함수 (fetcher 패턴 사용)
-- `src/features/admin/api/stats.ts` - 통계 API 함수 (fetcher 패턴 사용)
 - `src/features/admin/api/posts.ts` - 포스트 관리 API 함수 (fetcher 패턴 사용)
 - `src/features/admin/api/comments.ts` - 댓글 관리 API 함수 (fetcher 패턴 사용)
 - `src/features/admin/api/users.ts` - 사용자 관리 API 함수 (fetcher 패턴 사용)
@@ -84,6 +90,16 @@ Constitution v1.1.0에 따라 다음 API 개발 표준을 준수해야 합니다
 - `src/shared/api/fetcher.ts` - API 호출 유틸리티 함수
 - `src/shared/api/types.ts` - API 타입 유틸리티
 - `src/shared/api/openapi-types.ts` - 자동 생성된 OpenAPI 타입
+
+### API 엔드포인트 구조
+- `app/api/admin/dashboard/` - 관리자 대시보드 API (미구현)
+- `app/api/admin/posts/` - 관리자 포스트 관리 API (미구현)
+- `app/api/admin/comments/` - 관리자 댓글 관리 API (미구현)
+- `app/api/admin/users/` - 관리자 사용자 관리 API (미구현)
+- `app/api/posts/` - 공개 포스트 API (구현됨)
+- `app/api/comments/` - 댓글 API (구현됨)
+- `app/api/users/` - 사용자 API (구현됨)
+- `app/api/stats/` - 통계 API (구현됨)
 
 ## 📦 Repomix 파일 구조
 프로젝트는 AI 도구 최적화를 위해 다음과 같이 분리된 repomix 파일들을 사용합니다:

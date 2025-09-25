@@ -260,4 +260,4 @@ ios/ or android/
 - [x] `tasks.md` - 80개 작업 (T001-T080), TDD 방식, FSD 아키텍처 준수, 3D 성능 최적화
 
 ---
-*Based on Constitution v1.0.0 - See `.cursor/.specify/memory/constitution.md`*
+*Based on Constitution v1.1.0 - See `.cursor/.specify/memory/constitution.md`*
