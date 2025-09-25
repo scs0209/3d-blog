@@ -40,6 +40,8 @@ React Three Fiber를 활용한 3D 요소는 프로젝트의 핵심 차별화 요
 - 유틸리티: camelCase (formatDate.ts)
 - 타입: PascalCase (User.ts)
 - 상수: UPPER_SNAKE_CASE (API_ENDPOINTS.ts)
+- **클라이언트 API**: `*-api.ts` (post-api.ts)
+- **서버 API**: `*-service.ts` (post-service.ts)
 
 ## 3D Development Standards
 
@@ -63,17 +65,83 @@ React Three Fiber를 활용한 3D 요소는 프로젝트의 핵심 차별화 요
 
 ## API Development Standards
 
+### Core API Files
+- **Fetcher 함수**: `src/shared/api/fetcher.ts` - 타입 안전한 API 호출 유틸리티
+- **API 타입 정의**: `src/shared/api/types.ts` - ApiRequest, ApiResponse, ApiRequestParams 타입
+- **API 인덱스**: `src/shared/api/index.ts` - 모든 API 유틸리티 export
+- **OpenAPI 타입**: `src/shared/api/openapi-types.ts` - 자동 생성된 OpenAPI 타입
+
 ### Type Generation Workflow
-- API 스키마 변경 시 `npm run generate-types` 실행 필수
+- API 스키마 변경 시 `pnpm run generate-types` 실행 필수
 - 생성된 `openapi-types.ts` 파일은 자동 커밋하지 않음
 - `src/shared/api/types.ts`의 유틸리티 타입만 사용
 - `fetcher.ts`의 `FetcherParams` 타입을 통한 타입 안전한 API 호출
 
 ### API Implementation Pattern
-- 모든 API 함수는 `src/features/*/api/` 디렉토리에 위치
-- `fetcher` 함수를 사용한 일관된 API 호출 패턴
+- **클라이언트 API 함수**: `src/features/*/api/` 디렉토리에 위치, `fetcher` 사용
+- **서버 API 함수**: `src/features/*/api/` 디렉토리에 위치, Prisma 클라이언트 직접 사용
 - `ApiRequest`, `ApiResponse`, `ApiRequestParams` 타입 활용
 - Path parameter는 `{paramName}` 형식으로 URL에 포함
+
+### Server-Side API Guidelines
+- **클라이언트 API 호출**: `fetcher` 함수 사용 필수 (타입 안전성 보장)
+- **서버 컴포넌트**: Prisma 클라이언트를 통한 직접 데이터베이스 조작
+- **서버 API 라우트**: `app/api/` 디렉토리의 Next.js API Routes 사용
+- **API 라우트 내부**: Prisma 클라이언트 사용, `fetcher` 사용 금지
+- **외부 API 호출**: 서버에서는 `fetch` 또는 `axios` 직접 사용
+
+### API Utility Functions
+```typescript
+// src/shared/api/fetcher.ts
+export const fetcher = async <P extends Path, M extends Method<P>>({
+  url, method, config, ...restParams
+}: FetcherParams<P, M>) => { ... }
+
+// src/shared/api/types.ts
+export type ApiResponse<T extends keyof paths, M extends keyof paths[T]> = ...
+export type ApiRequest<T extends keyof paths, M extends keyof paths[T]> = ...
+export type ApiRequestParams<T extends keyof paths, M extends keyof paths[T]> = ...
+```
+
+### API Usage Patterns
+```typescript
+// ✅ 클라이언트 컴포넌트 (fetcher 사용)
+// src/features/post/api/post-api.ts
+export const getPosts = async (params: GetPostsParams) => {
+  return fetcher({
+    url: '/api/posts',
+    method: 'get',
+    query: params
+  });
+};
+
+// ✅ 서버 컴포넌트 (Prisma 직접 사용)
+// src/features/post/api/post-service.ts
+export const getPostsServer = async (params: GetPostsParams) => {
+  return prisma.post.findMany({
+    where: { published: true },
+    include: { author: true, category: true }
+  });
+};
+
+// ✅ 서버 컴포넌트에서 사용
+// app/posts/page.tsx
+export default async function PostsPage() {
+  const posts = await getPostsServer({ page: 1, limit: 10 });
+  return <PostsList posts={posts} />;
+}
+
+// ✅ 서버 API 라우트 (Prisma 클라이언트 사용)
+// app/api/posts/route.ts
+export async function GET() {
+  const posts = await prisma.post.findMany();
+  return Response.json(posts);
+}
+
+// ✅ 외부 API 호출 (서버에서는 fetch 직접 사용)
+const response = await fetch('https://api.external.com/data');
+const externalData = await response.json();
+```
 
 ### Type Safety Enforcement
 - API 호출 시 컴파일 타임 타입 검증 필수
