@@ -42,6 +42,13 @@ React Three Fiber를 활용한 3D 요소는 프로젝트의 핵심 차별화 요
 - 상수: UPPER_SNAKE_CASE (API_ENDPOINTS.ts)
 - **클라이언트 API**: `*-api.ts` (post-api.ts)
 - **서버 API**: `*-service.ts` (post-service.ts)
+- **Middleware**: `middleware.ts` (프로젝트 루트)
+
+### Programming Paradigm
+- **함수형 프로그래밍**: Class 문법 사용 금지
+- **함수 선언**: `const` 키워드 사용 (arrow function)
+- **상태 관리**: React hooks, Context API, TanStack Query
+- **유틸리티**: 순수 함수로 작성
 
 ## 3D Development Standards
 
@@ -156,6 +163,8 @@ const externalData = await response.json();
 - Biome을 통한 코드 품질 검사
 - 모든 함수와 컴포넌트에 JSDoc 주석
 - 복잡도가 높은 함수는 분리
+- **Class 문법 사용 금지**: 함수형 프로그래밍 원칙 준수
+- **Middleware**: 프로젝트 루트의 `middleware.ts` 파일에 위치
 
 ### Security Requirements
 - NextAuth.js를 통한 인증 시스템
