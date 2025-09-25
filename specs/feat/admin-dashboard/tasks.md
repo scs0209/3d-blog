@@ -65,15 +65,34 @@
 - [ ] T015 [P] 3D component performance test in tests/unit/test_3d_performance.ts
 
 ## Phase 3.2.1: Admin API Security Enhancement (HIGH PRIORITY)
+
+### API 경로 분리 전략
+- **Public API** (`/api/*`): 일반 사용자 접근 가능, 인증 불필요
+- **Admin API** (`/api/admin/*`): 관리자만 접근 가능, admin role 검증 필요
+
+### Public API (유지)
+- `/api/posts` - 블로그 게시물 조회 (읽기 전용)
+- `/api/comments` - 댓글 작성/조회
+- `/api/category` - 카테고리 조회
+- `/api/tags` - 태그 조회
+
+### Admin API (신규 생성)
+- `/api/admin/stats` - 관리자 통계
+- `/api/admin/users` - 사용자 관리
+- `/api/admin/posts` - 게시물 관리 (CRUD)
+- `/api/admin/comments` - 댓글 관리
+- `/api/admin/dashboard` - 대시보드 데이터
+
+### 작업 목록
 - [ ] T081 [P] Create admin role verification utility in src/shared/utils/admin-auth.ts
 - [ ] T082 [P] Create admin API middleware wrapper in src/features/admin/api/admin-middleware.ts
-- [ ] T083 [P] Update existing /api/stats to require admin role in app/api/stats/route.ts
-- [ ] T084 [P] Update existing /api/users to require admin role in app/api/users/route.ts
-- [ ] T085 [P] Update existing /api/posts to require admin role in app/api/posts/route.ts
-- [ ] T086 [P] Update existing /api/comments to require admin role in app/api/comments/route.ts
-- [ ] T087 [P] Create admin API route protection middleware in app/api/admin/middleware.ts
-- [ ] T088 [P] Add admin role verification to category management APIs
-- [ ] T089 [P] Add admin role verification to tag management APIs
+- [ ] T083 [P] Move /api/stats to /api/admin/stats (admin-only statistics)
+- [ ] T084 [P] Move /api/users to /api/admin/users (admin-only user management)
+- [ ] T085 [P] Create /api/admin/posts for admin post management (separate from public /api/posts)
+- [ ] T086 [P] Create /api/admin/comments for admin comment management (separate from public /api/comments)
+- [ ] T087 [P] Update root middleware.ts to protect /api/admin/* routes
+- [ ] T088 [P] Add admin role verification to category management APIs (admin-only operations)
+- [ ] T089 [P] Add admin role verification to tag management APIs (admin-only operations)
 - [ ] T090 [P] Create admin API error responses in src/features/admin/api/admin-responses.ts
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
@@ -107,15 +126,34 @@
 - [ ] T041 Error handling and logging in src/features/admin/api/error-handler.ts
 
 ## Phase 3.2.1: Admin API Security Enhancement (HIGH PRIORITY)
+
+### API 경로 분리 전략
+- **Public API** (`/api/*`): 일반 사용자 접근 가능, 인증 불필요
+- **Admin API** (`/api/admin/*`): 관리자만 접근 가능, admin role 검증 필요
+
+### Public API (유지)
+- `/api/posts` - 블로그 게시물 조회 (읽기 전용)
+- `/api/comments` - 댓글 작성/조회
+- `/api/category` - 카테고리 조회
+- `/api/tags` - 태그 조회
+
+### Admin API (신규 생성)
+- `/api/admin/stats` - 관리자 통계
+- `/api/admin/users` - 사용자 관리
+- `/api/admin/posts` - 게시물 관리 (CRUD)
+- `/api/admin/comments` - 댓글 관리
+- `/api/admin/dashboard` - 대시보드 데이터
+
+### 작업 목록
 - [ ] T081 [P] Create admin role verification utility in src/shared/utils/admin-auth.ts
 - [ ] T082 [P] Create admin API middleware wrapper in src/features/admin/api/admin-middleware.ts
-- [ ] T083 [P] Update existing /api/stats to require admin role in app/api/stats/route.ts
-- [ ] T084 [P] Update existing /api/users to require admin role in app/api/users/route.ts
-- [ ] T085 [P] Update existing /api/posts to require admin role in app/api/posts/route.ts
-- [ ] T086 [P] Update existing /api/comments to require admin role in app/api/comments/route.ts
-- [ ] T087 [P] Create admin API route protection middleware in app/api/admin/middleware.ts
-- [ ] T088 [P] Add admin role verification to category management APIs
-- [ ] T089 [P] Add admin role verification to tag management APIs
+- [ ] T083 [P] Move /api/stats to /api/admin/stats (admin-only statistics)
+- [ ] T084 [P] Move /api/users to /api/admin/users (admin-only user management)
+- [ ] T085 [P] Create /api/admin/posts for admin post management (separate from public /api/posts)
+- [ ] T086 [P] Create /api/admin/comments for admin comment management (separate from public /api/comments)
+- [ ] T087 [P] Update root middleware.ts to protect /api/admin/* routes
+- [ ] T088 [P] Add admin role verification to category management APIs (admin-only operations)
+- [ ] T089 [P] Add admin role verification to tag management APIs (admin-only operations)
 - [ ] T090 [P] Create admin API error responses in src/features/admin/api/admin-responses.ts
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
@@ -215,13 +253,13 @@
 # Launch admin security tasks immediately after Phase 3.1:
 Task: "Create admin role verification utility in src/shared/utils/admin-auth.ts"
 Task: "Create admin API middleware wrapper in src/features/admin/api/admin-middleware.ts"
-Task: "Update existing /api/stats to require admin role in app/api/stats/route.ts"
-Task: "Update existing /api/users to require admin role in app/api/users/route.ts"
-Task: "Update existing /api/posts to require admin role in app/api/posts/route.ts"
-Task: "Update existing /api/comments to require admin role in app/api/comments/route.ts"
-Task: "Create admin API route protection middleware in app/api/admin/middleware.ts"
-Task: "Add admin role verification to category management APIs"
-Task: "Add admin role verification to tag management APIs"
+Task: "Move /api/stats to /api/admin/stats (admin-only statistics)"
+Task: "Move /api/users to /api/admin/users (admin-only user management)"
+Task: "Create /api/admin/posts for admin post management (separate from public /api/posts)"
+Task: "Create /api/admin/comments for admin comment management (separate from public /api/comments)"
+Task: "Update root middleware.ts to protect /api/admin/* routes"
+Task: "Add admin role verification to category management APIs (admin-only operations)"
+Task: "Add admin role verification to tag management APIs (admin-only operations)"
 Task: "Create admin API error responses in src/features/admin/api/admin-responses.ts"
 ```
 
@@ -291,6 +329,9 @@ Task: "Update 3D performance guide in docs/3d-performance.md"
 - TypeScript strict 모드 사용
 - OpenAPI 명세 기반 타입 생성
 - TDD 방식으로 테스트 먼저 작성
+- **API 경로 분리**: Public API (`/api/*`)와 Admin API (`/api/admin/*`) 명확히 구분
+- **Public API**: 일반 사용자 접근 가능, 인증 불필요
+- **Admin API**: 관리자만 접근 가능, admin role 검증 필요
 
 ## Task Generation Rules
 *Applied during main() execution*
