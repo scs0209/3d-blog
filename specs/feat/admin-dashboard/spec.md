@@ -11,6 +11,8 @@
 - Q: 사용자 여정 및 핵심 시나리오 → A: 대시보드 홈 → 통계 확인 → 개별 관리 페이지 이동 + 모달/사이드패널 조합
 - Q: 오류 처리 및 예외 상황 → A: 기본적인 오류 메시지 표시만
 - Q: 완료 기준 및 측정 지표 → A: 정성+정량 혼합 (사용성 + 성능 지표)
+- Q: What is the expected scale of data (e.g., number of users, posts) the admin dashboard needs to handle? This will influence pagination and performance decisions. → A: Medium scale (thousands of entries)
+- Q: What action should be taken when an administrator attempts to delete a user who is the author of existing posts or comments? → A: Restrict Deletion: Prevent the user from being deleted and show an error message.
 
 ## 🎯 목표
 - 포스트, 댓글, 사용자, 카테고리, 태그를 통합 관리할 수 있는 대시보드 구현
@@ -26,6 +28,11 @@
 - **Category**: 카테고리 (id, name, slug, description)
 - **Tag**: 태그 (id, name, slug)
 - **PostTag**: 포스트-태그 다대다 관계
+
+### 데이터 볼륨 가정
+- **규모**: 중간 규모 (수천 개의 항목)를 기준으로 설계합니다.
+- **페이지네이션**: 모든 목록(포스트, 사용자, 댓글 등)에 페이지네이션을 적용하여 성능을 보장합니다.
+- **최적화**: 대량의 데이터를 효율적으로 처리하기 위해 데이터베이스 쿼리 최적화 및 가상 스크롤링(필요시)을 고려합니다.
 
 ## 🚶‍♂️ 사용자 여정
 ### 주요 시나리오
