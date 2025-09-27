@@ -1,0 +1,1726 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where content has been compressed (code blocks are separated by ⋮---- delimiter).
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.ts, **/*.tsx, **/*.js, **/*.jsx, **/*.json, **/*.md, **/*.yml, **/*.yaml
+- Files matching these patterns are excluded: **/node_modules/**, **/.next/**, **/dist/**, **/build/**, **/*.log, **/coverage/**, **/.nyc_output/**, **/repomix-*.xml
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Content has been compressed - code blocks are separated by ⋮---- delimiter
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+BaseModal/
+  index.ts
+  Modal.tsx
+Button/
+  test/
+    Button.test.tsx
+  Button.tsx
+  index.ts
+glassmorphism/
+  GlassmorphismButton.tsx
+  GlassmorphismCard.tsx
+  GlassmorphismContainer.tsx
+  index.ts
+react-swagger/
+  ReactSwagger.tsx
+skeleton/
+  index.ts
+  PostCardSkeleton.tsx
+  PostListCardSkeleton.tsx
+  SidebarSkeleton.tsx
+Tag/
+  index.ts
+  tag.tsx
+TextEditor/
+  code-block.tsx
+  extensions.ts
+  novel-editor.tsx
+  slash-command.tsx
+toast/
+  index.ts
+  README.md
+  Toast.tsx
+  ToastContainer.tsx
+  ToastProvider.tsx
+  types.ts
+  useToast.ts
+  utils.ts
+AnimatedText.tsx
+Atom.tsx
+AuthSidebar.tsx
+BlurCursor.tsx
+CameraController.tsx
+CameraLogger.tsx
+Cloud.tsx
+Cube.tsx
+CyberpunkCursor.tsx
+Dropdown.tsx
+Earth.tsx
+FloatingActionButton.tsx
+HelloBot.tsx
+index.ts
+Loader.tsx
+Meteors.tsx
+modal.tsx
+MoveBot.tsx
+Navbar.tsx
+NeutralNetwork.tsx
+NovelViewer.tsx
+PostSummary.tsx
+Room.tsx
+Scene.tsx
+SkyBox.tsx
+sparkles.tsx
+Sun.tsx
+ThemeToggleButton.tsx
+Tooltip.tsx
+VisitorLogger.tsx
+WatchRobot.tsx
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="BaseModal/index.ts">
+
+</file>
+
+<file path="BaseModal/Modal.tsx">
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
+⋮----
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  title?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'cyberpunk' | 'glass';
+  showCloseButton?: boolean;
+  closeOnBackdropClick?: boolean;
+  className?: string;
+}
+⋮----
+const handleBackdropClick = (e: React.MouseEvent) =>
+⋮----
+{/* 헤더 */}
+⋮----
+{/* 컨텐츠 */}
+</file>
+
+<file path="Button/test/Button.test.tsx">
+import { describe, expect, test } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { Button } from '../Button';
+</file>
+
+<file path="Button/Button.tsx">
+import { motion } from 'framer-motion';
+import { Send, Loader2 } from 'lucide-react';
+import type { ReactNode } from 'react';
+⋮----
+type ButtonProps = {
+  children?: ReactNode;
+  onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
+  variant?: 'primary' | 'secondary' | 'comment' | 'reply' | 'glass' | 'glass-primary';
+  size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  disabled?: boolean;
+  className?: string;
+  // Submit 버튼 전용 props (하위 호환성)
+  isPending?: boolean;
+  submitType?: 'comment' | 'reply';
+};
+⋮----
+// Submit 버튼 전용 props (하위 호환성)
+⋮----
+// 하위 호환성을 위한 submit 관련 props
+⋮----
+// 하위 호환성 처리
+⋮----
+// glassmorphism 버튼인지 확인
+⋮----
+// Submit 버튼인 경우 기본 children 설정
+⋮----
+// Submit 버튼인 경우 absolute 위치 클래스 추가
+</file>
+
+<file path="Button/index.ts">
+
+</file>
+
+<file path="glassmorphism/GlassmorphismButton.tsx">
+import { motion, type HTMLMotionProps } from 'framer-motion';
+import type { ReactNode } from 'react';
+⋮----
+type ButtonVariant = 'primary' | 'secondary' | 'outline';
+type ButtonSize = 'sm' | 'md' | 'lg';
+⋮----
+interface GlassmorphismButtonProps extends HTMLMotionProps<'button'> {
+  children: ReactNode;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
+}
+</file>
+
+<file path="glassmorphism/GlassmorphismCard.tsx">
+import { motion, type HTMLMotionProps } from 'framer-motion';
+import type { ReactNode } from 'react';
+⋮----
+interface GlassmorphismCardProps extends HTMLMotionProps<'div'> {
+  children: ReactNode;
+  className?: string;
+  hover?: boolean;
+  border?: boolean;
+}
+⋮----
+{/* L자 모서리 테두리 */}
+⋮----
+{/* 네 변 border */}
+⋮----
+{/* 좌상단 ┏ */}
+⋮----
+{/* 우상단 ┓ */}
+⋮----
+{/* 우하단 ┛ */}
+⋮----
+{/* 좌하단 ┗ */}
+</file>
+
+<file path="glassmorphism/GlassmorphismContainer.tsx">
+import { motion, type HTMLMotionProps } from 'framer-motion';
+import type { ReactNode } from 'react';
+⋮----
+interface GlassmorphismContainerProps extends HTMLMotionProps<'div'> {
+  children: ReactNode;
+  className?: string;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  rounded?: boolean;
+}
+⋮----
+export const GlassmorphismContainer = ({
+  children,
+  className = '',
+  padding = 'md',
+  rounded = true,
+  ...props
+}: GlassmorphismContainerProps) =>
+</file>
+
+<file path="glassmorphism/index.ts">
+
+</file>
+
+<file path="react-swagger/ReactSwagger.tsx">
+import SwaggerUI from 'swagger-ui-react';
+⋮----
+type Props = {
+  spec: Record<string, any>;
+};
+⋮----
+function ReactSwagger(
+</file>
+
+<file path="skeleton/index.ts">
+
+</file>
+
+<file path="skeleton/PostCardSkeleton.tsx">
+import { motion } from 'framer-motion';
+⋮----
+export const PostCardSkeleton = () =>
+⋮----
+{/* 제목 스켈레톤 */}
+⋮----
+{/* 카테고리 스켈레톤 */}
+⋮----
+{/* 날짜 스켈레톤 */}
+⋮----
+{/* 요약 스켈레톤 */}
+</file>
+
+<file path="skeleton/PostListCardSkeleton.tsx">
+import { motion } from 'framer-motion';
+⋮----
+export const PostListCardSkeleton = () =>
+⋮----
+{/* 왼쪽: 텍스트 영역 */}
+⋮----
+{/* 제목 스켈레톤 */}
+⋮----
+{/* 메타 정보 스켈레톤 */}
+⋮----
+{/* 내용 스켈레톤 */}
+⋮----
+{/* 태그 스켈레톤 */}
+⋮----
+{/* 오른쪽: 이미지 영역 (데스크톱에서만 표시) */}
+</file>
+
+<file path="skeleton/SidebarSkeleton.tsx">
+import { motion } from 'framer-motion';
+⋮----
+{/* Visitor Counter 스켈레톤 */}
+⋮----
+{/* Category 섹션 스켈레톤 */}
+⋮----
+{/* 전체 메뉴 스켈레톤 */}
+⋮----
+{/* 카테고리 메뉴 스켈레톤들 */}
+</file>
+
+<file path="Tag/index.ts">
+
+</file>
+
+<file path="Tag/tag.tsx">
+import type React from 'react';
+⋮----
+export type SizeToken = 'sm' | 'md' | 'lg';
+export type ColorToken =
+  | 'blue'
+  | 'navy'
+  | 'neon'
+  | 'blueToCyan'
+  | 'fuchsiaToBlue'
+  | 'purple'
+  | 'green'
+  | 'red'
+  | 'orange'
+  | 'yellow'
+  | 'pink'
+  | 'cyan'
+  | 'indigo'
+  | 'emerald'
+  | 'rose'
+  | 'violet'
+  | 'amber'
+  | 'teal'
+  | 'lime'
+  | 'sky'
+  | 'slate'
+  | 'gray'
+  | 'neutral';
+export type SpacingToken = 'tight' | 'normal' | 'loose';
+export type TypeToken = 'solid' | 'glass' | 'outline' | 'gradient';
+⋮----
+md: 'text-[11px] px-2 py-0.5', // PostListCard와 동일
+⋮----
+// Solid 스타일 (기존)
+⋮----
+// 새로운 solid 색상들
+⋮----
+// Glassmorphism 스타일 (배경, 테두리, 텍스트 모두 색상별로)
+⋮----
+// Outline 스타일
+⋮----
+export type TagProps = {
+  children: React.ReactNode;
+  size?: SizeToken;
+  color?: ColorToken;
+  spacing?: SpacingToken;
+  type?: TypeToken;
+  className?: string | Element;
+  hover?: boolean; // 호버 효과 활성화
+};
+⋮----
+hover?: boolean; // 호버 효과 활성화
+⋮----
+const getColorStyles = (type: TypeToken, color: ColorToken): string =>
+⋮----
+// gradient 타입은 기존 gradient 색상들만 지원
+⋮----
+return solidColorStyles[color]; // fallback to solid
+default: // 'solid' 포함
+⋮----
+export const Tag = ({
+  children,
+  size = 'md',
+  color = 'blue',
+  spacing = 'normal',
+  type = 'solid',
+  className = '',
+  hover = false,
+}: TagProps) =>
+</file>
+
+<file path="TextEditor/code-block.tsx">
+import { useEffect, useRef } from 'react';
+import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
+import mermaid from 'mermaid';
+import { useSession } from 'next-auth/react';
+⋮----
+export enum Mode {
+  Preview = 0,
+  Edit = 1,
+}
+⋮----
+// HTML 엔티티 디코딩
+⋮----
+{/* 상단 컨트롤 바 */}
+⋮----
+{/* 코드 블록 컨텐츠 */}
+</file>
+
+<file path="TextEditor/extensions.ts">
+import {
+  AIHighlight,
+  CharacterCount,
+  CodeBlockLowlight,
+  Color,
+  CustomKeymap,
+  GlobalDragHandle,
+  HighlightExtension,
+  HorizontalRule,
+  MarkdownExtension,
+  Mathematics,
+  Placeholder,
+  StarterKit,
+  TaskItem,
+  TaskList,
+  TextStyle,
+  TiptapImage,
+  TiptapLink,
+  TiptapUnderline,
+  Twitter,
+  UpdatedImage,
+  Youtube,
+} from 'novel/extensions';
+import { ReactNodeViewRenderer } from '@tiptap/react';
+import CodeBlock from './code-block';
+import { UploadImagesPlugin } from 'novel/plugins';
+⋮----
+import { cx } from 'class-variance-authority';
+import { all, createLowlight } from 'lowlight';
+⋮----
+// TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
+⋮----
+// You can overwrite the placeholder with your own configuration
+⋮----
+addProseMirrorPlugins()
+⋮----
+addAttributes()
+⋮----
+default: 0, // MODE.EDIT
+⋮----
+addNodeView()
+</file>
+
+<file path="TextEditor/novel-editor.tsx">
+import {
+  EditorCommand,
+  EditorCommandEmpty,
+  EditorCommandItem,
+  EditorCommandList,
+  EditorContent,
+  EditorRoot,
+} from 'novel';
+import { handleCommandNavigation } from 'novel/extensions';
+import { defaultExtensions } from './extensions';
+⋮----
+import { slashCommand, suggestionItems } from './slash-command';
+⋮----
+// HTML 문자열에서 코드블럭 내부의 \n 개행 문자를 <br> 태그로 변환
+const preprocessHTML = (html: string) =>
+⋮----
+// 코드블럭 내부의 \n 개행 문자를 <br> 태그로 변환
+</file>
+
+<file path="TextEditor/slash-command.tsx">
+import {
+  CheckSquare,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  MessageSquarePlus,
+  Network,
+  Text,
+  TextQuote,
+  Twitter,
+  Youtube,
+} from 'lucide-react';
+import { Command, createSuggestionItems, renderItems } from 'novel/extensions';
+⋮----
+const videoLink = prompt('Please enter Youtube Video Link');
+⋮----
+// From https://regexr.com/3dj5t
+⋮----
+const tweetLink = prompt('Please enter Twitter Link');
+</file>
+
+<file path="toast/index.ts">
+// 토스트 시스템 메인 export
+⋮----
+// 타입 export
+</file>
+
+<file path="toast/README.md">
+# 🍞 Toast System
+
+react-toastify와 유사한 토스트 메시지 시스템입니다. 스택처럼 쌓이는 구조로 설계되었으며, 디자인 시스템 라이브러리 규칙을 준수합니다.
+
+## ✨ 주요 기능
+
+- **4가지 토스트 타입**: success, error, warning, info
+- **6가지 위치**: top-right, top-left, top-center, bottom-right, bottom-left, bottom-center
+- **스택 구조**: 새로운 토스트가 위에 쌓임
+- **자동 제거**: 설정된 시간 후 자동으로 사라짐
+- **지속 토스트**: 사용자가 수동으로 닫을 때까지 유지
+- **애니메이션**: framer-motion을 사용한 부드러운 애니메이션
+- **접근성**: ARIA 속성 및 키보드 네비게이션 지원
+- **반응형**: 모바일과 데스크톱 모두 지원
+
+## 🚀 설치 및 설정
+
+### 1. ToastProvider 설정
+
+앱의 최상위 레벨에 `ToastProvider`를 추가합니다:
+
+```tsx
+// app/layout.tsx 또는 최상위 컴포넌트
+import { ToastProvider } from '@/shared/ui/toast';
+
+export default function RootLayout({ children }) {
+  return (
+    <ToastProvider maxToasts={5}>
+      {children}
+    </ToastProvider>
+  );
+}
+```
+
+### 2. ToastContainer 추가
+
+원하는 위치에 `ToastContainer`를 추가합니다:
+
+```tsx
+// app/layout.tsx 또는 페이지 컴포넌트
+import { ToastContainer } from '@/shared/ui/toast';
+
+export default function Layout({ children }) {
+  return (
+    <>
+      {children}
+      <ToastContainer position="top-right" maxToasts={5} />
+    </>
+  );
+}
+```
+
+## 📖 사용법
+
+### 기본 사용법
+
+```tsx
+import { useToast } from '@/shared/ui/toast';
+
+export function MyComponent() {
+  const toast = useToast();
+
+  const handleSuccess = () => {
+    toast.success('성공적으로 처리되었습니다!');
+  };
+
+  const handleError = () => {
+    toast.error('오류가 발생했습니다.');
+  };
+
+  return (
+    <div>
+      <button onClick={handleSuccess}>성공 토스트</button>
+      <button onClick={handleError}>에러 토스트</button>
+    </div>
+  );
+}
+```
+
+### 고급 사용법
+
+```tsx
+const toast = useToast();
+
+// 커스텀 토스트
+toast.toast({
+  type: 'info',
+  title: '업데이트 알림',
+  message: '새로운 기능이 추가되었습니다.',
+  duration: 8000,
+  position: 'bottom-right',
+  onClose: () => console.log('토스트가 닫혔습니다'),
+});
+
+// 지속 토스트 (자동으로 사라지지 않음)
+toast.persistent('중요한 알림입니다.', {
+  title: '주의',
+  duration: 0,
+});
+
+// 특정 토스트 제거
+const toastId = toast.success('메시지');
+toast.remove(toastId);
+
+// 모든 토스트 제거
+toast.clear();
+```
+
+## 🎨 토스트 타입별 스타일
+
+| 타입 | 색상 | 아이콘 | 용도 |
+|------|------|--------|------|
+| `success` | 초록색 | ✓ | 성공 메시지 |
+| `error` | 빨간색 | ✗ | 에러 메시지 |
+| `warning` | 노란색 | ⚠ | 경고 메시지 |
+| `info` | 파란색 | ℹ | 정보 메시지 |
+
+## 📍 위치 옵션
+
+```tsx
+// 6가지 위치 지원
+<ToastContainer position="top-right" />      // 우측 상단 (기본값)
+<ToastContainer position="top-left" />       // 좌측 상단
+<ToastContainer position="top-center" />     // 상단 중앙
+<ToastContainer position="bottom-right" />   // 우측 하단
+<ToastContainer position="bottom-left" />    // 좌측 하단
+<ToastContainer position="bottom-center" />  // 하단 중앙
+```
+
+## ⚙️ 설정 옵션
+
+### ToastProvider Props
+
+```tsx
+<ToastProvider maxToasts={5}>
+  {children}
+</ToastProvider>
+```
+
+- `maxToasts`: 최대 토스트 개수 (기본값: 5)
+
+### ToastContainer Props
+
+```tsx
+<ToastContainer 
+  position="top-right"
+  maxToasts={5}
+  className="custom-class"
+/>
+```
+
+- `position`: 토스트 위치 (기본값: 'top-right')
+- `maxToasts`: 해당 위치의 최대 토스트 개수 (기본값: 5)
+- `className`: 추가 CSS 클래스
+
+### ToastOptions
+
+```tsx
+interface ToastOptions {
+  id?: string;           // 고유 식별자 (자동 생성)
+  type?: ToastType;      // 토스트 타입
+  title?: string;        // 제목 (선택사항)
+  message: string;       // 메시지 (필수)
+  duration?: number;     // 표시 시간 (ms, 기본값: 5000)
+  position?: ToastPosition; // 위치 (기본값: 'top-right')
+  onClose?: () => void;  // 닫힐 때 콜백
+  persistent?: boolean;  // 자동 제거 여부 (기본값: false)
+}
+```
+
+## 🔧 커스터마이징
+
+### 스타일 커스터마이징
+
+`Toast.tsx`에서 `toastConfig` 객체를 수정하여 색상과 스타일을 변경할 수 있습니다:
+
+```tsx
+const toastConfig = {
+  success: {
+    icon: CheckCircle,
+    bgColor: 'bg-green-500/20',
+    borderColor: 'border-green-400/40',
+    textColor: 'text-green-200',
+    iconColor: 'text-green-400',
+  },
+  // ... 다른 타입들
+};
+```
+
+### 애니메이션 커스터마이징
+
+`Toast.tsx`와 `ToastContainer.tsx`에서 framer-motion 설정을 수정할 수 있습니다:
+
+```tsx
+// 진입 애니메이션
+initial={{ opacity: 0, x: 300, scale: 0.8 }}
+animate={{ opacity: 1, x: 0, scale: 1 }}
+transition={{
+  type: 'spring',
+  stiffness: 300,
+  damping: 30,
+  delay: index * 0.1,
+}}
+```
+
+## ♿ 접근성
+
+- `role="alert"`: 스크린 리더에게 알림 역할 전달
+- `aria-live="polite"`: 비동기 콘텐츠 변경 알림
+- `aria-atomic="true"`: 전체 토스트 내용을 하나의 단위로 처리
+- `aria-label`: 닫기 버튼에 적절한 라벨 제공
+
+## 🎯 성능 최적화
+
+- **React.memo**: 불필요한 리렌더링 방지
+- **useCallback**: 함수 메모이제이션
+- **자동 정리**: 토스트 제거 시 메모리 누수 방지
+- **최대 개수 제한**: DOM 노드 수 제한
+
+## 🔄 상태 관리
+
+- **React Context**: 전역 상태 관리
+- **useReducer**: 복잡한 상태 로직 처리
+- **자동 ID 생성**: 고유 식별자 자동 생성
+- **타이머 관리**: 자동 제거 타이머 관리
+
+## 📱 반응형 디자인
+
+- **모바일 최적화**: 작은 화면에서 적절한 크기
+- **터치 친화적**: 모바일에서 사용하기 편한 크기
+- **유연한 레이아웃**: 다양한 화면 크기 대응
+
+## 🧪 테스트
+
+```tsx
+// 테스트 예시
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ToastProvider, useToast } from '@/shared/ui/toast';
+
+function TestComponent() {
+  const toast = useToast();
+  return <button onClick={() => toast.success('테스트')}>토스트 표시</button>;
+}
+
+test('토스트가 표시되어야 한다', () => {
+  render(
+    <ToastProvider>
+      <TestComponent />
+    </ToastProvider>
+  );
+  
+  fireEvent.click(screen.getByText('토스트 표시'));
+  expect(screen.getByText('테스트')).toBeInTheDocument();
+});
+```
+
+## 🚨 문제 해결
+
+### 토스트가 표시되지 않는 경우
+
+1. `ToastProvider`가 올바르게 설정되었는지 확인
+2. `ToastContainer`가 렌더링되었는지 확인
+3. z-index 충돌이 없는지 확인
+
+### 애니메이션이 작동하지 않는 경우
+
+1. framer-motion이 설치되었는지 확인
+2. CSS 클래스가 올바르게 적용되었는지 확인
+
+### 성능 문제
+
+1. `maxToasts` 값을 적절히 설정
+2. 불필요한 토스트 생성을 피함
+3. `persistent: true` 사용을 최소화
+
+## 📚 추가 자료
+
+- [Framer Motion 문서](https://www.framer.com/motion/)
+- [React Context API](https://react.dev/reference/react/createContext)
+- [ARIA Live Regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions)
+</file>
+
+<file path="toast/Toast.tsx">
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
+import type { Toast as ToastType } from './types';
+import { toastVariants } from './utils';
+⋮----
+// 토스트 타입별 아이콘과 색상
+⋮----
+interface ToastProps {
+  toast: ToastType;
+  onRemove: (id: string) => void;
+}
+⋮----
+const handleRemove = () =>
+⋮----
+{/* 닫기 버튼 */}
+⋮----
+{/* 아이콘과 내용 */}
+⋮----
+{/* 제목 */}
+⋮----
+{/* 메시지 */}
+⋮----
+{/* 진행 바 (persistent가 아닌 경우) */}
+</file>
+
+<file path="toast/ToastContainer.tsx">
+import { memo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useToastContext } from './ToastProvider';
+import { Toast } from './Toast';
+import type { ToastContainerProps, ToastPosition } from './types';
+⋮----
+// 개선 후
+⋮----
+// 위치별 스타일 클래스
+⋮----
+// 위치별 애니메이션 방향
+⋮----
+// 해당 위치의 토스트만 필터링
+⋮----
+// 최대 개수 제한 (최신 토스트부터)
+⋮----
+// top 위치인지 bottom 위치인지 확인
+⋮----
+// sonner 스타일: 최신 토스트가 맨 앞에, 나머지는 뒤로 쌓임
+⋮----
+// position에 따른 스택 방향 설정
+⋮----
+// 위치별 스택 오프셋 (오른쪽은 왼쪽으로, 왼쪽은 오른쪽으로, 센터는 그대로)
+⋮----
+xOffset = 0; // center
+</file>
+
+<file path="toast/ToastProvider.tsx">
+import { createContext, useContext, useReducer, useCallback, type ReactNode, useMemo, useEffect } from 'react';
+import type { Toast, ToastOptions, ToastContextType, ToastPosition } from './types';
+import { ToastContainer } from './ToastContainer';
+import { toastEmitter } from './useToast';
+⋮----
+// 토스트 액션 타입
+type ToastAction =
+  | { type: 'ADD_TOAST'; payload: Toast }
+  | { type: 'REMOVE_TOAST'; payload: string }
+  | { type: 'UPDATE_TOAST'; payload: { id: string; updates: Partial<Toast> } }
+  | { type: 'CLEAR_TOASTS' }
+  | { type: 'SET_VISIBLE'; payload: { id: string; visible: boolean } };
+⋮----
+// 토스트 상태
+interface ToastState {
+  toasts: Toast[];
+  maxToasts: number;
+}
+⋮----
+// 초기 상태
+⋮----
+// 토스트 리듀서
+function toastReducer(state: ToastState, action: ToastAction): ToastState
+⋮----
+// 최대 개수 제한
+⋮----
+newToasts.shift(); // 가장 오래된 토스트 제거
+⋮----
+// 토스트 컨텍스트 생성
+⋮----
+// 기본 토스트 옵션
+⋮----
+// 토스트 제공자 컴포넌트
+interface ToastProviderProps {
+  children: ReactNode;
+  maxToasts?: number;
+}
+⋮----
+// 토스트 추가
+⋮----
+// 자동 제거 (persistent가 false인 경우)
+⋮----
+}, 300); // 애니메이션 완료 후 제거
+⋮----
+// 토스트 제거
+⋮----
+// 토스트 업데이트
+⋮----
+// 모든 토스트 제거
+⋮----
+// toastEmitter 구독
+⋮----
+{/* 모든 position을 자동으로 지원하는 ToastContainer들 */}
+⋮----
+// 토스트 컨텍스트 사용 훅
+</file>
+
+<file path="toast/types.ts">
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+⋮----
+export type ToastPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+⋮----
+export interface ToastOptions {
+  id?: string;
+  type?: ToastType;
+  title?: string;
+  message: string;
+  duration?: number;
+  position?: ToastPosition;
+  onClose?: () => void;
+  persistent?: boolean;
+}
+⋮----
+export interface Toast extends Required<ToastOptions> {
+  id: string;
+  createdAt: number;
+  visible: boolean;
+}
+⋮----
+export interface ToastContextType {
+  toasts: Toast[];
+  addToast: (options: ToastOptions) => string;
+  removeToast: (id: string) => void;
+  updateToast: (id: string, options: Partial<ToastOptions>) => void;
+  clearToasts: () => void;
+}
+⋮----
+export interface ToastContainerProps {
+  position?: ToastPosition;
+  maxToasts?: number;
+  className?: string;
+}
+</file>
+
+<file path="toast/useToast.ts">
+import { useCallback } from 'react';
+import type { ToastOptions } from './types';
+import { useToastContext } from './ToastProvider';
+⋮----
+// 1. 이벤트 시스템 (Emitter)
+// ----------------------------------------------------------------
+⋮----
+type ToastEvents = {
+  add: (options: ToastOptions) => void;
+  remove: (id: string) => void;
+  update: (id: string, options: Partial<ToastOptions>) => void;
+  clear: () => void;
+};
+⋮----
+const createEmitter = () =>
+⋮----
+const emit = <E extends keyof ToastEvents>(event: E, ...args: Parameters<ToastEvents[E]>) =>
+⋮----
+const subscribe = <E extends keyof ToastEvents>(event: E, cb: ToastEvents[E]) =>
+⋮----
+// 2. 스탠드얼론 toast 객체
+// ----------------------------------------------------------------
+⋮----
+const createStandaloneToast =
+(defaultOptions: Partial<ToastOptions> =
+⋮----
+/**
+ * 컴포넌트 외부에서도 사용할 수 있는 스탠드얼론 toast 함수입니다.
+ * `sonner` 라이브러리와 유사하게 동작합니다.
+ * @example
+ * import { toast } from '@/shared/ui/toast/useToast';
+ *
+ * function handleClick() {
+ *  toast.success('성공적으로 처리되었습니다.');
+ * }
+ */
+⋮----
+// 3. 기존 useToast 훅 (호환성 유지)
+// ----------------------------------------------------------------
+⋮----
+// 팩토리 함수: 기본 옵션을 가진 토스트 생성 함수를 만듦
+const createToastFunction = (addToast: (options: ToastOptions) => string, defaultOptions: Partial<ToastOptions>) =>
+⋮----
+/**
+ * ToastProvider 내부의 컴포넌트에서 토스트를 사용하기 위한 훅입니다.
+ */
+export function useToast()
+</file>
+
+<file path="toast/utils.ts">
+import { cva } from 'class-variance-authority';
+</file>
+
+<file path="AnimatedText.tsx">
+import { Environment, Lightformer, MeshTransmissionMaterial, Text3D } from '@react-three/drei';
+⋮----
+// const texture = useLoader(
+//   RGBELoader,
+//   'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr',
+// );
+⋮----
+// background={texture}
+</file>
+
+<file path="Atom.tsx">
+import { Sphere, Trail } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { useMemo, useRef } from 'react';
+⋮----
+type ElectronProps = {
+  radius?: number;
+  speed?: number;
+  rotation?: [number, number, number];
+  atomPosition?: [number, number, number];
+} & React.ComponentProps<'mesh'>;
+⋮----
+// 🌟 원 궤도 좌표 계산
+⋮----
+// rotation 적용
+⋮----
+// Atom의 위치 반영
+⋮----
+// 전자의 위치 설정
+⋮----
+{/* X축을 중심으로 90도 회전하여 수직 방향으로 설정 */}
+</file>
+
+<file path="AuthSidebar.tsx">
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/shadcn-ui/components/ui/sidebar';
+import { CategoryModal } from '@/widgets/category';
+import { CreateTagModal } from '@/widgets/tag';
+import { Plus, FileText, Tag, Home, Settings, Folder, Hash } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Tooltip } from './Tooltip';
+⋮----
+// 스타일 객체들 분리
+⋮----
+const getCategoryBoxShadow = () =>
+⋮----
+const getTagBoxShadow = () =>
+⋮----
+{/* Header */}
+⋮----
+{/* Main Navigation */}
+⋮----
+{/* Dashboard Home */}
+⋮----
+{/* Create New Post */}
+⋮----
+{/* Posts Management */}
+⋮----
+{/* Tags Management */}
+⋮----
+{/* Spacer to push Quick Actions to bottom */}
+⋮----
+{/* Quick Actions Section - Moved to bottom */}
+⋮----
+{/* Category Modal Icon */}
+⋮----
+onMouseLeave=
+onMouseDown=
+onMouseUp=
+⋮----
+{/* Tag Modal Icon */}
+⋮----
+{/* Footer */}
+</file>
+
+<file path="BlurCursor.tsx">
+import { type ComponentProps, useRef } from 'react';
+⋮----
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+⋮----
+import { cn } from '@/shadcn-ui/lib/utils';
+⋮----
+type LiquidCursorProps = Omit<ComponentProps<'div'>, 'children'> & {
+  size?: number;
+  strong?: boolean;
+};
+⋮----
+const clickDrop = () =>
+const moveDrop = (e: MouseEvent) =>
+</file>
+
+<file path="CameraController.tsx">
+import { useThree } from '@react-three/fiber';
+import { useControls } from 'leva';
+import { useEffect } from 'react';
+⋮----
+export const LevaCameraController = () =>
+</file>
+
+<file path="CameraLogger.tsx">
+import { useThree } from '@react-three/fiber';
+import { useEffect } from 'react';
+import type { OrbitControls } from 'three-stdlib';
+⋮----
+// 현재 카메라 포지션 확인용
+export const CameraLogger = () =>
+⋮----
+const logPosition = () =>
+⋮----
+orbitControls?.addEventListener('change', logPosition); // 카메라 이동 시 로그 출력
+</file>
+
+<file path="Cloud.tsx">
+import { Billboard, Text } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { generate } from 'random-words';
+import { useEffect, useMemo, useRef, useState } from 'react';
+⋮----
+// Word 컴포넌트의 props 타입 정의
+interface WordProps {
+  children: React.ReactNode; // children의 타입을 ReactNode로 정의
+  position: three.Vector3; // position prop의 타입 정의
+}
+⋮----
+children: React.ReactNode; // children의 타입을 ReactNode로 정의
+position: three.Vector3; // position prop의 타입 정의
+⋮----
+const over = (e: React.PointerEvent) =>
+const out = ()
+⋮----
+// Tie component to the render-loop
+⋮----
+const material = ref.current.material as three.MeshStandardMaterial; // material 타입 캐스팅
+⋮----
+color={hovered ? '#fa2720' : 'white'} // hover 상태에 따라 색상 변경
+⋮----
+// Create a count x count random words with spherical distribution
+⋮----
+const phiSpan = Math.PI / (count + 1); // 각 단어의 세로 간격
+const thetaSpan = (Math.PI * 2) / count; // 각 단어의 가로 간격
+⋮----
+temp.push([position, generate({ exactly: 1, join: ' ' })]); // 단일 단어 생성
+⋮----
+{/* <TrackballControls camera={camera} /> */}
+{/* 카메라를 TrackballControls에 전달 */}
+</file>
+
+<file path="Cube.tsx">
+import { useGLTF } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import type React from 'react';
+import { useRef } from 'react';
+⋮----
+type CubeModelProps = {
+  position: [number, number, number];
+  onClick?: () => void;
+} & React.ComponentProps<'group'>;
+⋮----
+// Animation for the cube when hovered
+⋮----
+// Optional animation for text
+⋮----
+{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+⋮----
+onPointerOut=
+</file>
+
+<file path="CyberpunkCursor.tsx">
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+⋮----
+type CursorPosition = {
+  x: number;
+  y: number;
+};
+⋮----
+type CyberpunkCursorProps = {
+  className?: string;
+};
+⋮----
+// 마우스 위치 추적
+⋮----
+const updateMousePosition = (e: MouseEvent) =>
+⋮----
+// 트레일 효과를 위한 포인트 추가
+⋮----
+const newTrail = [newPosition, ...prev.slice(0, 12)]; // 최대 13개 포인트로 증가
+⋮----
+const handleMouseDown = () =>
+const handleMouseUp = () =>
+⋮----
+const handleMouseEnter = () =>
+const handleMouseLeave = () =>
+⋮----
+// 호버 가능한 요소들 감지 - 더 정교한 감지
+const handleMouseOver = (e: MouseEvent) =>
+⋮----
+// 트레일 애니메이션 업데이트
+⋮----
+const animate = () =>
+⋮----
+{/* 강화된 트레일 효과 */}
+⋮----
+{/* 메인 커서 */}
+⋮----
+{/* 외부 헥사곤 링 */}
+⋮----
+{/* 헥사곤 모양의 외곽선 */}
+⋮----
+{/* 내부 코어 */}
+⋮----
+{/* 클릭 충격파 효과 */}
+⋮----
+{/* 호버 펄스 효과 - 더 복잡한 애니메이션 */}
+⋮----
+{/* 강화된 십자선 효과 */}
+⋮----
+{/* 수평선 */}
+⋮----
+{/* 수직선 */}
+⋮----
+{/* 대각선 강조 효과 */}
+⋮----
+{/* 텍스트 호버 시 특별한 효과 */}
+</file>
+
+<file path="Dropdown.tsx">
+import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
+⋮----
+type DropdownProps = {
+  trigger: (props: { ref: React.RefObject<HTMLElement | null>; onClick: () => void }) => ReactNode;
+  children: ReactNode;
+  className?: string;
+  contentClassName?: string;
+  placement?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
+  offset?: number;
+  closeOnEscape?: boolean;
+  closeOnOutsideClick?: boolean;
+};
+⋮----
+const handleToggle = () =>
+⋮----
+const handleClose = () =>
+⋮----
+const handleResize = () =>
+⋮----
+const handleScroll = () =>
+⋮----
+const handleEscape = (e: KeyboardEvent) =>
+⋮----
+const getPositionStyles = () =>
+⋮----
+<div className=
+⋮----
+{/* 배경 오버레이 */}
+⋮----
+{/* 드롭다운 컨텐츠 */}
+</file>
+
+<file path="Earth.tsx">
+import { useAnimations, useGLTF } from '@react-three/drei';
+⋮----
+import { useRef, useEffect } from 'react';
+⋮----
+// 모든 애니메이션 자동 재생
+⋮----
+// biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
+</file>
+
+<file path="FloatingActionButton.tsx">
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, Home, HelpCircle, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { BaseModal } from './BaseModal';
+⋮----
+interface MenuItemProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}
+⋮----
+const MenuItem = ({ icon, label, onClick }: MenuItemProps) => (
+  <motion.button
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: 20 }}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={onClick}
+    className='flex items-center gap-3 w-full p-3 rounded-lg bg-black/40 backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/60 hover:bg-cyan-500/10 transition-all duration-200'
+  >
+    <div className='w-5 h-5 text-cyan-400'>{icon}</div>
+    <span className='text-sm text-white font-medium'>{label}</span>
+  </motion.button>
+);
+⋮----
+// 외부 클릭시 메뉴 닫기
+⋮----
+const handleClickOutside = (event: MouseEvent) =>
+⋮----
+const handleHomeClick = () =>
+⋮----
+const handleHelpClick = () =>
+⋮----
+{/* 메인 플로팅 버튼 */}
+⋮----
+{/* 글로우 효과 */}
+⋮----
+{/* 메뉴 리스트 */}
+⋮----
+{/* 도움말 모달 */}
+</file>
+
+<file path="HelloBot.tsx">
+import { useRef, useEffect } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+⋮----
+export function HelloBot(props: any)
+</file>
+
+<file path="index.ts">
+
+</file>
+
+<file path="Loader.tsx">
+import { Html, useProgress } from '@react-three/drei';
+⋮----
+export const CanvasLoader = () =>
+</file>
+
+<file path="Meteors.tsx">
+import { cn } from '@/shadcn-ui/lib/utils';
+import React from 'react';
+⋮----
+className=
+</file>
+
+<file path="modal.tsx">
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/shadcn-ui/components/ui/dialog';
+import type { ReactNode } from 'react';
+⋮----
+type ModalProps = {
+  trigger: ReactNode;
+  title: string;
+  description?: string;
+  children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+⋮----
+const Modal = (
+</file>
+
+<file path="MoveBot.tsx">
+import { useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+</file>
+
+<file path="Navbar.tsx">
+import { Menu, Orbit, LogOut, X } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+⋮----
+// { href: '/', label: 'Contact', isComingSoon: true },
+⋮----
+const handleSignOut = () =>
+⋮----
+const handleMenuClick = (e: React.MouseEvent, item: (typeof menuItems)[0]) =>
+⋮----
+{/* 데스크톱 헤더 */}
+⋮----
+{/* 네비게이션 링크 */}
+⋮----
+{/* 로그인/가입 버튼 */}
+⋮----
+{/* 모바일 햄버거 메뉴 버튼 */}
+⋮----
+{/* 모바일 전체 화면 메뉴 */}
+⋮----
+{/* 배경 */}
+⋮----
+{/* 메뉴 패널 */}
+⋮----
+{/* 닫기 버튼 */}
+⋮----
+{/* 메뉴 콘텐츠 */}
+⋮----
+{/* 로고 */}
+⋮----
+{/* 네비게이션 링크 */}
+⋮----
+{/* 인증 버튼들 */}
+</file>
+
+<file path="NeutralNetwork.tsx">
+// @ts-nocheck
+⋮----
+import { useFrame } from '@react-three/fiber';
+import { useRef, useMemo, useEffect } from 'react';
+import { AdditiveBlending, type BufferGeometry, type Group, type Points, Vector3 } from 'three';
+⋮----
+interface ParticleData {
+  velocity: Vector3;
+  numConnections: number;
+}
+⋮----
+export function NeuralNetwork()
+</file>
+
+<file path="NovelViewer.tsx">
+import { defaultExtensions } from './TextEditor/extensions';
+import { EditorContent } from 'novel';
+⋮----
+type NovelViewerProps = {
+  content: string;
+};
+⋮----
+export default function NovelViewer(
+⋮----
+// HTML 문자열에서 코드블럭 내부의 \n 개행 문자를 <br> 태그로 변환
+const preprocessHTML = (html: string) =>
+⋮----
+// 코드블럭 내부의 \n 개행 문자를 <br> 태그로 변환
+</file>
+
+<file path="PostSummary.tsx">
+import { usePostSummary } from '@/features/post/model';
+import { isValidSummary } from '@/features/post/utils';
+import NovelViewer from './NovelViewer';
+⋮----
+interface PostSummaryProps {
+  post: {
+    id: string;
+    title: string;
+    content: string | null;
+  };
+}
+⋮----
+export function PostSummary(
+⋮----
+return null; // 에러나 유효하지 않은 요약은 표시하지 않음
+</file>
+
+<file path="Room.tsx">
+// @ts-nocheck
+⋮----
+import { useGLTF } from '@react-three/drei';
+import React from 'react';
+⋮----
+type ModelProps = {
+  // Define the props type to avoid implicit 'any' type
+  [key: string]: any; // You can replace 'any' with a more specific type if known
+};
+⋮----
+// Define the props type to avoid implicit 'any' type
+[key: string]: any; // You can replace 'any' with a more specific type if known
+⋮----
+export function Model(props: ModelProps)
+⋮----
+// Optional: Check if nodes and materials are defined before rendering
+⋮----
+return null; // or some fallback UI
+⋮----
+geometry={nodes.Object_2?.geometry} // Optional chaining to avoid undefined error
+⋮----
+geometry={nodes.Object_3?.geometry} // Optional chaining to avoid undefined error
+⋮----
+geometry={nodes.Object_4?.geometry} // Optional chaining to avoid undefined error
+⋮----
+geometry={nodes.Object_5?.geometry} // Optional chaining to avoid undefined error
+⋮----
+geometry={nodes.Object_6?.geometry} // Optional chaining to avoid undefined error
+</file>
+
+<file path="Scene.tsx">
+import { Model as RoomModel } from '@/shared/ui/Room';
+import { useGLTF } from '@react-three/drei';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import type React from 'react';
+import { useRef, useEffect, useState } from 'react';
+⋮----
+import { CubeModel } from './Cube';
+import { NeuralNetwork } from './NeutralNetwork';
+import { useTheme } from 'next-themes';
+import { useFrame } from '@react-three/fiber';
+⋮----
+// 노란 발광 재질 생성
+⋮----
+color: '#ffff00', // 노란색
+emissive: '#ffaa00', // 발광색 (주황빛 노란색)
+⋮----
+// 파란 발광 재질 생성 (두 번째 행성용)
+⋮----
+color: '#ff6fa1', // 핑크/코랄
+emissive: '#ff3b6a', // 발광색 (선명한 핑크)
+⋮----
+// 보라 발광 재질 (구)
+⋮----
+color: '#b266ff', // 보라색
+emissive: '#a259f7', // 발광색
+⋮----
+// 연보라 발광 재질 (선)
+⋮----
+color: '#e0b3ff', // 연보라
+⋮----
+// 민트 발광 재질 (구)
+⋮----
+color: '#00ffd0', // 민트
+⋮----
+emissiveIntensity: 2.5, // 매우 높은 발광 강도
+⋮----
+// 연민트 발광 재질 (선)
+⋮----
+color: '#b2fff6', // 연민트
+⋮----
+// 행성 회전 애니메이션 상태
+⋮----
+const handlePlanetClick = (event: any) =>
+⋮----
+event.stopPropagation(); // 이벤트 버블링 방지
+setIsSpinning((prev) => !prev); // useState로 토글
+⋮----
+// 최초 마운트 시에만 초기 회전값 할당
+⋮----
+// Y축으로만 회전 (옆으로 회전)
+planetGroupRef.current.rotation.z += delta * 3; // 적당한 속도로 회전
+⋮----
+// 두 번째 행성 회전/발광 상태
+⋮----
+const handlePlanet2Click = (event: any) =>
+⋮----
+// 세 번째 mesh(planetGroupRef2) 회전/발광 상태
+⋮----
+const handlePlanet262Click = (event: any) =>
+⋮----
+// 세 번째 mesh(planetGroupRef2) 회전/발광 상태
+⋮----
+const handlePlanet375Click = (event: any) =>
+⋮----
+{/* 클릭 가능한 행성 그룹 - 발광 효과 추가 */}
+{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+⋮----
+{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+⋮----
+{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+⋮----
+{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+⋮----
+{/* 바닥 */}
+{/* <mesh
+              castShadow
+              receiveShadow
+              geometry={(nodes.Sphere011_Material002_0 as three.Mesh).geometry}
+              material={mirrorMaterial}
+              position={[-553.462, 331.074, -379.067]}
+              rotation={[-Math.PI / 2, 0, 0]}
+              scale={11.437}
+            />
+            <mesh
+              castShadow
+              receiveShadow
+              geometry={(nodes.Cube_Material001_0 as three.Mesh).geometry}
+              material={spaceMaterial}
+              position={[0, -101.673, 0]}
+              rotation={[-Math.PI / 2, 0, 0]}
+              scale={[50000, 50000, 100]}
+            /> */}
+</file>
+
+<file path="SkyBox.tsx">
+import { useThree } from '@react-three/fiber';
+⋮----
+import { CubeTextureLoader } from 'three';
+⋮----
+const SkyBox = () =>
+</file>
+
+<file path="sparkles.tsx">
+import React, { useId, useMemo } from "react";
+import { useEffect, useState } from "react";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import type { Container, SingleOrMultiple } from "@tsparticles/engine";
+import { loadSlim } from "@tsparticles/slim";
+import { motion, useAnimation } from "motion/react";
+import { cn } from "@/shadcn-ui/lib/utils";
+⋮----
+type ParticlesProps = {
+  id?: string;
+  className?: string;
+  background?: string;
+  particleSize?: number;
+  minSize?: number;
+  maxSize?: number;
+  speed?: number;
+  particleColor?: string;
+  particleDensity?: number;
+};
+⋮----
+const particlesLoaded = async (container?: Container) =>
+⋮----
+className=
+</file>
+
+<file path="Sun.tsx">
+import { useRef } from 'react';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
+⋮----
+// 노란색 발광 재질 (기본 상태)
+⋮----
+color: '#ffff00', // 밝은 노란색
+emissive: '#ffaa00', // 노란색 발광
+⋮----
+// 흰색 발광 재질 (클릭 시)
+⋮----
+color: '#ffffff', // 흰색
+emissive: '#ffffff', // 흰색 발광
+⋮----
+{/* 조명 효과 - 노란색 또는 흰색 */}
+⋮----
+{/* Sun 전용 EffectComposer - 항상 활성화 */}
+</file>
+
+<file path="ThemeToggleButton.tsx">
+import { Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
+</file>
+
+<file path="Tooltip.tsx">
+import { useState, useRef, useCallback, type ReactNode } from 'react';
+⋮----
+type TooltipPosition = 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+⋮----
+interface TooltipProps {
+  children: ReactNode;
+  content: ReactNode;
+  position?: TooltipPosition;
+  className?: string;
+  delay?: number;
+  disabled?: boolean;
+  neon?: boolean;
+  neonIntensity?: 'low' | 'medium' | 'high' | number;
+}
+⋮----
+export const Tooltip = ({
+  children,
+  content,
+  position = 'top',
+  className = '',
+  delay = 500,
+  disabled = false,
+  neon = false,
+  neonIntensity = 'medium',
+}: TooltipProps) =>
+⋮----
+// Neon 효과를 위한 스타일 생성
+const getNeonStyle = () =>
+⋮----
+// className에서 색상 추출 (기본값: 흰색)
+let neonColor = '255, 255, 255'; // 기본 흰색
+⋮----
+neonColor = '249, 115, 22'; // orange-500
+⋮----
+neonColor = '6, 182, 212'; // cyan-500
+⋮----
+neonColor = '59, 130, 246'; // blue-500
+⋮----
+neonColor = '34, 197, 94'; // green-500
+⋮----
+neonColor = '139, 69, 255'; // purple-500
+⋮----
+neonColor = '239, 68, 68'; // red-500
+⋮----
+neonColor = '251, 191, 36'; // yellow-500
+⋮----
+// 강도에 따른 투명도 계산
+const getIntensityValues = () =>
+⋮----
+// 사용자 정의 값 (0-1 범위)
+⋮----
+// 프리셋 값들 (테두리 네온 효과에 최적화)
+⋮----
+inner: 0.1, // inset 글로우 감소
+middle: 0.3, // 테두리 주변 글로우
+outer: 0.1, // 외부 글로우 감소
+⋮----
+blur: [8, 15, 25], // 블러 감소
+⋮----
+inner: 0.2, // inset 글로우 감소
+middle: 0.7, // 테두리 주변 글로우 강화
+⋮----
+blur: [15, 30, 50], // 블러 감소
+⋮----
+default: // medium
+⋮----
+inner: 0.15, // inset 글로우 감소
+middle: 0.5, // 테두리 주변 글로우
+⋮----
+blur: [10, 20, 35], // 블러 감소
+⋮----
+showTooltip();
+⋮----
+{/* Tooltip Content */}
+⋮----
+{/* Arrow */}
+</file>
+
+<file path="VisitorLogger.tsx">
+import { plusVisitor } from '@/features/visitor/api';
+import { useEffect } from 'react';
+⋮----
+const VisitorLogger = () =>
+</file>
+
+<file path="WatchRobot.tsx">
+import { useGLTF } from '@react-three/drei';
+</file>
+
+</files>

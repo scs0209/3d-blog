@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
-import './Prosemirror.css';
 import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
 import Providers from '@/app/Providers';
 import dynamic from 'next/dynamic';

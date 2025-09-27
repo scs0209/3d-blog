@@ -1,0 +1,1695 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where content has been compressed (code blocks are separated by ⋮---- delimiter).
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.ts, **/*.tsx, **/*.js, **/*.jsx, **/*.json, **/*.md, **/*.yml, **/*.yaml
+- Files matching these patterns are excluded: **/node_modules/**, **/.next/**, **/dist/**, **/build/**, **/*.log, **/coverage/**, **/.nyc_output/**, **/repomix-*.xml
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Content has been compressed - code blocks are separated by ⋮---- delimiter
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+consts/
+  index.ts
+  portfolioProject.ts
+model/
+  animations/
+    index.ts
+    use-contact-camera-animation.ts
+    use-experience-camera-animation.ts
+    use-work-camera-animation.ts
+  index.ts
+  use-camera-animation.ts
+  use-initial-animation.ts
+  use-loading-animation.ts
+  use-loading-state.ts
+  use-overlay-state.ts
+  use-portfolio-actions.ts
+  use-portfolio-state.ts
+  use-portfolio.ts
+ui/
+  AboutBio.tsx
+  AboutFooter.tsx
+  AboutHeader.tsx
+  AboutMePage.tsx
+  AnimatedLink.tsx
+  Antenna.tsx
+  CameraController.tsx
+  Computer.tsx
+  ContactMe.tsx
+  CyberpunkContactForm.tsx
+  ExperienceDesk.tsx
+  ExperiencePage.tsx
+  ExperiencePerson.tsx
+  FloatMan.tsx
+  FPSContext.tsx
+  FPSDisplay.tsx
+  FPSMeasurer.tsx
+  GridBackground.tsx
+  HoloContainer.tsx
+  HoloTable.tsx
+  HoloText.tsx
+  HoverCameraController.tsx
+  index.ts
+  InspectingPerson.tsx
+  LabMachine.tsx
+  LoadingProgressbar.tsx
+  MagicRoom.tsx
+  NeonToggle.tsx
+  OverlayManager.tsx
+  Platform.tsx
+  PortfolioOverlay.tsx
+  ProfileImage.tsx
+  RobotArm.tsx
+  SceneRenderer.tsx
+  Server.tsx
+  SkillsOverlay.tsx
+  TitleBox.tsx
+  TypingMan.tsx
+  WorkChair.tsx
+  WorkPerson.tsx
+  WorkTable.tsx
+page.tsx
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="page.tsx">
+import { Canvas } from '@react-three/fiber';
+import { useEffect, useState } from 'react';
+import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
+import type { FocusedGroup } from '@/entities/portfolio/model/types';
+import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
+import { useInitialAnimation } from '@/features/portfolio/model/use-initial-animation';
+import { SceneRenderer, FPSDisplay, CameraController, FPSProvider, OverlayManager } from '@/widgets/portfolio/ui';
+⋮----
+// 초기 애니메이션 훅 사용
+⋮----
+// 타이틀 상태 추가
+⋮----
+// 상태들
+⋮----
+// Setters
+⋮----
+// 액션들
+⋮----
+// 모델 클릭 시 타이틀 변경 핸들러
+const handleGroupClickWithTitle = (group: FocusedGroup) =>
+⋮----
+// 그룹에 따른 타이틀 매핑 (HoloText와 동일한 텍스트)
+⋮----
+// 기존 클릭 핸들러 호출
+⋮----
+// 뒤로가기 시 원래 타이틀로 복원
+const handleBackWithTitleReset = () =>
+⋮----
+// workAnimation에서만 사용되는 props들
+⋮----
+// 초기 애니메이션 관련
+⋮----
+// 초기 애니메이션 props 추가
+</file>
+
+<file path="model/animations/index.ts">
+
+</file>
+
+<file path="model/animations/use-contact-camera-animation.ts">
+import { useCallback } from 'react';
+import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
+import { GROUP_CAMERA_TARGETS } from '@/entities/portfolio/model/constants';
+⋮----
+type UseContactCameraAnimationProps = {
+  setShowContactForm: (show: boolean) => void;
+  setTargetPos: (pos: Position3D) => void;
+  setTargetLook: (look: Position3D) => void;
+  setSecondaryAnimation: (secondary: boolean) => void;
+  setCameraAnimationDone: (done: boolean) => void;
+  focusedGroup: FocusedGroup;
+};
+⋮----
+export const useContactCameraAnimation = (props: UseContactCameraAnimationProps) =>
+⋮----
+// Contact Form 역순 애니메이션 완료 후 보조 애니메이션 역순 시작
+⋮----
+// 보조 애니메이션 역순: 두 번째 위치 → 첫 번째 위치
+⋮----
+// 나머지는 CameraController의 useFrame에서 자동 처리
+</file>
+
+<file path="model/animations/use-experience-camera-animation.ts">
+import { useEffect, useCallback } from 'react';
+import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
+import { CAMERA_ANIMATION_DELAY } from '@/entities/portfolio/model/constants';
+⋮----
+type UseExperienceCameraAnimationProps = {
+  focusedGroup: FocusedGroup;
+  cameraAnimationDone: boolean;
+  experienceClosing: boolean;
+  secondaryAnimation: boolean;
+  hasClickedBack: boolean;
+  setShowExperienceOverlay: (show: boolean) => void;
+  setTargetPos: (pos: Position3D) => void;
+  setTargetLook: (look: Position3D) => void;
+  setFocusedGroup: (group: FocusedGroup) => void;
+  setExperienceClosing: (closing: boolean) => void;
+  setCameraAnimationDone: (done: boolean) => void;
+};
+⋮----
+export const useExperienceCameraAnimation = (props: UseExperienceCameraAnimationProps) =>
+⋮----
+// ExperiencePage 애니메이션 완료 후 호출될 핸들러
+⋮----
+// 바로 초기 위치로 복귀
+setTargetPos([2, 5, 2]); // INITIAL_CAMERA_POS
+setTargetLook([0, 0, 0]); // INITIAL_CAMERA_LOOK
+⋮----
+// Experience 모델의 완전한 종료 처리
+⋮----
+setTargetPos([2, 5, 2]); // INITIAL_CAMERA_POS
+setTargetLook([0, 0, 0]); // INITIAL_CAMERA_LOOK
+⋮----
+// Experience 모델 클릭 시 카메라 애니메이션 완료 후 처리
+⋮----
+// Experience 모델의 닫힘 감지 및 처리
+</file>
+
+<file path="model/animations/use-work-camera-animation.ts">
+import { useEffect, useCallback } from 'react';
+import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
+import {
+  GROUP_CAMERA_TARGETS,
+  CAMERA_ANIMATION_DELAY,
+  INITIAL_CAMERA_POS,
+  INITIAL_CAMERA_LOOK,
+} from '@/entities/portfolio/model/constants';
+import type { OverlayState, OverlayKey } from '../use-overlay-state';
+⋮----
+type UseWorkCameraAnimationProps = {
+  overlays: OverlayState;
+  openOverlay: (key: OverlayKey) => void;
+  closeOverlay: (key: OverlayKey) => void;
+  finishClosing: (key: OverlayKey) => void;
+  focusedGroup: FocusedGroup;
+  cameraAnimationDone: boolean;
+  secondaryAnimation: boolean;
+  hasClickedBack: boolean;
+  setSecondaryAnimation: (animation: boolean) => void;
+  setTargetPos: (pos: Position3D) => void;
+  setTargetLook: (look: Position3D) => void;
+  setFocusedGroup: (group: FocusedGroup) => void;
+  setCameraAnimationDone: (done: boolean) => void;
+};
+⋮----
+export const useWorkCameraAnimation = (props: UseWorkCameraAnimationProps) =>
+⋮----
+// Work 모델의 보조 애니메이션 처리
+⋮----
+// 처음 모델 위치 + secondaryOffset 위치로 이동
+⋮----
+// Work 모델의 AboutMe 닫힘 처리
+⋮----
+// 먼저 원래 줌인 위치로
+⋮----
+// Work 모델 클릭 시 카메라 애니메이션 완료 후 처리
+⋮----
+// focusedGroup === 'work' 이고 첫 번째 애니메이션이 완료되었고, AboutMe가 닫히지 않았고, 보조 애니메이션이 진행중이지 않고, 뒤로가기 버튼이 클릭되지 않았다면 aboutMeOverlay 표시
+⋮----
+// AboutMePage 애니메이션 완료 후 호출될 핸들러
+⋮----
+// AboutMePage 애니메이션 완료 후 처리
+⋮----
+// 원래 줌인 위치로
+⋮----
+// 먼저 원래 줌인 위치로
+⋮----
+// Work 모델의 완전한 종료 처리
+⋮----
+// 초기 위치로
+⋮----
+// 초기 위치로 이동 후 처리
+</file>
+
+<file path="model/index.ts">
+
+</file>
+
+<file path="model/use-camera-animation.ts">
+import { useState } from 'react';
+import type { Position3D } from '@/entities/portfolio/model/types';
+import { INITIAL_CAMERA_POS, INITIAL_CAMERA_LOOK } from '@/entities/portfolio/model/constants';
+⋮----
+export const useCameraAnimation = () =>
+⋮----
+const resetToInitialPosition = () =>
+⋮----
+const resetAnimationState = () =>
+⋮----
+// State
+⋮----
+// Setters
+⋮----
+// Actions
+</file>
+
+<file path="model/use-initial-animation.ts">
+import { useState, useEffect } from 'react';
+⋮----
+type InitialAnimationStep = 'intro' | 'holotable-animation' | 'shrink-and-move' | 'show-others' | 'complete';
+⋮----
+export const useInitialAnimation = () =>
+⋮----
+const [holoTableScale, setHoloTableScale] = useState(2.5); // 화면을 꽉 채우는 크기
+⋮----
+// 초기 애니메이션 시퀀스 실행
+⋮----
+// 잠시 대기 후 HoloTable 애니메이션 시작
+⋮----
+// HoloTable 내장 애니메이션이 실행되는 시간 (약 3초 가정)
+⋮----
+// 크기 축소 및 위치 이동 애니메이션
+const duration = 1500; // 1.5초
+⋮----
+const animate = () =>
+⋮----
+// easeInOutCubic 이징 함수 적용
+⋮----
+// Scale 애니메이션
+⋮----
+// Position 애니메이션
+⋮----
+// 다른 모델들 등장
+⋮----
+const resetAnimation = () =>
+⋮----
+const skipAnimation = () =>
+⋮----
+// State
+⋮----
+// Actions
+</file>
+
+<file path="model/use-loading-animation.ts">
+import type React from 'react';
+import { useEffect } from 'react';
+import {
+  LOADING_PROGRESS_STEP,
+  LOADING_PROGRESS_INTERVAL,
+  BAR_EXPAND_ANIMATION_DURATION,
+  OVERLAY_TRANSITION_DELAY,
+  INITIAL_DELAY,
+} from '@/entities/portfolio/model/constants';
+import type { OverlayKey, OverlayState } from './use-overlay-state';
+⋮----
+type UseLoadingAnimationProps = {
+  overlays: OverlayState;
+  openOverlay: (key: OverlayKey) => void;
+  showWorksLoading: boolean;
+  setLoadingProgress: React.Dispatch<React.SetStateAction<number>>;
+  setLoadingBarFullExpand: (expand: boolean) => void;
+  setShowWorksLoading: (show: boolean) => void;
+};
+⋮----
+export const useLoadingAnimation = (props: UseLoadingAnimationProps) =>
+⋮----
+// 로딩 애니메이션 시작
+⋮----
+// 로딩 완료 후 로딩바를 전체 화면으로 확장
+⋮----
+// LoadingOverlay가 전체 화면 확장 애니메이션을 완료한 후에 사라지도록 추가 지연
+⋮----
+return prev + LOADING_PROGRESS_STEP; // 4%씩 증가
+⋮----
+}, LOADING_PROGRESS_INTERVAL); // 50ms마다 업데이트
+</file>
+
+<file path="model/use-loading-state.ts">
+import { useState } from 'react';
+⋮----
+export const useLoadingState = () =>
+⋮----
+const resetLoadingState = () =>
+⋮----
+// State
+⋮----
+// Setters
+⋮----
+// Actions
+</file>
+
+<file path="model/use-overlay-state.ts">
+import { useCallback, useState } from 'react';
+⋮----
+export type OverlayKey = 'aboutMe' | 'experience' | 'skills' | 'contact' | 'portfolio';
+⋮----
+export type OverlayState = {
+  [key in OverlayKey]?: {
+    isOpen: boolean;
+    isClosing: boolean;
+  };
+};
+⋮----
+export const useOverlayState = () =>
+⋮----
+// 특정 오버레이를 여는 함수
+⋮----
+// 특정 오버레이를 닫기 시작하는 함수
+⋮----
+// 애니메이션 종료 후 완전히 닫는 함수
+⋮----
+const resetOverlayState = () =>
+⋮----
+// State
+⋮----
+// Setters
+⋮----
+// Actions
+</file>
+
+<file path="model/use-portfolio-actions.ts">
+import { useCallback } from 'react';
+import type { FocusedGroup } from '@/entities/portfolio/model/types';
+import { GROUP_CAMERA_TARGETS, PULSE_DURATION, CAMERA_ANIMATION_DELAY } from '@/entities/portfolio/model/constants';
+⋮----
+const delay = (ms: number)
+⋮----
+type UsePortfolioActionsProps = {
+  focusedGroup: FocusedGroup;
+  setFocusedGroup: (group: FocusedGroup) => void;
+  setPulseCenter: (center: [number, number, number] | null) => void;
+  setPulseActive: (active: boolean) => void;
+  setTargetPos: (pos: [number, number, number]) => void;
+  setTargetLook: (look: [number, number, number]) => void;
+  setHasClickedBack: (clicked: boolean) => void;
+  resetToInitialPosition: () => void;
+  resetAnimationState: () => void;
+};
+⋮----
+export const usePortfolioActions = (props: UsePortfolioActionsProps) =>
+⋮----
+// 모델 위치에 offset을 더해서 카메라 위치 계산
+</file>
+
+<file path="model/use-portfolio-state.ts">
+import { useState } from 'react';
+import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
+⋮----
+export const usePortfolioState = () =>
+⋮----
+const isShow = (group: FocusedGroup) =>
+⋮----
+// State
+⋮----
+// Setters
+⋮----
+// Computed
+</file>
+
+<file path="model/use-portfolio.ts">
+import { usePortfolioState } from './use-portfolio-state';
+import { useCameraAnimation } from './use-camera-animation';
+import { useOverlayState } from './use-overlay-state';
+import { useLoadingState } from './use-loading-state';
+import { usePortfolioActions } from './use-portfolio-actions';
+import { useLoadingAnimation } from './use-loading-animation';
+⋮----
+// 1. handleGroupClick을 하면 애니메이션이 시작됨
+export const usePortfolio = () =>
+⋮----
+// 상태 관리 훅들
+⋮----
+// 액션 훅
+⋮----
+// 로딩 애니메이션 훅
+⋮----
+const delay = (ms: number)
+⋮----
+// 포트폴리오 EXIT 핸들러
+const handlePortfolioExit = async () =>
+⋮----
+// 1단계: 카드들만 사라지는 애니메이션 시작
+⋮----
+// 2단계: 카드가 모두 사라진 후 창 닫기 (1100ms 대기)
+⋮----
+loadingState.setShowWorksLoading(false); // 명시적으로 로딩 상태 해제
+⋮----
+// 3단계: Exit 로딩 시작 (300ms 대기)
+⋮----
+// 4단계: Exit 로딩 진행 (50ms 간격으로 4씩 감소)
+⋮----
+// 5단계: 최종 상태 리셋 (300ms 대기 후)
+⋮----
+// 6단계: focusedGroup 리셋 (3000ms 대기 후)
+⋮----
+// 포트폴리오 애니메이션 완료 핸들러
+const handlePortfolioAnimationComplete = async () =>
+⋮----
+// 창이 완전히 뜬 후 카드 표시
+⋮----
+// 상태들
+⋮----
+// 액션들
+</file>
+
+<file path="consts/index.ts">
+
+</file>
+
+<file path="consts/portfolioProject.ts">
+import type { PortfolioProject } from '@/entities/portfolio/model';
+</file>
+
+<file path="ui/AboutBio.tsx">
+
+</file>
+
+<file path="ui/AboutFooter.tsx">
+import type { JSX } from 'react';
+</file>
+
+<file path="ui/AboutHeader.tsx">
+
+</file>
+
+<file path="ui/AboutMePage.tsx">
+import { motion, useAnimation } from 'framer-motion';
+import { useEffect, useState } from 'react';
+⋮----
+// 섹션 border 애니메이션이 모두 끝난 후 컨텐츠 border 애니메이션 시작
+⋮----
+// 컨텐츠 border가 다 그려진 후 컨텐츠 페이드인
+⋮----
+// 애니메이션 완료 후 콜백
+⋮----
+const totalDuration = 1.2; // dropDuration + slideDuration
+⋮----
+{/* 섹션 네온 탭 */}
+⋮----
+{/* 하단 강조선 */}
+⋮----
+{/* 오른쪽 border */}
+⋮----
+{/* 상단 border */}
+⋮----
+{/* 왼쪽 border */}
+⋮----
+{/* 라벨 */}
+⋮----
+{/* 본문: 좌측 텍스트, 우측 프로필 - border-bottom 슬라이드 → height 애니메이션 */}
+⋮----
+// 1. border-bottom 슬라이드(왼→오)
+⋮----
+{/* border-bottom 슬라이드 아웃 (닫힐 때) */}
+</file>
+
+<file path="ui/AnimatedLink.tsx">
+import type { ReactNode } from 'react';
+⋮----
+type AnimatedLinkProps = {
+  href: string;
+  children: ReactNode;
+  target?: string;
+  rel?: string;
+  className?: string;
+};
+⋮----
+export const AnimatedLink = (
+</file>
+
+<file path="ui/Antenna.tsx">
+import { useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+⋮----
+// 사이버펑크 안테나 특수 재질들
+⋮----
+// 빨간 전선 - 빨간 네온
+⋮----
+// 파란 전선 - 파란 네온
+⋮----
+// 녹색 부분 - 강한 녹색 발광
+⋮----
+// 디스크 - 은색 메탈릭 발광
+⋮----
+// 전기 로고 - 노란 발광
+⋮----
+// 검은 전선 - 보라색 네온
+⋮----
+// 바닥 받침대 - 검정색 메탈
+⋮----
+// 상부 본체 - 은색 메탈
+</file>
+
+<file path="ui/CameraController.tsx">
+import { useRef, useEffect } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+⋮----
+import type { CameraAnimationRef, Position3D, FocusedGroup } from '@/entities/portfolio/model/types';
+import type { OverlayKey } from '@/features/portfolio/model/use-overlay-state';
+import {
+  CAMERA_ANIMATION_DURATION,
+  SECONDARY_ANIMATION_DURATION,
+  easeInOutCubic,
+  GROUP_CAMERA_TARGETS,
+  INITIAL_CAMERA_POS,
+  INITIAL_CAMERA_LOOK,
+} from '@/entities/portfolio/model/constants';
+import { SECONDARY_ANIMATION_TARGETS } from '../consts';
+⋮----
+// FocusedGroup을 OverlayKey로 매핑하는 함수
+const getOverlayKeyFromGroup = (group: FocusedGroup): OverlayKey | null =>
+⋮----
+type CameraControllerProps = {
+  targetPos: Position3D | null;
+  targetLook: Position3D | null;
+  secondaryAnimation: boolean;
+  setCameraAnimationDone: (done: boolean) => void;
+  setSecondaryAnimation: (animation: boolean) => void;
+  setTargetPos: (pos: Position3D) => void;
+  setTargetLook: (look: Position3D) => void;
+  setFocusedGroup: (group: FocusedGroup | null) => void;
+  // 오버레이 관련
+  hasClickedBack: boolean;
+  focusedGroup: FocusedGroup;
+  isInitialAnimation: boolean;
+  openOverlay: (key: OverlayKey) => void;
+};
+⋮----
+// 오버레이 관련
+⋮----
+export const CameraController = (props: CameraControllerProps) =>
+⋮----
+// 카메라 애니메이션 시작
+// 언제 애니메이션을 시작할지 담당
+⋮----
+// 초기 애니메이션 중에는 카메라 애니메이션 실행하지 않음
+⋮----
+// hasClickedBack이 true면 기존 애니메이션을 강제로 중단하고 새로운 애니메이션 시작
+// 그렇지 않으면 기존대로 실행 중이 아닐 때만 시작
+⋮----
+// 애니메이션 시작 시 현재 카메라 위치를 시작점으로 설정
+⋮----
+// 카메라가 현재 바라보고 있는 방향 계산
+⋮----
+animRef.current.running = true; // 애니메이션 실행 플래그 설정
+⋮----
+// 카메라 애니메이션 업데이트
+// 어떻게 애니메이션을 실행하는지 담당
+⋮----
+// position 보간
+⋮----
+// useFrame에서 카메라 위치 업데이트
+⋮----
+// lookAt 보간
+⋮----
+// 카메라가 바라보는 지점 변경
+⋮----
+// 애니메이션 끝날 때 최종 위치로 확실히 고정
+⋮----
+// 카메라 애니메이션 완료 플래그 설정
+⋮----
+// 보조 애니메이션 트리거 (Work, Server, ContactMe, Radar, Resume, Skill)
+// portfolioExiting 중일 때는 server 제외
+⋮----
+// Contact, Resume, Skill, Server 모델의 보조 애니메이션 트리거
+⋮----
+// 보조 애니메이션 위치 설정 후 useEffect에서 카메라 애니메이션 다시 시작
+⋮----
+// 보조 애니메이션 완료 시 오버레이 열기
+⋮----
+// Radar 모델의 보조 애니메이션 역순 완료 시 초기 위치로 복귀
+⋮----
+// 초기 위치 복귀 완료 후 완전 초기화 플래그 설정
+</file>
+
+<file path="ui/Computer.tsx">
+import { useGLTF } from '@react-three/drei';
+import type { GLTF } from 'three-stdlib';
+import type { JSX } from 'react';
+⋮----
+type GLTFResult = GLTF & {
+  nodes: {
+    middle_piece_low_Material_0: three.Mesh;
+    screen_low_Material_0: three.Mesh;
+    hinge_bottom_low_Material_0: three.Mesh;
+    back_piece_low_Material_0: three.Mesh;
+    front_piece_low_Material_0: three.Mesh;
+  };
+  materials: {
+    Material: three.MeshStandardMaterial;
+  };
+};
+⋮----
+useGLTF.preload('/scifi_terminal.glb');
+</file>
+
+<file path="ui/ContactMe.tsx">
+import { useAnimations, useGLTF } from '@react-three/drei';
+import { useEffect, useRef } from 'react';
+⋮----
+// 보라색 네온 재질
+⋮----
+type ContactMeProps = {
+  triggerAnimation?: boolean;
+  onAnimationComplete?: () => void;
+} & any;
+⋮----
+export function ContactMe(props: ContactMeProps)
+⋮----
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+⋮----
+// 애니메이션 설정
+⋮----
+// 애니메이션 완료 이벤트 리스너
+const handleFinished = (e: any) =>
+⋮----
+// 1.5초 대기 후 역방향 애니메이션 실행
+⋮----
+action.timeScale = -1; // 역방향으로 실행
+⋮----
+action.time = action.getClip().duration; // 끝 시간으로 설정
+⋮----
+// 역방향 애니메이션 완료 후 정리
+const handleReverseFinished = (e: any) =>
+⋮----
+action.timeScale = 1; // 원래 방향으로 복원
+action.stop(); // 애니메이션 정지 (reset 대신 stop 사용)
+isAnimationRunning.current = false; // 애니메이션 완료
+⋮----
+// 애니메이션 완료 후 콜백 호출
+⋮----
+break; // 첫 번째 액션만 실행하고 중단
+⋮----
+{/* 문 뒤 홀로그램 패널 - 문 안쪽 깊숙이 배치 */}
+</file>
+
+<file path="ui/CyberpunkContactForm.tsx">
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+⋮----
+type CyberpunkContactFormProps = {
+  show?: boolean;
+  isClosing?: boolean;
+  onClose?: () => void;
+  style?: React.CSSProperties;
+  className?: string;
+};
+⋮----
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+⋮----
+// 역순 애니메이션 완료 후 콜백 호출
+⋮----
+}, 800); // 애니메이션 시간과 맞춤
+⋮----
+{/* Cyberpunk SVG Frame */}
+⋮----
+{/* 네 변 border */}
+⋮----
+{/* 좌상단 ┏ */}
+⋮----
+{/* 우상단 ┓ */}
+⋮----
+{/* 우하단 ┛ */}
+⋮----
+{/* 좌하단 ┗ */}
+</file>
+
+<file path="ui/ExperienceDesk.tsx">
+import type { JSX } from 'react';
+import { useGLTF } from '@react-three/drei';
+import type { GLTF } from 'three-stdlib';
+⋮----
+type GLTFResult = GLTF & {
+  nodes: {
+    pPlane7_Tb_0: three.Mesh;
+    pPlane3_Tb_0: three.Mesh;
+    pPlane4_Tb_0: three.Mesh;
+    pPlane8_Tb_0: three.Mesh;
+    pPlane5_Tb_0: three.Mesh;
+    pPlane6_Tb_0: three.Mesh;
+    pCylinder1_Tb_0: three.Mesh;
+  };
+  materials: {
+    material: three.MeshStandardMaterial;
+  };
+};
+</file>
+
+<file path="ui/ExperiencePage.tsx">
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+⋮----
+interface Experience {
+  id: string;
+  company: string;
+  role: string;
+  period: string;
+  location: string;
+  description: string[];
+  skills: string[];
+}
+⋮----
+const staggerDuration = 0.15; // 카드 간격 줄임
+const cardAnimationDuration = 0.3; // 각 카드 애니메이션 시간
+⋮----
+// 초기화 및 닫기 처리
+⋮----
+// 컨텐츠 닫힘 애니메이션 완료 후 카드 애니메이션 시작
+⋮----
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+⋮----
+// 카드 애니메이션 완료 핸들러
+const handleCardAnimationComplete = (index: number) =>
+⋮----
+{/* 왼쪽: 경험 카드들 */}
+⋮----
+{/* 하단 강조선 */}
+⋮----
+{/* 오른쪽: 선택된 경험 상세 내용 */}
+⋮----
+{/* 설명 */}
+⋮----
+{/* 기술 스택 */}
+</file>
+
+<file path="ui/ExperiencePerson.tsx">
+import { useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+</file>
+
+<file path="ui/FloatMan.tsx">
+import { useGLTF } from '@react-three/drei';
+⋮----
+useGLTF.preload('/low_poly_man.glb');
+</file>
+
+<file path="ui/FPSContext.tsx">
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+⋮----
+type FPSContextType = {
+  fps: number;
+  updateFps: (fps: number) => void;
+};
+⋮----
+type FPSProviderProps = {
+  children: ReactNode;
+};
+⋮----
+export const FPSProvider = (
+⋮----
+export const useFPS = () =>
+</file>
+
+<file path="ui/FPSDisplay.tsx">
+import { useMemo, memo } from 'react';
+import { useFPS } from './FPSContext';
+⋮----
+const FPSDisplayComponent = () =>
+⋮----
+// FPS에 따른 색상 결정 - useMemo로 메모이제이션
+⋮----
+{/* FPS 텍스트 */}
+⋮----
+{/* 프로그래스바 */}
+⋮----
+// React.memo로 메모이제이션하여 불필요한 리렌더링 방지
+</file>
+
+<file path="ui/FPSMeasurer.tsx">
+import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { useFPS } from './FPSContext';
+⋮----
+export const FPSMeasurer = () =>
+⋮----
+// 매 1초마다 FPS 업데이트 (0.5초에서 1초로 변경)
+⋮----
+// FPS가 5 이상 변경되었을 때만 업데이트 (불필요한 리렌더링 방지)
+⋮----
+// 이 컴포넌트는 렌더링되지 않음 (측정만 함)
+</file>
+
+<file path="ui/GridBackground.tsx">
+import { useRef, useMemo, useEffect } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Grid } from '@react-three/drei';
+⋮----
+import { useState } from 'react';
+⋮----
+const pulseDuration = 0.8; // 초
+⋮----
+// 원형 텍스처 생성 (빛나는 교차점용)
+⋮----
+// 원형 그라디언트
+⋮----
+// 교차점 생성 함수 (빛나는 점들)
+⋮----
+const fadeDistance = 15; // Grid의 fadeDistance와 일치
+const step = 1; // Grid의 cellSize와 일치
+⋮----
+// fadeDistance 범위 내에서만 교차점 생성
+⋮----
+// 중심에서의 거리 계산
+⋮----
+// fadeDistance 내에 있는 점들만 추가
+⋮----
+// 거리에 따른 페이드 효과 (Grid와 동일한 방식)
+⋮----
+// 거리에 따른 색상 강도
+⋮----
+// hoveredGroup 변경 시 하이라이트 위치 및 투명도 목표 설정
+⋮----
+// 가장 가까운 그리드 셀의 중앙으로 위치를 보정합니다.
+⋮----
+targetOpacity.current = 0.4; // 나타날 때의 최종 투명도
+⋮----
+targetOpacity.current = 0; // 사라질 때의 최종 투명도
+⋮----
+// 선 애니메이션 시작 (컴포넌트 마운트 시)
+⋮----
+return prev + 0.02; // 2%씩 증가
+⋮----
+}, 50); // 50ms마다 업데이트
+⋮----
+// pulseActive가 true로 바뀔 때마다 1회 애니메이션 트리거
+⋮----
+// 하이라이트 원 투명도 애니메이션
+⋮----
+// 투명도가 거의 0이고, 목표도 0이면 위치 초기화 (불필요한 렌더링 방지)
+⋮----
+// 퍼짐 파동 애니메이션 (한 번만)
+⋮----
+// 교차점 펄스 효과
+⋮----
+// 애니메이션된 네온 경로 라인 생성 함수 (ㄹ자 형태, 수직/수평만)
+const createAnimatedNeonPath = (points: three.Vector3[], color: string, progress: number) =>
+⋮----
+// 모든 점들을 살짝 위로 올려서 그리드와 겹치지 않게 함
+⋮----
+// 각 구간의 길이 계산
+⋮----
+// 각 구간의 비율 계산
+⋮----
+// 현재 진행률에 따라 어느 구간까지 그릴지 결정
+let currentSegment = segmentRatios.length - 1; // 기본값을 마지막 구간으로 설정
+⋮----
+// currentSegment가 결정된 후 해당 구간의 시작점까지의 누적 비율 재계산
+⋮----
+// 메인 네온 라인 재질 (더 밝고 명확하게)
+⋮----
+// 내부 glow 재질
+⋮----
+// 외부 glow 재질 (더 넓은 범위)
+⋮----
+// 완료된 구간들 그리기
+⋮----
+// 레이어 순서: 외부 glow -> 내부 glow -> 메인 라인
+⋮----
+// 현재 진행 중인 구간 그리기
+⋮----
+const clampedProgress = Math.max(0, Math.min(1, segmentProgress)); // 0-1 사이로 제한
+⋮----
+// 레이어 순서: 외부 glow -> 내부 glow -> 메인 라인
+⋮----
+{/* 빛나는 교차점들 */}
+⋮----
+{/* 호버 하이라이트 원 */}
+⋮----
+{/* 네온 보라색 경로들 - HoloTable(중심)에서 홀로그램 텍스트로 */}
+⋮----
+{/* WORKS로 연결 (ㄹ자 형태, 수직/수평만) */}
+⋮----
+new three.Vector3(0, 0, 0), // 시작점 (중심)
+new three.Vector3(0, 0, -2.2), // 뒤쪽으로
+new three.Vector3(1.2, 0, -2.2), // 왼쪽으로
+new three.Vector3(1.2, 0, -3), // 더 뒤쪽으로
+new three.Vector3(0.8, 0, -3), // 텍스트 시작 부분으로
+⋮----
+{/* RESUME로 연결 (ㄹ자 형태, 수직/수평만) */}
+⋮----
+new three.Vector3(0.1, 0, -0.08), // 시작점 (중심)
+new three.Vector3(0.1, 0, -1.5), // 뒤쪽으로
+new three.Vector3(2.8, 0, -1.5), // 아래쪽으로
+⋮----
+// new three.Vector3(3.35, 2, 0.6),
+⋮----
+{/* EXPERIENCE로 연결 (ㄹ자 형태, 수직/수평만) */}
+⋮----
+new three.Vector3(-0.1, 0, 0), // 시작점 (중심)
+new three.Vector3(-0.1, 0, 2.3), // 뒤쪽으로
+new three.Vector3(0.5, 0, 2.3), // 왼쪽으로
+new three.Vector3(0.5, 0, 3.2), // 더 뒤쪽으로
+new three.Vector3(0, 0, 3.2), // 텍스트 시작 부분으로
+⋮----
+{/* HOME으로 연결 (ㄹ자 형태, 수직/수평만) */}
+⋮----
+new three.Vector3(0, 0, 0), // 시작점 (중심)
+new three.Vector3(-3, 0, 0), // 왼쪽으로
+new three.Vector3(-3, 0, 1), // 아래쪽으로
+new three.Vector3(-4.1, 0, 1), // 텍스트 시작 부분으로
+new three.Vector3(-4.1, 0, 0.4), // 텍스트 시작 부분으로
+⋮----
+{/* RADAR로 연결 (ㄹ자 형태, 수직/수평만) */}
+⋮----
+new three.Vector3(0, 0, -0.1), // 시작점 (중심)
+new three.Vector3(-1.5, 0, -0.1), // 왼쪽으로
+new three.Vector3(-1.5, 0, -2), // 아래쪽으로
+new three.Vector3(-2, 0, -2), // 텍스트 시작 부분으로
+new three.Vector3(-2, 0, -3), // 텍스트 시작 부분으로
+⋮----
+new three.Vector3(0, 0, 0.1), // 시작점 (중심)
+new three.Vector3(-2, 0, 0.1), // 왼쪽으로
+new three.Vector3(-2, 0, 2.7), // 아래쪽으로
+new three.Vector3(-3, 0, 2.7), // 텍스트 시작 부분으로
+⋮----
+{/* ABOUT ME로 연결 (ㄹ자 형태, 수직/수평만) */}
+⋮----
+new three.Vector3(0, 0, 0), // 시작점 (중심)
+new three.Vector3(3, 0, 0), // 오른쪽으로
+new three.Vector3(3, 0, 0.8), // 아래쪽으로
+⋮----
+{/* SKILL로 연결 (ㄹ자 형태, 수직/수평만) */}
+⋮----
+new three.Vector3(0, 0, 0.1), // 시작점 (중심)
+new three.Vector3(2.3, 0, 0.1), // 오른쪽으로
+new three.Vector3(2.3, 0, 1), // 아래쪽으로
+⋮----
+{/* 퍼짐 파동 효과 (링) */}
+</file>
+
+<file path="ui/HoloContainer.tsx">
+import type { JSX } from 'react';
+⋮----
+// 메인 프레임 재질 (어두운 메탈)
+⋮----
+// 네온 라인 재질 (화이트-블루)
+⋮----
+// 네온 라인 재질 (퍼플)
+⋮----
+// 바닥 그리드 재질
+⋮----
+type HoloContainerProps = {
+  scale?: number | [number, number, number];
+  position?: [number, number, number];
+} & Omit<JSX.IntrinsicElements['group'], 'scale' | 'position'>;
+⋮----
+{/* 메인 컨테이너 */}
+⋮----
+{/* 바닥 플랫폼 */}
+⋮----
+{/* 바닥 네온 그리드 */}
+⋮----
+{/* 바닥 겉면 보라색 네온 테두리 */}
+⋮----
+{/* 코너 필러 (8각형) */}
+⋮----
+{/* 메인 필러 */}
+⋮----
+{/* 네온 스트립 */}
+⋮----
+{/* 추가 수직 네온 링 - X축 회전 */}
+⋮----
+{/* 에너지 코어 라인들 (중앙에서 퍼져나가는) */}
+⋮----
+{/* 플로팅 디테일 (작은 홀로그램 큐브들) */}
+</file>
+
+<file path="ui/HoloTable.tsx">
+import { type JSX, useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+⋮----
+type HoloTableProps = {
+  scale?: number | [number, number, number];
+  position?: [number, number, number];
+} & Omit<JSX.IntrinsicElements['group'], 'scale' | 'position'>;
+⋮----
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+⋮----
+{/* 寃됰㈃ ?먮툕??- ????諛쒓킅??*/}
+</file>
+
+<file path="ui/HoloText.tsx">
+import { Text3D } from '@react-three/drei';
+import { useRef, useEffect, useState } from 'react';
+import { useFrame } from '@react-three/fiber';
+⋮----
+// 미세한 위치 흔들림
+⋮----
+// 밝기 깜빡임
+⋮----
+{/* 가로선 */}
+⋮----
+{/* 세로선 */}
+</file>
+
+<file path="ui/HoverCameraController.tsx">
+import { useRef, useEffect } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+⋮----
+import type { Position3D, FocusedGroup } from '@/entities/portfolio/model/types';
+⋮----
+type HoverCameraControllerProps = {
+  hoveredPosition: Position3D | null;
+  isInitialAnimation?: boolean;
+  focusedGroup?: FocusedGroup | null;
+};
+⋮----
+export const HoverCameraController = ({
+  hoveredPosition,
+  isInitialAnimation = false,
+  focusedGroup,
+}: HoverCameraControllerProps) =>
+⋮----
+// 초기 카메라 위치 저장 (한 번만)
+⋮----
+// 호버 상태 변경 처리
+⋮----
+// 호버된 모델의 위치와 카메라의 거리 계산
+⋮----
+// 카메라에서 모델로의 방향 벡터
+⋮----
+// 거리에 따른 이동량 조절
+⋮----
+// 먼 모델: 그 방향으로 살짝 이동 (가까워짐)
+⋮----
+// 중간 거리: 약간 이동
+⋮----
+// 가까운 모델: 반대 방향으로 살짝 이동 (멀어짐)
+⋮----
+// 호버 해제 시 원래 위치로 복귀
+⋮----
+// 더욱 부드러운 lerp로 목표 위치로 이동 (매우 부드럽게)
+</file>
+
+<file path="ui/index.ts">
+
+</file>
+
+<file path="ui/InspectingPerson.tsx">
+import { useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+</file>
+
+<file path="ui/LabMachine.tsx">
+import { useAnimations, useGLTF } from '@react-three/drei';
+import { useRef } from 'react';
+⋮----
+// DNA 연구실 기계에 어울리는 발광 재질들
+⋮----
+// gltf.pmnd.rs 변환으로 손실된 재질들 복원
+</file>
+
+<file path="ui/LoadingProgressbar.tsx">
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, animate, useTransform, useMotionValueEvent } from 'framer-motion';
+import { PortfolioOverlay } from './PortfolioOverlay';
+⋮----
+type LoadingProgressBarProps = {
+  isReversing?: boolean;
+};
+⋮----
+// motionValue 변화를 감지하여 display용 state 업데이트
+⋮----
+// 역순 애니메이션 처리
+⋮----
+// 먼저 PortfolioOverlay를 닫기 시작
+⋮----
+// PortfolioOverlay 닫힘 완료 후 LoadingProgressBar 역순 애니메이션 시작
+const handlePortfolioExitComplete = () =>
+⋮----
+// LoadingProgressBar 역순 애니메이션을 useMotionValue와 animate로 처리
+⋮----
+duration: 3, // 100% -> 0%까지 3초 (30ms * 100 / 1000)
+⋮----
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+⋮----
+// 정순 애니메이션을 useMotionValue와 animate로 처리
+⋮----
+duration: 3, // 0% -> 100%까지 3초 (30ms * 100 / 1000)
+⋮----
+// setTimeout 대신 animate를 사용하여 딜레이 처리
+⋮----
+// 완료되면 아무것도 렌더링하지 않음
+⋮----
+{/* Loading 텍스트 */}
+⋮----
+{/* 프로그래스바 컨테이너 */}
+⋮----
+{/* 퍼센티지 표시 */}
+⋮----
+{/* 로딩 도트 애니메이션 */}
+</file>
+
+<file path="ui/MagicRoom.tsx">
+import { useGLTF } from '@react-three/drei';
+</file>
+
+<file path="ui/NeonToggle.tsx">
+import React from 'react';
+⋮----
+e.preventDefault();
+</file>
+
+<file path="ui/OverlayManager.tsx">
+import type { FocusedGroup } from '@/entities/portfolio/model/types';
+import { Mail, LinkedinIcon, GithubIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { NeonToggle, AnimatedLink, LoadingProgressBar } from '@/widgets/portfolio/ui';
+import type { OverlayKey, OverlayState } from '@/features/portfolio/model/use-overlay-state';
+⋮----
+interface OverlayManagerProps {
+  focusedGroup: FocusedGroup;
+  quality: boolean;
+  sound: boolean;
+  onQualityChange: (quality: boolean) => void;
+  onSoundChange: (sound: boolean) => void;
+  onBack: () => void;
+
+  // Title
+  currentTitle?: string;
+  currentSubtitle?: string;
+  titleAnimation?: 'idle' | 'changing' | 'exiting';
+
+  // Overlay
+  overlays: OverlayState;
+  closeOverlay: (key: OverlayKey) => void;
+}
+⋮----
+// Title
+⋮----
+// Overlay
+⋮----
+{/* 오버레이 UI: 상단좌측 타이틀/직함 */}
+⋮----
+{/* 오버레이 UI: 상단가운데 타이틀/직함 - 모델 클릭 시에만 표시 */}
+⋮----
+{/* 오버레이 UI: 하단좌측 퀄리티/사운드/라이트모드 */}
+⋮----
+{/* 오버레이 UI: 하단중앙 저작권/소셜 */}
+⋮----
+{/* 오버레이 AboutMePage */}
+{/* {overlays.aboutMe?.isOpen && (
+        <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
+          <AboutMePage
+            isClosing={overlays.aboutMe?.isClosing}
+            onClose={overlays.aboutMe?.isClosing ? onAboutMeAnimationComplete : closeOverlay('aboutMe')}
+          />
+        </div>
+      )} */}
+⋮----
+{/* 오버레이 ExperiencePage */}
+{/* {overlays.experience?.isOpen && (
+        <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
+          <ExperiencePage
+            isClosing={overlays.experience?.isClosing}
+            onClose={overlays.experience?.isClosing ? onExperienceAnimationComplete : closeOverlay('experience')}
+          />
+        </div>
+      )} */}
+⋮----
+{/* Skills Overlay */}
+{/* {overlays.skills?.isOpen && (
+        <div className='fixed right-0 top-0 h-full w-1/2 max-w-4xl min-w-[600px] z-50 flex items-start justify-center'>
+          <SkillsOverlay
+            skillsClosing={overlays.skills?.isClosing}
+            onAnimationComplete={
+              onSkillsAnimationComplete ||
+              (() => {
+                // 기본 애니메이션 완료 처리
+              })
+            }
+          />
+        </div>
+      )} */}
+⋮----
+{/* Contact Form */}
+{/* {overlays.contact?.isOpen && (
+        <div className='fixed left-[100px] top-1/2 transform -translate-y-1/2 z-50'>
+          <CyberpunkContactForm
+            show={overlays.contact?.isOpen}
+            isClosing={overlays.contact?.isClosing}
+            onClose={overlays.contact?.isClosing ? onContactAnimationComplete : closeOverlay('contact')}
+          />
+        </div>
+      )} */}
+⋮----
+{/* 로딩 오버레이들 */}
+{/* <LoadingOverlay
+        showWorksLoading={showWorksLoading}
+        showPortfolioOverlay={overlays.portfolio?.isOpen}
+        showExitLoading={showExitLoading}
+        loadingProgress={loadingProgress}
+        loadingBarFullExpand={loadingBarFullExpand}
+        exitLoadingProgress={exitLoadingProgress}
+      /> */}
+⋮----
+{/* 포트폴리오 오버레이 */}
+⋮----
+{/* 뒤로가기 버튼 */}
+</file>
+
+<file path="ui/Platform.tsx">
+import { useGLTF } from '@react-three/drei';
+</file>
+
+<file path="ui/PortfolioOverlay.tsx">
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { GlassmorphismCard, GlassmorphismButton } from '@/shared/ui/glassmorphism';
+import { cardVariants, containerVariants } from '@/shared/animation';
+import { portfolioProjects } from '../consts';
+import { TitleBox } from './TitleBox';
+⋮----
+{/* 프로젝트 그리드 */}
+⋮----
+{/* 프로젝트 이미지 */}
+⋮----
+{/* 프로젝트 정보 */}
+</file>
+
+<file path="ui/ProfileImage.tsx">
+
+</file>
+
+<file path="ui/RobotArm.tsx">
+import { useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+⋮----
+// 사이버펑크 테마 재질 생성
+</file>
+
+<file path="ui/SceneRenderer.tsx">
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
+import {
+  Antenna,
+  Computer,
+  ContactMe,
+  LabMachine,
+  ExperienceDesk,
+  ExperiencePerson,
+  FloatMan,
+  GridBackground,
+  HoloText,
+  InspectingPerson,
+  Platform,
+  RobotArm,
+  Server,
+  TypingMan,
+  WorkPerson,
+  WorkTable,
+  FPSMeasurer,
+  WorkChair,
+} from '@/widgets/portfolio/ui';
+import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
+import { HoloContainer } from '@/widgets/portfolio/ui/HoloContainer';
+import { HoverCameraController } from '@/widgets/portfolio/ui/HoverCameraController';
+⋮----
+type SceneRendererProps = {
+  focusedGroup: FocusedGroup;
+  pulseActive: boolean;
+  pulseCenter: Position3D | null;
+  hoveredPosition: Position3D | null;
+  isShow: (group: FocusedGroup) => boolean;
+  onGroupClick: (group: FocusedGroup) => void;
+  onPointerOver: (position: Position3D) => void;
+  onPointerOut: () => void;
+  // onFpsUpdate prop 제거
+  // 초기 애니메이션 props 추가
+  holoTableScale?: number;
+  holoTablePosition?: [number, number, number];
+  showOtherModels?: boolean;
+  isInitialAnimation?: boolean;
+  // 카메라 애니메이션 완료 상태 추가
+  cameraAnimationDone?: boolean;
+};
+⋮----
+// onFpsUpdate prop 제거
+// 초기 애니메이션 props 추가
+⋮----
+// 카메라 애니메이션 완료 상태 추가
+⋮----
+const handlePointerOver = (position: Position3D) => (e: any) =>
+⋮----
+const handlePointerOut = (e: any) =>
+⋮----
+{/* 호버 카메라 컨트롤러 - 초기 애니메이션이 아니고 특정 그룹에 포커스되지 않았을 때만 작동 */}
+⋮----
+{/* 초기 애니메이션 중이 아닐 때만 GridBackground 표시 */}
+⋮----
+{/* 홀로테이블과 보관함 - 항상 표시하되 스케일과 위치를 동적으로 제어 */}
+⋮----
+{/* 보관함은 초기 애니메이션이 완료된 후에만 표시 */}
+⋮----
+{/* 다른 모델들은 초기 애니메이션 완료 후에만 표시 */}
+{/* work 그룹: workTable + typingMan */}
+⋮----
+{/* HOME */}
+⋮----
+// 홈으로 이동
+⋮----
+{/* server 그룹: server0,1,2 */}
+⋮----
+{/* experience 그룹: experiencePerson + experienceDesk */}
+⋮----
+onPointerOver=
+⋮----
+{/* 홀로그램 이름표들 */}
+⋮----
+{/* 메인 조명 */}
+</file>
+
+<file path="ui/Server.tsx">
+import { useGLTF } from '@react-three/drei';
+</file>
+
+<file path="ui/SkillsOverlay.tsx">
+import { motion } from 'framer-motion';
+⋮----
+import { GlassmorphismCard } from '@/shared/ui/glassmorphism';
+⋮----
+interface SkillsOverlayProps {
+  skillsClosing: boolean;
+  onAnimationComplete: () => void;
+}
+⋮----
+// 스킬 데이터 구조
+interface SkillItem {
+  name: string;
+  icon: string; // 아이콘 이모지 또는 텍스트
+  color?: string;
+}
+⋮----
+icon: string; // 아이콘 이모지 또는 텍스트
+⋮----
+interface SkillSection {
+  title: string;
+  items: SkillItem[];
+}
+⋮----
+{/* 스킬 섹션들 */}
+⋮----
+{/* 섹션 제목 */}
+⋮----
+{/* 스킬 아이템들 */}
+⋮----
+{/* 아이콘 컨테이너 */}
+⋮----
+{/* 스킬 이름 */}
+</file>
+
+<file path="ui/TitleBox.tsx">
+import { motion, AnimatePresence } from 'framer-motion';
+import { boxVariants, textVariants } from '@/shared/animation';
+⋮----
+type TitleBoxProps = {
+  title: string;
+};
+</file>
+
+<file path="ui/TypingMan.tsx">
+import { useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+</file>
+
+<file path="ui/WorkChair.tsx">
+import { useGLTF } from '@react-three/drei';
+import type { GLTF } from 'three-stdlib';
+import type { JSX } from 'react';
+⋮----
+type GLTFResult = GLTF & {
+  nodes: {
+    Object_4: three.Mesh;
+    Object_5: three.Mesh;
+    Object_6: three.Mesh;
+  };
+  materials: {
+    Color_E10: three.MeshStandardMaterial;
+    Color_004: three.MeshStandardMaterial;
+    Material: three.MeshStandardMaterial;
+  };
+};
+</file>
+
+<file path="ui/WorkPerson.tsx">
+import { useEffect, useRef } from 'react';
+import { useGLTF, useAnimations } from '@react-three/drei';
+</file>
+
+<file path="ui/WorkTable.tsx">
+import type { JSX } from 'react';
+import { useGLTF } from '@react-three/drei';
+import type { GLTF } from 'three-stdlib';
+⋮----
+type GLTFResult = GLTF & {
+  nodes: {
+    Object_4: three.Mesh;
+    Object_6: three.Mesh;
+    Object_8: three.Mesh;
+    Object_10: three.Mesh;
+    Object_12: three.Mesh;
+    Object_14: three.Mesh;
+    Object_16: three.Mesh;
+    Object_18: three.Mesh;
+    Object_19: three.Mesh;
+    Object_21: three.Mesh;
+    Object_23: three.Mesh;
+    Object_25: three.Mesh;
+    Object_27: three.Mesh;
+    Object_28: three.Mesh;
+    Object_30: three.Mesh;
+    Object_31: three.Mesh;
+    Object_33: three.Mesh;
+    Object_35: three.Mesh;
+    Object_37: three.Mesh;
+    Object_39: three.Mesh;
+    Object_40: three.Mesh;
+    Object_42: three.Mesh;
+    Object_44: three.Mesh;
+    Object_46: three.Mesh;
+    Object_48: three.Mesh;
+    Object_50: three.Mesh;
+    Object_52: three.Mesh;
+    Object_54: three.Mesh;
+    Object_55: three.Mesh;
+    Object_57: three.Mesh;
+    Object_58: three.Mesh;
+    Object_60: three.Mesh;
+    Object_62: three.Mesh;
+    Object_64: three.Mesh;
+    Object_66: three.Mesh;
+    Object_68: three.Mesh;
+    Object_70: three.Mesh;
+    Object_71: three.Mesh;
+    Object_72: three.Mesh;
+    Object_74: three.Mesh;
+    Object_75: three.Mesh;
+    Object_77: three.Mesh;
+    Object_78: three.Mesh;
+    Object_80: three.Mesh;
+    Object_82: three.Mesh;
+    Object_84: three.Mesh;
+    Object_86: three.Mesh;
+    Object_87: three.Mesh;
+    Object_88: three.Mesh;
+    Object_89: three.Mesh;
+    Object_91: three.Mesh;
+    Object_92: three.Mesh;
+    Object_93: three.Mesh;
+    Object_95: three.Mesh;
+    Object_96: three.Mesh;
+    Object_98: three.Mesh;
+    Object_100: three.Mesh;
+    Object_102: three.Mesh;
+    Object_104: three.Mesh;
+    Object_106: three.Mesh;
+    Object_107: three.Mesh;
+    Object_109: three.Mesh;
+    Object_111: three.Mesh;
+    Object_112: three.Mesh;
+    Object_114: three.Mesh;
+    Object_116: three.Mesh;
+    Object_118: three.Mesh;
+    Object_120: three.Mesh;
+    Object_122: three.Mesh;
+    Object_124: three.Mesh;
+    Object_126: three.Mesh;
+    Object_128: three.Mesh;
+    Object_130: three.Mesh;
+    Object_132: three.Mesh;
+    Object_134: three.Mesh;
+    Object_136: three.Mesh;
+    Object_138: three.Mesh;
+    Object_139: three.Mesh;
+    Object_140: three.Mesh;
+    Object_141: three.Mesh;
+    Object_143: three.Mesh;
+    Object_144: three.Mesh;
+    Object_146: three.Mesh;
+    Object_148: three.Mesh;
+    Object_150: three.Mesh;
+    Object_151: three.Mesh;
+    Object_153: three.Mesh;
+    Object_155: three.Mesh;
+    Object_157: three.Mesh;
+    Object_159: three.Mesh;
+    Object_161: three.Mesh;
+    Object_163: three.Mesh;
+    Object_165: three.Mesh;
+    Object_167: three.Mesh;
+    Object_168: three.Mesh;
+    Object_170: three.Mesh;
+    Object_171: three.Mesh;
+    Object_173: three.Mesh;
+    Object_174: three.Mesh;
+    Object_176: three.Mesh;
+    Object_177: three.Mesh;
+    Object_179: three.Mesh;
+    Object_180: three.Mesh;
+    Object_182: three.Mesh;
+    Object_183: three.Mesh;
+    Object_185: three.Mesh;
+    Object_186: three.Mesh;
+    Object_188: three.Mesh;
+    Object_189: three.Mesh;
+    Object_191: three.Mesh;
+    Object_192: three.Mesh;
+    Object_194: three.Mesh;
+    Object_195: three.Mesh;
+    Object_197: three.Mesh;
+    Object_198: three.Mesh;
+    Object_199: three.Mesh;
+    Object_200: three.Mesh;
+    Object_201: three.Mesh;
+    Object_202: three.Mesh;
+    Object_203: three.Mesh;
+    Object_204: three.Mesh;
+    Object_205: three.Mesh;
+    Object_206: three.Mesh;
+    Object_207: three.Mesh;
+    Object_208: three.Mesh;
+    Object_209: three.Mesh;
+    Object_210: three.Mesh;
+    Object_211: three.Mesh;
+    Object_212: three.Mesh;
+    Object_213: three.Mesh;
+    Object_214: three.Mesh;
+    Object_215: three.Mesh;
+    Object_217: three.Mesh;
+    Object_219: three.Mesh;
+    Object_221: three.Mesh;
+    Object_222: three.Mesh;
+    Object_224: three.Mesh;
+    Object_226: three.Mesh;
+  };
+  materials: {
+    'Materil.002': three.MeshStandardMaterial;
+    'Materil.003': three.MeshPhysicalMaterial;
+    'Materil.005': three.MeshStandardMaterial;
+    'Materil.008': three.MeshStandardMaterial;
+    'Materil.006': three.MeshStandardMaterial;
+    'Materil.007': three.MeshStandardMaterial;
+    'Materil.015': three.MeshStandardMaterial;
+    'Materil.009': three.MeshPhysicalMaterial;
+    'Materil.012': three.MeshStandardMaterial;
+    'Materil.011': three.MeshStandardMaterial;
+    'Materil.013': three.MeshStandardMaterial;
+    'Materil.016': three.MeshStandardMaterial;
+    'Materil.014': three.MeshStandardMaterial;
+    'Materil.018': three.MeshStandardMaterial;
+    'Materil.019': three.MeshStandardMaterial;
+    'Materil.020': three.MeshPhysicalMaterial;
+    'Materil.021': three.MeshPhysicalMaterial;
+    'Materil.022': three.MeshPhysicalMaterial;
+    'Materil.023': three.MeshStandardMaterial;
+    'Materil.010': three.MeshPhysicalMaterial;
+    'Materil.017': three.MeshPhysicalMaterial;
+    'Materil.024': three.MeshStandardMaterial;
+    'Materil.025': three.MeshStandardMaterial;
+    'Materil.026': three.MeshStandardMaterial;
+    'Materil.027': three.MeshStandardMaterial;
+    'Materil.038': three.MeshStandardMaterial;
+    'Materil.037': three.MeshPhysicalMaterial;
+    'Materil.032': three.MeshStandardMaterial;
+    'Materil.004': three.MeshStandardMaterial;
+    'Materil.035': three.MeshStandardMaterial;
+    'Materil.036': three.MeshStandardMaterial;
+    'Materil.040': three.MeshPhysicalMaterial;
+    'Materil.041': three.MeshStandardMaterial;
+    'Materil.029': three.MeshStandardMaterial;
+    'Materil.031': three.MeshPhysicalMaterial;
+    'Materil.042': three.MeshPhysicalMaterial;
+    'Materil.044': three.MeshPhysicalMaterial;
+    'Materil.045': three.MeshStandardMaterial;
+    'Materil.054': three.MeshPhysicalMaterial;
+    'Materil.055': three.MeshPhysicalMaterial;
+    'Materil.065': three.MeshPhysicalMaterial;
+    'Materil.057': three.MeshStandardMaterial;
+    'Materil.066': three.MeshPhysicalMaterial;
+    'Materil.067': three.MeshPhysicalMaterial;
+    'Materil.069': three.MeshPhysicalMaterial;
+    'Materil.068': three.MeshPhysicalMaterial;
+    'Materil.070': three.MeshPhysicalMaterial;
+    'Materil.071': three.MeshPhysicalMaterial;
+    'Materil.072': three.MeshPhysicalMaterial;
+    'Materil.073': three.MeshPhysicalMaterial;
+    'Materil.074': three.MeshPhysicalMaterial;
+    'Materil.075': three.MeshPhysicalMaterial;
+    'Materil.076': three.MeshPhysicalMaterial;
+    'Materil.077': three.MeshStandardMaterial;
+    'Materil.078': three.MeshPhysicalMaterial;
+    'Materil.079': three.MeshStandardMaterial;
+    'Materil.080': three.MeshPhysicalMaterial;
+    'Materil.081': three.MeshPhysicalMaterial;
+    'Materil.082': three.MeshPhysicalMaterial;
+    'Materil.083': three.MeshPhysicalMaterial;
+    'Materil.084': three.MeshPhysicalMaterial;
+    'Materil.085': three.MeshPhysicalMaterial;
+    'Materil.086': three.MeshPhysicalMaterial;
+    'Materil.087': three.MeshPhysicalMaterial;
+    'Materil.088': three.MeshPhysicalMaterial;
+    'Materil.093': three.MeshPhysicalMaterial;
+    'Materil.094': three.MeshPhysicalMaterial;
+    'Materil.095': three.MeshPhysicalMaterial;
+    'Materil.097': three.MeshPhysicalMaterial;
+    'Materil.098': three.MeshPhysicalMaterial;
+  };
+};
+</file>
+
+</files>
