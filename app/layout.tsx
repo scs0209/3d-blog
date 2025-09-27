@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   creator: 'Ayaan',
   publisher: 'Ayaan Company',
 
-  // metadataBase: new URL(baseUrl),
+  metadataBase: new URL(baseUrl),
   alternates: {
     canonical: '/',
   },
