@@ -6,14 +6,13 @@ import { formatDateToYMD } from '@/shared/utils';
 import type { PostResponse } from '@/entities/post/model/post';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { Button } from '@/shadcn-ui/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import { Tag as TagComponent, useToast } from '@/shared/ui';
 import { Save, Trash2, Calendar, User, Tag, Loader2 } from 'lucide-react';
 import { updatePostAction, deletePostAction } from '@/features/admin/post/api';
 import { CategorySelector, TagsSelector } from '@/features/admin/post/ui';
-import { CategorySelectorRef } from '@/features/admin/post/ui/category-selector';
-import { TagsSelectorRef } from '@/features/admin/post/ui/tags-selector';
-
+import type { CategorySelectorRef } from '@/features/admin/post/ui/category-selector';
+import type { TagsSelectorRef } from '@/features/admin/post/ui/tags-selector';
 
 interface PostUpdateClientProps {
   initialPost: PostResponse;
@@ -23,53 +22,46 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
   const toast = useToast();
   const [post, setPost] = useState<PostResponse>(initialPost);
   const [content, setContent] = useState(initialPost.content ?? '');
-  
+
   // refs for child components
   const categoryRef = useRef<CategorySelectorRef>(null);
   const tagsRef = useRef<TagsSelectorRef>(null);
 
-
   // React 19: useActionState for update action
-  const [, updateAction, isUpdatePending] = useActionState(
-    async (prevState: any, formData: FormData) => {
-      const categoryId = categoryRef.current?.getSelectedCategoryId() ?? '';
-      const tagIds = tagsRef.current?.getSelectedTagIds() ?? [];
-      
-      const result = await updatePostAction(Number(initialPost.id), {
-        title: post.title ?? '',
-        content,
-        categoryId: Number(categoryId),
-        tagIds: tagIds.map(id => Number(id))
-      });
-      
-      if (result.success && result.post) {
-        setPost(result.post);
-        toast.success('Post updated successfully');
-      } else {
-        toast.error(result.error || 'Failed to update post');
-      }
-      
-      return result;
-    },
-    null
-  );
+  const [, updateAction, isUpdatePending] = useActionState(async (prevState: any, formData: FormData) => {
+    const categoryId = categoryRef.current?.getSelectedCategoryId() ?? '';
+    const tagIds = tagsRef.current?.getSelectedTagIds() ?? [];
+
+    const result = await updatePostAction(Number(initialPost.id), {
+      title: post.title ?? '',
+      content,
+      categoryId: Number(categoryId),
+      tagIds: tagIds.map((id) => Number(id)),
+    });
+
+    if (result.success && result.post) {
+      setPost(result.post);
+      toast.success('Post updated successfully');
+    } else {
+      toast.error(result.error || 'Failed to update post');
+    }
+
+    return result;
+  }, null);
 
   // React 19: useActionState for delete action
-  const [, deleteAction, isDeletePending] = useActionState(
-    async (prevState: any) => {
-      const result = await deletePostAction(Number(initialPost.id));
-      
-      if (result.success) {
-        setPost(null as any);
-        toast.success('Post deleted successfully');
-      } else {
-        toast.error(result.error || 'Failed to delete post');
-      }
-      
-      return result;
-    },
-    null
-  );
+  const [, deleteAction, isDeletePending] = useActionState(async (prevState: any) => {
+    const result = await deletePostAction(Number(initialPost.id));
+
+    if (result.success) {
+      setPost(null as any);
+      toast.success('Post deleted successfully');
+    } else {
+      toast.error(result.error || 'Failed to delete post');
+    }
+
+    return result;
+  }, null);
 
   // React 19: useOptimistic for optimistic UI updates
   const [optimisticPost, setOptimisticPost] = useOptimistic(post, (_currentPost, newPost: PostResponse) => newPost);
@@ -83,7 +75,6 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
     };
     setOptimisticPost(optimisticUpdate);
   };
-
 
   // Use optimistic post for display, fallback to actual post
   const displayPost = optimisticPost || post;
@@ -103,12 +94,7 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
           </CardTitle>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className='space-y-4'
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className='space-y-4'>
           {/* Meta Info */}
           <div className='flex flex-wrap items-center gap-4 text-sm text-blue-200'>
             <div className='flex items-center gap-2'>
@@ -142,21 +128,19 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
           {/* Category and Tags - Inline */}
           <div className='flex flex-col sm:flex-row gap-4'>
             <div className='flex-1'>
-              <CategorySelector 
-                ref={categoryRef}
-                initialCategoryId={initialPost.category?.id?.toString() ?? ''}
-              />
+              <CategorySelector ref={categoryRef} initialCategoryId={initialPost.category?.id?.toString() ?? ''} />
             </div>
             <div className='flex-1'>
-              <TagsSelector 
+              <TagsSelector
                 ref={tagsRef}
-                initialTagIds={initialPost.tags?.map(tag => tag.id?.toString()).filter((id): id is string => Boolean(id)) ?? []}
+                initialTagIds={
+                  initialPost.tags?.map((tag) => tag.id?.toString()).filter((id): id is string => Boolean(id)) ?? []
+                }
               />
             </div>
           </div>
         </motion.div>
       </CardHeader>
-
 
       {/* Editor Card */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
