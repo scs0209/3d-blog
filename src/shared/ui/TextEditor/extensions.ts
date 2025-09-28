@@ -21,6 +21,7 @@ import {
   UpdatedImage,
   Youtube,
 } from 'novel/extensions';
+import { TableKit } from '@tiptap/extension-table';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import CodeBlock from './code-block';
 import { UploadImagesPlugin } from 'novel/plugins';
@@ -166,6 +167,31 @@ const mathematics = Mathematics.configure({
 
 const characterCount = CharacterCount.configure();
 
+const tableKit = TableKit.configure({
+  table: {
+    HTMLAttributes: {
+      class: cx('border-collapse border-2 border-gray-500 dark:border-gray-400 my-6 w-full'),
+    },
+  },
+  tableRow: {
+    HTMLAttributes: {
+      class: cx('border-b border-gray-400 dark:border-gray-500'),
+    },
+  },
+  tableHeader: {
+    HTMLAttributes: {
+      class: cx(
+        'border border-gray-500 dark:border-gray-400 bg-gray-700 px-4 py-3 text-left font-semibold text-foreground',
+      ),
+    },
+  },
+  tableCell: {
+    HTMLAttributes: {
+      class: cx('border border-gray-500 dark:border-gray-400 px-4 py-3 text-foreground'),
+    },
+  },
+});
+
 const markdownExtension = MarkdownExtension.configure({
   html: true,
   tightLists: true,
@@ -173,8 +199,8 @@ const markdownExtension = MarkdownExtension.configure({
   bulletListMarker: '-',
   linkify: false,
   breaks: false,
-  transformPastedText: false,
-  transformCopiedText: false,
+  transformPastedText: true,
+  transformCopiedText: true,
 });
 
 export const defaultExtensions = [
@@ -193,6 +219,7 @@ export const defaultExtensions = [
   mathematics,
   characterCount,
   TiptapUnderline,
+  tableKit,
   markdownExtension,
   HighlightExtension,
   TextStyle,

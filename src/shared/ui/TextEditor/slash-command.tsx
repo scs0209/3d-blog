@@ -8,6 +8,7 @@ import {
   ListOrdered,
   MessageSquarePlus,
   Network,
+  Table,
   Text,
   TextQuote,
   Twitter,
@@ -159,6 +160,15 @@ export const suggestionItems = createSuggestionItems([
       } else if (tweetLink !== null) {
         alert('Please enter a correct Twitter Link');
       }
+    },
+  },
+  {
+    title: 'Table',
+    description: 'Insert a table.',
+    searchTerms: ['table', 'grid', 'rows', 'columns'],
+    icon: <Table size={18} />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
     },
   },
   {

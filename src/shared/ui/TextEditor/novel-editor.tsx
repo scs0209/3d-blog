@@ -32,7 +32,7 @@ const NovelEditor = ({
   };
 
   const processedValue = value ? preprocessHTML(value) : value;
-  console.log(processedValue);
+
   return (
     <div className='relative w-[1000px] max-w-screen-lg min-h-[500px]'>
       <EditorRoot>
