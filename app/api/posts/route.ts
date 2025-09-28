@@ -15,6 +15,16 @@ import prisma from '@/shared/lib/db';
  *           type: string
  *         description: 게시물 검색어 (title, content)
  *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: 카테고리 slug로 필터링
+ *       - in: query
+ *         name: tags
+ *         schema:
+ *           type: string
+ *         description: 태그 ID들을 쉼표로 구분하여 필터링 (예: 1,2,3)
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer
@@ -93,6 +103,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') ?? '';
+    const category = searchParams.get('category') ?? '';
+    const tags = searchParams.get('tags') ?? '';
     const page = Number.parseInt(searchParams.get('page') ?? '1', 10);
     const limit = Number.parseInt(searchParams.get('limit') ?? '10', 10);
 
@@ -103,11 +115,35 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     const whereClause: any = {};
+
+    // 검색어 필터링
     if (search) {
       whereClause.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { content: { contains: search, mode: 'insensitive' } },
       ];
+    }
+
+    // 카테고리 필터링
+    if (category) {
+      whereClause.category = {
+        slug: category,
+      };
+    }
+
+    // 태그 필터링
+    if (tags) {
+      const tagIds = tags
+        .split(',')
+        .map((id) => Number.parseInt(id.trim(), 10))
+        .filter(Boolean);
+      if (tagIds.length > 0) {
+        whereClause.tags = {
+          some: {
+            id: { in: tagIds },
+          },
+        };
+      }
     }
 
     const totalItems = await prisma.post.count({ where: whereClause });
