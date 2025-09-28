@@ -1,0 +1,1 @@
+export { updatePostAction, deletePostAction } from './post-action';
