@@ -1,30 +1,17 @@
 'use client';
 
 import { MobileNavbar } from './MobileNavbar';
-import dynamic from 'next/dynamic';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { Menu, Search, X, Home, Globe, Navigation, User, LogOut } from 'lucide-react';
+import { Menu, Home, Globe, Navigation, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Dropdown } from '@/shared/ui';
 import Image from 'next/image';
-import { useQueryState } from 'nuqs';
-
-const SearchBar = dynamic(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), {
-  ssr: false,
-});
+import { BlogSearch } from './BlogSearch';
 
 export default function BlogHeader() {
-  const [search, setSearch] = useQueryState('search', {
-    limitUrlUpdates: {
-      method: 'debounce',
-      timeMs: 500,
-    },
-  });
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchExpanded, setSearchExpanded] = useState(false);
-  const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
@@ -36,18 +23,6 @@ export default function BlogHeader() {
   const handleLogout = async () => {
     await signOut({ callbackUrl: '/' });
   };
-
-  const toggleSearch = () => {
-    setSearchExpanded(!searchExpanded);
-    if (!searchExpanded) {
-      setTimeout(() => {
-        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
-        searchInput?.focus();
-      }, 150);
-    }
-  };
-
-  const shouldShowSearch = pathname === '/blog/all';
 
   return (
     <>
@@ -79,7 +54,7 @@ export default function BlogHeader() {
         <div className='flex items-center gap-3'>
           {/* 네비게이션 드롭다운 */}
           <Dropdown
-            className='relative'
+            className='relative z-50'
             placement='bottom-right'
             contentClassName='min-w-[120px]'
             trigger={({ ref, onClick }) => (
@@ -139,62 +114,14 @@ export default function BlogHeader() {
           </Dropdown>
 
           {/* 검색 영역 */}
-          {shouldShowSearch && (
-            <AnimatePresence mode='wait'>
-              {searchExpanded ? (
-                <motion.div
-                  key='search-expanded'
-                  initial={{ width: 40, opacity: 0 }}
-                  animate={{ width: 320, opacity: 1 }}
-                  exit={{ width: 40, opacity: 0 }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 30,
-                    mass: 0.8,
-                  }}
-                  className='flex items-center gap-2 overflow-hidden bg-black/10 rounded-lg px-2'
-                >
-                  <div className='flex-1'>
-                    <SearchBar value={search ?? ''} onChange={setSearch} />
-                  </div>
-                  <motion.button
-                    type='button'
-                    onClick={toggleSearch}
-                    whileHover={{ scale: 1.1, rotate: 90 }}
-                    whileTap={{ scale: 0.9 }}
-                    className='p-1 text-blue-100 hover:text-white transition-all duration-200 rounded-full hover:bg-white/10 flex-shrink-0'
-                  >
-                    <X size={16} />
-                  </motion.button>
-                </motion.div>
-              ) : (
-                <motion.button
-                  key='search-collapsed'
-                  type='button'
-                  onClick={toggleSearch}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  whileHover={{ scale: 1.1, rotate: 15 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ duration: 0.2 }}
-                  className='p-2 rounded-full text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-300'
-                >
-                  <Search size={18} />
-                </motion.button>
-              )}
-            </AnimatePresence>
-          )}
+          <BlogSearch />
         </div>
       </motion.div>
 
       {/* 모바일 헤더 */}
       <div className='block lg:hidden w-full max-w-4xl mx-auto'>
         <motion.div
-          className={`mt-4 mb-6 mx-4 p-3 bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-xl relative transition-all duration-300 ${
-            searchExpanded ? 'rounded-2xl' : 'rounded-full'
-          }`}
+          className='mt-4 mb-6 mx-4 p-3 bg-black/20 backdrop-blur-md border border-blue-400/20 shadow-xl relative transition-all duration-300 rounded-full'
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -278,18 +205,8 @@ export default function BlogHeader() {
 
             {/* 우측 버튼들 */}
             <div className='absolute top-4 right-3 flex gap-2'>
-              {/* 검색 버튼 */}
-              {shouldShowSearch && (
-                <motion.button
-                  type='button'
-                  onClick={toggleSearch}
-                  whileHover={{ scale: 1.1, rotate: 15 }}
-                  whileTap={{ scale: 0.9 }}
-                  className='p-2 rounded-full text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-300'
-                >
-                  <Search size={18} />
-                </motion.button>
-              )}
+              {/* 검색 영역 */}
+              <BlogSearch />
 
               {/* 메뉴 버튼 */}
               <motion.button
@@ -304,38 +221,6 @@ export default function BlogHeader() {
               </motion.button>
             </div>
           </div>
-
-          {/* 모바일 검색 영역 */}
-          <AnimatePresence>
-            {shouldShowSearch && searchExpanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0, y: -10 }}
-                animate={{ height: 'auto', opacity: 1, y: 0 }}
-                exit={{ height: 0, opacity: 0, y: -10 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 400,
-                  damping: 30,
-                }}
-                className='mt-3 pt-3 border-t border-blue-400/20'
-              >
-                <div className='flex items-center gap-2 bg-black/10 rounded-lg px-3 py-2'>
-                  <div className='flex-1'>
-                    <SearchBar value={search ?? ''} onChange={setSearch} />
-                  </div>
-                  <motion.button
-                    type='button'
-                    onClick={toggleSearch}
-                    whileHover={{ scale: 1.1, rotate: 90 }}
-                    whileTap={{ scale: 0.9 }}
-                    className='p-1 text-blue-100 hover:text-white transition-all duration-200 rounded-full hover:bg-white/10 flex-shrink-0'
-                  >
-                    <X size={16} />
-                  </motion.button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </motion.div>
       </div>
 
