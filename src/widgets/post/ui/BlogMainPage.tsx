@@ -9,6 +9,8 @@ export const BlogMainPage = () => {
   const search = searchParams.get('search');
   const { posts, isLoading } = usePost({
     search: search ?? '',
+    category: searchParams.get('category') ?? '',
+    tags: searchParams.get('tags') ?? '',
     page: 1,
     limit: 10,
   });

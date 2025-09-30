@@ -30,12 +30,12 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
 
   useEffect(() => {
     setMounted(true);
-    
+
     if (triggerRef?.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       setPosition({
         top: rect.bottom + 20,
-        right: window.innerWidth - rect.right
+        right: window.innerWidth - rect.right,
       });
     }
   }, [triggerRef]);
@@ -51,7 +51,7 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
       className='w-80 bg-gray-900/95 backdrop-blur-xl border border-blue-400/30 rounded-xl shadow-2xl fixed z-[9999]'
       style={{
         top: `${position.top}px`,
-        right: `${position.right}px`
+        right: `${position.right}px`,
       }}
       onClick={(e) => e.stopPropagation()}
     >
@@ -106,12 +106,12 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
                 </div>
               </div>
             )}
-            
+
             {/* 구분선 */}
             {categories && categories.length > 0 && tags && tags.length > 0 && (
-              <div className='border-t border-gray-600/50 my-3'></div>
+              <div className='border-t border-gray-600/50 my-3' />
             )}
-            
+
             {tags && tags.length > 0 && (
               <div>
                 <h3 className='text-xs font-semibold text-yellow-200 px-1 mb-2 flex items-center gap-1.5'>
@@ -151,6 +151,6 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
         )}
       </div>
     </motion.div>,
-    document.body
+    document.body,
   );
 };

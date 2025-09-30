@@ -16,12 +16,16 @@ const SearchFilter = dynamic<any>(() => import('./SearchFilter').then((mod) => (
 
 export function BlogSearch() {
   const pathname = usePathname();
-  const [q, setQ] = useQueryState('q', parseAsString.withDefault(''));
+  const [search, setSearch] = useQueryState('search', {
+    limitUrlUpdates: {
+      method: 'debounce',
+      timeMs: 500,
+    },
+  });
   const [category, setCategory] = useQueryState('category', parseAsString.withDefault(''));
   const [tags, setTags] = useQueryState('tags', parseAsArrayOf(parseAsString).withDefault([]));
 
   const [pills, setPills] = useState<SearchPill[]>([]);
-  const [text, setText] = useState('');
 
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -32,17 +36,12 @@ export function BlogSearch() {
     if (category) {
       newPills.push({ type: 'category', value: category });
     }
-    tags.forEach((tag) => {
+    for (const tag of tags) {
       newPills.push({ type: 'tag', value: tag });
-    });
-    setPills(newPills);
-    setText(q);
-  }, [q, category, tags]);
+    }
 
-  const handleTextChange = (newText: string) => {
-    setText(newText);
-    setQ(newText || null);
-  };
+    setPills(newPills);
+  }, [category, tags]);
 
   const handlePillRemove = (pillToRemove: SearchPill) => {
     if (pillToRemove.type === 'category') {
@@ -99,9 +98,9 @@ export function BlogSearch() {
             >
               <div className='flex-1 pl-2'>
                 <SearchBar
-                  text={text}
+                  text={search}
                   pills={pills}
-                  onTextChange={handleTextChange}
+                  onTextChange={setSearch}
                   onPillRemove={handlePillRemove}
                   placeholder={searchBarPlaceholder}
                 />
@@ -182,9 +181,9 @@ export function BlogSearch() {
                 <div className='flex items-center gap-2 mb-4'>
                   <div className='flex-1'>
                     <SearchBar
-                      text={text}
+                      text={search}
                       pills={pills}
-                      onTextChange={handleTextChange}
+                      onTextChange={setSearch}
                       onPillRemove={handlePillRemove}
                       placeholder={searchBarPlaceholder}
                     />
