@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQueryState, parseAsString, parseAsArrayOf } from 'nuqs';
 import { Search, X, Filter } from 'lucide-react';
@@ -25,6 +25,7 @@ export function BlogSearch() {
 
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const newPills: SearchPill[] = [];
@@ -85,7 +86,7 @@ export function BlogSearch() {
   return (
     <>
       {/* Desktop Search */}
-      <div className='hidden lg:block relative'>
+      <div className='hidden lg:block relative' style={{ zIndex: 1000 }}>
         <AnimatePresence mode='wait'>
           {searchExpanded ? (
             <motion.div
@@ -106,6 +107,7 @@ export function BlogSearch() {
                 />
               </div>
               <motion.button
+                ref={filterButtonRef}
                 type='button'
                 onClick={() => setFilterOpen(!filterOpen)}
                 whileHover={{ scale: 1.1 }}
@@ -125,9 +127,7 @@ export function BlogSearch() {
               </motion.button>
               <AnimatePresence>
                 {filterOpen && (
-                  <div className='absolute top-full right-0 mt-2 z-50'>
-                    <SearchFilter onSelect={handlePillAdd} existingPills={pills} />
-                  </div>
+                  <SearchFilter onSelect={handlePillAdd} existingPills={pills} triggerRef={filterButtonRef} />
                 )}
               </AnimatePresence>
             </motion.div>
@@ -201,9 +201,7 @@ export function BlogSearch() {
                 </div>
                 <AnimatePresence>
                   {filterOpen && (
-                    <div className='mt-2'>
-                      <SearchFilter onSelect={handlePillAdd} existingPills={pills} />
-                    </div>
+                    <SearchFilter onSelect={handlePillAdd} existingPills={pills} triggerRef={filterButtonRef} />
                   )}
                 </AnimatePresence>
               </motion.div>

@@ -5,16 +5,21 @@ import { useTags } from '@/features/tag/model';
 import { motion } from 'framer-motion';
 import { Loader2, Tag as TagIcon, Folder, Inbox } from 'lucide-react';
 import { Tag } from '@/shared/ui/Tag';
+import { createPortal } from 'react-dom';
+import { useEffect, useState } from 'react';
 import type { SearchPill } from './SearchBar';
 
 interface SearchFilterProps {
   onSelect: (pill: SearchPill) => void;
   existingPills: SearchPill[];
+  triggerRef?: React.RefObject<HTMLElement>;
 }
 
-export const SearchFilter = ({ onSelect, existingPills }: SearchFilterProps) => {
+export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilterProps) => {
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data: tags, isLoading: tagsLoading } = useTags();
+  const [mounted, setMounted] = useState(false);
+  const [position, setPosition] = useState({ top: 0, right: 0 });
 
   const isPillSelected = (pill: SearchPill) => {
     return existingPills.some((p) => p.type === pill.type && p.value === pill.value);
@@ -23,13 +28,32 @@ export const SearchFilter = ({ onSelect, existingPills }: SearchFilterProps) => 
   const isLoading = categoriesLoading || tagsLoading;
   const noResults = !isLoading && categories?.length === 0 && tags?.length === 0;
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+    
+    if (triggerRef?.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + 20,
+        right: window.innerWidth - rect.right
+      });
+    }
+  }, [triggerRef]);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <motion.div
       initial={{ opacity: 0, y: -10, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-      className='w-80 bg-gray-900/95 backdrop-blur-xl border border-blue-400/30 rounded-xl shadow-2xl relative z-20'
+      className='w-80 bg-gray-900/95 backdrop-blur-xl border border-blue-400/30 rounded-xl shadow-2xl fixed z-[9999]'
+      style={{
+        top: `${position.top}px`,
+        right: `${position.right}px`
+      }}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className='p-3'>
         <h2 className='text-sm font-bold text-blue-100 mb-3 px-1'>Filter by</h2>
@@ -126,6 +150,7 @@ export const SearchFilter = ({ onSelect, existingPills }: SearchFilterProps) => 
           </div>
         )}
       </div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 };
