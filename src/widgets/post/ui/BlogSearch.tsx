@@ -6,17 +6,20 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQueryState, parseAsString, parseAsArrayOf } from 'nuqs';
 import { Search, X, Filter } from 'lucide-react';
+import { useCategories } from '@/features/category/model';
 import type { SearchPill } from './SearchBar';
 
-const SearchBar = dynamic<any>(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), { ssr: false });
+const SearchBar = dynamic(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), { ssr: false });
 
-const SearchFilter = dynamic<any>(() => import('./SearchFilter').then((mod) => ({ default: mod.SearchFilter })), {
+const SearchFilter = dynamic(() => import('./SearchFilter').then((mod) => ({ default: mod.SearchFilter })), {
   ssr: false,
 });
 
 export function BlogSearch() {
   const pathname = usePathname();
+  const { data: categories } = useCategories();
   const [search, setSearch] = useQueryState('search', {
+    defaultValue: '',
     limitUrlUpdates: {
       method: 'debounce',
       timeMs: 500,
@@ -34,14 +37,18 @@ export function BlogSearch() {
   useEffect(() => {
     const newPills: SearchPill[] = [];
     if (category) {
-      newPills.push({ type: 'category', value: category });
+      const categoryData = categories?.find((cat) => cat.slug === category);
+      newPills.push({
+        type: 'category',
+        value: categoryData?.name ?? category,
+      });
     }
     for (const tag of tags) {
       newPills.push({ type: 'tag', value: tag });
     }
 
     setPills(newPills);
-  }, [category, tags]);
+  }, [category, tags, categories]);
 
   const handlePillRemove = (pillToRemove: SearchPill) => {
     if (pillToRemove.type === 'category') {
@@ -52,9 +59,9 @@ export function BlogSearch() {
     }
   };
 
-  const handlePillAdd = (pillToAdd: SearchPill) => {
+  const handlePillAdd = (pillToAdd: SearchPill, slug?: string) => {
     if (pillToAdd.type === 'category') {
-      setCategory(pillToAdd.value);
+      setCategory(slug ?? pillToAdd.value);
     } else if (!tags.includes(pillToAdd.value)) {
       setTags([...tags, pillToAdd.value]);
     }
@@ -98,7 +105,7 @@ export function BlogSearch() {
             >
               <div className='flex-1 pl-2'>
                 <SearchBar
-                  text={search}
+                  text={search ?? ''}
                   pills={pills}
                   onTextChange={setSearch}
                   onPillRemove={handlePillRemove}
@@ -126,7 +133,11 @@ export function BlogSearch() {
               </motion.button>
               <AnimatePresence>
                 {filterOpen && (
-                  <SearchFilter onSelect={handlePillAdd} existingPills={pills} triggerRef={filterButtonRef} />
+                  <SearchFilter
+                    onSelect={handlePillAdd}
+                    existingPills={pills}
+                    triggerRef={filterButtonRef as React.RefObject<HTMLElement>}
+                  />
                 )}
               </AnimatePresence>
             </motion.div>
@@ -181,7 +192,7 @@ export function BlogSearch() {
                 <div className='flex items-center gap-2 mb-4'>
                   <div className='flex-1'>
                     <SearchBar
-                      text={search}
+                      text={search ?? ''}
                       pills={pills}
                       onTextChange={setSearch}
                       onPillRemove={handlePillRemove}
@@ -200,7 +211,11 @@ export function BlogSearch() {
                 </div>
                 <AnimatePresence>
                   {filterOpen && (
-                    <SearchFilter onSelect={handlePillAdd} existingPills={pills} triggerRef={filterButtonRef} />
+                    <SearchFilter
+                      onSelect={handlePillAdd}
+                      existingPills={pills}
+                      triggerRef={filterButtonRef as React.RefObject<HTMLElement>}
+                    />
                   )}
                 </AnimatePresence>
               </motion.div>

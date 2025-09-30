@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import type { SearchPill } from './SearchBar';
 
 interface SearchFilterProps {
-  onSelect: (pill: SearchPill) => void;
+  onSelect: (pill: SearchPill, slug?: string) => void;
   existingPills: SearchPill[];
   triggerRef?: React.RefObject<HTMLElement>;
 }
@@ -81,7 +81,7 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         if (!isPillSelected({ type: 'category', value: category.name })) {
-                          onSelect({ type: 'category', value: category.name });
+                          onSelect({ type: 'category', value: category.name }, category.slug);
                         }
                       }}
                     >
