@@ -23,7 +23,7 @@ import prisma from '@/shared/lib/db';
  *         name: tags
  *         schema:
  *           type: string
- *         description: 태그 ID들을 쉼표로 구분하여 필터링 (예: 1,2,3)
+ *         description: 태그 ID들을 쉼표로 구분하여 필터링
  *       - in: query
  *         name: page
  *         schema:

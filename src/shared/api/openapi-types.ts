@@ -1312,6 +1312,10 @@ export interface paths {
                 query?: {
                     /** @description 게시물 검색어 (title, content) */
                     search?: string;
+                    /** @description 카테고리 slug로 필터링 */
+                    category?: string;
+                    /** @description 태그 ID들을 쉼표로 구분하여 필터링 */
+                    tags?: string;
                     /** @description 페이지 번호 */
                     page?: number;
                     /** @description 한 페이지 당 아이템 개수 */
