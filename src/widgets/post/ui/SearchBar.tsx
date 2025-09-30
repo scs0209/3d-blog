@@ -23,12 +23,12 @@ export const SearchBar = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className='w-full flex items-center ml-auto'
     >
-      <div className='w-full flex items-center flex-wrap gap-2 px-4 py-2 rounded-lg bg-[#232946]/80 border border-blue-300 focus-within:ring-2 focus-within:ring-blue-400 shadow-[0_0_8px_#7dd3fc55] transition'>
+      <div className='w-full flex items-center flex-wrap gap-2 px-4 py-2 rounded-lg bg-[#232946]/80 border border-blue-300/50 focus-within:border-blue-400 focus-within:shadow-[0_0_20px_#7dd3fc55] transition-all duration-300'>
         {pills.map((pill) => (
           <motion.div
             key={`${pill.type}-${pill.value}`}
