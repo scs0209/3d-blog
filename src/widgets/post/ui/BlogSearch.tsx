@@ -92,7 +92,7 @@ export function BlogSearch() {
   return (
     <>
       {/* Desktop Search */}
-      <div className='hidden lg:block relative' style={{ zIndex: 1000 }}>
+      <div className='hidden lg:block relative overflow-hidden max-w-sm' style={{ zIndex: 1000 }}>
         <AnimatePresence mode='wait'>
           {searchExpanded ? (
             <motion.div
@@ -101,7 +101,7 @@ export function BlogSearch() {
               animate={{ width: 380, opacity: 1 }}
               exit={{ width: 40, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 0.8 }}
-              className='flex items-center gap-2 bg-black/10 rounded-lg'
+              className='flex items-center gap-2 bg-black/10 rounded-lg relative'
             >
               <div className='flex-1 pl-2'>
                 <SearchBar
