@@ -40,7 +40,7 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
           <AnimatePresence>
             {hoveredIndex === idx && (
               <motion.span
-                className='absolute inset-0 h-full w-full bg-slate-600/60 dark:bg-[#232946]/95 backdrop-blur-md block rounded-3xl pointer-events-none z-0'
+                className='absolute inset-0 h-full w-full bg-slate-600/60 dark:bg-[#232946]/95 backdrop-blur-md block rounded-3xl pointer-events-none'
                 layoutId='hoverBackground'
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { duration: 0.15 } }}

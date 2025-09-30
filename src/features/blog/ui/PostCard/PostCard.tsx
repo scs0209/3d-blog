@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useMotionValue, animate } from 'framer-motion';
+import { motion, useMotionValue, animate, AnimationPlaybackControlsWithThen } from 'framer-motion';
 import { CardPattern } from './CardPattern';
 import { useEffect, useRef, useState } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
@@ -19,14 +19,14 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [_, setRandomString] = useState('');
-  const animationRef = useRef<{ x: any; y: any } | null>(null);
+  const animationRef = useRef<{ x: AnimationPlaybackControlsWithThen; y: AnimationPlaybackControlsWithThen } | null>(null);
 
   useEffect(() => {
     const str = generateRandomString(1500);
     setRandomString(str);
   }, []);
 
-  function onMouseMove({ currentTarget, clientX, clientY }: any) {
+  function onMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent<HTMLDivElement>) {
     const { left, top } = currentTarget.getBoundingClientRect();
     const targetX = clientX - left;
     const targetY = clientY - top;
