@@ -3,7 +3,8 @@
 import { useCategories } from '@/features/category/model';
 import { useTags } from '@/features/tag/model';
 import { motion } from 'framer-motion';
-import { Loader2, Tag, Folder, Inbox } from 'lucide-react';
+import { Loader2, Tag as TagIcon, Folder, Inbox } from 'lucide-react';
+import { Tag } from '@/shared/ui/Tag';
 import type { SearchPill } from './SearchBar';
 
 interface SearchFilterProps {
@@ -28,68 +29,98 @@ export const SearchFilter = ({ onSelect, existingPills }: SearchFilterProps) => 
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-      className='w-72 max-h-96 overflow-y-auto bg-gray-900/70 backdrop-blur-xl border border-blue-400/30 rounded-xl shadow-2xl'
+      className='w-80 bg-gray-900/95 backdrop-blur-xl border border-blue-400/30 rounded-xl shadow-2xl relative z-20'
     >
       <div className='p-3'>
-        <h2 className='text-base font-bold text-blue-100 mb-3 px-1'>Filter by</h2>
+        <h2 className='text-sm font-bold text-blue-100 mb-3 px-1'>Filter by</h2>
         {isLoading ? (
-          <div className='flex justify-center items-center p-8'>
-            <Loader2 className='animate-spin text-blue-300' />
+          <div className='flex justify-center items-center p-4'>
+            <Loader2 className='animate-spin text-blue-300' size={20} />
           </div>
         ) : noResults ? (
-          <div className='text-center py-8 px-4'>
-            <Inbox size={32} className='mx-auto text-gray-500' />
-            <p className='mt-2 text-sm text-gray-400'>No categories or tags found.</p>
+          <div className='text-center py-4 px-2'>
+            <Inbox size={24} className='mx-auto text-gray-500' />
+            <p className='mt-1 text-xs text-gray-400'>No categories or tags found.</p>
           </div>
         ) : (
           <div className='space-y-4'>
             {categories && categories.length > 0 && (
               <div>
-                <h3 className='text-sm font-semibold text-blue-200 px-2 mb-2 flex items-center gap-2'>
-                  <Folder size={16} /> Categories
+                <h3 className='text-xs font-semibold text-blue-200 px-1 mb-2 flex items-center gap-1.5'>
+                  <Folder size={14} /> Categories
                 </h3>
-                <ul className='space-y-1'>
+                <div className='flex flex-wrap gap-1.5'>
                   {categories.map((category) => (
-                    <li key={category.id}>
-                      <motion.button
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
-                        type='button'
-                        onClick={() => onSelect({ type: 'category', value: category.name })}
-                        disabled={isPillSelected({ type: 'category', value: category.name })}
-                        className='w-full text-left px-3 py-2 text-sm rounded-lg text-slate-100 hover:bg-blue-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-between'
+                    <motion.div
+                      key={category.id}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        if (!isPillSelected({ type: 'category', value: category.name })) {
+                          onSelect({ type: 'category', value: category.name });
+                        }
+                      }}
+                    >
+                      <Tag
+                        size='sm'
+                        color='blue'
+                        type='glass'
+                        hover={true}
+                        className={`cursor-pointer transition-all duration-200 ${
+                          isPillSelected({ type: 'category', value: category.name })
+                            ? 'opacity-40 cursor-not-allowed'
+                            : 'hover:bg-blue-500/20'
+                        }`}
                       >
-                        <span>{category.name}</span>
+                        {category.name}
                         {category._count?.posts && (
-                          <span className='text-xs text-gray-400'>{category._count.posts}</span>
+                          <span className='ml-1 text-xs opacity-70'>({category._count.posts})</span>
                         )}
-                      </motion.button>
-                    </li>
+                      </Tag>
+                    </motion.div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
+            
+            {/* 구분선 */}
+            {categories && categories.length > 0 && tags && tags.length > 0 && (
+              <div className='border-t border-gray-600/50 my-3'></div>
+            )}
+            
             {tags && tags.length > 0 && (
               <div>
-                <h3 className='text-sm font-semibold text-yellow-200 px-2 mb-2 flex items-center gap-2'>
-                  <Tag size={16} /> Tags
+                <h3 className='text-xs font-semibold text-yellow-200 px-1 mb-2 flex items-center gap-1.5'>
+                  <TagIcon size={14} /> Tags
                 </h3>
-                <ul className='flex flex-wrap gap-2 p-1'>
+                <div className='flex flex-wrap gap-1.5'>
                   {tags.map((tag) => (
-                    <li key={tag.id}>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        type='button'
-                        onClick={() => onSelect({ type: 'tag', value: tag.name ?? '' })}
-                        disabled={isPillSelected({ type: 'tag', value: tag.name ?? '' })}
-                        className='px-2.5 py-1 text-xs rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-400/30 hover:bg-yellow-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200'
+                    <motion.div
+                      key={tag.id}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        if (!isPillSelected({ type: 'tag', value: tag.name ?? '' })) {
+                          onSelect({ type: 'tag', value: tag.name ?? '' });
+                        }
+                      }}
+                    >
+                      <Tag
+                        size='sm'
+                        color='yellow'
+                        type='glass'
+                        hover={true}
+                        className={`cursor-pointer transition-all duration-200 ${
+                          isPillSelected({ type: 'tag', value: tag.name ?? '' })
+                            ? 'opacity-40 cursor-not-allowed'
+                            : 'hover:bg-yellow-500/20'
+                        }`}
                       >
                         #{tag.name}
-                      </motion.button>
-                    </li>
+                      </Tag>
+                    </motion.div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </div>
