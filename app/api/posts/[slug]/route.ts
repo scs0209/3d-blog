@@ -124,14 +124,17 @@ import prisma from '@/shared/lib/db';
  *       500:
  *         description: 서버 에러
  */
-export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
     if (!slug || typeof slug !== 'string') {
       return NextResponse.json({ error: 'Invalid post slug' }, { status: 400 });
     }
-    const post = await prisma.post.findUnique({
+    
+    // 조회수 증가와 함께 게시물 조회
+    const post = await prisma.post.update({
       where: { slug },
+      data: { views: { increment: 1 } },
       include: {
         author: {
           select: {
@@ -174,9 +177,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
         },
       },
     });
-    if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
-    }
+    
     return NextResponse.json(post, { status: 200 });
   } catch (error) {
     console.error('Error fetching post:', error);
@@ -309,7 +310,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug
  *       500:
  *         description: 서버 에러
  */
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
     if (!slug || typeof slug !== 'string') {
