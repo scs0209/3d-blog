@@ -1,7 +1,7 @@
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { Mail, LinkedinIcon, GithubIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NeonToggle, AnimatedLink, LoadingProgressBar } from '@/widgets/portfolio/ui';
+import { NeonToggle, AnimatedLink, LoadingProgressBar, ExperiencePage } from '@/widgets/portfolio/ui';
 import type { OverlayKey, OverlayState } from '@/features/portfolio/model/use-overlay-state';
 
 interface OverlayManagerProps {
@@ -142,14 +142,18 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       )} */}
 
       {/* 오버레이 ExperiencePage */}
-      {/* {overlays.experience?.isOpen && (
+      {overlays.experience?.isOpen && (
         <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
           <ExperiencePage
-            isClosing={overlays.experience?.isClosing}
-            onClose={overlays.experience?.isClosing ? onExperienceAnimationComplete : closeOverlay('experience')}
+            isClosing={overlays.experience?.isClosing ?? false}
+            onClose={() => {
+              // closing 애니메이션 완료 후
+              finishClosing('experience'); // 오버레이 완전히 닫기
+              onBack(); // 카메라 리셋
+            }}
           />
         </div>
-      )} */}
+      )}
 
       {/* Skills Overlay */}
       {/* {overlays.skills?.isOpen && (
@@ -207,6 +211,9 @@ export const OverlayManager = (props: OverlayManagerProps) => {
             if (overlays.portfolio?.isOpen) {
               // portfolio overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
               closeOverlay('portfolio');
+            } else if (overlays.experience?.isOpen) {
+              // experience overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('experience');
             } else {
               // 다른 경우에는 일반적인 뒤로가기 (카메라 리셋 포함)
               onBack();
