@@ -196,7 +196,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
           type='button'
           onClick={() => {
             if (overlays.portfolio?.isOpen) {
-              return closeOverlay('portfolio');
+              closeOverlay('portfolio');
             }
 
             onBack();
