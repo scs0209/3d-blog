@@ -104,8 +104,6 @@ export const CameraController = (props: CameraControllerProps) => {
     }
   }, [targetPos, targetLook, camera, secondaryAnimation, setCameraAnimationDone, isInitialAnimation, clock]);
 
-  console.log(animRef.current.running);
-
   // 카메라 애니메이션 업데이트
   // 어떻게 애니메이션을 실행하는지 담당
   useFrame(() => {
