@@ -1,4 +1,12 @@
-export const SECONDARY_ANIMATION_TARGETS = ['work', 'contactMe', 'radar', 'resumeConsole', 'skill', 'server'] as const;
+export const SECONDARY_ANIMATION_TARGETS = [
+  'work',
+  'contactMe',
+  'radar',
+  'resumeConsole',
+  'skill',
+  'server',
+  'experience',
+] as const;
 
 export const titleMap: Record<string, { title: string; subtitle: string }> = {
   work: { title: 'ABOUT ME', subtitle: 'Personal Information' },

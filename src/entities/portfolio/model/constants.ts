@@ -29,10 +29,27 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     secondaryLookAt: [0.3, 0.3, -4],
   },
   experience: {
-    offset: [0, 1, 2],
-    lookAt: [0, 1.5, 0],
-    pulse: [1.75, 0, 4.15],
+    // 모델의 절대 위치
     modelPosition: [-1, -0.5, 3],
+
+    // 첫 번째 애니메이션: 모델 기준 상대 위치
+    offset: [0, 1, 2],
+    // 실제 첫 번째 카메라 위치 = modelPosition + offset
+    // = [-1, -0.5, 3] + [0, 1, 2] = [-1, 0.5, 5]
+
+    // 첫 번째 애니메이션에서 카메라가 바라보는 절대 좌표 (모델을 일직선으로 바라봄)
+    lookAt: [-1, -0.5, 3],
+
+    // 클릭 시 펄스 효과 위치
+    pulse: [1.75, 0, 4.15],
+
+    // 두 번째 애니메이션: 카메라를 살짝 위로 올림
+    secondaryOffset: [0, 1.5, 2],
+    // 실제 두 번째 카메라 위치 = modelPosition + secondaryOffset
+    // = [-1, -0.5, 3] + [0, 1.5, 2] = [-1, 1.0, 5] (y축으로 0.5 상승)
+
+    // 두 번째 애니메이션에서 카메라가 바라보는 절대 좌표 (책상/사람 중심)
+    secondaryLookAt: [-1, 1, 4],
   },
   contactMe: {
     offset: [2, 0.5, 0], // 첫 번째 카메라: [-2, 0.5, -0.1]
