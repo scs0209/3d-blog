@@ -56,3 +56,23 @@ export type PortfolioProject = {
   image: string;
   liveUrl: string;
 };
+
+export interface Experience {
+  id: string;
+  company: string;
+  role: string;
+  period: string;
+  location: string;
+  description: string[];
+  skills: string[];
+}
+
+export type AnimationPhase =
+  | 'idle'
+  | 'cards-entering'
+  | 'cards-entered'
+  | 'content-entering'
+  | 'active'
+  | 'content-exiting'
+  | 'cards-exiting'
+  | 'exited';
