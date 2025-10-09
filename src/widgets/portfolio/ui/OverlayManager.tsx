@@ -20,6 +20,7 @@ interface OverlayManagerProps {
   // Overlay
   overlays: OverlayState;
   closeOverlay: (key: OverlayKey) => void;
+  finishClosing: (key: OverlayKey) => void;
 }
 
 export const OverlayManager = (props: OverlayManagerProps) => {
@@ -35,6 +36,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     titleAnimation,
     overlays,
     closeOverlay,
+    finishClosing,
   } = props;
 
   return (
@@ -187,7 +189,14 @@ export const OverlayManager = (props: OverlayManagerProps) => {
 
       {/* 포트폴리오 오버레이 */}
       {overlays.portfolio?.isOpen && (
-        <LoadingProgressBar key='loading-portfolio' isReversing={overlays.portfolio?.isClosing ?? false} />
+        <LoadingProgressBar
+          isReversing={overlays.portfolio?.isClosing ?? false}
+          onCloseComplete={() => {
+            // closing 애니메이션 완료 후
+            finishClosing('portfolio'); // 오버레이 완전히 닫기
+            onBack(); // 카메라 리셋
+          }}
+        />
       )}
 
       {/* 뒤로가기 버튼 */}
@@ -196,10 +205,12 @@ export const OverlayManager = (props: OverlayManagerProps) => {
           type='button'
           onClick={() => {
             if (overlays.portfolio?.isOpen) {
+              // portfolio overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
               closeOverlay('portfolio');
+            } else {
+              // 다른 경우에는 일반적인 뒤로가기 (카메라 리셋 포함)
+              onBack();
             }
-
-            onBack();
           }}
           className='absolute top-6 right-6 z-escape-hatch px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
         >

@@ -48,6 +48,7 @@ export const PortfolioClient = () => {
     handleBack,
     openOverlay,
     closeOverlay,
+    finishClosing,
   } = portfolio;
 
   const handleGroupClickWithTitle = (group: FocusedGroup) => {
@@ -68,6 +69,7 @@ export const PortfolioClient = () => {
     handleGroupClick(group);
   };
 
+  // 일반적인 뒤로가기 (카메라 리셋 포함)
   const handleBackWithTitleReset = () => {
     setTitleAnimation('exiting');
     handleBack();
@@ -88,6 +90,7 @@ export const PortfolioClient = () => {
           titleAnimation={titleAnimation}
           overlays={overlays}
           closeOverlay={closeOverlay}
+          finishClosing={finishClosing}
         />
 
         <Suspense fallback={<p>Loading 3D Models...</p>}>
