@@ -33,3 +33,4 @@ export * from './WorkChair';
 export * from './SkillsOverlay';
 export * from './TitleBox';
 export * from './LoadingProgressbar';
+export * from './PortfolioClient';
