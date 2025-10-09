@@ -2,8 +2,6 @@ import { useCallback } from 'react';
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { GROUP_CAMERA_TARGETS, PULSE_DURATION, CAMERA_ANIMATION_DELAY } from '@/entities/portfolio/model/constants';
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 type UsePortfolioActionsProps = {
   focusedGroup: FocusedGroup;
   setFocusedGroup: (group: FocusedGroup) => void;
