@@ -4,21 +4,34 @@ import { PortfolioOverlay } from './PortfolioOverlay';
 
 type LoadingProgressBarProps = {
   isReversing?: boolean;
+  onCloseComplete?: () => void;
 };
 
-export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarProps) => {
+export const LoadingProgressBar = ({ isReversing = false, onCloseComplete }: LoadingProgressBarProps) => {
   const [showPortfolio, setShowPortfolio] = useState(false);
   const [portfolioExiting, setPortfolioExiting] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const [displayProgress, setDisplayProgress] = useState(isReversing ? 100 : 0);
+  const [displayProgress, setDisplayProgress] = useState(0);
   const progressBarRef = useRef(null);
-  const motionProgress = useMotionValue(isReversing ? 100 : 0);
+  const motionProgress = useMotionValue(0);
   const progressWidth = useTransform(motionProgress, (value) => `${value}%`);
 
   // motionValue 변화를 감지하여 display용 state 업데이트
   useMotionValueEvent(motionProgress, 'change', (latest) => {
     setDisplayProgress(Math.round(latest));
   });
+
+  // isReversing이 변경될 때 초기 상태 설정
+  useEffect(() => {
+    if (isReversing) {
+      // closing 시작: 100%부터 시작
+      motionProgress.set(100);
+      setDisplayProgress(100);
+    } else {
+      // opening 시작: 0%부터 시작
+      motionProgress.set(0);
+      setDisplayProgress(0);
+    }
+  }, [isReversing, motionProgress]);
 
   // 역순 애니메이션 처리
   useEffect(() => {
@@ -38,7 +51,8 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
       duration: 3, // 100% -> 0%까지 3초 (30ms * 100 / 1000)
       ease: 'linear',
       onComplete: () => {
-        setIsComplete(true);
+        // closing 애니메이션 완료 후 콜백 실행 (카메라 리셋 등)
+        onCloseComplete?.();
       },
     });
 
@@ -66,11 +80,6 @@ export const LoadingProgressBar = ({ isReversing = false }: LoadingProgressBarPr
       return () => controls.stop();
     }
   }, [isReversing]);
-
-  // 완료되면 아무것도 렌더링하지 않음
-  if (isComplete) {
-    return null;
-  }
 
   return (
     <AnimatePresence mode='wait'>
