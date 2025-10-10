@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { GROUP_CAMERA_TARGETS, PULSE_DURATION, CAMERA_ANIMATION_DELAY } from '@/entities/portfolio/model/constants';
+import { SECONDARY_ANIMATION_TARGETS } from '@/widgets/portfolio/consts';
 
 type UsePortfolioActionsProps = {
   focusedGroup: FocusedGroup;
@@ -12,6 +13,7 @@ type UsePortfolioActionsProps = {
   setHasClickedBack: (clicked: boolean) => void;
   resetToInitialPosition: () => void;
   resetAnimationState: () => void;
+  setSecondaryAnimation: (active: boolean) => void;
 };
 
 export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
@@ -25,6 +27,7 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     setHasClickedBack,
     resetToInitialPosition,
     resetAnimationState,
+    setSecondaryAnimation,
   } = props;
 
   const handleGroupClick = useCallback(
@@ -68,14 +71,42 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
   );
 
   const handleBack = useCallback(() => {
-    resetToInitialPosition();
-    setTimeout(() => {
-      setFocusedGroup(null);
-    }, CAMERA_ANIMATION_DELAY);
+    // secondary animation이 있는 그룹인지 확인
+    const hasSecondaryAnimation =
+      focusedGroup &&
+      SECONDARY_ANIMATION_TARGETS.includes(focusedGroup as (typeof SECONDARY_ANIMATION_TARGETS)[number]);
 
-    resetAnimationState();
-    setHasClickedBack(true);
-  }, [resetToInitialPosition, setFocusedGroup, resetAnimationState, setHasClickedBack]);
+    if (hasSecondaryAnimation && focusedGroup && GROUP_CAMERA_TARGETS[focusedGroup]) {
+      const target = GROUP_CAMERA_TARGETS[focusedGroup];
+
+      // 역순 애니메이션 시작: offset 위치로 설정
+      const firstPos: [number, number, number] = [
+        target.modelPosition[0] + target.offset[0],
+        target.modelPosition[1] + target.offset[1],
+        target.modelPosition[2] + target.offset[2],
+      ];
+      setTargetPos(firstPos);
+      setTargetLook(target.lookAt);
+      setHasClickedBack(true);
+    } else {
+      // secondary animation이 없는 경우 바로 초기 위치로
+      resetToInitialPosition();
+      setTimeout(() => {
+        setFocusedGroup(null);
+      }, CAMERA_ANIMATION_DELAY);
+
+      resetAnimationState();
+      setHasClickedBack(true);
+    }
+  }, [
+    focusedGroup,
+    setTargetPos,
+    setTargetLook,
+    setHasClickedBack,
+    resetToInitialPosition,
+    setFocusedGroup,
+    resetAnimationState,
+  ]);
 
   return {
     handleGroupClick,

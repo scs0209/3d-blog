@@ -167,6 +167,20 @@ export const CameraController = (props: CameraControllerProps) => {
             return;
           }
         } else if (animRef.current.isSecondary) {
+          // hasClickedBack이 true면 역순 애니메이션 (첫 번째 위치에서 초기 위치로)
+          if (hasClickedBack) {
+            setSecondaryAnimation(false);
+            setTargetPos(INITIAL_CAMERA_POS);
+            setTargetLook(INITIAL_CAMERA_LOOK);
+            setCameraAnimationDone(false);
+
+            // 초기 위치 복귀 완료 후 완전 초기화 플래그 설정
+            setTimeout(() => {
+              setFocusedGroup(null);
+            }, CAMERA_ANIMATION_DURATION * 1000);
+            return;
+          }
+
           // 보조 애니메이션 완료 시 오버레이 열기
           const overlayKey = getOverlayKeyFromGroup(focusedGroup);
 
