@@ -1,3 +1,8 @@
+export interface AboutMeSection {
+  key: string;
+  label: string;
+}
+
 export const aboutMeData = {
   name: 'MEROUANE BALI',
   title: 'FULL STACK WEB DEVELOPER',
@@ -7,7 +12,7 @@ export const aboutMeData = {
     { key: 'background', label: 'BACKGROUND' },
     { key: 'focus', label: 'CURRENT FOCUS' },
     { key: 'hobbies', label: 'HOBBIES' },
-  ],
+  ] as AboutMeSection[],
   profileImage: '/profile.png',
   socials: [
     { type: 'github', url: 'https://github.com/yourid' },

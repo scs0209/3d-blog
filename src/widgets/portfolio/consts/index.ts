@@ -23,3 +23,4 @@ export const titleMap: Record<string, { title: string; subtitle: string }> = {
 export * from './portfolioProject';
 export * from './skillSections';
 export * from './aboutMeData';
+export * from './aboutMeAnimationConfig';
