@@ -26,9 +26,10 @@ const getOverlayKeyFromGroup = (group: FocusedGroup): OverlayKey | null => {
     case 'contactMe':
       return 'contact';
     case 'resumeConsole':
-      return 'resumeConsole';
-    case 'server':
+      return 'resume';
     case 'radar':
+      return 'contact';
+    case 'server':
     case 'platform':
       return 'portfolio';
     default:
