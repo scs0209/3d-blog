@@ -200,6 +200,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           <Platform
             scale={0.1}
             position={[-4, 0, 3.5]}
+            onClick={() => onGroupClick('platform')}
             onPointerOver={handlePointerOver([-4, 0, 3.4])}
             onPointerOut={handlePointerOut}
           />
@@ -207,6 +208,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             scale={0.2}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
             position={[-4.1, 0.2, 3.45]}
+            onClick={() => onGroupClick('platform')}
             onPointerOver={handlePointerOver([-4, 0, 3.4])}
             onPointerOut={handlePointerOut}
           />

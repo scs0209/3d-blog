@@ -6,6 +6,7 @@ import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
 import { FPSDisplay, FPSProvider, OverlayManager } from '@/widgets/portfolio/ui';
 import { titleMap } from '@/widgets/portfolio/consts';
+import { useToast } from '@/shared/ui/toast';
 
 const PortfolioCanvas = dynamic(
   () => import('@/widgets/portfolio/ui/PortfolioCanvas').then((mod) => mod.PortfolioCanvas),
@@ -17,6 +18,7 @@ const PortfolioCanvas = dynamic(
 
 export const PortfolioClient = () => {
   const portfolio = usePortfolio();
+  const toast = useToast();
 
   const [currentTitle, setCurrentTitle] = useState('');
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -53,6 +55,15 @@ export const PortfolioClient = () => {
 
   const handleGroupClickWithTitle = (group: FocusedGroup) => {
     if (!group) {
+      return;
+    }
+
+    // platform 클릭 시 준비중 토스트 표시
+    if (group === 'platform') {
+      toast.info('준비중입니다', {
+        position: 'top-center',
+        duration: 3000,
+      });
       return;
     }
 
