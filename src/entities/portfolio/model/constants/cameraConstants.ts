@@ -52,8 +52,8 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     lookAt: [-4, 0, -0.1],
     pulse: [-4, 0, -0.1],
     modelPosition: [-4, 0, -0.1],
-    secondaryOffset: [1, 0.5, 0], // 두 번째 카메라: [-4, 0.5, -0.1] (모델에 매우 가까이)
-    secondaryLookAt: [-4.3, 0.5, -0.1],
+    secondaryOffset: [0.3, 0.5, 0], // 두 번째 카메라: [-4.7, 0.5, -0.1] (문에 훨씬 더 가까이)
+    secondaryLookAt: [-4.7, 0.5, -0.1],
   },
   resumeConsole: {
     // 모델 위치를 기준으로 카메라가 상대적으로 얼마나 떨어진 곳에 위치할지

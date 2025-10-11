@@ -93,7 +93,7 @@ export const PortfolioClient = () => {
           finishClosing={finishClosing}
         />
 
-        <Suspense fallback={<p>Loading 3D Models...</p>}>
+        <Suspense>
           <PortfolioCanvas
             focusedGroup={focusedGroup}
             pulseActive={pulseActive}
