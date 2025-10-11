@@ -57,8 +57,8 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
   },
   resumeConsole: {
     // 모델 위치를 기준으로 카메라가 상대적으로 얼마나 떨어진 곳에 위치할지
-    // 실제 카메라 위치 = 모델 위치 + offset = [3.2, 0, -2.8] + [2, 1.5, 0] = [5.2, 1.5, -2.8]
-    offset: [2, 1.5, 0],
+    // 실제 카메라 위치 = 모델 위치 + offset = [3.2, 0, -2.8] + [1.5, 1.0, 0] = [4.7, 1.0, -2.8]
+    offset: [1.5, 1.0, 0],
     // 카메라가 바라보는 절대 좌표(어디를 향해 보는지)
     lookAt: [3.2, 0, -2.8],
     // 카메라 펄스 위치(카메라가 펄스 효과를 주는 위치)
@@ -66,10 +66,10 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     // 모델 위치(카메라가 바라보는 대상)
     modelPosition: [3.2, 0, -2.8],
     // 보조 애니메이션 시 카메라 위치
-    // 실제 카메라 위치 = 모델 위치 + offset = [3.2, 0, -2.8] + [2, 1.5, 2] = [5.2, 1.5, -0.8]
-    secondaryOffset: [2, 1.5, 2],
+    // 실제 카메라 위치 = 모델 위치 + offset = [3.2, 0, -2.8] + [1.5, 1.0, 0.8] = [4.7, 1.0, -2.0]
+    secondaryOffset: [1.5, 1.0, 0.8],
     // 보조 애니메이션 시 카메라가 바라보는 절대 좌표(어디를 향해 보는지)
-    secondaryLookAt: [3.2, 0, -0.8],
+    secondaryLookAt: [3.2, 0, -2.0],
   },
   radar: {
     offset: [1.6, 2.4, 1.6], // lookAt에서 1.3배 거리만큼 떨어진 위치

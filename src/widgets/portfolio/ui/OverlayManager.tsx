@@ -8,6 +8,7 @@ import {
   ExperiencePage,
   SkillsOverlay,
   AboutMePage,
+  ResumeConsoleOverlay,
 } from '@/widgets/portfolio/ui';
 import type { OverlayKey, OverlayState } from '@/features/portfolio/model/use-overlay-state';
 
@@ -201,6 +202,19 @@ export const OverlayManager = (props: OverlayManagerProps) => {
         />
       )}
 
+      {/* Resume Console 오버레이 */}
+      {overlays.resumeConsole?.isOpen && (
+        <ResumeConsoleOverlay
+          isOpen={overlays.resumeConsole?.isOpen}
+          isClosing={overlays.resumeConsole?.isClosing ?? false}
+          onAnimationComplete={() => {
+            // closing 애니메이션 완료 후
+            finishClosing('resumeConsole');
+            onBack();
+          }}
+        />
+      )}
+
       {/* 뒤로가기 버튼 */}
       {focusedGroup && (
         <button
@@ -218,6 +232,9 @@ export const OverlayManager = (props: OverlayManagerProps) => {
             } else if (overlays.aboutMe?.isOpen) {
               // aboutMe overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
               closeOverlay('aboutMe');
+            } else if (overlays.resumeConsole?.isOpen) {
+              // resumeConsole overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('resumeConsole');
             } else {
               // 다른 경우에는 일반적인 뒤로가기 (카메라 리셋 포함)
               onBack();

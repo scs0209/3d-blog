@@ -33,3 +33,4 @@ export * from './PortfolioClient';
 export * from './experience';
 export * from './skills';
 export * from './aboutMe';
+export * from './ResumeConsoleOverlay';
