@@ -27,7 +27,6 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
     setHasClickedBack,
     resetToInitialPosition,
     resetAnimationState,
-    setSecondaryAnimation,
   } = props;
 
   const handleGroupClick = useCallback(

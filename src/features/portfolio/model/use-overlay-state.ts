@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-export type OverlayKey = 'aboutMe' | 'experience' | 'skills' | 'contact' | 'portfolio';
+export type OverlayKey = 'aboutMe' | 'experience' | 'skills' | 'contact' | 'portfolio' | 'resume';
 
 export type OverlayState = {
   [key in OverlayKey]?: {
