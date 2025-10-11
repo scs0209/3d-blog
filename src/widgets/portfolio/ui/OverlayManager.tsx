@@ -9,6 +9,7 @@ import {
   SkillsOverlay,
   AboutMePage,
   ResumeConsoleOverlay,
+  CyberpunkContactForm,
 } from '@/widgets/portfolio/ui';
 import type { OverlayKey, OverlayState } from '@/features/portfolio/model/use-overlay-state';
 
@@ -180,15 +181,18 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       )}
 
       {/* Contact Form */}
-      {/* {overlays.contact?.isOpen && (
+      {overlays.contact?.isOpen && (
         <div className='fixed left-[100px] top-1/2 transform -translate-y-1/2 z-50'>
           <CyberpunkContactForm
             show={overlays.contact?.isOpen}
             isClosing={overlays.contact?.isClosing}
-            onClose={overlays.contact?.isClosing ? onContactAnimationComplete : closeOverlay('contact')}
+            onClose={() => {
+              finishClosing('contact');
+              onBack();
+            }}
           />
         </div>
-      )} */}
+      )}
 
       {/* 포트폴리오 오버레이 */}
       {overlays.portfolio?.isOpen && (
@@ -203,13 +207,13 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       )}
 
       {/* Resume Console 오버레이 */}
-      {overlays.resumeConsole?.isOpen && (
+      {overlays.resume?.isOpen && (
         <ResumeConsoleOverlay
-          isOpen={overlays.resumeConsole?.isOpen}
-          isClosing={overlays.resumeConsole?.isClosing ?? false}
+          isOpen={overlays.resume?.isOpen}
+          isClosing={overlays.resume?.isClosing ?? false}
           onAnimationComplete={() => {
             // closing 애니메이션 완료 후
-            finishClosing('resumeConsole');
+            finishClosing('resume');
             onBack();
           }}
         />
@@ -232,9 +236,12 @@ export const OverlayManager = (props: OverlayManagerProps) => {
             } else if (overlays.aboutMe?.isOpen) {
               // aboutMe overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
               closeOverlay('aboutMe');
-            } else if (overlays.resumeConsole?.isOpen) {
-              // resumeConsole overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
-              closeOverlay('resumeConsole');
+            } else if (overlays.resume?.isOpen) {
+              // resume overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('resume');
+            } else if (overlays.contact?.isOpen) {
+              // contact overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('contact');
             } else {
               // 다른 경우에는 일반적인 뒤로가기 (카메라 리셋 포함)
               onBack();
