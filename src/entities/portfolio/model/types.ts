@@ -4,7 +4,7 @@ export type FocusedGroup =
   | 'work'
   | 'server'
   | 'experience'
-  | 'contactMe'
+  | 'home'
   | 'resumeConsole'
   | 'skill'
   | 'radar'

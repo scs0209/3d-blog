@@ -1,6 +1,6 @@
 export const SECONDARY_ANIMATION_TARGETS = [
   'work',
-  'contactMe',
+  'home',
   'radar',
   'resumeConsole',
   'skill',
@@ -10,7 +10,7 @@ export const SECONDARY_ANIMATION_TARGETS = [
 
 export const titleMap: Record<string, { title: string; subtitle: string }> = {
   work: { title: 'ABOUT ME', subtitle: 'Personal Information' },
-  contactMe: { title: 'HOME', subtitle: 'Welcome Back' },
+  home: { title: 'HOME', subtitle: 'Welcome Back' },
   server: { title: 'WORKS', subtitle: 'Portfolio Projects' },
   resumeConsole: { title: 'RESUME', subtitle: 'Professional Experience' },
   experience: { title: 'EXPERIENCE', subtitle: 'Work History' },

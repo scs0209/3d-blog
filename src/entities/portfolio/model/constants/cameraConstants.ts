@@ -47,7 +47,7 @@ export const GROUP_CAMERA_TARGETS: Record<string, CameraTarget> = {
     // 두 번째 애니메이션에서 카메라가 바라보는 절대 좌표 (책상/사람 중심)
     secondaryLookAt: [-1, 1, 4],
   },
-  contactMe: {
+  home: {
     offset: [2, 0.5, 0], // 첫 번째 카메라: [-2, 0.5, -0.1]
     lookAt: [-4, 0, -0.1],
     pulse: [-4, 0, -0.1],
