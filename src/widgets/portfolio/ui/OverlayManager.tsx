@@ -189,16 +189,6 @@ export const OverlayManager = (props: OverlayManagerProps) => {
         </div>
       )} */}
 
-      {/* 로딩 오버레이들 */}
-      {/* <LoadingOverlay
-        showWorksLoading={showWorksLoading}
-        showPortfolioOverlay={overlays.portfolio?.isOpen}
-        showExitLoading={showExitLoading}
-        loadingProgress={loadingProgress}
-        loadingBarFullExpand={loadingBarFullExpand}
-        exitLoadingProgress={exitLoadingProgress}
-      /> */}
-
       {/* 포트폴리오 오버레이 */}
       {overlays.portfolio?.isOpen && (
         <LoadingProgressBar
