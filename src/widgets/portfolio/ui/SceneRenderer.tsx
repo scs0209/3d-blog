@@ -3,7 +3,7 @@ import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types'
 import {
   Antenna,
   Computer,
-  ContactMe,
+  HomeDoor,
   LabMachine,
   ExperienceDesk,
   ExperiencePerson,
@@ -131,19 +131,15 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         ]}
 
       {/* HOME */}
-      {showOtherModels && isShow('contactMe') && (
-        <ContactMe
+      {showOtherModels && isShow('home') && (
+        <HomeDoor
           scale={0.4}
           rotation={[0, -Math.PI / 2, 0]}
           position={[-5, 0, -0.1]}
-          onClick={() => onGroupClick('contactMe')}
+          onClick={() => onGroupClick('home')}
           onPointerOver={handlePointerOver([-5, 0, -0.1])}
           onPointerOut={handlePointerOut}
-          triggerAnimation={focusedGroup === 'contactMe' && cameraAnimationDone}
-          onAnimationComplete={() => {
-            // 홈으로 이동
-            window.location.href = '/';
-          }}
+          triggerAnimation={focusedGroup === 'home' && cameraAnimationDone}
         />
       )}
 
@@ -204,6 +200,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
           <Platform
             scale={0.1}
             position={[-4, 0, 3.5]}
+            onClick={() => onGroupClick('platform')}
             onPointerOver={handlePointerOver([-4, 0, 3.4])}
             onPointerOut={handlePointerOut}
           />
@@ -211,6 +208,7 @@ export const SceneRenderer = (props: SceneRendererProps) => {
             scale={0.2}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
             position={[-4.1, 0.2, 3.45]}
+            onClick={() => onGroupClick('platform')}
             onPointerOver={handlePointerOver([-4, 0, 3.4])}
             onPointerOut={handlePointerOut}
           />

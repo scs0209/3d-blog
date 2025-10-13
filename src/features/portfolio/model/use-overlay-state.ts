@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 
-export type OverlayKey = 'aboutMe' | 'experience' | 'skills' | 'contact' | 'portfolio';
+export type OverlayKey = 'aboutMe' | 'experience' | 'skills' | 'contact' | 'portfolio' | 'resume' | 'home';
 
 export type OverlayState = {
-  [key in OverlayKey]?: {
+  [Key in OverlayKey]?: {
     isOpen: boolean;
     isClosing: boolean;
   };
@@ -15,6 +15,7 @@ const initialOverlayState: OverlayState = {
   skills: { isOpen: false, isClosing: false },
   contact: { isOpen: false, isClosing: false },
   portfolio: { isOpen: false, isClosing: false },
+  resume: { isOpen: false, isClosing: false },
 };
 
 export const useOverlayState = () => {

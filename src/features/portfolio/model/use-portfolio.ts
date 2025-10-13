@@ -19,6 +19,7 @@ export const usePortfolio = () => {
     ...cameraState,
     ...overlayState,
     ...loadingState,
+    setSecondaryAnimation: cameraState.setSecondaryAnimation,
   });
 
   // 로딩 애니메이션 훅

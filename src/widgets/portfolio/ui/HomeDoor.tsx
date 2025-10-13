@@ -1,5 +1,5 @@
-import { useAnimations, useGLTF } from '@react-three/drei';
-import { useEffect, useRef } from 'react';
+import { useAnimations, useGLTF, Html } from '@react-three/drei';
+import { useEffect, useRef, useState } from 'react';
 import * as three from 'three';
 
 // 보라색 네온 재질
@@ -13,15 +13,17 @@ const purpleNeonMaterial = new three.MeshStandardMaterial({
   roughness: 0.2,
 });
 
-type ContactMeProps = {
+type HomeDoorProps = {
   triggerAnimation?: boolean;
+  onDoorOpened?: () => void;
   onAnimationComplete?: () => void;
 } & any;
 
-export function ContactMe(props: ContactMeProps) {
-  const { triggerAnimation, onAnimationComplete, ...otherProps } = props;
+export function HomeDoor(props: HomeDoorProps) {
+  const { triggerAnimation, onDoorOpened, onAnimationComplete, ...otherProps } = props;
   const group = useRef<three.Group>(null);
   const isAnimationRunning = useRef(false);
+  const [showLoading, setShowLoading] = useState(false);
   const { nodes, materials, animations } = useGLTF('/sci-fi_door..glb');
   const { actions, mixer } = useAnimations(animations, group);
 
@@ -40,6 +42,14 @@ export function ContactMe(props: ContactMeProps) {
           // 애니메이션 완료 이벤트 리스너
           const handleFinished = (e: any) => {
             if (e.action === action) {
+              // 문이 열렸을 때 로딩 화면 표시
+              setShowLoading(true);
+
+              // 문이 열렸을 때 콜백 호출
+              if (onDoorOpened) {
+                onDoorOpened();
+              }
+
               // 1.5초 대기 후 역방향 애니메이션 실행
               setTimeout(() => {
                 action.reset();
@@ -56,6 +66,9 @@ export function ContactMe(props: ContactMeProps) {
                     action.stop(); // 애니메이션 정지 (reset 대신 stop 사용)
                     isAnimationRunning.current = false; // 애니메이션 완료
                     mixer.removeEventListener('finished', handleReverseFinished);
+
+                    // 홈으로 이동
+                    window.location.href = '/';
 
                     // 애니메이션 완료 후 콜백 호출
                     if (onAnimationComplete) {
@@ -203,6 +216,30 @@ export function ContactMe(props: ContactMeProps) {
           </group>
         </group>
       </group>
+
+      {/* 로딩 오버레이 */}
+      {showLoading && (
+        <Html fullscreen>
+          <div className='fixed -top-60 left-0 w-full h-full bg-[#12161B]/95 backdrop-blur-md z-[9999] flex flex-col items-center justify-start text-[#E5D6C4] font-mono'>
+            <div className='text-center'>
+              {/* 회전하는 로딩 스피너 */}
+              <div className='mb-6 flex justify-center'>
+                <div className='relative w-16 h-16'>
+                  <div className='absolute inset-0 border-4 border-[#E5D6C4]/20 rounded-full' />
+                  <div className='absolute inset-0 border-4 border-transparent border-t-[#E5D6C4] rounded-full animate-spin' />
+                </div>
+              </div>
+
+              {/* 펄스 도트 애니메이션 */}
+              <div className='flex justify-center gap-2'>
+                <div className='w-2 h-2 bg-[#E5D6C4] rounded-full animate-pulse' style={{ animationDelay: '0s' }} />
+                <div className='w-2 h-2 bg-[#E5D6C4] rounded-full animate-pulse' style={{ animationDelay: '0.2s' }} />
+                <div className='w-2 h-2 bg-[#E5D6C4] rounded-full animate-pulse' style={{ animationDelay: '0.4s' }} />
+              </div>
+            </div>
+          </div>
+        </Html>
+      )}
     </group>
   );
 }

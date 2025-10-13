@@ -1,7 +1,16 @@
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { Mail, LinkedinIcon, GithubIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NeonToggle, AnimatedLink, LoadingProgressBar } from '@/widgets/portfolio/ui';
+import {
+  NeonToggle,
+  AnimatedLink,
+  LoadingProgressBar,
+  ExperiencePage,
+  SkillsOverlay,
+  AboutMePage,
+  ResumeConsoleOverlay,
+  CyberpunkContactForm,
+} from '@/widgets/portfolio/ui';
 import type { OverlayKey, OverlayState } from '@/features/portfolio/model/use-overlay-state';
 
 interface OverlayManagerProps {
@@ -20,6 +29,7 @@ interface OverlayManagerProps {
   // Overlay
   overlays: OverlayState;
   closeOverlay: (key: OverlayKey) => void;
+  finishClosing: (key: OverlayKey) => void;
 }
 
 export const OverlayManager = (props: OverlayManagerProps) => {
@@ -35,6 +45,7 @@ export const OverlayManager = (props: OverlayManagerProps) => {
     titleAnimation,
     overlays,
     closeOverlay,
+    finishClosing,
   } = props;
 
   return (
@@ -130,64 +141,82 @@ export const OverlayManager = (props: OverlayManagerProps) => {
       </div>
 
       {/* 오버레이 AboutMePage */}
-      {/* {overlays.aboutMe?.isOpen && (
+      {overlays.aboutMe?.isOpen && (
         <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
           <AboutMePage
             isClosing={overlays.aboutMe?.isClosing}
-            onClose={overlays.aboutMe?.isClosing ? onAboutMeAnimationComplete : closeOverlay('aboutMe')}
+            onClose={() => {
+              finishClosing('aboutMe');
+              onBack();
+            }}
           />
         </div>
-      )} */}
+      )}
 
       {/* 오버레이 ExperiencePage */}
-      {/* {overlays.experience?.isOpen && (
+      {overlays.experience?.isOpen && (
         <div className='fixed left-0 top-0 h-full w-1/2 max-w-3xl min-w-[320px] z-50 flex items-start justify-center'>
           <ExperiencePage
-            isClosing={overlays.experience?.isClosing}
-            onClose={overlays.experience?.isClosing ? onExperienceAnimationComplete : closeOverlay('experience')}
+            isClosing={overlays.experience?.isClosing ?? false}
+            onClose={() => {
+              // closing 애니메이션 완료 후
+              finishClosing('experience'); // 오버레이 완전히 닫기
+              onBack(); // 카메라 리셋
+            }}
           />
         </div>
-      )} */}
+      )}
 
       {/* Skills Overlay */}
-      {/* {overlays.skills?.isOpen && (
+      {overlays.skills?.isOpen && (
         <div className='fixed right-0 top-0 h-full w-1/2 max-w-4xl min-w-[600px] z-50 flex items-start justify-center'>
           <SkillsOverlay
             skillsClosing={overlays.skills?.isClosing}
-            onAnimationComplete={
-              onSkillsAnimationComplete ||
-              (() => {
-                // 기본 애니메이션 완료 처리
-              })
-            }
+            onAnimationComplete={() => {
+              finishClosing('skills');
+              onBack();
+            }}
           />
         </div>
-      )} */}
+      )}
 
       {/* Contact Form */}
-      {/* {overlays.contact?.isOpen && (
+      {overlays.contact?.isOpen && (
         <div className='fixed left-[100px] top-1/2 transform -translate-y-1/2 z-50'>
           <CyberpunkContactForm
             show={overlays.contact?.isOpen}
             isClosing={overlays.contact?.isClosing}
-            onClose={overlays.contact?.isClosing ? onContactAnimationComplete : closeOverlay('contact')}
+            onClose={() => {
+              finishClosing('contact');
+              onBack();
+            }}
           />
         </div>
-      )} */}
-
-      {/* 로딩 오버레이들 */}
-      {/* <LoadingOverlay
-        showWorksLoading={showWorksLoading}
-        showPortfolioOverlay={overlays.portfolio?.isOpen}
-        showExitLoading={showExitLoading}
-        loadingProgress={loadingProgress}
-        loadingBarFullExpand={loadingBarFullExpand}
-        exitLoadingProgress={exitLoadingProgress}
-      /> */}
+      )}
 
       {/* 포트폴리오 오버레이 */}
       {overlays.portfolio?.isOpen && (
-        <LoadingProgressBar key='loading-portfolio' isReversing={overlays.portfolio?.isClosing ?? false} />
+        <LoadingProgressBar
+          isReversing={overlays.portfolio?.isClosing ?? false}
+          onCloseComplete={() => {
+            // closing 애니메이션 완료 후
+            finishClosing('portfolio'); // 오버레이 완전히 닫기
+            onBack(); // 카메라 리셋
+          }}
+        />
+      )}
+
+      {/* Resume Console 오버레이 */}
+      {overlays.resume?.isOpen && (
+        <ResumeConsoleOverlay
+          isOpen={overlays.resume?.isOpen}
+          isClosing={overlays.resume?.isClosing ?? false}
+          onAnimationComplete={() => {
+            // closing 애니메이션 완료 후
+            finishClosing('resume');
+            onBack();
+          }}
+        />
       )}
 
       {/* 뒤로가기 버튼 */}
@@ -196,10 +225,27 @@ export const OverlayManager = (props: OverlayManagerProps) => {
           type='button'
           onClick={() => {
             if (overlays.portfolio?.isOpen) {
-              return closeOverlay('portfolio');
+              // portfolio overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('portfolio');
+            } else if (overlays.experience?.isOpen) {
+              // experience overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('experience');
+            } else if (overlays.skills?.isOpen) {
+              // skills overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('skills');
+            } else if (overlays.aboutMe?.isOpen) {
+              // aboutMe overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('aboutMe');
+            } else if (overlays.resume?.isOpen) {
+              // resume overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('resume');
+            } else if (overlays.contact?.isOpen) {
+              // contact overlay가 열려있으면 오버레이만 닫고 카메라는 리셋하지 않음
+              closeOverlay('contact');
+            } else {
+              // 다른 경우에는 일반적인 뒤로가기 (카메라 리셋 포함)
+              onBack();
             }
-
-            onBack();
           }}
           className='absolute top-6 right-6 z-escape-hatch px-4 py-2.5 bg-gray-900/80 backdrop-blur-sm text-[#E5D6C4] rounded border border-[#E5D6C4]/50 font-mono text-sm font-bold cursor-pointer transition-all duration-200 hover:bg-[#E5D6C4]/10 hover:border-[#E5D6C4] hover:text-[#f3efeb] hover:shadow-lg hover:shadow-[#E5D6C4]/25 active:scale-95'
         >
