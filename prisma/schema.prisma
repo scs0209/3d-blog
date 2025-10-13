@@ -48,6 +48,7 @@ model Post {
   updatedAt  DateTime  @updatedAt    // 추가된 부분
   comments   Comment[]
   likes      Like[]
+  postViews  PostView[]
   author     User      @relation(fields: [authorId], references: [id])
   category   Category  @relation(fields: [categoryId], references: [id])
   tags       Tag[]     @relation("PostToTag")
@@ -87,6 +88,17 @@ model Like {
   createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model PostView {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  ip        String
+  userAgent String?
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, ip])
 }
 
 model VisitorLog {

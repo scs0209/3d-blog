@@ -130,6 +130,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     if (!slug || typeof slug !== 'string') {
       return NextResponse.json({ error: 'Invalid post slug' }, { status: 400 });
     }
+
+    // 클라이언트 IP 주소 가져오기
+    const clientIP =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      req.headers.get('x-real-ip') ||
+      req.headers.get('cf-connecting-ip') ||
+      'unknown';
+
+    const userAgent = req.headers.get('user-agent') || 'unknown';
+
+    // 먼저 게시물 조회
     const post = await prisma.post.findUnique({
       where: { slug },
       include: {
@@ -174,10 +185,90 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
         },
       },
     });
+
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
-    return NextResponse.json(post, { status: 200 });
+
+    // 24시간 내 중복 조회 체크
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const existingView = await prisma.postView.findFirst({
+      where: {
+        postId: post.id,
+        ip: clientIP,
+        createdAt: {
+          gte: twentyFourHoursAgo,
+        },
+      },
+    });
+
+    // 중복 조회가 아닌 경우에만 조회수 증가 및 기록 저장
+    if (!existingView) {
+      await prisma.$transaction([
+        // 조회수 증가
+        prisma.post.update({
+          where: { id: post.id },
+          data: { views: { increment: 1 } },
+        }),
+        // 조회 기록 저장
+        prisma.postView.create({
+          data: {
+            postId: post.id,
+            ip: clientIP,
+            userAgent: userAgent,
+          },
+        }),
+      ]);
+    }
+
+    // 조회수 업데이트된 게시물 정보 반환
+    const updatedPost = await prisma.post.findUnique({
+      where: { slug },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        category: true,
+        tags: true,
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            replies: {
+              include: {
+                author: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        likes: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(updatedPost, { status: 200 });
   } catch (error) {
     console.error('Error fetching post:', error);
     return NextResponse.json({ error: 'Failed to fetch post' }, { status: 500 });
@@ -309,7 +400,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ slug
  *       500:
  *         description: 서버 에러
  */
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
     if (!slug || typeof slug !== 'string') {
