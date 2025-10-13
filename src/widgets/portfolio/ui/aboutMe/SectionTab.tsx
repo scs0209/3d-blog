@@ -41,6 +41,17 @@ export function SectionTab({ section, sectionIndex, sectionCount, isClosing }: S
     },
   };
 
+  const borders = [
+    {
+      key: 'bottom',
+      props: borderSequence.bottom,
+      className: 'left-0 bottom-0 h-[4px] rounded shadow-[0_0_8px_white]',
+    },
+    { key: 'right', props: borderSequence.right, className: 'right-0 bottom-0 w-[2px]' },
+    { key: 'top', props: borderSequence.top, className: 'right-0 top-0 h-[2px]' },
+    { key: 'left', props: borderSequence.left, className: 'left-0 top-0 w-[2px]' },
+  ];
+
   return (
     <motion.div
       key={section.key}
@@ -54,25 +65,14 @@ export function SectionTab({ section, sectionIndex, sectionCount, isClosing }: S
     >
       <span className='text-xs font-mono text-white/70 drop-shadow-[0_0_6px_white] mb-2'>SEC-{sectionIndex}</span>
 
-      {/* 하단 강조선 */}
-      <motion.div
-        className='absolute left-0 bottom-0 h-[4px] bg-white rounded shadow-[0_0_8px_white]'
-        {...borderSequence.bottom}
-        style={{ zIndex: 2 }}
-      />
-
-      {/* 오른쪽 border */}
-      <motion.div
-        className='absolute right-0 bottom-0 w-[2px] bg-white'
-        {...borderSequence.right}
-        style={{ zIndex: 2 }}
-      />
-
-      {/* 상단 border */}
-      <motion.div className='absolute right-0 top-0 h-[2px] bg-white' {...borderSequence.top} style={{ zIndex: 2 }} />
-
-      {/* 왼쪽 border */}
-      <motion.div className='absolute left-0 top-0 w-[2px] bg-white' {...borderSequence.left} style={{ zIndex: 2 }} />
+      {borders.map((border) => (
+        <motion.div
+          key={border.key}
+          className={`absolute bg-white ${border.className}`}
+          {...border.props}
+          style={{ zIndex: 2 }}
+        />
+      ))}
 
       {/* 라벨 */}
       <motion.span
