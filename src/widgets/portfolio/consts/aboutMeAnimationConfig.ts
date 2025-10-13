@@ -42,6 +42,11 @@ export const calculateSectionBaseDelay = (sectionIndex: number, sectionCount: nu
 export const calculateBorderTiming = (baseDelay: number, isClosing: boolean) => {
   const { BORDER_BASE_DURATION, BORDER_SECONDARY_DURATION } = ABOUT_ME_ANIMATION_CONFIG;
 
+  /**
+   * 닫기 애니메이션(isClosing: true)은 열기 애니메이션의 역순으로 진행됩니다.
+   * (열기 순서: bottom → right → top → left)
+   * baseDelay를 기준으로 이전 단계의 duration만큼 시간을 빼서 시작 시점을 앞당겨 역순 재생을 구현합니다.
+   */
   return {
     bottom: {
       delay: baseDelay,
