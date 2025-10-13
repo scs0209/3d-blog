@@ -47,12 +47,12 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
           if (target) {
             // 모델 위치에 offset을 더해서 카메라 위치 계산
             const newPos: [number, number, number] = [
-              target?.modelPosition[0] + target?.offset[0],
-              target?.modelPosition[1] + target?.offset[1],
-              target?.modelPosition[2] + target?.offset[2],
+              target.modelPosition[0] + target.offset[0],
+              target.modelPosition[1] + target.offset[1],
+              target.modelPosition[2] + target.offset[2],
             ];
             setTargetPos(newPos);
-            setTargetLook(target?.lookAt);
+            setTargetLook(target.lookAt);
           }
         }, PULSE_DURATION);
       }
@@ -75,18 +75,20 @@ export const usePortfolioActions = (props: UsePortfolioActionsProps) => {
       focusedGroup &&
       SECONDARY_ANIMATION_TARGETS.includes(focusedGroup as (typeof SECONDARY_ANIMATION_TARGETS)[number]);
 
-    if (hasSecondaryAnimation && focusedGroup && GROUP_CAMERA_TARGETS[focusedGroup]) {
+    if (hasSecondaryAnimation && focusedGroup) {
       const target = GROUP_CAMERA_TARGETS[focusedGroup];
 
-      // 역순 애니메이션 시작: offset 위치로 설정
-      const firstPos: [number, number, number] = [
-        target?.modelPosition[0] + target?.offset[0],
-        target?.modelPosition[1] + target?.offset[1],
-        target?.modelPosition[2] + target?.offset[2],
-      ];
-      setTargetPos(firstPos);
-      setTargetLook(target.lookAt);
-      setHasClickedBack(true);
+      if (target) {
+        // 역순 애니메이션 시작: offset 위치로 설정
+        const firstPos: [number, number, number] = [
+          target.modelPosition[0] + target.offset[0],
+          target.modelPosition[1] + target.offset[1],
+          target.modelPosition[2] + target.offset[2],
+        ];
+        setTargetPos(firstPos);
+        setTargetLook(target.lookAt);
+        setHasClickedBack(true);
+      }
     } else {
       // secondary animation이 없는 경우 바로 초기 위치로
       resetToInitialPosition();
