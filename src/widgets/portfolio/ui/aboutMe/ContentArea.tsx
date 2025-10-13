@@ -17,31 +17,22 @@ export function ContentArea({ sectionCount, isClosing, onClose }: ContentAreaPro
   const borderDelay = calculateBorderDelay(sectionCount);
   const borderSlideVariants = createBorderSlideVariants(borderDelay);
 
-  // 컴포넌트 언마운트 시 타이머 정리
+  // isClosing 상태 변화에 따라 타이머를 생성하고 정리하는 단일 useEffect
   useEffect(() => {
-    return () => {
-      if (closeTimerRef.current) {
-        clearTimeout(closeTimerRef.current);
-      }
-    };
-  }, []);
+    if (isClosing) {
+      const totalCloseTime = calculateTotalCloseTime(sectionCount);
+      const timer = setTimeout(() => {
+        onClose?.();
+      }, totalCloseTime * 1000);
+
+      // isClosing 상태가 바뀌거나 컴포넌트가 언마운트될 때 타이머를 정리합니다.
+      return () => clearTimeout(timer);
+    }
+  }, [isClosing, onClose, sectionCount]);
 
   const handleContentAnimationComplete = () => {
     if (!isClosing) return;
-
     setSlideDone(false);
-    const totalCloseTime = calculateTotalCloseTime(sectionCount);
-
-    // 기존 타이머가 있으면 정리
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-    }
-
-    // 새 타이머 설정
-    closeTimerRef.current = setTimeout(() => {
-      if (onClose) onClose();
-      closeTimerRef.current = null;
-    }, totalCloseTime * 1000);
   };
 
   return (
