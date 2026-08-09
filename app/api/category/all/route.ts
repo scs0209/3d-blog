@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { parseCategoryParentId } from '@/entities/category';
 import prisma from '@/shared/lib/db';
 import { auth } from '@/shared/utils/auth';
 import { createSlug } from '@/shared/utils/create-slug';
@@ -56,7 +57,7 @@ import { createSlug } from '@/shared/utils/create-slug';
  *         name: includePostCount
  *         schema:
  *           type: boolean
- *         description: 각 카테고리의 게시글 수 포함 여부
+ *         description: 각 카테고리의 게시글 수(_count.posts) 포함 여부. 자식 수(_count.children)는 항상 포함됩니다.
  *     responses:
  *       200:
  *         description: 카테고리 목록 조회 성공
@@ -79,13 +80,12 @@ export async function GET(request: Request) {
         name: 'asc',
       },
       include: {
-        _count: includePostCount
-          ? {
-              select: {
-                posts: true,
-              },
-            }
-          : undefined,
+        _count: {
+          select: {
+            children: true,
+            ...(includePostCount ? { posts: true } : {}),
+          },
+        },
       },
     });
 
@@ -152,8 +152,8 @@ export async function POST(request: Request) {
 
     let normalizedParentId: number | null = null;
     if (parentId != null && parentId !== '') {
-      const parsedParentId = Number(parentId);
-      if (Number.isNaN(parsedParentId)) {
+      const parsedParentId = parseCategoryParentId(parentId);
+      if (parsedParentId == null) {
         return NextResponse.json({ error: 'Invalid parentId' }, { status: 400 });
       }
 

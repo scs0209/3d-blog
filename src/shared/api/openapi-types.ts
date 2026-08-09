@@ -234,7 +234,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description 각 카테고리의 게시글 수 포함 여부 */
+                    /** @description 각 카테고리의 게시글 수(_count.posts) 포함 여부. 자식 수(_count.children)는 항상 포함됩니다. */
                     includePostCount?: boolean;
                 };
                 header?: never;

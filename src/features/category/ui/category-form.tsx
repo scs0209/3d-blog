@@ -52,13 +52,16 @@ const CategoryForm = ({ onSubmit, initialData }: CategoryFormProps) => {
 
   const handleFormSubmit = async (data: CategoryFormSchema) => {
     setIsLoading(true);
+    form.clearErrors('root');
     try {
       await onSubmit({
         ...data,
         parentId: data.parentId ?? null,
       });
     } catch (error) {
-      console.error('Failed to submit category:', error);
+      form.setError('root', {
+        message: error instanceof Error ? error.message : '카테고리 저장에 실패했습니다.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -77,6 +80,11 @@ const CategoryForm = ({ onSubmit, initialData }: CategoryFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)} className='space-y-8'>
+        {form.formState.errors.root?.message && (
+          <p className='rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-200' role='alert'>
+            {form.formState.errors.root.message}
+          </p>
+        )}
         <FormField
           control={form.control}
           name='name'

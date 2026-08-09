@@ -35,7 +35,7 @@
 │   ├── widgets/           # 독립적으로 재사용 가능한 UI 컴포넌트
 │   ├── features/          # 기능 단위 모듈 (예: 로그인, 회원가입)
 │   ├── entities/          # 도메인 엔티티 (예: User, Product)
-│   ├── shared/            # 공용 유틸 (예: Button, Modal)
+│   ├── shared/            # 공용 코드 (예: ui, lib, config)
 │   └── shadcn-ui/         # ShadCN UI 컴포넌트 관리 디렉토리
 │       ├── components/    # ShadCN의 기본 컴포넌트
 │       │   ├── Button.tsx
@@ -124,8 +124,11 @@ views/
 ---
 
 ### **7. src/shared/**
-- 애플리케이션 전반에서 사용되는 공용 유틸을 관리합니다.
-- 예: 버튼, 모달, 유틸리티 함수 등.
+- 애플리케이션 전반에서 재사용되는 공용 코드를 관리합니다.
+- 주요 하위 디렉토리:
+  - `ui/`: 공용 UI 컴포넌트 (예: `AuthSidebar`, `Modal`, `Button`)
+  - `lib/`: 인프라·라이브러리 래퍼 (예: `db`, `swagger`, `supabase`)
+  - `config`/`consts`/`utils`: 설정값, 상수, 순수 유틸리티 함수
 
 ---
 
@@ -195,7 +198,7 @@ export function cn(...inputs: ClassValue[]) {
 
 ## **폴더 구조 설계 원칙**
 
-1. **관심사 분리**: 페이지, 상태 관리, 공용 유틸을 명확히 구분.
+1. **관심사 분리**: 페이지, 상태 관리, 공용 코드를 명확히 구분.
 2. **재사용성**: 위젯과 공용 컴포넌트를 통해 코드 중복 최소화.
 3. **확장성**: 새로운 기능 추가 시 기존 코드에 최소한의 영향을 미침.
 
@@ -204,15 +207,20 @@ export function cn(...inputs: ClassValue[]) {
 ## **Server Component vs Client Component**
 
 이 프로젝트는 Next.js App Router의 **React Server Components(RSC)** 를 기본으로 씁니다.  
-파일 상단에 `'use client'`가 없으면 **서버 컴포넌트**, 있으면 **클라이언트 컴포넌트**입니다.
+`app/**/page.tsx`, `layout.tsx` 등 **라우트 진입점의 기본 실행 환경은 Server**입니다.  
+`'use client'`는 **Client Component 진입 경계**입니다. 이 지시어가 없는 파일 전부가 Server Component인 것은 아닙니다.  
+Client Component가 공유 모듈을 import하면, 그 모듈도 **Client 번들의 일부**가 됩니다.  
+(예: `src/features/admin/post/ui/category-selector.tsx`가 `'use client'`를 두고 `src/entities/category/lib/build-category-tree.ts`를 import하는 구조.)  
+서버에서만 써야 하는 코드(시크릿, DB 직접 접근 등)는 `server-only`로 별도 보호합니다.
 
 ### 기본 규칙
 
 | 구분 | 위치 / 예시 | 역할 |
 |------|-------------|------|
 | **Server (기본)** | `app/**/page.tsx`, `layout.tsx`, `loading.tsx`, `app/api/**/route.ts` | 라우트 진입, 데이터 fetch, SEO/metadata, API |
-| **Server 가능** | `src/entities/**/lib/*` (순수 함수, `'use client'` 없음) | 트리 빌드, 도메인 변환 등 공유 유틸 |
-| **Client** | `'use client'`가 있는 `widgets` / `features` UI | 클릭·폼·모달·애니메이션·브라우저 API·React Query |
+| **공유 모듈** | `'use client'` 없는 `src/entities/**/lib/*` 등 | 순수 함수·변환 로직. Server/Client 모두 import 가능(Client에서 import 시 Client 번들에 포함) |
+| **Client 경계** | `'use client'`가 있는 `widgets` / `features` UI | 클릭·폼·모달·애니메이션·브라우저 API·React Query |
+| **서버 전용** | `server-only`를 import한 모듈 | Client 번들로 새면 안 되는 코드 |
 
 ### 언제 클라이언트로 두나
 
@@ -236,9 +244,11 @@ app/
   api/category/**/route.ts             # Server: REST API
 
 src/
-  entities/category/lib/               # Server·Client 모두 import 가능 (순수 함수)
-    build-category-tree.ts
+  entities/category/lib/               # 공유 모듈: Server·Client 모두 import 가능 (순수 함수)
+    build-category-tree.ts             # 예: category-selector(Client)에서도 import
     to-category-list-item.ts
+  features/admin/post/ui/
+    category-selector.tsx              # Client 경계 ('use client') → build-category-tree import
   widgets/post/ui/
     Sidebar.tsx                        # Client: 라우팅·사이드바 토글
     CategoryTree.tsx                   # Client: 접기/펼치기·클릭
@@ -250,8 +260,9 @@ src/
 
 1. **`app/.../page.tsx`(Server)** 가 데이터를 가져오거나, 클라이언트 위젯만 마운트한다.
 2. **인터랙션 UI는 Client 위젯/피처**로 분리한다 (`CategoryTree`, `CategoryManagement` 등).
-3. **트리 변환·타입 정규화 같은 순수 로직**은 `entities/**/lib`에 두고 Server/Client 어디서든 import한다.
+3. **트리 변환·타입 정규화 같은 순수 로직**은 `entities/**/lib` 공유 모듈에 둔다. `'use client'`가 없어도 Client에서 import되면 Client 번들에 포함된다.
 4. Client 경계를 불필요하게 넓히지 않는다. 정적 마크업·metadata·초기 HTML은 Server에 남긴다.
+5. 서버 전용 코드는 `server-only`로 보호한다.
 
 ### 체크리스트
 

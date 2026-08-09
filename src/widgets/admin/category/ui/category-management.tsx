@@ -13,9 +13,10 @@ import type { CategoryFormSchema } from '@/features/category/model/category-sche
 import CategoryForm from '@/features/category/ui/category-form';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import Modal from '@/shared/ui/modal';
+import { toast } from '@/shared/ui/toast/useToast';
 import { useQueryClient } from '@tanstack/react-query';
 import { FileText, Folder, FolderOpen, Pencil, Plus, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { queryKeys } from '@/shared/queryKeys';
 
 const toCategoryFormData = (category: CategoryListItem): Category => ({
@@ -29,12 +30,12 @@ const toCategoryFormData = (category: CategoryListItem): Category => ({
 type CategoryRowProps = {
   node: CategoryTreeNode<CategoryListItem>;
   depth: number;
-  onEdit: (category: CategoryListItem) => void;
+  onEdit: (category: CategoryListItem, trigger: HTMLButtonElement) => void;
   onDelete: (category: CategoryListItem) => void;
 };
 
 const CategoryRow = ({ node, depth, onEdit, onDelete }: CategoryRowProps) => {
-  const hasChildren = node.children.length > 0;
+  const hasChildren = (node._count?.children ?? node.children.length) > 0;
 
   return (
     <div className='flex flex-col gap-2'>
@@ -52,11 +53,20 @@ const CategoryRow = ({ node, depth, onEdit, onDelete }: CategoryRowProps) => {
           )}
           <div className='min-w-0'>
             <p className='truncate font-medium'>{node.name}</p>
-            <p className='truncate text-xs text-white/50'>/{node.slug}</p>
+            <p className='truncate text-xs text-white/50'>
+              /{node.slug}
+              {hasChildren ? ` · 하위 ${node._count?.children ?? node.children.length}` : ''}
+            </p>
           </div>
         </div>
         <div className='flex shrink-0 items-center gap-2'>
-          <Button type='button' variant='ghost' size='sm' onClick={() => onEdit(node)} aria-label={`${node.name} 수정`}>
+          <Button
+            type='button'
+            variant='ghost'
+            size='sm'
+            onClick={(event) => onEdit(node, event.currentTarget)}
+            aria-label={`${node.name} 수정`}
+          >
             <Pencil size={14} />
             수정
           </Button>
@@ -66,7 +76,9 @@ const CategoryRow = ({ node, depth, onEdit, onDelete }: CategoryRowProps) => {
             size='sm'
             className='text-red-300 hover:text-red-200'
             onClick={() => onDelete(node)}
-            aria-label={`${node.name} 삭제`}
+            disabled={hasChildren}
+            aria-label={hasChildren ? `${node.name} 삭제 불가 (하위 카테고리 있음)` : `${node.name} 삭제`}
+            title={hasChildren ? '하위 카테고리를 먼저 삭제하세요' : undefined}
           >
             <Trash2 size={14} />
             삭제
@@ -85,7 +97,7 @@ export const CategoryManagement = () => {
   const { data, isLoading } = useCategories();
   const [createOpen, setCreateOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryListItem | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const categories = useMemo(() => toCategoryListItems(data), [data]);
 
@@ -97,38 +109,38 @@ export const CategoryManagement = () => {
   };
 
   const handleCreate = async (formData: CategoryFormSchema) => {
-    setErrorMessage(null);
-    try {
-      await createCategory(formData);
-      await invalidateCategories();
-      setCreateOpen(false);
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '카테고리 생성에 실패했습니다.');
-    }
+    await createCategory(formData);
+    await invalidateCategories();
+    setCreateOpen(false);
   };
 
   const handleUpdate = async (formData: CategoryFormSchema) => {
     if (!editingCategory) return;
-    setErrorMessage(null);
-    try {
-      await updateCategory(String(editingCategory.id), formData);
-      await invalidateCategories();
-      setEditingCategory(null);
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '카테고리 수정에 실패했습니다.');
-    }
+    await updateCategory(String(editingCategory.id), formData);
+    await invalidateCategories();
+    setEditingCategory(null);
+  };
+
+  const handleEdit = (category: CategoryListItem, trigger: HTMLButtonElement) => {
+    editTriggerRef.current = trigger;
+    setEditingCategory(category);
+  };
+
+  const handleEditModalCloseAutoFocus = (event: Event) => {
+    event.preventDefault();
+    editTriggerRef.current?.focus();
   };
 
   const handleDelete = async (category: CategoryListItem) => {
     const confirmed = window.confirm(`"${category.name}" 카테고리를 삭제할까요?`);
     if (!confirmed) return;
 
-    setErrorMessage(null);
     try {
       await deleteCategory(String(category.id));
       await invalidateCategories();
+      toast.success(`"${category.name}" 카테고리를 삭제했습니다.`);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '카테고리 삭제에 실패했습니다.');
+      toast.error(error instanceof Error ? error.message : '카테고리 삭제에 실패했습니다.');
     }
   };
 
@@ -155,12 +167,6 @@ export const CategoryManagement = () => {
         </Modal>
       </div>
 
-      {errorMessage && (
-        <div className='rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-200'>
-          {errorMessage}
-        </div>
-      )}
-
       <div className='rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-sm'>
         <div className='mb-4 flex items-center justify-between text-sm text-white/60'>
           <span>총 {flatCount}개</span>
@@ -178,7 +184,7 @@ export const CategoryManagement = () => {
                 key={node.id}
                 node={node}
                 depth={0}
-                onEdit={setEditingCategory}
+                onEdit={handleEdit}
                 onDelete={handleDelete}
               />
             ))}
@@ -193,7 +199,7 @@ export const CategoryManagement = () => {
         }}
         title='카테고리 수정'
         description='부모 카테고리를 변경해 자식으로 옮길 수 있습니다.'
-        trigger={<span className='hidden' />}
+        onCloseAutoFocus={handleEditModalCloseAutoFocus}
       >
         {editingCategory && (
           <CategoryForm key={editingCategory.id} onSubmit={handleUpdate} initialData={toCategoryFormData(editingCategory)} />

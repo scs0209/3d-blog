@@ -11,7 +11,7 @@ type CategoryLike = {
   parentId?: number | null;
 };
 
-/** 플랫 카테고리 목록을 parentId 기준 트리로 변환 */
+/** 플랫 카테고리 목록을 parentId 기준 트리로 변환 (순환 parent는 루트로 분리) */
 export const buildCategoryTree = <T extends CategoryLike>(categories: T[]): CategoryTreeNode<T>[] => {
   const nodes = new Map<number, CategoryTreeNode<T>>();
 
@@ -20,14 +20,34 @@ export const buildCategoryTree = <T extends CategoryLike>(categories: T[]): Cate
   }
 
   const roots: CategoryTreeNode<T>[] = [];
+  const parentOf = new Map<number, number>();
+
+  const wouldCreateCycle = (childId: number, parentId: number): boolean => {
+    let current: number | undefined = parentId;
+    const visited = new Set<number>();
+
+    while (current != null) {
+      if (current === childId) return true;
+      if (visited.has(current)) return true;
+      visited.add(current);
+      current = parentOf.get(current);
+    }
+
+    return false;
+  };
 
   for (const category of categories) {
     const node = nodes.get(category.id);
     if (!node) continue;
 
     const parentId = category.parentId ?? null;
-    if (parentId != null && nodes.has(parentId)) {
+    if (
+      parentId != null &&
+      nodes.has(parentId) &&
+      !wouldCreateCycle(category.id, parentId)
+    ) {
       nodes.get(parentId)?.children.push(node);
+      parentOf.set(category.id, parentId);
       continue;
     }
 
@@ -71,9 +91,11 @@ export const collectAncestorIds = <T extends CategoryLike>(categories: T[], acti
   if (activeId == null) return ancestors;
 
   const byId = new Map(categories.map((category) => [category.id, category]));
+  const visited = new Set<number>();
   let current = byId.get(activeId);
 
-  while (current?.parentId != null) {
+  while (current?.parentId != null && !visited.has(current.id)) {
+    visited.add(current.id);
     ancestors.add(current.parentId);
     current = byId.get(current.parentId);
   }
