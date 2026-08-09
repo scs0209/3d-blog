@@ -18,8 +18,8 @@ export const ExperiencePage = ({ isClosing = false, onClose }: ExperiencePagePro
   const selectedExperience = experiences.find((exp) => exp.id === selectedExpId);
 
   return (
-    <div className='flex flex-row gap-6 h-full min-h-0 flex-1 overflow-hidden w-full'>
-      <div className='relative w-[280px] flex-shrink-0 h-full overflow-y-auto'>
+    <div className='flex flex-col md:flex-row gap-4 md:gap-6 h-full min-h-0 flex-1 overflow-hidden w-full'>
+      <div className='relative w-full md:w-[280px] flex-shrink-0 max-h-[40%] md:max-h-none md:h-full overflow-y-auto'>
         <div className='flex flex-col gap-4'>
           {experiences.map((exp, index) => {
             const shouldShow = index <= animState.currentCardIndex;
