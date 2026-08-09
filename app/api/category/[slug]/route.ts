@@ -1,5 +1,6 @@
 // app/api/category/[slug]/route.ts
 import { NextResponse } from 'next/server';
+import { parseCategoryParentId } from '@/entities/category';
 import prisma from '@/shared/lib/db';
 import { createSlug } from '@/shared/utils/create-slug';
 import { auth } from '@/shared/utils/auth';
@@ -215,6 +216,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
  *               description:
  *                 type: string
  *                 nullable: true
+ *               parentId:
+ *                 type: integer
+ *                 nullable: true
+ *                 description: 부모 카테고리 ID (루트면 null)
  *     responses:
  *       200:
  *         description: Category updated successfully
@@ -258,11 +263,65 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const { name, description } = await request.json();
+    const body = await request.json();
+    const { name, description, parentId } = body;
     const categoryId = Number.parseInt(slug);
+    const shouldUpdateParentId = Object.hasOwn(body, 'parentId');
 
     if (!name?.trim()) {
       return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
+    }
+
+    const current = await prisma.category.findUnique({ where: { id: categoryId } });
+    if (!current) {
+      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+    }
+
+    let normalizedParentId: number | null = null;
+    if (shouldUpdateParentId) {
+      if (parentId != null && parentId !== '') {
+        const parsedParentId = parseCategoryParentId(parentId);
+        if (parsedParentId == null) {
+          return NextResponse.json({ error: 'Invalid parentId' }, { status: 400 });
+        }
+        if (parsedParentId === categoryId) {
+          return NextResponse.json({ error: 'Category cannot be its own parent' }, { status: 400 });
+        }
+
+        const allCategories = await prisma.category.findMany({
+          select: { id: true, parentId: true },
+        });
+        const blocked = new Set<number>([categoryId]);
+        const childrenByParent = new Map<number, number[]>();
+        for (const category of allCategories) {
+          if (category.parentId == null) continue;
+          const list = childrenByParent.get(category.parentId) ?? [];
+          list.push(category.id);
+          childrenByParent.set(category.parentId, list);
+        }
+        const stack = [categoryId];
+        while (stack.length > 0) {
+          const currentId = stack.pop();
+          if (currentId == null) continue;
+          for (const childId of childrenByParent.get(currentId) ?? []) {
+            if (blocked.has(childId)) continue;
+            blocked.add(childId);
+            stack.push(childId);
+          }
+        }
+
+        if (blocked.has(parsedParentId)) {
+          return NextResponse.json({ error: 'Cannot set a descendant as parent' }, { status: 400 });
+        }
+
+        const parent = await prisma.category.findUnique({ where: { id: parsedParentId } });
+        if (!parent) {
+          return NextResponse.json({ error: 'Parent category not found' }, { status: 400 });
+        }
+        normalizedParentId = parsedParentId;
+      } else {
+        normalizedParentId = null;
+      }
     }
 
     // Check for duplicate category name, excluding current category
@@ -287,6 +346,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
         name: name.trim(),
         slug: createSlug(name),
         description: description?.trim(),
+        ...(shouldUpdateParentId ? { parentId: normalizedParentId } : {}),
       },
     });
 
@@ -355,6 +415,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ s
         _count: {
           select: {
             posts: true,
+            children: true,
           },
         },
       },
@@ -366,6 +427,10 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ s
 
     if (category._count.posts > 0) {
       return NextResponse.json({ error: 'Cannot delete category that contains posts' }, { status: 400 });
+    }
+
+    if (category._count.children > 0) {
+      return NextResponse.json({ error: 'Cannot delete category that has child categories' }, { status: 400 });
     }
 
     await prisma.category.delete({

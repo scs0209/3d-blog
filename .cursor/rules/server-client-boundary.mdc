@@ -1,0 +1,51 @@
+---
+description: Next.js App Router Server/Client 컴포넌트 경계
+globs: "{app,src}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Server vs Client Component
+
+라우트(`page`/`layout`) 기본 실행 환경은 **Server**.  
+`'use client'`는 **Client Component 진입 경계**다. 지시어가 없는 파일 전부가 Server Component는 아니다.  
+상세 가이드: `ARCHITECTURE.md`의 Server/Client 섹션.
+
+## Server로 둘 것
+
+- `app/**/page.tsx`, `layout.tsx`, `loading.tsx` (인터랙션 없을 때)
+- `app/api/**/route.ts`
+- 서버 전용 모듈은 `server-only`로 보호
+
+## 공유 모듈 (`'use client'` 없음)
+
+- `src/entities/**/lib/*` 순수 함수 (트리 빌드, DTO 정규화 등)
+- Server/Client 모두 import 가능. Client에서 import하면 **Client 번들 일부**가 됨
+- 예: `category-selector.tsx`(`'use client'`) → `build-category-tree.ts`
+
+## Client 경계 (`'use client'`)
+
+- `useState` / `useEffect` / `useTransition`
+- 클릭·폼·모달 open 상태
+- `useRouter` / `usePathname`, framer-motion
+- TanStack Query (`useQuery` 등)
+- `window` / `localStorage` 등 브라우저 API
+
+## 패턴
+
+```tsx
+// ✅ app/.../page.tsx (Server) → Client 위젯만 조합
+export default function Page() {
+  return <CategoryManagement />;
+}
+
+// ✅ entities/.../lib/build-category-tree.ts — 공유 모듈 ('use client' 없음)
+// ✅ features/.../category-selector.tsx — Client 경계에서 위 lib를 import
+// ✅ widgets/.../CategoryTree.tsx — 접기/클릭 있으므로 'use client'
+```
+
+## 하지 말 것
+
+- `'use client'` 없음을 Server Component와 동일시
+- 정적 마크업·metadata만 있는 파일에 `'use client'`
+- Client 경계를 부모까지 불필요하게 확장
+- 서버 전용 코드를 공유 모듈에 섞어 Client로 유출

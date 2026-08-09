@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { parseCategoryParentId } from '@/entities/category';
 import prisma from '@/shared/lib/db';
 import { auth } from '@/shared/utils/auth';
 import { createSlug } from '@/shared/utils/create-slug';
@@ -26,6 +27,10 @@ import { createSlug } from '@/shared/utils/create-slug';
  *         slug:
  *           type: string
  *           description: 카테고리 슬러그
+ *         parentId:
+ *           type: integer
+ *           nullable: true
+ *           description: 부모 카테고리 ID (루트면 null)
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -36,6 +41,9 @@ import { createSlug } from '@/shared/utils/create-slug';
  *             posts:
  *               type: integer
  *               description: 해당 카테고리의 게시글 수
+ *             children:
+ *               type: integer
+ *               description: 자식 카테고리 수
  */
 
 /**
@@ -49,7 +57,7 @@ import { createSlug } from '@/shared/utils/create-slug';
  *         name: includePostCount
  *         schema:
  *           type: boolean
- *         description: 각 카테고리의 게시글 수 포함 여부
+ *         description: 각 카테고리의 게시글 수(_count.posts) 포함 여부. 자식 수(_count.children)는 항상 포함됩니다.
  *     responses:
  *       200:
  *         description: 카테고리 목록 조회 성공
@@ -72,13 +80,12 @@ export async function GET(request: Request) {
         name: 'asc',
       },
       include: {
-        _count: includePostCount
-          ? {
-              select: {
-                posts: true,
-              },
-            }
-          : undefined,
+        _count: {
+          select: {
+            children: true,
+            ...(includePostCount ? { posts: true } : {}),
+          },
+        },
       },
     });
 
@@ -112,6 +119,10 @@ export async function GET(request: Request) {
  *               description:
  *                 type: string
  *                 description: 카테고리 설명
+ *               parentId:
+ *                 type: integer
+ *                 nullable: true
+ *                 description: 부모 카테고리 ID (루트면 null)
  *     responses:
  *       200:
  *         description: 카테고리 생성 성공
@@ -133,10 +144,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const { name, description } = await request.json();
+    const { name, description, parentId } = await request.json();
 
     if (!name?.trim()) {
       return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
+    }
+
+    let normalizedParentId: number | null = null;
+    if (parentId != null && parentId !== '') {
+      const parsedParentId = parseCategoryParentId(parentId);
+      if (parsedParentId == null) {
+        return NextResponse.json({ error: 'Invalid parentId' }, { status: 400 });
+      }
+
+      const parent = await prisma.category.findUnique({ where: { id: parsedParentId } });
+      if (!parent) {
+        return NextResponse.json({ error: 'Parent category not found' }, { status: 400 });
+      }
+      normalizedParentId = parsedParentId;
     }
 
     // Check for duplicate category name
@@ -153,6 +178,7 @@ export async function POST(request: Request) {
         name: name.trim(),
         slug: createSlug(name),
         description: description?.trim(),
+        parentId: normalizedParentId,
       },
     });
 

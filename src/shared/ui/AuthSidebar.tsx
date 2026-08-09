@@ -31,6 +31,7 @@ const styles = {
     base: 'relative rounded-xl transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-xl bg-gradient-to-br from-white/8 to-white/4 border border-white/20 backdrop-blur-sm hover:bg-gradient-to-br hover:from-white/15 hover:to-white/8',
     dashboard: 'hover:border-blue-400/50',
     posts: 'hover:border-green-400/50',
+    categories: 'hover:border-cyan-400/50',
     tags: 'hover:border-yellow-400/50',
     newPost:
       'bg-gradient-to-br from-purple-500/80 to-blue-500/70 border border-purple-400/50 hover:bg-gradient-to-br hover:from-purple-500/90 hover:to-blue-500/80 hover:border-purple-400/70',
@@ -42,6 +43,7 @@ const styles = {
 const boxShadows = {
   dashboard: '0 0 10px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
   posts: '0 0 10px rgba(34, 197, 94, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+  categories: '0 0 10px rgba(34, 211, 238, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
   tags: '0 0 10px rgba(251, 191, 36, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
   newPost: '0 0 15px rgba(139, 69, 255, 0.4), 0 0 30px rgba(139, 69, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
   quickAction:
@@ -127,6 +129,20 @@ const AuthSidebar = () => {
                   <Link href='/admin' className='flex items-center gap-3 p-3'>
                     <FileText className='w-5 h-5 text-green-400' />
                     <span className='text-white/90 font-medium'>All Posts</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* Categories Management */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className={`${styles.menuButton.base} ${styles.menuButton.categories}`}
+                  style={{ boxShadow: boxShadows.categories }}
+                >
+                  <Link href='/admin/categories' className='flex items-center gap-3 p-3'>
+                    <Folder className='w-5 h-5 text-cyan-400' />
+                    <span className='text-white/90 font-medium'>Categories</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

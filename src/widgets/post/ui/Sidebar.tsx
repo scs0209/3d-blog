@@ -4,20 +4,24 @@ import { useTags } from '@/features/tag/model/use-tags';
 import { Tag } from '@/features/tag/ui';
 import { VisitorCounter } from '@/features/blog/ui';
 import { useCategories } from '@/features/category/model';
+import { toCategoryListItems } from '@/entities/category';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SparklesCore } from '@/shared/ui/sparkles';
 import { SidebarSkeleton } from '@/shared/ui/skeleton';
+import { CategoryTree } from './CategoryTree';
 
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { data: categories, isLoading } = useCategories();
+  const { data, isLoading } = useCategories();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { data: tags } = useTags();
+
+  const categories = useMemo(() => toCategoryListItems(data), [data]);
 
   // pathname에서 category slug 추출 (/blog/category/react -> react)
   const currentCategorySlug = (() => {
@@ -99,32 +103,11 @@ export default function Sidebar() {
                   전체
                 </motion.button>
 
-                {categories?.map((cat) => (
-                  <motion.button
-                    key={cat.id}
-                    type='button'
-                    animate={{
-                      boxShadow: currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : 'none',
-                    }}
-                    whileHover={{
-                      scale: 1.06,
-                      boxShadow:
-                        currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
-                    }}
-                    whileTap={{ scale: 0.97 }}
-                    className={`text-left px-2 py-1 rounded-lg font-mono transition relative
-                        ${
-                          currentCategorySlug === cat.slug
-                            ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
-                            : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-0'
-                        }`}
-                    onClick={() => {
-                      router.push(`/blog/category/${cat.slug}`);
-                    }}
-                  >
-                    {cat.name}
-                  </motion.button>
-                ))}
+                <CategoryTree
+                  categories={categories}
+                  currentCategorySlug={currentCategorySlug}
+                  onSelect={(slug) => router.push(`/blog/category/${slug}`)}
+                />
               </nav>
             </div>
             <div>

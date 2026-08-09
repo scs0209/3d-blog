@@ -19,17 +19,17 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-// SEO 최적화를 위한 메타데이터
+// SEO 메타데이터
 export const metadata: Metadata = {
   title: {
-    default: '3D 블로그 - 개발자의 사이버펑크 공간',
-    template: '%s | 3D 블로그',
+    default: '3D Blog',
+    template: '%s | 3D Blog',
   },
-  description: 'React Three Fiber로 구현된 3D 인터랙티브 블로그 겸 포트폴리오.',
-  keywords: ['3D 블로그', 'React Three Fiber', 'Three.js', '개발', '프로그래밍', '사이버펑크', '인터랙티브'],
-  authors: [{ name: '3D 블로그 개발자' }],
-  creator: 'Ayaan',
-  publisher: 'Ayaan Company',
+  description: '웹 개발 기록을 남기는 블로그이자, Three.js 기반 3D 홈·포트폴리오입니다.',
+  keywords: ['블로그', '포트폴리오', '웹 개발', 'React', 'Next.js', 'Three.js', 'React Three Fiber'],
+  authors: [{ name: '3D Blog' }],
+  creator: '3D Blog',
+  publisher: '3D Blog',
 
   metadataBase: new URL(baseUrl),
   alternates: {
@@ -39,31 +39,30 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ko_KR',
     url: baseUrl,
-    title: '3D 블로그 - 개발자의 사이버펑크 공간',
-    description:
-      'React Three Fiber로 구현된 3D 인터랙티브 블로그. 개발, 기술, 창작에 대한 이야기를 3D 공간에서 경험해보세요.',
-    siteName: '3D 블로그',
+    title: '3D Blog',
+    description: '웹 개발 기록과 Three.js로 만든 3D 홈·포트폴리오.',
+    siteName: '3D Blog',
     images: [
       {
         url: '/logo.png',
         width: 1200,
         height: 630,
-        alt: '3D 블로그 로고',
+        alt: '3D Blog 로고',
         type: 'image/png',
       },
       {
         url: '/logo.png',
         width: 800,
         height: 800,
-        alt: '3D 블로그 로고 (정사각형)',
+        alt: '3D Blog 로고',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '3D 블로그 - 개발자의 사이버펑크 공간',
-    description: 'React Three Fiber로 구현된 3D 인터랙티브 블로그',
+    title: '3D Blog',
+    description: '웹 개발 기록과 Three.js로 만든 3D 홈·포트폴리오.',
     images: ['/logo.png', '/logo-square.png'],
   },
   robots: {
