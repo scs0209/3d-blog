@@ -1,14 +1,15 @@
 'use client';
 
-import { MobileNavbar } from './MobileNavbar';
-import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
-import { Menu, Home, Globe, Navigation, User, LogOut } from 'lucide-react';
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Dropdown } from '@/shared/ui';
+import { Globe, Home, LogOut, Menu, Navigation, User } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { Dropdown } from '@/shared/ui';
+import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
 import { BlogSearch } from './BlogSearch';
+import { MobileNavbar } from './MobileNavbar';
 
 export default function BlogHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -52,6 +53,7 @@ export default function BlogHeader() {
 
         {/* 우측: 네비게이션 + 검색 */}
         <div className='flex items-center gap-3'>
+          <ThemeToggleButton variant='blog' />
           {/* 네비게이션 드롭다운 */}
           <Dropdown
             className='relative z-50'
@@ -204,7 +206,8 @@ export default function BlogHeader() {
             </motion.button>
 
             {/* 우측 버튼들 */}
-            <div className='absolute top-4 right-3 flex gap-2'>
+            <div className='absolute top-4 right-3 flex gap-2 items-center'>
+              <ThemeToggleButton variant='blog' className='h-8 w-8' />
               {/* 검색 영역 */}
               <BlogSearch />
 

@@ -1,10 +1,9 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
-import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
-import Providers from '@/app/Providers';
-import dynamic from 'next/dynamic';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+import Providers from '@/app/Providers';
 import { baseUrl } from '@/shared/consts/baseUrl';
 
 const VisitorLogger = dynamic(() => import('@/shared/ui/VisitorLogger'));
@@ -95,7 +94,6 @@ export default function RootLayout({
           <Providers>
             <VisitorLogger />
             {children}
-            <ThemeToggleButton />
           </Providers>
         </ThemeProvider>
       </body>
