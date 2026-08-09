@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { OverlayPanel } from './OverlayShell';
 import { overlayStyles } from './overlayStyles';
+
+const CONTACT_EMAIL = 'tjdckdtn2463@naver.com';
 
 type CyberpunkContactFormProps = {
   show?: boolean;
@@ -22,6 +24,14 @@ export const CyberpunkContactForm = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const subject = encodeURIComponent(`[Portfolio] ${form.name || 'Message'}`);
+    const body = encodeURIComponent(`이름: ${form.name}\n이메일: ${form.email}\n\n${form.message}`);
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   };
 
   useEffect(() => {
@@ -45,7 +55,7 @@ export const CyberpunkContactForm = ({
           style={style}
         >
           <OverlayPanel className='p-6'>
-            <form className='flex flex-col gap-4'>
+            <form className='flex flex-col gap-4' onSubmit={handleSubmit} noValidate>
               <p className={overlayStyles.subtitle}>메시지를 남겨주세요</p>
 
               <div className='flex gap-3'>
@@ -58,7 +68,6 @@ export const CyberpunkContactForm = ({
                   className={`${overlayStyles.input} w-1/2`}
                   autoComplete='off'
                   aria-label='이름'
-                  tabIndex={0}
                 />
                 <input
                   type='email'
@@ -67,9 +76,8 @@ export const CyberpunkContactForm = ({
                   value={form.email}
                   onChange={handleChange}
                   className={`${overlayStyles.input} w-1/2`}
-                  autoComplete='off'
+                  autoComplete='email'
                   aria-label='이메일'
-                  tabIndex={0}
                 />
               </div>
               <textarea
@@ -80,18 +88,17 @@ export const CyberpunkContactForm = ({
                 rows={5}
                 className={`${overlayStyles.input} resize-none`}
                 aria-label='메시지'
-                tabIndex={0}
               />
               <p className={overlayStyles.subtitle}>
                 문의가 잘 안되면{' '}
                 <a
-                  href='mailto:tjdckdtn2463@naver.com'
-                  className='underline underline-offset-2 text-[#E5D6C4]/80 hover:text-[#E5D6C4]'
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className='underline underline-offset-2 text-neon-cream/80 hover:text-neon-cream'
                 >
-                  tjdckdtn2463@naver.com
+                  {CONTACT_EMAIL}
                 </a>
               </p>
-              <button type='submit' className={overlayStyles.buttonPrimary} aria-label='메시지 보내기' tabIndex={0}>
+              <button type='submit' className={overlayStyles.buttonPrimary} aria-label='메시지 보내기'>
                 SEND MESSAGE
               </button>
             </form>
