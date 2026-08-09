@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, Suspense } from 'react';
 import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import type { FocusedGroup } from '@/entities/portfolio/model/types';
 import { usePortfolio } from '@/features/portfolio/model/use-portfolio';
-import { FPSDisplay, FPSProvider, OverlayManager } from '@/widgets/portfolio/ui';
-import { titleMap } from '@/widgets/portfolio/consts';
 import { useToast } from '@/shared/ui/toast';
+import { titleMap } from '@/widgets/portfolio/consts';
+import { FPSDisplay, FPSProvider, OverlayManager } from '@/widgets/portfolio/ui';
 
 const PortfolioCanvas = dynamic(
   () => import('@/widgets/portfolio/ui/PortfolioCanvas').then((mod) => mod.PortfolioCanvas),
@@ -19,10 +19,6 @@ const PortfolioCanvas = dynamic(
 export const PortfolioClient = () => {
   const portfolio = usePortfolio();
   const toast = useToast();
-
-  const [currentTitle, setCurrentTitle] = useState('');
-  const [currentSubtitle, setCurrentSubtitle] = useState('');
-  const [titleAnimation, setTitleAnimation] = useState<'idle' | 'changing' | 'exiting'>('idle');
 
   const {
     focusedGroup,
@@ -53,6 +49,10 @@ export const PortfolioClient = () => {
     finishClosing,
   } = portfolio;
 
+  const titleInfo = focusedGroup
+    ? (titleMap[focusedGroup] ?? { title: focusedGroup.toUpperCase(), subtitle: 'Section' })
+    : null;
+
   const handleGroupClickWithTitle = (group: FocusedGroup) => {
     if (!group) {
       return;
@@ -67,23 +67,7 @@ export const PortfolioClient = () => {
       return;
     }
 
-    setTitleAnimation('changing');
-
-    const newTitle = titleMap[group] || { title: group.toUpperCase(), subtitle: 'Section' };
-
-    setTimeout(() => {
-      setCurrentTitle(newTitle.title);
-      setCurrentSubtitle(newTitle.subtitle);
-      setTitleAnimation('idle');
-    }, 300);
-
     handleGroupClick(group);
-  };
-
-  // 일반적인 뒤로가기 (카메라 리셋 포함)
-  const handleBackWithTitleReset = () => {
-    setTitleAnimation('exiting');
-    handleBack();
   };
 
   return (
@@ -95,10 +79,9 @@ export const PortfolioClient = () => {
           sound={sound}
           onQualityChange={setQuality}
           onSoundChange={setSound}
-          onBack={handleBackWithTitleReset}
-          currentTitle={currentTitle}
-          currentSubtitle={currentSubtitle}
-          titleAnimation={titleAnimation}
+          onBack={handleBack}
+          currentTitle={titleInfo?.title}
+          currentSubtitle={titleInfo?.subtitle}
           overlays={overlays}
           closeOverlay={closeOverlay}
           finishClosing={finishClosing}

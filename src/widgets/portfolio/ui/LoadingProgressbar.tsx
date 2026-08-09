@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, animate, useTransform, useMotionValueEvent } from 'framer-motion';
+import { AnimatePresence, animate, motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { PortfolioOverlay } from './PortfolioOverlay';
 
 type LoadingProgressBarProps = {
@@ -93,19 +93,16 @@ export const LoadingProgressBar = ({ isReversing = false, onCloseComplete }: Loa
         >
           <div className='flex flex-col items-center justify-center min-h-screen'>
             <div className='w-80 p-8'>
-              {/* Loading 텍스트 */}
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='text-center mb-6'>
                 <h1 className='text-2xl font-semibold text-white'>{isReversing ? 'Closing...' : 'Loading...'}</h1>
               </motion.div>
 
-              {/* 프로그래스바 컨테이너 */}
               <div className='space-y-4'>
                 <div className='w-full h-3 bg-white/20 rounded-full overflow-hidden'>
                   <motion.div ref={progressBarRef} className='h-full bg-white' style={{ width: progressWidth }} />
                 </div>
               </div>
 
-              {/* 퍼센티지 표시 */}
               <motion.div
                 className='text-center mt-6'
                 animate={{ opacity: [1, 0.5, 1] }}
@@ -114,7 +111,6 @@ export const LoadingProgressBar = ({ isReversing = false, onCloseComplete }: Loa
                 <span className='text-lg font-medium text-white'>{displayProgress}%</span>
               </motion.div>
 
-              {/* 로딩 도트 애니메이션 */}
               <div className='flex justify-center space-x-1 mt-4'>
                 {[0, 1, 2].map((index) => (
                   <motion.div

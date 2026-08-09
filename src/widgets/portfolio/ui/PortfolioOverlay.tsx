@@ -1,19 +1,13 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { GlassmorphismCard, GlassmorphismButton } from '@/shared/ui/glassmorphism';
 import { cardVariants, containerVariants } from '@/shared/animation';
 import { portfolioProjects } from '../consts';
-import { TitleBox } from './TitleBox';
+import { OverlayPanel } from './OverlayShell';
+import { overlayStyles } from './overlayStyles';
 
-export function PortfolioOverlay({
-  isExiting,
-  onExitComplete,
-}: {
-  isExiting?: boolean;
-  onExitComplete?: () => void;
-}) {
+export function PortfolioOverlay({ isExiting, onExitComplete }: { isExiting?: boolean; onExitComplete?: () => void }) {
   const [animationKey] = useState(0);
   const [isScaleExiting, setIsScaleExiting] = useState(false);
   const [cardExitComplete, setCardExitComplete] = useState(false);
@@ -40,14 +34,11 @@ export function PortfolioOverlay({
             onExitComplete();
           }
         }}
-        className='fixed inset-0 z-overlay bg-black backdrop-blur-xl text-white font-mono overflow-auto'
+        className='fixed inset-0 z-overlay bg-[#0a0c10]/92 backdrop-blur-xl overflow-auto'
       >
-        <TitleBox title='PORTFOLIO' />
-
-        <div className='min-h-screen p-4 flex items-center justify-center'>
-          {/* 프로젝트 그리드 */}
+        <div className='min-h-screen p-6 md:p-10 flex flex-col items-center justify-center'>
           <motion.div
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto'
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl w-full mx-auto'
             variants={containerVariants}
             initial='hidden'
             animate={isExiting ? 'exit' : 'visible'}
@@ -61,37 +52,38 @@ export function PortfolioOverlay({
             <AnimatePresence>
               {portfolioProjects.map((project, index) => (
                 <motion.div key={`${project.id}-${animationKey}`} variants={cardVariants}>
-                  <GlassmorphismCard className='overflow-hidden h-[520px] w-full'>
-                    {/* 프로젝트 이미지 */}
-                    <div className='h-48 bg-gradient-to-br from-white/3 to-white/8 flex items-center justify-center border-b border-white/15 overflow-hidden'>
-                      <div className='text-center transform transition-transform duration-300 hover:scale-110'>
-                        <div className='text-white text-6xl mb-4 transform transition-transform duration-500 hover:rotate-12'>
-                          📁
-                        </div>
-                        <div className='text-white/70'>PROJECT {index + 1}</div>
+                  <OverlayPanel className='overflow-hidden h-[480px] w-full flex flex-col'>
+                    <div className='h-40 border-b border-[#E5D6C4]/20 flex items-center justify-center bg-black/40'>
+                      <div className='text-center'>
+                        <p className={`${overlayStyles.kicker} mb-2`}>PROJECT {String(index + 1).padStart(2, '0')}</p>
+                        <p className={`${overlayStyles.title} text-sm`}>{project.title}</p>
                       </div>
                     </div>
 
-                    {/* 프로젝트 정보 */}
-                    <div className='p-6 relative h-full'>
-                      <div className='h-[280px] overflow-hidden'>
-                        <h3 className='text-xl font-bold text-white mb-2'>{project.title}</h3>
-                        <p className='text-white/70 text-sm mb-4'>{project.subtitle}</p>
-                        <p className='text-white/80 text-sm leading-relaxed overflow-hidden'>
-                          <span className='line-clamp-6'>{project.description}</span>
-                        </p>
-                      </div>
+                    <div className='p-5 flex flex-col flex-1 relative'>
+                      <p className={`${overlayStyles.subtitle} mb-3`}>{project.subtitle}</p>
+                      <p className={`${overlayStyles.body} line-clamp-6`}>{project.description}</p>
 
-                      <div className='absolute bottom-6 left-6 right-6 flex gap-4'>
-                        <GlassmorphismButton variant='outline' size='sm' className='flex-1'>
+                      <div className='absolute bottom-5 left-5 right-5 flex gap-3'>
+                        <a
+                          href={project.liveUrl}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className={`${overlayStyles.button} flex-1 text-center text-xs`}
+                        >
                           VIEW LIVE
-                        </GlassmorphismButton>
-                        <GlassmorphismButton variant='primary' size='sm' className='flex-1'>
-                          SOURCE CODE
-                        </GlassmorphismButton>
+                        </a>
+                        <a
+                          href={project.liveUrl}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className={`${overlayStyles.buttonPrimary} flex-1 text-center text-xs py-2.5`}
+                        >
+                          SOURCE
+                        </a>
                       </div>
                     </div>
-                  </GlassmorphismCard>
+                  </OverlayPanel>
                 </motion.div>
               ))}
             </AnimatePresence>
