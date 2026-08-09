@@ -1,6 +1,7 @@
 import { type ApiRequest, fetcher } from '@/shared/api';
 import type { Post } from '@prisma/client';
 import { getSession } from 'next-auth/react';
+import { cache } from 'react';
 import type { GetPostListParams, GetPostSummaryRequest } from '../model';
 import type { PostResponse } from '@/entities/post/model/post';
 
@@ -63,12 +64,14 @@ export const deletePost = (id: number) =>
     method: 'delete',
   });
 
-export const getPostBySlug = (slug: string): Promise<PostResponse> =>
+/** generateMetadata + page가 같은 요청에서 한 번만 fetch 하도록 cache */
+export const getPostBySlug = cache((slug: string): Promise<PostResponse> =>
   fetcher({
     url: '/api/posts/{slug}',
     path: { slug },
     method: 'get',
-  });
+  }),
+);
 
 export const getPostSummary = (body: GetPostSummaryRequest) =>
   fetcher({
