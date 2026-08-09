@@ -1,9 +1,7 @@
 import { SpaceBackground } from '@/widgets/post/ui';
+import BlogHeader from '@/widgets/post/ui/BlogHeader';
+import Sidebar from '@/widgets/post/ui/Sidebar';
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
-
-const BlogHeader = dynamic(() => import('@/widgets/post/ui/BlogHeader'));
-const Sidebar = dynamic(() => import('@/widgets/post/ui/Sidebar'));
 
 export const metadata: Metadata = {
   title: 'Blog',
