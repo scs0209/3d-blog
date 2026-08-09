@@ -61,11 +61,13 @@ export const SceneRenderer = (props: SceneRendererProps) => {
 
   const handlePointerOver = (position: Position3D) => (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
+    document.body.style.cursor = 'pointer';
     onPointerOver(position);
   };
 
   const handlePointerOut = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
+    document.body.style.cursor = 'auto';
     onPointerOut();
   };
 
