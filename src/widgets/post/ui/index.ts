@@ -6,4 +6,5 @@ export { default as Sidebar } from './Sidebar';
 export { MobileNavbar } from './MobileNavbar';
 export { SpaceBackground } from './SpaceBackground';
 export { SearchBar } from './SearchBar';
+export { CategoryTree } from './CategoryTree';
 export * from './ComputerBackground/index';

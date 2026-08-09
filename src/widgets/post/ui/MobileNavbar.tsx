@@ -2,8 +2,11 @@
 import { useCategories } from '@/features/category/model';
 import { useTags } from '@/features/tag/model/use-tags';
 import { Tag } from '@/features/tag/ui';
+import { toCategoryListItems } from '@/entities/category';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter, usePathname } from 'next/navigation';
+import { useMemo } from 'react';
+import { CategoryTree } from './CategoryTree';
 
 export const MobileNavbar = ({
   menuOpen,
@@ -12,13 +15,23 @@ export const MobileNavbar = ({
   menuOpen: boolean;
   setMenuOpen: (menuOpen: boolean) => void;
 }) => {
-  const { data: categories } = useCategories();
+  const { data } = useCategories();
   const { data: tags } = useTags();
   const router = useRouter();
   const pathname = usePathname();
 
-  const currentCategorySlug = pathname.startsWith('/blog/category/') ? pathname.split('/blog/category/')[1] : null;
+  const categories = useMemo(() => toCategoryListItems(data), [data]);
+
+  const currentCategorySlug = (() => {
+    const match = pathname.match(/^\/blog\/category\/([^\/]+)/);
+    return match?.[1] ? decodeURIComponent(match[1]) : null;
+  })();
   const isAllPage = pathname === '/blog/all';
+
+  const handleSelectCategory = (slug: string) => {
+    router.push(`/blog/category/${slug}`);
+    setMenuOpen(false);
+  };
 
   return (
     <AnimatePresence>
@@ -36,7 +49,7 @@ export const MobileNavbar = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 80, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className='w-72 max-w-full h-full flex flex-col gap-8 p-6 bg-[#181c2a]/90 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm'
+            className='w-72 max-w-full h-full flex flex-col gap-8 p-6 bg-[#181c2a]/90 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm overflow-y-auto'
           >
             <div className='flex items-center justify-between mb-4'>
               <span className='font-extrabold text-lg font-mono text-blue-100'>Category</span>
@@ -71,37 +84,17 @@ export const MobileNavbar = ({
                   }`}
                 onClick={() => {
                   router.push('/blog/all');
+                  setMenuOpen(false);
                 }}
               >
                 전체
               </motion.button>
 
-              {categories?.map((cat) => (
-                <motion.button
-                  key={cat.id}
-                  type='button'
-                  animate={{
-                    boxShadow: currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : 'none',
-                  }}
-                  whileHover={{
-                    scale: 1.06,
-                    boxShadow:
-                      currentCategorySlug === cat.slug ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  className={`text-left px-2 py-1 rounded-lg font-mono transition relative
-                    ${
-                      currentCategorySlug === cat.slug
-                        ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
-                        : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-0'
-                    }`}
-                  onClick={() => {
-                    router.push(`/blog/category/${cat.slug}`);
-                  }}
-                >
-                  {cat.name}
-                </motion.button>
-              ))}
+              <CategoryTree
+                categories={categories}
+                currentCategorySlug={currentCategorySlug}
+                onSelect={handleSelectCategory}
+              />
             </nav>
             <div>
               <h2 className='font-extrabold text-base px-3 mb-2 font-mono text-blue-100'>Tags</h2>
