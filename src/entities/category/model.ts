@@ -5,6 +5,20 @@ export type Category = {
   name: string;
   slug: string;
   description?: string;
+  parentId?: number | null;
+};
+
+export type CategoryListItem = {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  parentId?: number | null;
+  createdAt?: string;
+  _count?: {
+    posts?: number;
+    children?: number;
+  };
 };
 
 export type CategoryResponse = ApiResponse<'/api/category/all', 'get'>;

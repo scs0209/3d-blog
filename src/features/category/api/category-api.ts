@@ -6,13 +6,17 @@ import { fetcher } from '@/shared/api';
 export const getCategories = fetcher({ url: '/api/category/all', method: 'get', query: { includePostCount: false } });
 
 // 새 카테고리 생성
-export const createCategory = async ({ name, description }: CategoryFormSchema) => {
+export const createCategory = async ({ name, description, parentId }: CategoryFormSchema) => {
   const response = await fetch('/api/category/all', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name, description }),
+    body: JSON.stringify({
+      name,
+      description,
+      parentId: parentId ?? null,
+    }),
   });
 
   if (!response.ok) {
@@ -34,6 +38,7 @@ export const getCategoryPosts = (slug: string, page = 1, limit = 10) =>
 type CategoryInput = {
   name: string;
   description?: string;
+  parentId?: number | null;
 };
 
 // Update category
@@ -43,7 +48,10 @@ export async function updateCategory(id: string, data: CategoryInput): Promise<C
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      ...data,
+      parentId: data.parentId ?? null,
+    }),
   });
 
   if (!response.ok) {

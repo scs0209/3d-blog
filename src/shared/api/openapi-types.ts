@@ -4,2309 +4,2273 @@
  */
 
 export interface paths {
-  '/api/category/{slug}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get a single category with its posts */
-    get: {
-      parameters: {
-        query?: {
-          /** @description Search keyword for post title or content */
-          search?: string;
-          /** @description Page number for pagination */
-          page?: number;
-          /** @description Number of items per page */
-          limit?: number;
+    "/api/category/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        header?: never;
-        path: {
-          /** @description Category slug */
-          slug: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Returns category with posts and pagination info */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              name?: string;
-              slug?: string;
-              description?: string | null;
-              /** Format: date-time */
-              createdAt?: string;
-              posts?: {
-                id?: number;
-                title?: string;
-                content?: string;
-                /** Format: date-time */
-                createdAt?: string;
-                /** Format: date-time */
-                updatedAt?: string;
-                author?: {
-                  id?: number;
-                  name?: string;
+        /** Get a single category with its posts */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Search keyword for post title or content */
+                    search?: string;
+                    /** @description Page number for pagination */
+                    page?: number;
+                    /** @description Number of items per page */
+                    limit?: number;
                 };
-                _count?: {
-                  comments?: number;
-                  likes?: number;
+                header?: never;
+                path: {
+                    /** @description Category slug */
+                    slug: string;
                 };
-              }[];
-              _count?: {
-                posts?: number;
-              };
-              pagination?: {
-                page?: number;
-                limit?: number;
-                total?: number;
-                totalPages?: number;
-              };
+                cookie?: never;
             };
-          };
-        };
-        /** @description Category not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Internal server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /** Delete a category */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Category ID */
-          slug: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Category deleted successfully */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              success?: boolean;
-            };
-          };
-        };
-        /** @description Cannot delete category with posts */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Cannot delete category that contains posts */
-              error?: string;
-            };
-          };
-        };
-        /** @description Forbidden - Admin access required */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Category not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Internal server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /** Update a category */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Category ID */
-          slug: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            name: string;
-            description?: string | null;
-          };
-        };
-      };
-      responses: {
-        /** @description Category updated successfully */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              name?: string;
-              slug?: string;
-              description?: string | null;
-              /** Format: date-time */
-              createdAt?: string;
-            };
-          };
-        };
-        /** @description Invalid input or duplicate category name */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Forbidden - Admin access required */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Forbidden: Admin access required */
-              error?: string;
-            };
-          };
-        };
-        /** @description Internal server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/category/all': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 카테고리 목록 조회
-     * @description 모든 카테고리를 조회합니다.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /** @description 각 카테고리의 게시글 수 포함 여부 */
-          includePostCount?: boolean;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 카테고리 목록 조회 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['Category'][];
-          };
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    /**
-     * 새 카테고리 생성
-     * @description 새로운 카테고리를 생성합니다. (관리자 전용)
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @description 카테고리 이름 */
-            name: string;
-            /** @description 카테고리 설명 */
-            description?: string;
-          };
-        };
-      };
-      responses: {
-        /** @description 카테고리 생성 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['Category'];
-          };
-        };
-        /** @description 잘못된 요청 (중복된 이름 등) */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 권한 없음 */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/comments/{postId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 특정 게시물의 댓글 목록 조회
-     * @description 게시물 ID에 해당하는 모든 댓글과 대댓글을 계층 구조로 반환합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 게시물 ID */
-          postId: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 댓글 목록 반환 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              content?: string;
-              createdAt?: string;
-              author?: {
-                name?: string;
-                id?: number;
-                parentId?: number;
-              };
-              likes?: number;
-              dislikes?: number;
-              replies?: {
-                id?: number;
-                content?: string;
-                createdAt?: string;
-                author?: {
-                  name?: string;
-                  id?: number;
-                  parentId?: number;
+            requestBody?: never;
+            responses: {
+                /** @description Returns category with posts and pagination info */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            name?: string;
+                            slug?: string;
+                            description?: string | null;
+                            /** Format: date-time */
+                            createdAt?: string;
+                            posts?: {
+                                id?: number;
+                                title?: string;
+                                content?: string;
+                                /** Format: date-time */
+                                createdAt?: string;
+                                /** Format: date-time */
+                                updatedAt?: string;
+                                author?: {
+                                    id?: number;
+                                    name?: string;
+                                };
+                                _count?: {
+                                    comments?: number;
+                                    likes?: number;
+                                };
+                            }[];
+                            _count?: {
+                                posts?: number;
+                            };
+                            pagination?: {
+                                page?: number;
+                                limit?: number;
+                                total?: number;
+                                totalPages?: number;
+                            };
+                        };
+                    };
                 };
-                likes?: number;
-                dislikes?: number;
-              }[];
-            }[];
-          };
-        };
-        /** @description 게시물을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/comments/individual/{commentId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /**
-     * 댓글 수정
-     * @description 특정 댓글의 내용을 수정합니다. 작성자 또는 관리자만 수정할 수 있습니다.
-     */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 댓글 ID */
-          commentId: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @description 수정할 댓글 내용 */
-            content: string;
-          };
-        };
-      };
-      responses: {
-        /** @description 댓글 수정 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              content?: string;
-              updatedAt?: string;
-            };
-          };
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 인증되지 않은 사용자 */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 권한 없음 (작성자가 아님) */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 댓글을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    post?: never;
-    /**
-     * 댓글 삭제
-     * @description 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다. 작성자 또는 관리자만 삭제할 수 있습니다.
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 댓글 ID */
-          commentId: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 댓글 삭제 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 인증되지 않은 사용자 */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 권한 없음 (작성자가 아님) */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 댓글을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/comments/like/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 댓글 좋아요/싫어요 수 조회
-     * @description 특정 댓글의 좋아요/싫어요 수와 사용자의 반응 상태를 반환합니다.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /** @description 사용자 ID (반응 상태 확인용) */
-          userId?: number;
-        };
-        header?: never;
-        path: {
-          /** @description 댓글 ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 댓글 반응 정보 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              likes?: number;
-              dislikes?: number;
-              /** @enum {string} */
-              userReaction?: 'LIKE' | 'DISLIKE' | null;
-            };
-          };
-        };
-        /** @description 댓글을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    /**
-     * 댓글 좋아요/싫어요 토글
-     * @description 댓글에 좋아요/싫어요를 추가하거나 제거합니다.
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 댓글 ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            userId: number;
-            /** @enum {string} */
-            type: 'LIKE' | 'DISLIKE';
-          };
-        };
-      };
-      responses: {
-        /** @description 댓글 반응 토글 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @enum {string} */
-              userReaction?: 'LIKE' | 'DISLIKE' | null;
-              likes?: number;
-              dislikes?: number;
-            };
-          };
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 댓글을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/comments': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * 댓글 또는 대댓글 생성
-     * @description 새로운 댓글을 생성합니다. parentId가 있으면 대댓글, 없으면 댓글입니다. 인증된 사용자만 사용 가능합니다.
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @description 댓글 내용 */
-            content: string;
-            /** @description 게시물 ID */
-            postId: number;
-            /** @description 부모 댓글 ID (대댓글인 경우) */
-            parentId?: number;
-          };
-        };
-      };
-      responses: {
-        /** @description 댓글 생성 성공 */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              content?: string;
-              createdAt?: string;
-              author?: {
-                name?: string;
-              };
-            };
-          };
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 인증되지 않은 사용자 */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/post/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 특정 게시물 조회
-     * @description 게시물 ID를 기반으로 상세 정보를 조회합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 게시물 ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 게시물 조회 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              title?: string;
-              content?: string;
-              author?: {
-                id?: number;
-                name?: string;
-                email?: string;
-              };
-              category?: Record<string, never>;
-              tags?: unknown[];
-              comments?: unknown[];
-              likes?: unknown[];
-            };
-          };
-        };
-        /** @description 게시물을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    /**
-     * 게시물 수정
-     * @description 특정 게시물의 정보를 수정합니다.
-     */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 게시물 ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @description 게시물 제목 */
-            title?: string;
-            /** @description 게시물 내용 */
-            content?: string;
-            /** @description 카테고리 ID */
-            categoryId?: number;
-            /** @description 태그 ID 배열 */
-            tags?: number[];
-          };
-        };
-      };
-      responses: {
-        /** @description 게시물 수정 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 게시물을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    post?: never;
-    /**
-     * 게시물 삭제
-     * @description 특정 게시물과 관련된 모든 데이터(댓글, 좋아요)를 삭제합니다.
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 게시물 ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 게시물 삭제 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Post deleted successfully */
-              message?: string;
-            };
-          };
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 게시물을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/posts/{slug}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 특정 게시물 조회
-     * @description 게시물 slug를 기반으로 상세 정보를 조회합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 게시물 slug */
-          slug: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 게시물 조회 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              slug?: string;
-              title?: string;
-              content?: string;
-              /** Format: date-time */
-              createdAt?: string;
-              /** Format: date-time */
-              updatedAt?: string;
-              views?: number;
-              author?: {
-                id?: number;
-                name?: string;
-                email?: string;
-              };
-              category?: {
-                id?: number;
-                name?: string;
-                slug?: string;
-              };
-              tags?: {
-                id?: number;
-                name?: string;
-                slug?: string;
-              }[];
-              comments?: {
-                id?: number;
-                content?: string;
-                /** Format: date-time */
-                createdAt?: string;
-                author?: {
-                  id?: number;
-                  name?: string;
+                /** @description Category not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
-                replies?: {
-                  id?: number;
-                  content?: string;
-                  /** Format: date-time */
-                  createdAt?: string;
-                  author?: {
-                    id?: number;
-                    name?: string;
-                  };
-                }[];
-              }[];
-              likes?: {
-                id?: number;
-                user?: {
-                  id?: number;
-                  name?: string;
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
-              }[];
             };
-          };
         };
-        /** @description 게시물을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    /**
-     * 게시물 수정
-     * @description 특정 게시물의 정보를 수정합니다.
-     */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 게시물 slug */
-          slug: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @description 게시물 제목 */
-            title?: string;
-            /** @description 게시물 내용 */
-            content?: string;
-            /** @description 카테고리 ID */
-            categoryId?: number;
-            /** @description 태그 ID 배열 */
-            tags?: number[];
-          };
-        };
-      };
-      responses: {
-        /** @description 게시물 수정 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 게시물을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    post?: never;
-    /**
-     * 게시물 삭제
-     * @description 특정 게시물과 관련된 모든 데이터(댓글, 좋아요)를 삭제합니다.
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 게시물 slug */
-          slug: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 게시물 삭제 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Post deleted successfully */
-              message?: string;
-            };
-          };
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 게시물을 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/posts/{slug}/view': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * 게시글 조회수 증가
-     * @description 게시글 조회수를 증가시킵니다.
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          slug: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 조회수 증가 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              ok?: boolean;
-              views?: number;
-            };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/posts/like/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 포스트 좋아요 수 조회
-     * @description 특정 포스트의 좋아요 수와 사용자의 좋아요 여부를 반환합니다.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /** @description 사용자 ID (좋아요 여부 확인용) */
-          userId?: number;
-        };
-        header?: never;
-        path: {
-          /** @description 포스트 ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 좋아요 정보 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              count?: number;
-              isLiked?: boolean;
-            };
-          };
-        };
-        /** @description 포스트를 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    /**
-     * 포스트 좋아요 토글
-     * @description 포스트에 좋아요를 추가하거나 제거합니다.
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 포스트 ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            userId: number;
-          };
-        };
-      };
-      responses: {
-        /** @description 좋아요 토글 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              isLiked?: boolean;
-              count?: number;
-            };
-          };
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 포스트를 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/posts': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 게시물 목록 조회
-     * @description 검색어와 페이지네이션 옵션을 이용해 게시물 목록을 가져옵니다.
-     */
-    get: {
-      parameters: {
-        query?: {
-          /** @description 게시물 검색어 (title, content) */
-          search?: string;
-          /** @description 카테고리 slug로 필터링 */
-          category?: string;
-          /** @description 태그 ID들을 쉼표로 구분하여 필터링 */
-          tags?: string;
-          /** @description 페이지 번호 */
-          page?: number;
-          /** @description 한 페이지 당 아이템 개수 */
-          limit?: number;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 게시물 목록과 메타데이터 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              data?: {
-                id?: number;
-                title?: string;
-                content?: string;
-                /** Format: date-time */
-                createdAt?: string;
-                category?: {
-                  name?: string;
-                  slug?: string;
+        put?: never;
+        post?: never;
+        /** Delete a category */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Category ID */
+                    slug: string;
                 };
-                author?: {
-                  name?: string;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Category deleted successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                        };
+                    };
                 };
-                tags?: {
-                  id?: number;
-                  name?: string;
-                }[];
-              }[];
-              meta?: {
-                pagination?: {
-                  currentPage?: number;
-                  totalPages?: number;
-                  totalItems?: number;
-                  itemsPerPage?: number;
-                  hasNextPage?: boolean;
-                  hasPrevPage?: boolean;
+                /** @description Cannot delete category with posts */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Cannot delete category that contains posts */
+                            error?: string;
+                        };
+                    };
                 };
-              };
+                /** @description Forbidden - Admin access required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Category not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-        /** @description 잘못된 페이지네이션 파라미터 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    /**
-     * 게시물 생성
-     * @description 새로운 게시물을 생성합니다. 관리자 또는 인증된 사용자만 접근 가능합니다.
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @description 게시물 제목 */
-            title: string;
-            /** @description 게시물 내용 */
-            content: string;
-            /** @description 카테고리 ID */
-            categoryId: number;
-            /** @description 태그 ID 배열 (선택사항) */
-            tags?: number[];
-          };
-        };
-      };
-      responses: {
-        /** @description 게시물이 성공적으로 생성됨 */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              title?: string;
-              content?: string;
-              authorId?: number;
-              categoryId?: number;
-              /** Format: date-time */
-              createdAt?: string;
-              /** Format: date-time */
-              updatedAt?: string;
+        options?: never;
+        head?: never;
+        /** Update a category */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Category ID */
+                    slug: string;
+                };
+                cookie?: never;
             };
-          };
-        };
-        /** @description 잘못된 요청 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              error?: string;
+            requestBody: {
+                content: {
+                    "application/json": {
+                        name: string;
+                        description?: string | null;
+                        /** @description 부모 카테고리 ID (루트면 null) */
+                        parentId?: number | null;
+                    };
+                };
             };
-          };
-        };
-        /** @description 인증되지 않은 사용자 */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 권한 없음 */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              error?: string;
+            responses: {
+                /** @description Category updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            name?: string;
+                            slug?: string;
+                            description?: string | null;
+                            /** Format: date-time */
+                            createdAt?: string;
+                        };
+                    };
+                };
+                /** @description Invalid input or duplicate category name */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden - Admin access required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Forbidden: Admin access required */
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-      };
+        trace?: never;
     };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/users': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 모든 사용자 목록 조회
-     * @description 모든 사용자 목록을 반환합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 사용자 목록 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['User'][];
-          };
+    "/api/category/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    /** Create a new user (User Registration) */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @description User's full name */
-            name: string;
-            /**
-             * Format: email
-             * @description User's email address
-             * @example user@example.com
-             */
-            email: string;
-            /** @description User's password */
-            password: string;
-          };
-        };
-      };
-      responses: {
-        /** @description User successfully created */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              name?: string;
-              email?: string;
-              /**
-               * @default USER
-               * @enum {string}
-               */
-              role: 'USER' | 'ADMIN';
-              /** Format: date-time */
-              createdAt?: string;
+        /**
+         * 카테고리 목록 조회
+         * @description 모든 카테고리를 조회합니다.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 각 카테고리의 게시글 수 포함 여부 */
+                    includePostCount?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
             };
-          };
-        };
-        /** @description Validation error */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Invalid email or password */
-              error?: string;
+            requestBody?: never;
+            responses: {
+                /** @description 카테고리 목록 조회 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Category"][];
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-        /** @description User already exists */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Email already in use */
-              error?: string;
+        put?: never;
+        /**
+         * 새 카테고리 생성
+         * @description 새로운 카테고리를 생성합니다. (관리자 전용)
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
             };
-          };
-        };
-        /** @description Internal server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Internal server error */
-              error?: string;
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 카테고리 이름 */
+                        name: string;
+                        /** @description 카테고리 설명 */
+                        description?: string;
+                        /** @description 부모 카테고리 ID (루트면 null) */
+                        parentId?: number | null;
+                    };
+                };
             };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/stats': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 사이트 통계 조회
-     * @description 게시물, 사용자, 댓글, 조회수의 월별 통계를 조회합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 통계 데이터 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              posts?: {
-                /** @description 전체 게시물 수 */
-                total?: number;
-                /** @description 이번달 게시물 수 */
-                thisMonth?: number;
-                /** @description 저번달 게시물 수 */
-                lastMonth?: number;
-              };
-              users?: {
-                /** @description 전체 사용자 수 */
-                total?: number;
-                /** @description 이번달 가입자 수 */
-                thisMonth?: number;
-                /** @description 저번달 가입자 수 */
-                lastMonth?: number;
-              };
-              comments?: {
-                /** @description 전체 댓글 수 */
-                total?: number;
-                /** @description 이번달 댓글 수 */
-                thisMonth?: number;
-                /** @description 저번달 댓글 수 */
-                lastMonth?: number;
-              };
-              views?: {
-                /** @description 전체 조회수 */
-                total?: number;
-                /** @description 이번달 조회수 */
-                thisMonth?: number;
-                /** @description 저번달 조회수 */
-                lastMonth?: number;
-              };
+            responses: {
+                /** @description 카테고리 생성 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Category"];
+                    };
+                };
+                /** @description 잘못된 요청 (중복된 이름 등) */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 권한 없음 */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Failed to fetch stats */
-              error?: string;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/comments/{postId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 게시물의 댓글 목록 조회
+         * @description 게시물 ID에 해당하는 모든 댓글과 대댓글을 계층 구조로 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 ID */
+                    postId: number;
+                };
+                cookie?: never;
             };
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/summarize': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * 블로그 포스트 요약 생성
-     * @description AI를 사용하여 블로그 포스트의 내용을 간결하게 요약합니다
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /**
-             * @description 요약할 블로그 포스트 내용
-             * @example 이 글에서는 React와 Next.js를 사용한 웹 개발에 대해 다룹니다...
-             */
-            content: string;
-            /**
-             * @description 블로그 포스트 제목
-             * @example React와 Next.js로 현대적인 웹 애플리케이션 구축하기
-             */
-            title: string;
-          };
-        };
-      };
-      responses: {
-        /** @description 요약 생성 성공 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /**
-               * @description 생성된 요약 텍스트
-               * @example React와 Next.js를 활용한 웹 개발 방법론과 실제 구현 과정을 다룬 글입니다.
-               */
-              summary?: string;
+            requestBody?: never;
+            responses: {
+                /** @description 댓글 목록 반환 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            content?: string;
+                            createdAt?: string;
+                            author?: {
+                                name?: string;
+                                id?: number;
+                                parentId?: number;
+                            };
+                            likes?: number;
+                            dislikes?: number;
+                            replies?: {
+                                id?: number;
+                                content?: string;
+                                createdAt?: string;
+                                author?: {
+                                    name?: string;
+                                    id?: number;
+                                    parentId?: number;
+                                };
+                                likes?: number;
+                                dislikes?: number;
+                            }[];
+                        }[];
+                    };
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-        /** @description 필수 필드 누락 */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example 콘텐츠와 제목이 필요합니다. */
-              error?: string;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/comments/individual/{commentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * 댓글 수정
+         * @description 특정 댓글의 내용을 수정합니다. 작성자 또는 관리자만 수정할 수 있습니다.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    commentId: number;
+                };
+                cookie?: never;
             };
-          };
-        };
-        /** @description 서버 오류 또는 AI 요약 생성 실패 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example 요약 생성에 실패했습니다. */
-              error?: string;
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 수정할 댓글 내용 */
+                        content: string;
+                    };
+                };
             };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/tags/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get a specific tag
-     * @description Retrieve a tag by its ID with related posts
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Tag ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Tag retrieved successfully */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Tag not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    /**
-     * Update a tag
-     * @description Update a tag's name by its ID
-     */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Tag ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            name: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Tag updated successfully */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Name already in use */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Tag not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    post?: never;
-    /**
-     * Delete a tag
-     * @description Delete a tag by its ID
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Tag ID */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Tag deleted successfully */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Tag not found */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/tags': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all tags
-     * @description Retrieve a list of all tags with post counts
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description A list of tags */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              id?: number;
-              name?: string;
-              /** Format: date-time */
-              createdAt?: string;
-              count?: {
-                posts?: number;
-              };
-            }[];
-          };
-        };
-        /** @description Server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              error?: string;
+            responses: {
+                /** @description 댓글 수정 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            content?: string;
+                            updatedAt?: string;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 인증되지 않은 사용자 */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 권한 없음 (작성자가 아님) */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-      };
-    };
-    put?: never;
-    /**
-     * Create a new tag
-     * @description Create a new tag in the system
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            /** @example JavaScript */
-            name: string;
-          };
-        };
-      };
-      responses: {
-        /** @description Tag created successfully */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example 1 */
-              id?: number;
-              /** @example JavaScript */
-              name?: string;
-              /** Format: date-time */
-              createdAt?: string;
+        post?: never;
+        /**
+         * 댓글 삭제
+         * @description 특정 댓글을 삭제합니다. 대댓글이 있는 댓글을 삭제하면 대댓글도 함께 삭제됩니다. 작성자 또는 관리자만 삭제할 수 있습니다.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    commentId: number;
+                };
+                cookie?: never;
             };
-          };
-        };
-        /** @description Tag already exists */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Tag already exists */
-              error?: string;
+            requestBody?: never;
+            responses: {
+                /** @description 댓글 삭제 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 인증되지 않은 사용자 */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 권한 없음 (작성자가 아님) */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-        /** @description Server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @example Failed to create tag */
-              error?: string;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/comments/like/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 댓글 좋아요/싫어요 수 조회
+         * @description 특정 댓글의 좋아요/싫어요 수와 사용자의 반응 상태를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 사용자 ID (반응 상태 확인용) */
+                    userId?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    id: number;
+                };
+                cookie?: never;
             };
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/users/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 특정 사용자 정보 조회
-     * @description ID를 사용하여 특정 사용자 정보를 반환합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 사용자 ID */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 사용자 정보 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['User'];
-          };
-        };
-        /** @description 사용자를 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    /**
-     * 사용자 정보 수정
-     * @description ID를 사용하여 특정 사용자 정보를 수정합니다.
-     */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description 사용자 ID */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            name?: string;
-            email?: string;
-            /** @enum {string} */
-            role?: 'USER' | 'ADMIN';
-          };
-        };
-      };
-      responses: {
-        /** @description 수정된 사용자 정보 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['User'];
-          };
-        };
-        /** @description 사용자를 찾을 수 없음 */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/users/count': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 전체 사용자 수 조회
-     * @description 전체 사용자 수를 반환합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 사용자 수 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              count?: number;
+            requestBody?: never;
+            responses: {
+                /** @description 댓글 반응 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            likes?: number;
+                            dislikes?: number;
+                            /** @enum {string} */
+                            userReaction?: "LIKE" | "DISLIKE" | null;
+                        };
+                    };
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
             };
-          };
         };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/visitor': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * 오늘 방문자 수와 총 방문자 수 조회
-     * @description VisitorLog를 기반으로 오늘 방문자 수와 전체 방문자 수를 반환합니다.
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description 방문자 통계 반환 */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              today?: number;
-              total?: number;
+        put?: never;
+        /**
+         * 댓글 좋아요/싫어요 토글
+         * @description 댓글에 좋아요/싫어요를 추가하거나 제거합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 댓글 ID */
+                    id: number;
+                };
+                cookie?: never;
             };
-          };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        userId: number;
+                        /** @enum {string} */
+                        type: "LIKE" | "DISLIKE";
+                    };
+                };
+            };
+            responses: {
+                /** @description 댓글 반응 토글 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {string} */
+                            userReaction?: "LIKE" | "DISLIKE" | null;
+                            likes?: number;
+                            dislikes?: number;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 댓글을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    put?: never;
-    /**
-     * 방문자 기록 추가
-     * @description 방문자의 ip, userAgent, path를 VisitorLog에 기록합니다.
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': {
-            path?: string;
-          };
+    "/api/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-      responses: {
-        /** @description 기록 성공 */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
+        get?: never;
+        put?: never;
+        /**
+         * 댓글 또는 대댓글 생성
+         * @description 새로운 댓글을 생성합니다. parentId가 있으면 대댓글, 없으면 댓글입니다. 인증된 사용자만 사용 가능합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 댓글 내용 */
+                        content: string;
+                        /** @description 게시물 ID */
+                        postId: number;
+                        /** @description 부모 댓글 ID (대댓글인 경우) */
+                        parentId?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description 댓글 생성 성공 */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            content?: string;
+                            createdAt?: string;
+                            author?: {
+                                name?: string;
+                            };
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 인증되지 않은 사용자 */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
         };
-        /** @description 서버 에러 */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-      };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+    "/api/post/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 게시물 조회
+         * @description 게시물 ID를 기반으로 상세 정보를 조회합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 게시물 조회 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            title?: string;
+                            content?: string;
+                            author?: {
+                                id?: number;
+                                name?: string;
+                                email?: string;
+                            };
+                            category?: Record<string, never>;
+                            tags?: unknown[];
+                            comments?: unknown[];
+                            likes?: unknown[];
+                        };
+                    };
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        /**
+         * 게시물 수정
+         * @description 특정 게시물의 정보를 수정합니다.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 게시물 제목 */
+                        title?: string;
+                        /** @description 게시물 내용 */
+                        content?: string;
+                        /** @description 카테고리 ID */
+                        categoryId?: number;
+                        /** @description 태그 ID 배열 */
+                        tags?: number[];
+                    };
+                };
+            };
+            responses: {
+                /** @description 게시물 수정 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        /**
+         * 게시물 삭제
+         * @description 특정 게시물과 관련된 모든 데이터(댓글, 좋아요)를 삭제합니다.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 게시물 삭제 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Post deleted successfully */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/posts/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 게시물 조회
+         * @description 게시물 slug를 기반으로 상세 정보를 조회합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 slug */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 게시물 조회 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            slug?: string;
+                            title?: string;
+                            content?: string;
+                            /** Format: date-time */
+                            createdAt?: string;
+                            /** Format: date-time */
+                            updatedAt?: string;
+                            views?: number;
+                            author?: {
+                                id?: number;
+                                name?: string;
+                                email?: string;
+                            };
+                            category?: {
+                                id?: number;
+                                name?: string;
+                                slug?: string;
+                            };
+                            tags?: {
+                                id?: number;
+                                name?: string;
+                                slug?: string;
+                            }[];
+                            comments?: {
+                                id?: number;
+                                content?: string;
+                                /** Format: date-time */
+                                createdAt?: string;
+                                author?: {
+                                    id?: number;
+                                    name?: string;
+                                };
+                                replies?: {
+                                    id?: number;
+                                    content?: string;
+                                    /** Format: date-time */
+                                    createdAt?: string;
+                                    author?: {
+                                        id?: number;
+                                        name?: string;
+                                    };
+                                }[];
+                            }[];
+                            likes?: {
+                                id?: number;
+                                user?: {
+                                    id?: number;
+                                    name?: string;
+                                };
+                            }[];
+                        };
+                    };
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        /**
+         * 게시물 수정
+         * @description 특정 게시물의 정보를 수정합니다.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 slug */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 게시물 제목 */
+                        title?: string;
+                        /** @description 게시물 내용 */
+                        content?: string;
+                        /** @description 카테고리 ID */
+                        categoryId?: number;
+                        /** @description 태그 ID 배열 */
+                        tags?: number[];
+                    };
+                };
+            };
+            responses: {
+                /** @description 게시물 수정 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        /**
+         * 게시물 삭제
+         * @description 특정 게시물과 관련된 모든 데이터(댓글, 좋아요)를 삭제합니다.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 게시물 slug */
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 게시물 삭제 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Post deleted successfully */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 게시물을 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/posts/like/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 포스트 좋아요 수 조회
+         * @description 특정 포스트의 좋아요 수와 사용자의 좋아요 여부를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 사용자 ID (좋아요 여부 확인용) */
+                    userId?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description 포스트 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 좋아요 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            count?: number;
+                            isLiked?: boolean;
+                        };
+                    };
+                };
+                /** @description 포스트를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * 포스트 좋아요 토글
+         * @description 포스트에 좋아요를 추가하거나 제거합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 포스트 ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        userId: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description 좋아요 토글 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            isLiked?: boolean;
+                            count?: number;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 포스트를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 게시물 목록 조회
+         * @description 검색어와 페이지네이션 옵션을 이용해 게시물 목록을 가져옵니다.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description 게시물 검색어 (title, content) */
+                    search?: string;
+                    /** @description 카테고리 slug로 필터링 */
+                    category?: string;
+                    /** @description 태그 ID들을 쉼표로 구분하여 필터링 */
+                    tags?: string;
+                    /** @description 페이지 번호 */
+                    page?: number;
+                    /** @description 한 페이지 당 아이템 개수 */
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 게시물 목록과 메타데이터 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            data?: {
+                                id?: number;
+                                title?: string;
+                                content?: string;
+                                /** Format: date-time */
+                                createdAt?: string;
+                                category?: {
+                                    name?: string;
+                                    slug?: string;
+                                };
+                                author?: {
+                                    name?: string;
+                                };
+                                tags?: {
+                                    id?: number;
+                                    name?: string;
+                                }[];
+                            }[];
+                            meta?: {
+                                pagination?: {
+                                    currentPage?: number;
+                                    totalPages?: number;
+                                    totalItems?: number;
+                                    itemsPerPage?: number;
+                                    hasNextPage?: boolean;
+                                    hasPrevPage?: boolean;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description 잘못된 페이지네이션 파라미터 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * 게시물 생성
+         * @description 새로운 게시물을 생성합니다. 관리자 또는 인증된 사용자만 접근 가능합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description 게시물 제목 */
+                        title: string;
+                        /** @description 게시물 내용 */
+                        content: string;
+                        /** @description 카테고리 ID */
+                        categoryId: number;
+                        /** @description 태그 ID 배열 (선택사항) */
+                        tags?: number[];
+                    };
+                };
+            };
+            responses: {
+                /** @description 게시물이 성공적으로 생성됨 */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            title?: string;
+                            content?: string;
+                            authorId?: number;
+                            categoryId?: number;
+                            /** Format: date-time */
+                            createdAt?: string;
+                            /** Format: date-time */
+                            updatedAt?: string;
+                        };
+                    };
+                };
+                /** @description 잘못된 요청 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description 인증되지 않은 사용자 */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 권한 없음 */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 모든 사용자 목록 조회
+         * @description 모든 사용자 목록을 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 사용자 목록 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"][];
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /** Create a new user (User Registration) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description User's full name */
+                        name: string;
+                        /**
+                         * Format: email
+                         * @description User's email address
+                         * @example user@example.com
+                         */
+                        email: string;
+                        /** @description User's password */
+                        password: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description User successfully created */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            name?: string;
+                            email?: string;
+                            /**
+                             * @default USER
+                             * @enum {string}
+                             */
+                            role: "USER" | "ADMIN";
+                            /** Format: date-time */
+                            createdAt?: string;
+                        };
+                    };
+                };
+                /** @description Validation error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid email or password */
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description User already exists */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Email already in use */
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Internal server error */
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 사이트 통계 조회
+         * @description 게시물, 사용자, 댓글, 조회수의 월별 통계를 조회합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 통계 데이터 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            posts?: {
+                                /** @description 전체 게시물 수 */
+                                total?: number;
+                                /** @description 이번달 게시물 수 */
+                                thisMonth?: number;
+                                /** @description 저번달 게시물 수 */
+                                lastMonth?: number;
+                            };
+                            users?: {
+                                /** @description 전체 사용자 수 */
+                                total?: number;
+                                /** @description 이번달 가입자 수 */
+                                thisMonth?: number;
+                                /** @description 저번달 가입자 수 */
+                                lastMonth?: number;
+                            };
+                            comments?: {
+                                /** @description 전체 댓글 수 */
+                                total?: number;
+                                /** @description 이번달 댓글 수 */
+                                thisMonth?: number;
+                                /** @description 저번달 댓글 수 */
+                                lastMonth?: number;
+                            };
+                            views?: {
+                                /** @description 전체 조회수 */
+                                total?: number;
+                                /** @description 이번달 조회수 */
+                                thisMonth?: number;
+                                /** @description 저번달 조회수 */
+                                lastMonth?: number;
+                            };
+                        };
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Failed to fetch stats */
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/summarize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 블로그 포스트 요약 생성
+         * @description AI를 사용하여 블로그 포스트의 내용을 간결하게 요약합니다
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description 요약할 블로그 포스트 내용
+                         * @example 이 글에서는 React와 Next.js를 사용한 웹 개발에 대해 다룹니다...
+                         */
+                        content: string;
+                        /**
+                         * @description 블로그 포스트 제목
+                         * @example React와 Next.js로 현대적인 웹 애플리케이션 구축하기
+                         */
+                        title: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description 요약 생성 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /**
+                             * @description 생성된 요약 텍스트
+                             * @example React와 Next.js를 활용한 웹 개발 방법론과 실제 구현 과정을 다룬 글입니다.
+                             */
+                            summary?: string;
+                        };
+                    };
+                };
+                /** @description 필수 필드 누락 */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example 콘텐츠와 제목이 필요합니다. */
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description 서버 오류 또는 AI 요약 생성 실패 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example 요약 생성에 실패했습니다. */
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tags/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a specific tag
+         * @description Retrieve a tag by its ID with related posts
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Tag ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Tag retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Tag not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        /**
+         * Update a tag
+         * @description Update a tag's name by its ID
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Tag ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        name: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Tag updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Name already in use */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Tag not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        /**
+         * Delete a tag
+         * @description Delete a tag by its ID
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Tag ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Tag deleted successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Tag not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all tags
+         * @description Retrieve a list of all tags with post counts
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description A list of tags */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            id?: number;
+                            name?: string;
+                            /** Format: date-time */
+                            createdAt?: string;
+                            count?: {
+                                posts?: number;
+                            };
+                        }[];
+                    };
+                };
+                /** @description Server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create a new tag
+         * @description Create a new tag in the system
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @example JavaScript */
+                        name: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Tag created successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example 1 */
+                            id?: number;
+                            /** @example JavaScript */
+                            name?: string;
+                            /** Format: date-time */
+                            createdAt?: string;
+                        };
+                    };
+                };
+                /** @description Tag already exists */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Tag already exists */
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description Server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Failed to create tag */
+                            error?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 사용자 정보 조회
+         * @description ID를 사용하여 특정 사용자 정보를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 사용자 ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 사용자 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description 사용자를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        /**
+         * 사용자 정보 수정
+         * @description ID를 사용하여 특정 사용자 정보를 수정합니다.
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description 사용자 ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        email?: string;
+                        /** @enum {string} */
+                        role?: "USER" | "ADMIN";
+                    };
+                };
+            };
+            responses: {
+                /** @description 수정된 사용자 정보 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description 사용자를 찾을 수 없음 */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 전체 사용자 수 조회
+         * @description 전체 사용자 수를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 사용자 수 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            count?: number;
+                        };
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/visitor": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 오늘 방문자 수와 총 방문자 수 조회
+         * @description VisitorLog를 기반으로 오늘 방문자 수와 전체 방문자 수를 반환합니다.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description 방문자 통계 반환 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            today?: number;
+                            total?: number;
+                        };
+                    };
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /**
+         * 방문자 기록 추가
+         * @description 방문자의 ip, userAgent, path를 VisitorLog에 기록합니다.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        path?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description 기록 성공 */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 서버 에러 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    Category: {
-      /** @description 카테고리 고유 ID */
-      id: number;
-      /** @description 카테고리 이름 */
-      name: string;
-      /** @description 카테고리 설명 */
-      description?: string | null;
-      /** @description 카테고리 슬러그 */
-      slug?: string;
-      /**
-       * Format: date-time
-       * @description 생성 일시
-       */
-      createdAt?: string;
-      _count?: {
-        /** @description 해당 카테고리의 게시글 수 */
-        posts?: number;
-      };
+    schemas: {
+        Category: {
+            /** @description 카테고리 고유 ID */
+            id: number;
+            /** @description 카테고리 이름 */
+            name: string;
+            /** @description 카테고리 설명 */
+            description?: string | null;
+            /** @description 카테고리 슬러그 */
+            slug?: string;
+            /** @description 부모 카테고리 ID (루트면 null) */
+            parentId?: number | null;
+            /**
+             * Format: date-time
+             * @description 생성 일시
+             */
+            createdAt?: string;
+            _count?: {
+                /** @description 해당 카테고리의 게시글 수 */
+                posts?: number;
+                /** @description 자식 카테고리 수 */
+                children?: number;
+            };
+        };
+        User: {
+            id?: number;
+            name?: string;
+            email?: string;
+            /** @enum {string} */
+            role?: "USER" | "ADMIN";
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
     };
-    User: {
-      id?: number;
-      name?: string;
-      email?: string;
-      /** @enum {string} */
-      role?: 'USER' | 'ADMIN';
-      /** Format: date-time */
-      createdAt?: string;
-      /** Format: date-time */
-      updatedAt?: string;
-      /** Format: date-time */
-      deletedAt?: string;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;
