@@ -1,8 +1,8 @@
 name: AI PR 자동 작성
+# 임시 비활성화: 필요 시 Actions에서 workflow_dispatch로만 수동 실행
 on:
-  pull_request:
-    types: [opened, synchronize]
-    
+  workflow_dispatch:
+
 permissions:
   contents: read
   pull-requests: write
