@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import NextAuth from 'next-auth';
 import { authConfig } from './src/shared/utils/auth.config';
 
@@ -7,7 +7,7 @@ const protectedRoutes = ['/admin', '/api/admin'];
 
 const { auth } = NextAuth(authConfig);
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const session = await auth();
   const { pathname } = request.nextUrl;
 
