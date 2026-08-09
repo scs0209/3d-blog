@@ -1,7 +1,9 @@
 import type React from 'react';
+import { ScrollArea } from '@/shadcn-ui/components/ui/scroll-area';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/shadcn-ui/components/ui/sidebar';
 import AuthSidebar from '@/shared/ui/AuthSidebar';
-import { ScrollArea } from '@/shadcn-ui/components/ui/scroll-area';
+
+export const dynamic = 'force-dynamic';
 
 const ProtectLayout = ({ children }: { children: React.ReactNode }) => {
   return (

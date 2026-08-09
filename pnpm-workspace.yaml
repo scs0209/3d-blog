@@ -1,0 +1,3 @@
+allowBuilds:
+  '@prisma/client': true
+  prisma: true

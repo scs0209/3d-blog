@@ -1,7 +1,7 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false, "ignore": ["tailwind.config.ts"] },
+  "files": { "ignoreUnknown": false, "includes": ["**", "!**/tailwind.config.ts"] },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
@@ -9,23 +9,20 @@
     "lineWidth": 120,
     "formatWithErrors": true
   },
-  "organizeImports": { "enabled": true },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "a11y": {
-        "noBlankTarget": "error"
-      },
+      "preset": "recommended",
+      "a11y": {},
       "complexity": {
         "noBannedTypes": "warn",
         "noExtraBooleanCast": "error",
-        "noMultipleSpacesInRegularExpressionLiterals": "error",
         "noUselessCatch": "error",
         "noUselessThisAlias": "error",
         "noUselessTypeConstraint": "error",
-        "noWith": "error",
-        "useArrowFunction": "off"
+        "useArrowFunction": "off",
+        "noAdjacentSpacesInRegex": "error"
       },
       "correctness": {
         "noChildrenProp": "error",
@@ -37,7 +34,6 @@
         "noInnerDeclarations": "error",
         "noInvalidConstructorSuper": "error",
         "noInvalidUseBeforeDeclaration": "error",
-        "noNewSymbol": "error",
         "noNonoctalDecimalEscape": "error",
         "noPrecisionLoss": "error",
         "noSelfAssign": "error",
@@ -51,24 +47,25 @@
         "noUnusedImports": "error",
         "noUnusedLabels": "error",
         "noUnusedVariables": "warn",
-        "useArrayLiterals": "off",
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
         "useIsNan": "error",
         "useJsxKeyInIterable": "error",
         "useValidForDirection": "error",
-        "useYield": "error"
+        "useYield": "error",
+        "noInvalidBuiltinInstantiation": "error",
+        "useValidTypeof": "error"
       },
       "security": {
         "noDangerouslySetInnerHtmlWithChildren": "error",
-        "noDangerouslySetInnerHtml": "warn"
+        "noDangerouslySetInnerHtml": "warn",
+        "noBlankTarget": "error"
       },
       "style": {
         "noInferrableTypes": "error",
         "noNamespace": "error",
         "noNonNullAssertion": "off",
         "noParameterProperties": "off",
-        "noVar": "error",
         "useAsConstAssertion": "error",
         "useConsistentArrayType": {
           "level": "error",
@@ -92,7 +89,8 @@
               }
             ]
           }
-        }
+        },
+        "useArrayLiterals": "off"
       },
       "suspicious": {
         "noAssignInExpressions": "error",
@@ -126,32 +124,34 @@
         "noUnsafeDeclarationMerging": "error",
         "noUnsafeNegation": "error",
         "useGetterReturn": "warn",
-        "useValidTypeof": "error"
+        "noWith": "error",
+        "noVar": "error"
       }
     },
-    "ignore": [
-      ".eslintrc.js",
-      ".eslintrc.json",
-      ".eslintrc.yml",
-      ".eslintrc.yaml",
-      "**/next.config.js",
-      "docs/next.config.js",
-      "apps/*/next.config.js",
-      "packages/extension/**/*",
-      "**/public",
-      "**/node_modules",
-      "**/.cache",
-      "**/.vscode",
-      "**/dist",
-      ".next/**",
-      "dist/**",
-      "storybook-static/**",
-      "build/**",
-      "extension/**",
-      "node_modules/**",
-      "**/node_modules/**",
-      "test-env/**",
-      "**/__tests__/**"
+    "includes": [
+      "**",
+      "!**/.eslintrc.js",
+      "!**/.eslintrc.json",
+      "!**/.eslintrc.yml",
+      "!**/.eslintrc.yaml",
+      "!**/next.config.js",
+      "!**/docs/next.config.js",
+      "!**/apps/**/*/next.config.js",
+      "!**/packages/extension/**/*",
+      "!**/public",
+      "!**/node_modules",
+      "!**/.cache",
+      "!**/.vscode",
+      "!**/dist",
+      "!**/.next/**",
+      "!**/dist/**",
+      "!**/storybook-static/**",
+      "!**/build/**",
+      "!**/extension/**",
+      "!**/node_modules/**",
+      "!**/node_modules/**",
+      "!**/test-env/**",
+      "!**/__tests__/**"
     ]
   },
   "javascript": {
@@ -163,7 +163,7 @@
   },
   "overrides": [
     {
-      "include": ["*.ts", "*.tsx", "*.js"],
+      "includes": ["**/*.ts", "**/*.tsx", "**/*.js"],
       "linter": {
         "rules": {
           "style": {
@@ -177,25 +177,23 @@
       }
     },
     {
-      "include": ["*.ts", "*.tsx"]
+      "includes": ["**/*.ts", "**/*.tsx"]
     },
     {
-      "include": ["*.ts", "*.tsx", "*.mts", "*.cts"],
+      "includes": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "linter": {
         "rules": {
           "correctness": {
             "noConstAssign": "off",
             "noGlobalObjectCalls": "off",
             "noInvalidConstructorSuper": "off",
-            "noNewSymbol": "off",
             "noSetterReturn": "off",
             "noUndeclaredVariables": "off",
             "noUnreachable": "off",
-            "noUnreachableSuper": "off"
+            "noUnreachableSuper": "off",
+            "noInvalidBuiltinInstantiation": "off"
           },
           "style": {
-            "noArguments": "error",
-            "noVar": "error",
             "useConst": "error"
           },
           "suspicious": {
@@ -206,7 +204,11 @@
             "noImportAssign": "off",
             "noRedeclare": "off",
             "noUnsafeNegation": "off",
-            "useGetterReturn": "off"
+            "useGetterReturn": "off",
+            "noVar": "error"
+          },
+          "complexity": {
+            "noArguments": "error"
           }
         }
       }
