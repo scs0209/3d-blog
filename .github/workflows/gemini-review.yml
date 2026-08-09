@@ -18,6 +18,8 @@ defaults:
 
 jobs:
   review:
+    # 임시 비활성화: Gemini AI 코드 리뷰 자동 실행 중지
+    if: false
     runs-on: 'ubuntu-latest'
     timeout-minutes: 7
     permissions:

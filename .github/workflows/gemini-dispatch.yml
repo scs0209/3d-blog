@@ -1,22 +1,8 @@
 name: '🔀 Gemini Dispatch'
 
+# 임시 비활성화: AI 리뷰/디스패치 자동 실행 중지 (수동만 허용)
 on:
-  pull_request_review_comment:
-    types:
-      - 'created'
-  pull_request_review:
-    types:
-      - 'submitted'
-  pull_request:
-    types:
-      - 'opened'
-  issues:
-    types:
-      - 'opened'
-      - 'reopened'
-  issue_comment:
-    types:
-      - 'created'
+  workflow_dispatch:
 
 defaults:
   run:
