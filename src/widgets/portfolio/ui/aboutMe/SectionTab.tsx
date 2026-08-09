@@ -78,7 +78,7 @@ export function SectionTab({
       onKeyDown={handleKeyDown}
       className={`relative min-w-[140px] px-4 py-3 ${
         isSelected ? overlayStyles.panelSelected : overlayStyles.panel
-      } flex flex-col items-start justify-end cursor-pointer transition-all duration-300 hover:border-[#E5D6C4]/55`}
+      } flex flex-col items-start justify-end cursor-pointer transition-all duration-300 hover:border-neon-cream/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neon-cream focus-visible:outline-offset-2`}
       style={{ clipPath: 'polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px)' }}
     >
       <span className={`${overlayStyles.kicker} mb-1.5`}>SEC-{String(sectionIndex).padStart(2, '0')}</span>

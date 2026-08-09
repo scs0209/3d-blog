@@ -98,6 +98,8 @@ export default {
 				},
 				neon: {
 					cream: '#E5D6C4',
+					muted: '#eeebe7',
+					soft: '#f3efeb',
 					'cream-light': '#F0E6D9',
 					'cream-dark': '#DAC5AF',
 					'cream-glow': 'rgba(229, 214, 196, 0.8)',

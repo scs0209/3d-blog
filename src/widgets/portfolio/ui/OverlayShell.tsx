@@ -38,10 +38,10 @@ export const OverlayShell = ({ children, side = 'left', className, contentClassN
 /** 패널 코너 브라켓 — 비율에 늘어나지 않는 고정 크기 */
 export const OverlayCornerFrame = ({ className }: { className?: string }) => (
   <div className={cn('pointer-events-none absolute inset-0 z-20', className)} aria-hidden='true'>
-    <span className='absolute top-0 left-0 h-3.5 w-3.5 border-l-2 border-t-2 border-[#E5D6C4]/85' />
-    <span className='absolute top-0 right-0 h-3.5 w-3.5 border-r-2 border-t-2 border-[#E5D6C4]/85' />
-    <span className='absolute bottom-0 left-0 h-3.5 w-3.5 border-b-2 border-l-2 border-[#E5D6C4]/85' />
-    <span className='absolute bottom-0 right-0 h-3.5 w-3.5 border-b-2 border-r-2 border-[#E5D6C4]/85' />
+    <span className='absolute top-0 left-0 h-3.5 w-3.5 border-l-2 border-t-2 border-neon-cream/85' />
+    <span className='absolute top-0 right-0 h-3.5 w-3.5 border-r-2 border-t-2 border-neon-cream/85' />
+    <span className='absolute bottom-0 left-0 h-3.5 w-3.5 border-b-2 border-l-2 border-neon-cream/85' />
+    <span className='absolute bottom-0 right-0 h-3.5 w-3.5 border-b-2 border-r-2 border-neon-cream/85' />
   </div>
 );
 
@@ -55,7 +55,7 @@ type OverlayPanelProps = {
 export const OverlayPanel = ({ children, className, contentClassName, withFrame = true }: OverlayPanelProps) => (
   <div
     className={cn(
-      'relative overflow-hidden bg-black/55 backdrop-blur-md border border-[#E5D6C4]/20',
+      'relative overflow-hidden bg-black/55 backdrop-blur-md border border-neon-cream/20',
       className,
     )}
   >
@@ -74,8 +74,8 @@ type OverlaySectionHeaderProps = {
 /** 오버레이 공통 섹션 헤더 */
 export const OverlaySectionHeader = ({ kicker, title, description, className }: OverlaySectionHeaderProps) => (
   <div className={cn('mb-4', className)}>
-    <p className='text-[10px] font-mono tracking-[0.2em] text-[#E5D6C4]/50 uppercase'>{kicker}</p>
-    {title ? <p className='text-[#E5D6C4] font-mono font-bold tracking-wider text-lg mt-1'>{title}</p> : null}
-    {description ? <p className='text-[#eeebe7]/65 font-mono text-xs tracking-wide mt-1'>{description}</p> : null}
+    <p className='text-[10px] font-mono tracking-[0.2em] text-neon-cream/50 uppercase'>{kicker}</p>
+    {title ? <p className='text-neon-cream font-mono font-bold tracking-wider text-lg mt-1'>{title}</p> : null}
+    {description ? <p className='text-neon-muted/65 font-mono text-xs tracking-wide mt-1'>{description}</p> : null}
   </div>
 );
