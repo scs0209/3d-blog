@@ -30,7 +30,7 @@ const animationReducer = (state: AnimationState, action: Action): AnimationState
     case 'START_EXIT':
       return { ...state, phase: 'content-exiting' };
     case 'CONTENT_CLOSED':
-      return { phase: 'cards-exiting', currentCardIndex: experiences.length - 2 };
+      return { phase: 'cards-exiting', currentCardIndex: Math.max(experiences.length - 2, -1) };
     case 'PREV_CARD':
       return { ...state, currentCardIndex: state.currentCardIndex - 1 };
     case 'CARDS_CLOSED':

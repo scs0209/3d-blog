@@ -20,7 +20,7 @@ export const titleMap: Record<string, { title: string; subtitle: string }> = {
   radar: { title: 'CONTACT ME', subtitle: 'Get In Touch' },
 };
 
+export * from './aboutMeAnimationConfig';
+export * from './aboutMeData';
 export * from './portfolioProject';
 export * from './skillSections';
-export * from './aboutMeData';
-export * from './aboutMeAnimationConfig';

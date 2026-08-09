@@ -1,10 +1,13 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
+import { FileText, Folder, FolderOpen, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useMemo, useRef, useState } from 'react';
 import {
   buildCategoryTree,
+  type CategoryTreeNode,
   flattenCategoryTree,
   toCategoryListItems,
-  type CategoryTreeNode,
 } from '@/entities/category';
 import type { Category, CategoryListItem } from '@/entities/category/model';
 import { createCategory, deleteCategory, updateCategory } from '@/features/category/api/category-api';
@@ -12,12 +15,9 @@ import { useCategories } from '@/features/category/model';
 import type { CategoryFormSchema } from '@/features/category/model/category-schema';
 import CategoryForm from '@/features/category/ui/category-form';
 import { Button } from '@/shadcn-ui/components/ui/button';
+import { queryKeys } from '@/shared/queryKeys';
 import Modal from '@/shared/ui/modal';
 import { toast } from '@/shared/ui/toast/useToast';
-import { useQueryClient } from '@tanstack/react-query';
-import { FileText, Folder, FolderOpen, Pencil, Plus, Trash2 } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
-import { queryKeys } from '@/shared/queryKeys';
 
 const toCategoryFormData = (category: CategoryListItem): Category => ({
   id: String(category.id),
@@ -158,8 +158,7 @@ export const CategoryManagement = () => {
           description='부모를 고르면 사이드바 트리의 자식으로 표시됩니다.'
           trigger={
             <Button type='button' className='gap-2'>
-              <Plus size={16} />
-              새 카테고리
+              <Plus size={16} />새 카테고리
             </Button>
           }
         >
@@ -180,13 +179,7 @@ export const CategoryManagement = () => {
         ) : (
           <div className='flex flex-col gap-2'>
             {tree.map((node) => (
-              <CategoryRow
-                key={node.id}
-                node={node}
-                depth={0}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
+              <CategoryRow key={node.id} node={node} depth={0} onEdit={handleEdit} onDelete={handleDelete} />
             ))}
           </div>
         )}
@@ -202,7 +195,11 @@ export const CategoryManagement = () => {
         onCloseAutoFocus={handleEditModalCloseAutoFocus}
       >
         {editingCategory && (
-          <CategoryForm key={editingCategory.id} onSubmit={handleUpdate} initialData={toCategoryFormData(editingCategory)} />
+          <CategoryForm
+            key={editingCategory.id}
+            onSubmit={handleUpdate}
+            initialData={toCategoryFormData(editingCategory)}
+          />
         )}
       </Modal>
     </div>

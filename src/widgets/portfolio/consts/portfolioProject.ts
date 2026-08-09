@@ -3,29 +3,20 @@ import type { PortfolioProject } from '@/entities/portfolio/model';
 export const portfolioProjects: PortfolioProject[] = [
   {
     id: 1,
-    title: 'Portfolio',
-    subtitle: '포트폴리오 겸 블로그 프로젝트',
+    title: '3D Blog & Portfolio',
+    subtitle: '개인 블로그 / 포트폴리오 (2025.01 - 진행중)',
     description:
-      'Next.js 15, Shadcn UI, Tailwind CSS, TypeScript, Framer Motion, React Three Fiber, Three.js, Tailwind CSS, TypeScript, Framer Motion, React Three Fiber, Three.js를 사용해서 만든 포트폴리오 겸 블로그 프로젝트입니다.',
+      'FSD 아키텍처로 설계한 Next.js 기반 블로그·포트폴리오입니다. React Three Fiber 3D 씬, Gemini API 기반 PR/코드리뷰 자동화, Open Router AI 본문 요약, OpenAPI 타입 자동화까지 제품과 DX를 함께 실험하고 있습니다.',
     image: '/assets/images/portfolio.png',
-    liveUrl: 'https://github.com/scs0209/3d-blog',
+    sourceUrl: 'https://github.com/scs0209/3d-blog',
   },
   {
     id: 2,
-    title: "MERCHIANE BALI'S PORTFOLIO V1",
-    subtitle: 'Personal portfolio website',
+    title: 'FashionBiz',
+    subtitle: '패션 비즈니스 사이트 (인턴, 2024.02 - 2024.05)',
     description:
-      'The first version of my portfolio website, showcasing my skills, projects, and experience as a developer. It features a 3D design and smooth navigation, emphasizing responsiveness across devices.',
+      'Next.js App Router로 전체 페이지를 구현하고, Apollo Client로 GraphQL 연동과 상태 관리를 담당했습니다. Google 번역 API 다국어 지원과 Metatag·서버 컴포넌트 기반 SEO 최적화를 적용했습니다.',
     image: '/assets/images/project2.jpg',
-    liveUrl: 'https://example.com',
-  },
-  {
-    id: 3,
-    title: "ZIME FUMUDOH'S PORTFOLIO",
-    subtitle: 'Creative personal website',
-    description:
-      "A remake of Fumudoh's personal website, inspired by an award-winning Squarespace template. Built using standard web technologies, it features engaging animations created with GSAP and WebGL, enhancing the site's visual appeal and interactivity.",
-    image: '/assets/images/project3.jpg',
-    liveUrl: 'https://example.com',
+    sourceUrl: 'https://github.com/scs0209',
   },
 ];

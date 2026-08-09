@@ -1,9 +1,10 @@
 'use client';
 
-import { Menu, Orbit, LogOut, X } from 'lucide-react';
+import { LogOut, Menu, Orbit, X } from 'lucide-react';
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
 
 const menuItems = [
   { href: '/portfolio', label: 'Portfolio', isComingSoon: false },
@@ -53,8 +54,9 @@ export const Navbar = () => {
             ))}
           </nav>
 
-          {/* 로그인/가입 버튼 */}
+          {/* 테마 / 로그인 / 가입 */}
           <div className='flex items-center gap-2'>
+            <ThemeToggleButton variant='navbar' />
             {status === 'loading' ? (
               <div className='w-20 h-8 bg-gray-700 rounded-xl animate-pulse' />
             ) : session ? (
@@ -129,12 +131,14 @@ export const Navbar = () => {
 
           {/* 메뉴 패널 */}
           <div className='absolute inset-x-0 top-0 h-full bg-[#0a0a0a] animate-in slide-in-from-top duration-500 ease-out'>
-            {/* 닫기 버튼 */}
-            <div className='absolute top-4 right-4'>
+            {/* 닫기 + 테마 */}
+            <div className='absolute top-4 right-4 flex items-center gap-2'>
+              <ThemeToggleButton variant='navbar' />
               <button
                 type='button'
                 onClick={() => setIsMenuOpen(false)}
                 className='p-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-all duration-300 border border-transparent hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                aria-label='메뉴 닫기'
               >
                 <X size={24} />
               </button>

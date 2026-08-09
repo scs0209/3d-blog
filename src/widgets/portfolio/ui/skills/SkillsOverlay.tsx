@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { gridVariants } from '../../lib/animations';
 import { skillSections } from '../../consts/skillSections';
+import { gridVariants } from '../../lib/animations';
 import { SkillCard } from './SkillCard';
 
 interface SkillsOverlayProps {
@@ -19,7 +19,7 @@ export function SkillsOverlay({ skillsClosing, onAnimationComplete }: SkillsOver
 
   return (
     <motion.div
-      className='text-white font-mono h-full'
+      className='h-full'
       initial={{ opacity: 0, x: '100%' }}
       animate={{
         opacity: skillsClosing ? 0 : 1,
@@ -32,10 +32,9 @@ export function SkillsOverlay({ skillsClosing, onAnimationComplete }: SkillsOver
       }}
       onAnimationComplete={handleAnimationComplete}
     >
-      <div className='h-full p-6 flex flex-col justify-center'>
-        {/* 스킬 섹션들 */}
+      <div className='h-full flex flex-col gap-4 justify-center'>
         <motion.div
-          className='w-full grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8 overflow-y-auto'
+          className='w-full grid grid-cols-1 xl:grid-cols-2 gap-3 overflow-y-auto max-h-[calc(100vh-14rem)]'
           variants={gridVariants}
           initial='hidden'
           animate={skillsClosing ? 'hidden' : 'show'}

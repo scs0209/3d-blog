@@ -1,14 +1,14 @@
 'use client';
 
-import {
-  buildCategoryTree,
-  collectAncestorIds,
-  type CategoryTreeNode,
-} from '@/entities/category/lib/build-category-tree';
-import type { CategoryListItem } from '@/entities/category/model';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, ChevronRight, FileText, Folder, FolderOpen } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import {
+  buildCategoryTree,
+  type CategoryTreeNode,
+  collectAncestorIds,
+} from '@/entities/category/lib/build-category-tree';
+import type { CategoryListItem } from '@/entities/category/model';
 
 type CategoryTreeProps = {
   categories: CategoryListItem[];

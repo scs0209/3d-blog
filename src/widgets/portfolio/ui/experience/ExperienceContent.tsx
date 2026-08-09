@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
-import type { Experience, AnimationPhase } from '@/entities/portfolio/model/types';
+import { useEffect, useRef } from 'react';
 import { EXPERIENCE_ANIMATION_DURATION } from '@/entities/portfolio/model/constants';
+import type { AnimationPhase, Experience } from '@/entities/portfolio/model/types';
+import { OverlayPanel } from '../OverlayShell';
+import { overlayStyles } from '../overlayStyles';
 
 interface ExperienceContentProps {
   experience: Experience | undefined;
@@ -17,87 +20,84 @@ export const ExperienceContent = ({
 }: ExperienceContentProps) => {
   const showTopLine = animPhase === 'cards-entered';
   const showContent = animPhase === 'active' || animPhase === 'content-exiting';
-  const showBottomLine = animPhase === 'content-exiting';
   const isContentExiting = animPhase === 'content-exiting';
+  const isExitingRef = useRef(isContentExiting);
+
+  useEffect(() => {
+    isExitingRef.current = isContentExiting;
+  }, [isContentExiting]);
 
   if (!experience) {
     return null;
   }
 
   return (
-    <>
-      {/* 상단 라인 - 카드 입장 완료 후 표시 */}
+    <div className='flex flex-col w-full h-full min-h-0'>
       {showTopLine && (
         <motion.div
-          className='w-full h-[3px] overflow-hidden'
+          className='w-full h-[2px] overflow-hidden flex-shrink-0'
           initial={{ width: 0 }}
           animate={{ width: '100%' }}
           transition={{ duration: EXPERIENCE_ANIMATION_DURATION.slide, ease: 'easeInOut' }}
           onAnimationComplete={onTopLineComplete}
         >
-          <div className='h-[3px] bg-white/80 rounded-t w-full' />
+          <div className={`h-[2px] ${overlayStyles.accentLine} w-full`} />
         </motion.div>
       )}
 
-      {/* 콘텐츠 박스 */}
       {showContent && (
-        <div
-          className='w-full bg-white/10 backdrop-blur-md border border-white/60'
-          style={{ borderBottom: '2px solid rgba(255,255,255,0.6)' }}
-        >
+        <div className='relative w-full flex-1 min-h-0'>
           <motion.div
-            key={`content-${experience.id}`}
-            className='w-full flex flex-col gap-4 overflow-hidden'
-            initial={{ height: isContentExiting ? 'auto' : 0, opacity: isContentExiting ? 1 : 0 }}
-            animate={{ height: isContentExiting ? 0 : 'auto', opacity: isContentExiting ? 0 : 1 }}
+            className='absolute inset-x-0 top-0 w-full overflow-hidden'
+            initial={{ height: 0 }}
+            animate={{
+              height: isContentExiting ? 0 : '100%',
+            }}
             transition={{
               height: { duration: EXPERIENCE_ANIMATION_DURATION.drop, ease: 'easeInOut' },
-              opacity: { duration: 0.3, delay: isContentExiting ? 0 : EXPERIENCE_ANIMATION_DURATION.drop * 0.5 },
             }}
-            onAnimationComplete={isContentExiting ? onContentExitComplete : undefined}
+            onAnimationComplete={() => {
+              if (isExitingRef.current) {
+                onContentExitComplete();
+              }
+            }}
           >
-            {/* 설명 */}
-            <div className='space-y-4 p-6'>
-              {experience.description.map((desc) => (
-                <p key={desc.substring(0, 50)} className='text-white/90 text-base font-mono leading-relaxed'>
-                  {desc}
-                </p>
-              ))}
-            </div>
+            <div className='relative h-full w-full'>
+              <OverlayPanel className='h-full w-full' contentClassName='h-full overflow-y-auto'>
+                <motion.div
+                  key={experience.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className='space-y-3 p-6 md:p-8'>
+                    <p className={overlayStyles.kicker}>DETAILS</p>
+                    {experience.description.map((desc) => (
+                      <p key={desc.substring(0, 50)} className={overlayStyles.body}>
+                        {desc}
+                      </p>
+                    ))}
+                  </div>
 
-            {/* 기술 스택 */}
-            <div className='mt-6 p-6'>
-              <h3 className='text-white font-bold mb-3'>TECHNOLOGIES</h3>
-              <div className='flex flex-wrap gap-2'>
-                {experience.skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className='px-3 py-1 bg-white/10 border border-white/60 rounded-full text-white/90 text-sm font-mono backdrop-blur-sm'
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
+                  <div className='px-6 md:px-8 pb-6 md:pb-8'>
+                    <h3 className={`${overlayStyles.kicker} mb-3`}>TECHNOLOGIES</h3>
+                    <div className='flex flex-wrap gap-2'>
+                      {experience.skills.map((skill) => (
+                        <span key={skill} className={overlayStyles.chip}>
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </OverlayPanel>
+
+              {/* 하단 보더 — 접힐 때 패널 하단과 함께 위로 이동 */}
+              <div className={`pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] ${overlayStyles.accentLine}`} />
             </div>
           </motion.div>
         </div>
       )}
-
-      {/* 하단 라인 - 콘텐츠 닫힐 때 축소 */}
-      {showBottomLine && (
-        <motion.div
-          className='w-full h-[3px] overflow-hidden'
-          initial={{ width: '100%' }}
-          animate={{ width: 0 }}
-          transition={{
-            duration: EXPERIENCE_ANIMATION_DURATION.slide,
-            delay: EXPERIENCE_ANIMATION_DURATION.drop,
-            ease: 'easeInOut',
-          }}
-        >
-          <div className='h-[3px] bg-white/80 rounded-t w-full' />
-        </motion.div>
-      )}
-    </>
+    </div>
   );
 };

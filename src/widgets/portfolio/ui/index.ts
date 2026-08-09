@@ -34,3 +34,5 @@ export * from './experience';
 export * from './skills';
 export * from './aboutMe';
 export * from './ResumeConsoleOverlay';
+export * from './OverlayShell';
+export * from './overlayStyles';

@@ -4,8 +4,8 @@ import { Canvas } from '@react-three/fiber';
 import { INITIAL_CAMERA_POS } from '@/entities/portfolio/model/constants';
 import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
 import { useInitialAnimation } from '@/features/portfolio/model/use-initial-animation';
-import { SceneRenderer, CameraController } from '@/widgets/portfolio/ui';
 import type { OverlayKey } from '@/features/portfolio/model/use-overlay-state';
+import { CameraController, SceneRenderer } from '@/widgets/portfolio/ui';
 
 interface PortfolioCanvasProps {
   focusedGroup: FocusedGroup;

@@ -2,6 +2,7 @@ import type React from 'react';
 import { ScrollArea } from '@/shadcn-ui/components/ui/scroll-area';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/shadcn-ui/components/ui/sidebar';
 import AuthSidebar from '@/shared/ui/AuthSidebar';
+import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +27,9 @@ const ProtectLayout = ({ children }: { children: React.ReactNode }) => {
               <SidebarTrigger className='text-white/90 hover:text-white hover:bg-white/20 transition-all duration-300 rounded-lg p-2' />
               <div className='h-6 w-px bg-white/30' />
               <h1 className='text-2xl font-semibold text-white/95 drop-shadow-lg'>관리자 대시보드</h1>
+              <div className='ml-auto'>
+                <ThemeToggleButton variant='admin' />
+              </div>
             </div>
 
             {/* Scrollable Content */}
