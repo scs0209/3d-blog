@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle, useMemo } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import { useCategories } from '@/features/category/model';
+import { buildCategoryTree, flattenCategoryTree } from '@/entities/category/lib/build-category-tree';
 
 export interface CategorySelectorRef {
   getSelectedCategoryId: () => string;
@@ -17,6 +18,15 @@ export const CategorySelector = forwardRef<CategorySelectorRef, CategorySelector
   ({ initialCategoryId = '' }, ref) => {
     const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryId);
     const { data: categories } = useCategories();
+
+    const flatOptions = useMemo(() => {
+      const list = (categories ?? []).map((category) => ({
+        id: category.id,
+        parentId: category.parentId ?? null,
+        name: category.name,
+      }));
+      return flattenCategoryTree(buildCategoryTree(list));
+    }, [categories]);
 
     // 초기값이 변경되면 내부 상태도 업데이트
     useEffect(() => {
@@ -35,27 +45,29 @@ export const CategorySelector = forwardRef<CategorySelectorRef, CategorySelector
 
     return (
       <div className='space-y-2'>
-        <label className='text-xs font-medium text-muted-foreground flex items-center gap-1'>
-          <span className='w-1.5 h-1.5 bg-blue-400 rounded-full'></span>
+        <span className='text-xs font-medium text-muted-foreground flex items-center gap-1'>
+          <span className='w-1.5 h-1.5 bg-blue-400 rounded-full' />
           카테고리
-        </label>
+        </span>
         <Select value={selectedCategoryId} onValueChange={handleCategoryChange}>
-          <SelectTrigger className='h-9 bg-muted/10 border-muted-foreground/20 text-foreground hover:bg-muted/20 transition-colors text-sm'>
+          <SelectTrigger className='h-9 w-full border-white/30 bg-white/10 text-foreground backdrop-blur-md hover:bg-white/15 transition-colors text-sm'>
             <SelectValue placeholder='카테고리 선택' />
           </SelectTrigger>
-          <SelectContent className='bg-muted/95 backdrop-blur-sm border-muted-foreground/20'>
-            {categories?.map((category) => (
-              <SelectItem 
-                key={category.id} 
+          <SelectContent className='z-[100] overflow-hidden rounded-xl border border-white/30 bg-gradient-to-br from-white/20 via-[#1b2133]/85 to-[#151a28]/90 text-white shadow-[0_0_30px_rgba(255,255,255,0.18)] backdrop-blur-2xl'>
+            {flatOptions.map((category) => (
+              <SelectItem
+                key={category.id}
                 value={category.id.toString()}
-                className='hover:bg-muted/50 focus:bg-muted/50 text-sm'
+                className='rounded-md text-sm focus:bg-white/20 focus:text-white data-[highlighted]:bg-white/20 data-[highlighted]:text-white'
               >
-                {category.name}
+                {`${'—'.repeat(category.depth)}${category.depth > 0 ? ' ' : ''}${category.name}`}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
     );
-  }
+  },
 );
+
+CategorySelector.displayName = 'CategorySelector';
