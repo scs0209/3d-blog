@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { aboutMeData } from '../../consts';
-import { SectionTab } from './SectionTab';
 import { ContentArea } from './ContentArea';
+import { SectionTab } from './SectionTab';
 
 interface AboutMePageProps {
   isClosing?: boolean;
@@ -11,38 +12,41 @@ interface AboutMePageProps {
 
 export function AboutMePage({ isClosing = false, onClose }: AboutMePageProps) {
   const sectionCount = aboutMeData.sections.length;
+  const [selectedSectionKey, setSelectedSectionKey] = useState(aboutMeData.sections[0]?.key ?? 'quick-bio');
+
+  const selectedSection =
+    aboutMeData.sections.find((section) => section.key === selectedSectionKey) ?? aboutMeData.sections[0];
+
+  const handleSelectSection = (key: string) => {
+    if (isClosing) {
+      return;
+    }
+    setSelectedSectionKey(key);
+  };
 
   return (
-    <div
-      className='fixed top-0 left-0 h-screen w-screen backdrop-blur-[2px] bg-transparent'
-      style={{
-        maxWidth: 'calc(4rem + 50vw)',
-        maskImage: 'linear-gradient(to right, white 50%, transparent 100%)',
-        opacity: 1,
-      }}
-    >
-      <div
-        className='fixed pl-4 mt-16 h-screen max-w-[50vw] flex flex-col gap-4 overflow-y-hidden'
-        style={{
-          top: '48px',
-          maxHeight: 'calc(-128px - 8rem + 100vh)',
-        }}
-      >
-        {/* 섹션 네온 탭 */}
-        <div className='flex gap-4 ml-4'>
-          {aboutMeData.sections.map((section, i) => (
-            <SectionTab
-              key={section.key}
-              section={section}
-              sectionIndex={i}
-              sectionCount={sectionCount}
-              isClosing={isClosing}
-            />
-          ))}
-        </div>
+    <div className='flex flex-col gap-5 h-full max-h-full overflow-hidden'>
+      <div className='flex flex-wrap gap-3'>
+        {aboutMeData.sections.map((section, i) => (
+          <SectionTab
+            key={section.key}
+            section={section}
+            sectionIndex={i}
+            sectionCount={sectionCount}
+            isClosing={isClosing}
+            isSelected={section.key === selectedSectionKey}
+            onSelect={handleSelectSection}
+          />
+        ))}
+      </div>
 
-        {/* 본문 영역 */}
-        <ContentArea sectionCount={sectionCount} isClosing={isClosing} onClose={onClose} />
+      <div className='flex-1 min-h-0 overflow-hidden'>
+        <ContentArea
+          section={selectedSection}
+          sectionCount={sectionCount}
+          isClosing={isClosing}
+          onClose={onClose}
+        />
       </div>
     </div>
   );
