@@ -54,7 +54,10 @@ export type PortfolioProject = {
   subtitle: string;
   description: string;
   image: string;
-  liveUrl: string;
+  /** 배포된 사이트 URL. 없으면 VIEW LIVE 미노출 */
+  liveUrl?: string;
+  /** GitHub 등 소스 저장소 URL */
+  sourceUrl: string;
 };
 
 export interface Experience {

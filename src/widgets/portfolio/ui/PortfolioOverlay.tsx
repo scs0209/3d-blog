@@ -53,7 +53,7 @@ export function PortfolioOverlay({ isExiting, onExitComplete }: { isExiting?: bo
               {portfolioProjects.map((project, index) => (
                 <motion.div key={`${project.id}-${animationKey}`} variants={cardVariants}>
                   <OverlayPanel className='overflow-hidden h-[480px] w-full flex flex-col'>
-                    <div className='h-40 border-b border-[#E5D6C4]/20 flex items-center justify-center bg-black/40'>
+                    <div className='h-40 border-b border-neon-cream/20 flex items-center justify-center bg-black/40'>
                       <div className='text-center'>
                         <p className={`${overlayStyles.kicker} mb-2`}>PROJECT {String(index + 1).padStart(2, '0')}</p>
                         <p className={`${overlayStyles.title} text-sm`}>{project.title}</p>
@@ -65,16 +65,18 @@ export function PortfolioOverlay({ isExiting, onExitComplete }: { isExiting?: bo
                       <p className={`${overlayStyles.body} line-clamp-6`}>{project.description}</p>
 
                       <div className='absolute bottom-5 left-5 right-5 flex gap-3'>
+                        {project.liveUrl ? (
+                          <a
+                            href={project.liveUrl}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className={`${overlayStyles.button} flex-1 text-center text-xs`}
+                          >
+                            VIEW LIVE
+                          </a>
+                        ) : null}
                         <a
-                          href={project.liveUrl}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className={`${overlayStyles.button} flex-1 text-center text-xs`}
-                        >
-                          VIEW LIVE
-                        </a>
-                        <a
-                          href={project.liveUrl}
+                          href={project.sourceUrl}
                           target='_blank'
                           rel='noopener noreferrer'
                           className={`${overlayStyles.buttonPrimary} flex-1 text-center text-xs py-2.5`}

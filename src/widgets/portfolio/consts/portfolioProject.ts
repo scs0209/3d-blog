@@ -8,7 +8,7 @@ export const portfolioProjects: PortfolioProject[] = [
     description:
       'FSD 아키텍처로 설계한 Next.js 기반 블로그·포트폴리오입니다. React Three Fiber 3D 씬, Gemini API 기반 PR/코드리뷰 자동화, Open Router AI 본문 요약, OpenAPI 타입 자동화까지 제품과 DX를 함께 실험하고 있습니다.',
     image: '/assets/images/portfolio.png',
-    liveUrl: 'https://github.com/scs0209/3d-blog',
+    sourceUrl: 'https://github.com/scs0209/3d-blog',
   },
   {
     id: 2,
@@ -17,6 +17,6 @@ export const portfolioProjects: PortfolioProject[] = [
     description:
       'Next.js App Router로 전체 페이지를 구현하고, Apollo Client로 GraphQL 연동과 상태 관리를 담당했습니다. Google 번역 API 다국어 지원과 Metatag·서버 컴포넌트 기반 SEO 최적화를 적용했습니다.',
     image: '/assets/images/project2.jpg',
-    liveUrl: 'https://github.com/scs0209',
+    sourceUrl: 'https://github.com/scs0209',
   },
 ];
