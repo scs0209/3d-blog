@@ -1,27 +1,29 @@
+import { Environment } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { SCENE_STATIONS } from '@/entities/portfolio/model/constants';
 import type { FocusedGroup, Position3D } from '@/entities/portfolio/model/types';
 import {
   Antenna,
   Computer,
-  HomeDoor,
-  LabMachine,
   ExperienceDesk,
   ExperiencePerson,
   FloatMan,
+  FPSMeasurer,
   GridBackground,
   HoloText,
+  HomeDoor,
   InspectingPerson,
+  LabMachine,
   Platform,
   RobotArm,
   Server,
   TypingMan,
+  WorkChair,
   WorkPerson,
   WorkTable,
-  FPSMeasurer,
-  WorkChair,
 } from '@/widgets/portfolio/ui';
-import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
 import { HoloContainer } from '@/widgets/portfolio/ui/HoloContainer';
+import { HoloTable } from '@/widgets/portfolio/ui/HoloTable';
 import { HoverCameraController } from '@/widgets/portfolio/ui/HoverCameraController';
 
 type SceneRendererProps = {
@@ -33,13 +35,10 @@ type SceneRendererProps = {
   onGroupClick: (group: FocusedGroup) => void;
   onPointerOver: (position: Position3D) => void;
   onPointerOut: () => void;
-  // onFpsUpdate prop 제거
-  // 초기 애니메이션 props 추가
   holoTableScale?: number;
   holoTablePosition?: [number, number, number];
   showOtherModels?: boolean;
   isInitialAnimation?: boolean;
-  // 카메라 애니메이션 완료 상태 추가
   cameraAnimationDone?: boolean;
 };
 
@@ -60,26 +59,33 @@ export const SceneRenderer = (props: SceneRendererProps) => {
     cameraAnimationDone = false,
   } = props;
 
-  const handlePointerOver = (position: Position3D) => (e: any) => {
+  const handlePointerOver = (position: Position3D) => (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     onPointerOver(position);
   };
 
-  const handlePointerOut = (e: any) => {
+  const handlePointerOut = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     onPointerOut();
   };
 
+  const work = SCENE_STATIONS.work;
+  const home = SCENE_STATIONS.home;
+  const server = SCENE_STATIONS.server;
+  const experience = SCENE_STATIONS.experience;
+  const platform = SCENE_STATIONS.platform;
+  const resume = SCENE_STATIONS.resumeConsole;
+  const skill = SCENE_STATIONS.skill;
+  const radar = SCENE_STATIONS.radar;
+
   return (
     <>
-      {/* 호버 카메라 컨트롤러 - 초기 애니메이션이 아니고 특정 그룹에 포커스되지 않았을 때만 작동 */}
       <HoverCameraController
         hoveredPosition={hoveredPosition}
         isInitialAnimation={isInitialAnimation}
         focusedGroup={focusedGroup}
       />
 
-      {/* 초기 애니메이션 중이 아닐 때만 GridBackground 표시 */}
       {!isInitialAnimation && (
         <GridBackground
           showNeonPaths={!focusedGroup}
@@ -89,215 +95,201 @@ export const SceneRenderer = (props: SceneRendererProps) => {
         />
       )}
 
-      {/* 홀로테이블과 보관함 - 항상 표시하되 스케일과 위치를 동적으로 제어 */}
       {isShow('holoTable') && (
         <>
-          {/* 보관함은 초기 애니메이션이 완료된 후에만 표시 */}
           {!isInitialAnimation && <HoloContainer scale={holoTableScale} position={[0, 0.6, 0]} />}
           <HoloTable scale={holoTableScale} position={holoTablePosition} />
         </>
       )}
 
-      {/* 다른 모델들은 초기 애니메이션 완료 후에만 표시 */}
-      {/* work 그룹: workTable + typingMan */}
-      {showOtherModels &&
-        isShow('work') && [
+      {/* ABOUT ME */}
+      {showOtherModels && isShow('work') && (
+        <group position={work.anchor}>
           <WorkTable
-            key='workTable'
             scale={0.3}
-            position={[4.7, 0, 0.4]}
+            position={[0.5, 0, 0.4]}
             onClick={() => onGroupClick('work')}
-            onPointerOver={handlePointerOver([4, 0, 0])}
+            onPointerOver={handlePointerOver(work.hoverCenter)}
             onPointerOut={handlePointerOut}
-          />,
+          />
           <TypingMan
-            key='typingMan'
             scale={0.2}
             rotation={[0, -Math.PI / 2, 0]}
-            position={[4.2, 0, 0]}
+            position={[0, 0, 0]}
             onClick={() => onGroupClick('work')}
-            onPointerOver={handlePointerOver([4.2, 0, 0])}
+            onPointerOver={handlePointerOver(work.hoverCenter)}
             onPointerOut={handlePointerOut}
-          />,
+          />
           <WorkChair
-            key='workChair'
             scale={0.4}
-            position={[4.45, 0, -0.1]}
+            position={[0.25, 0, -0.1]}
             rotation={[0, -Math.PI, 0]}
             onClick={() => onGroupClick('work')}
-            onPointerOver={handlePointerOver([4.2, 0, 0])}
+            onPointerOver={handlePointerOver(work.hoverCenter)}
             onPointerOut={handlePointerOut}
-          />,
-        ]}
+          />
+        </group>
+      )}
 
       {/* HOME */}
       {showOtherModels && isShow('home') && (
-        <HomeDoor
-          scale={0.4}
-          rotation={[0, -Math.PI / 2, 0]}
-          position={[-5, 0, -0.1]}
-          onClick={() => onGroupClick('home')}
-          onPointerOver={handlePointerOver([-5, 0, -0.1])}
-          onPointerOut={handlePointerOut}
-          triggerAnimation={focusedGroup === 'home' && cameraAnimationDone}
-        />
+        <group position={home.anchor}>
+          <HomeDoor
+            scale={0.4}
+            rotation={[0, -Math.PI / 2, 0]}
+            position={[0, 0, 0]}
+            onClick={() => onGroupClick('home')}
+            onPointerOver={handlePointerOver(home.hoverCenter)}
+            onPointerOut={handlePointerOut}
+            triggerAnimation={focusedGroup === 'home' && cameraAnimationDone}
+          />
+        </group>
       )}
 
-      {/* server 그룹: server0,1,2 */}
-      {showOtherModels &&
-        isShow('server') && [
+      {/* WORKS */}
+      {showOtherModels && isShow('server') && (
+        <group position={server.anchor}>
           <WorkPerson
-            key='serverPerson'
             scale={0.2}
             rotation={[0, Math.PI, 0]}
-            position={[0.3, 0, -3.4]}
+            position={[0, 0, 0.4]}
             onClick={() => onGroupClick('server')}
-            onPointerOver={handlePointerOver([0, 0, -4])}
+            onPointerOver={handlePointerOver(server.hoverCenter)}
             onPointerOut={handlePointerOut}
             animationType='touch'
-          />,
-          <Computer key='computer' scale={0.06} position={[0.3, 0.3, -3.6]} rotation={[0, Math.PI / 2, 0]} />,
-          [0, 1, 2].map((index) => {
-            const position: Position3D = [0.3, 0, -4.2 - index * 0.2];
-            return (
-              <Server
-                key={index}
-                scale={0.004}
-                rotation={[0, Math.PI / 2, 0]}
-                position={position}
-                onClick={() => onGroupClick('server')}
-                onPointerOver={handlePointerOver([0, 0, -4])}
-                onPointerOut={handlePointerOut}
-              />
-            );
-          }),
-        ]}
+          />
+          <Computer scale={0.06} position={[0, 0.3, 0.2]} rotation={[0, Math.PI / 2, 0]} />
+          {[0, 1, 2].map((index) => (
+            <Server
+              key={index}
+              scale={0.004}
+              rotation={[0, Math.PI / 2, 0]}
+              position={[0, 0, -0.4 - index * 0.22]}
+              onClick={() => onGroupClick('server')}
+              onPointerOver={handlePointerOver(server.hoverCenter)}
+              onPointerOut={handlePointerOut}
+            />
+          ))}
+        </group>
+      )}
 
-      {/* experience 그룹: experiencePerson + experienceDesk */}
-      {showOtherModels &&
-        isShow('experience') && [
+      {/* EXPERIENCE */}
+      {showOtherModels && isShow('experience') && (
+        <group position={experience.anchor}>
           <ExperiencePerson
-            key='experiencePerson'
             scale={0.2}
             rotation={[0, Math.PI, 0]}
-            position={[-1, 0, 4.2]}
+            position={[0, 0, 0.2]}
             onClick={() => onGroupClick('experience')}
-            onPointerOver={handlePointerOver([-1, 0, 4])}
+            onPointerOver={handlePointerOver(experience.hoverCenter)}
             onPointerOut={handlePointerOut}
-          />,
+          />
           <ExperienceDesk
-            key='experienceDesk'
             scale={0.4}
-            position={[-1, 0, 4]}
-            onPointerOver={handlePointerOver([-1, 0, 4])}
+            position={[0, 0, 0]}
+            onPointerOver={handlePointerOver(experience.hoverCenter)}
             onPointerOut={handlePointerOut}
             onClick={() => onGroupClick('experience')}
-          />,
-        ]}
+          />
+        </group>
+      )}
 
+      {/* PLAYGROUND */}
       {showOtherModels && isShow('platform') && (
-        <>
+        <group position={platform.anchor}>
           <Platform
             scale={0.1}
-            position={[-4, 0, 3.5]}
+            position={[0, 0, 0]}
             onClick={() => onGroupClick('platform')}
-            onPointerOver={handlePointerOver([-4, 0, 3.4])}
+            onPointerOver={handlePointerOver(platform.hoverCenter)}
             onPointerOut={handlePointerOut}
           />
           <FloatMan
             scale={0.2}
             rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            position={[-4.1, 0.2, 3.45]}
+            position={[-0.1, 0.2, -0.05]}
             onClick={() => onGroupClick('platform')}
-            onPointerOver={handlePointerOver([-4, 0, 3.4])}
+            onPointerOver={handlePointerOver(platform.hoverCenter)}
             onPointerOut={handlePointerOut}
           />
-        </>
+        </group>
       )}
 
-      {/* 홀로그램 이름표들 */}
-      {showOtherModels && !focusedGroup && !pulseActive && (
-        <>
-          <HoloText
-            text='ABOUT ME'
-            position={[3.4, 0, 0.5]}
-            rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#E5D6C4'
-          />
-          <HoloText
-            text='CONTACT'
-            position={[-1.9, 0, -3.1]}
-            rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#E5D6C4'
-            scale={0.8}
-          />
-          <HoloText text='WORKS' position={[-0.1, 0, -3]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
-          <HoloText
-            text='RESUME'
-            position={[2.85, 0, -2.5]}
-            rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#E5D6C4'
-          />
-          <HoloText text='EXPERIENCE' position={[-1.3, 0, 3.3]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
-          <HoloText text='SKILLS' position={[2.3, 0, 2]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} color='#E5D6C4' />
-          <HoloText
-            text='HOME'
-            position={[-4, 0, 0.3]}
-            rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-            color='#E5D6C4'
-            scale={0.8}
-          />
-          <HoloText text='PLAYGROUND' position={[-4.5, 0, 2.8]} rotation={[-Math.PI / 2, 0, 0]} color='#E5D6C4' />
-        </>
-      )}
-
+      {/* RESUME */}
       {showOtherModels && isShow('resumeConsole') && (
-        <>
+        <group position={resume.anchor}>
           <InspectingPerson
             scale={0.2}
             rotation={[0, -Math.PI / 2, 0]}
-            position={[3.7, 0, -2.9]}
+            position={[0.5, 0, 0]}
             onClick={() => onGroupClick('resumeConsole')}
-            onPointerOver={handlePointerOver([3, 0, -2.6])}
+            onPointerOver={handlePointerOver(resume.hoverCenter)}
             onPointerOut={handlePointerOut}
           />
           <LabMachine
             scale={0.3}
-            position={[3, 0, -3]}
+            position={[-0.2, 0, -0.1]}
             rotation={[0, Math.PI / 2, 0]}
             onClick={() => onGroupClick('resumeConsole')}
-            onPointerOver={handlePointerOver([3, 0, -2.6])}
+            onPointerOver={handlePointerOver(resume.hoverCenter)}
             onPointerOut={handlePointerOut}
           />
-        </>
+        </group>
       )}
 
+      {/* SKILLS */}
       {showOtherModels && isShow('skill') && (
-        <RobotArm
-          scale={0.005}
-          position={[1.5, 0, 1.5]}
-          onClick={() => onGroupClick('skill')}
-          onPointerOver={handlePointerOver([1.5, 0, 1.5])}
-          onPointerOut={handlePointerOut}
-        />
+        <group position={skill.anchor}>
+          <RobotArm
+            scale={0.005}
+            position={[0, 0, 0]}
+            onClick={() => onGroupClick('skill')}
+            onPointerOver={handlePointerOver(skill.hoverCenter)}
+            onPointerOut={handlePointerOut}
+          />
+        </group>
       )}
 
+      {/* CONTACT */}
       {showOtherModels && isShow('radar') && (
-        <Antenna
-          scale={0.3}
-          rotation={[0, Math.PI, 0]}
-          position={[-3, 0, -3.5]}
-          onClick={() => onGroupClick('radar')}
-          onPointerOver={handlePointerOver([-3, 0, -3.5])}
-          onPointerOut={handlePointerOut}
-        />
+        <group position={radar.anchor}>
+          <Antenna
+            scale={0.3}
+            rotation={[0, Math.PI, 0]}
+            position={[0, 0, 0]}
+            onClick={() => onGroupClick('radar')}
+            onPointerOver={handlePointerOver(radar.hoverCenter)}
+            onPointerOut={handlePointerOut}
+          />
+        </group>
       )}
 
-      {/* 메인 조명 */}
-      <directionalLight position={[10, 10, 5]} intensity={0.5} color='#ffffff' />
+      {/* 라벨 — 앵커 + labelOffset */}
+      {showOtherModels &&
+        !focusedGroup &&
+        !pulseActive &&
+        Object.values(SCENE_STATIONS).map((station) => (
+          <HoloText
+            key={station.id}
+            text={station.label}
+            position={[
+              station.anchor[0] + station.labelOffset[0],
+              station.anchor[1] + station.labelOffset[1],
+              station.anchor[2] + station.labelOffset[2],
+            ]}
+            rotation={station.labelRotation}
+            color='#E5D6C4'
+            scale={station.labelScale ?? 0.55}
+          />
+        ))}
+
+      <ambientLight intensity={0.28} />
+      <hemisphereLight args={['#b8d4ff', '#1a1a1a', 0.35]} />
+      <directionalLight position={[8, 12, 6]} intensity={0.75} color='#ffffff' castShadow={false} />
+      <Environment preset='city' environmentIntensity={0.35} />
 
       <EffectComposer>
-        <Bloom luminanceThreshold={0} mipmapBlur luminanceSmoothing={0.0} intensity={1} />
+        <Bloom luminanceThreshold={0.82} mipmapBlur luminanceSmoothing={0.2} intensity={0.45} />
       </EffectComposer>
 
       <FPSMeasurer />

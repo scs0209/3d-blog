@@ -1,10 +1,9 @@
 'use client';
 
-import { useRef, useMemo, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
 import { Grid } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as three from 'three';
-import { useState } from 'react';
 
 export function GridBackground({
   showNeonPaths = true,
@@ -111,35 +110,29 @@ export function GridBackground({
   // hoveredGroup 변경 시 하이라이트 위치 및 투명도 목표 설정
   useEffect(() => {
     if (hoveredPosition) {
-      const pos = hoveredPosition;
-      // 가장 가까운 그리드 셀의 중앙으로 위치를 보정합니다.
-      const snappedX = Math.round(pos[0]);
-      const snappedZ = Math.round(pos[2]);
-
-      setHighlightPosition(new three.Vector3(snappedX, 0.01, snappedZ));
-      targetOpacity.current = 0.4; // 나타날 때의 최종 투명도
+      // 모델 클러스터 중심에 네온 박스를 맞춤 (정수 round 시 .5 좌표가 한 칸 밀림)
+      setHighlightPosition(new three.Vector3(hoveredPosition[0], 0.01, hoveredPosition[2]));
+      targetOpacity.current = 0.4;
     } else {
-      targetOpacity.current = 0; // 사라질 때의 최종 투명도
+      targetOpacity.current = 0;
     }
   }, [hoveredPosition]);
 
-  // 선 애니메이션 시작 (컴포넌트 마운트 시)
+  // 선 애니메이션 — 최초 진입 시 1회만 실행
   useEffect(() => {
-    if (showNeonPaths) {
-      setLineAnimationProgress(0);
-      const animationInterval = setInterval(() => {
-        setLineAnimationProgress((prev) => {
-          if (prev >= 1) {
-            clearInterval(animationInterval);
-            return 1;
-          }
-          return prev + 0.02; // 2%씩 증가
-        });
-      }, 50); // 50ms마다 업데이트
+    setLineAnimationProgress(0);
+    const animationInterval = setInterval(() => {
+      setLineAnimationProgress((prev) => {
+        if (prev >= 1) {
+          clearInterval(animationInterval);
+          return 1;
+        }
+        return prev + 0.02;
+      });
+    }, 50);
 
-      return () => clearInterval(animationInterval);
-    }
-  }, [showNeonPaths]);
+    return () => clearInterval(animationInterval);
+  }, []);
 
   // pulseActive가 true로 바뀔 때마다 1회 애니메이션 트리거
   useEffect(() => {
@@ -309,7 +302,7 @@ export function GridBackground({
       {/* 호버 하이라이트 원 */}
       {highlightPosition && (
         <mesh ref={highlightRef} position={highlightPosition} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[2, 2]} />
+          <planeGeometry args={[1.5, 1.5]} />
           <meshBasicMaterial
             color='#d0e9f7'
             transparent
@@ -320,74 +313,29 @@ export function GridBackground({
         </mesh>
       )}
 
-      {/* 네온 보라색 경로들 - HoloTable(중심)에서 홀로그램 텍스트로 */}
+      {/* 네온 경로 — 허브 → 각 라벨 (ㄹ자, 검증된 좌표) */}
       {showNeonPaths && (
         <>
-          {/* WORKS로 연결 (ㄹ자 형태, 수직/수평만) */}
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 0, 0), // 시작점 (중심)
-                new three.Vector3(0, 0, -2.2), // 뒤쪽으로
-                new three.Vector3(1.2, 0, -2.2), // 왼쪽으로
-                new three.Vector3(1.2, 0, -3), // 더 뒤쪽으로
-                new three.Vector3(0.8, 0, -3), // 텍스트 시작 부분으로
+                new three.Vector3(0, 0, 0),
+                new three.Vector3(0, 0, -2.2),
+                new three.Vector3(1.2, 0, -2.2),
+                new three.Vector3(1.2, 0, -3),
+                new three.Vector3(0.8, 0, -3),
               ],
               lineColor,
               lineAnimationProgress,
             )}
           />
-          {/* RESUME로 연결 (ㄹ자 형태, 수직/수평만) */}
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0.1, 0, -0.08), // 시작점 (중심)
-                new three.Vector3(0.1, 0, -1.5), // 뒤쪽으로
-                new three.Vector3(2.8, 0, -1.5), // 아래쪽으로
+                new three.Vector3(0.1, 0, -0.08),
+                new three.Vector3(0.1, 0, -1.5),
+                new three.Vector3(2.8, 0, -1.5),
                 new three.Vector3(2.8, 0, -2.5),
-                // new three.Vector3(3.35, 2, 0.6),
-              ],
-              lineColor,
-              lineAnimationProgress,
-            )}
-          />
-          {/* EXPERIENCE로 연결 (ㄹ자 형태, 수직/수평만) */}
-          <primitive
-            object={createAnimatedNeonPath(
-              [
-                new three.Vector3(-0.1, 0, 0), // 시작점 (중심)
-                new three.Vector3(-0.1, 0, 2.3), // 뒤쪽으로
-                new three.Vector3(0.5, 0, 2.3), // 왼쪽으로
-                new three.Vector3(0.5, 0, 3.2), // 더 뒤쪽으로
-                new three.Vector3(0, 0, 3.2), // 텍스트 시작 부분으로
-              ],
-              lineColor,
-              lineAnimationProgress,
-            )}
-          />
-          {/* HOME으로 연결 (ㄹ자 형태, 수직/수평만) */}
-          <primitive
-            object={createAnimatedNeonPath(
-              [
-                new three.Vector3(0, 0, 0), // 시작점 (중심)
-                new three.Vector3(-3, 0, 0), // 왼쪽으로
-                new three.Vector3(-3, 0, 1), // 아래쪽으로
-                new three.Vector3(-4.1, 0, 1), // 텍스트 시작 부분으로
-                new three.Vector3(-4.1, 0, 0.4), // 텍스트 시작 부분으로
-              ],
-              lineColor,
-              lineAnimationProgress,
-            )}
-          />
-          {/* RADAR로 연결 (ㄹ자 형태, 수직/수평만) */}
-          <primitive
-            object={createAnimatedNeonPath(
-              [
-                new three.Vector3(0, 0, -0.1), // 시작점 (중심)
-                new three.Vector3(-1.5, 0, -0.1), // 왼쪽으로
-                new three.Vector3(-1.5, 0, -2), // 아래쪽으로
-                new three.Vector3(-2, 0, -2), // 텍스트 시작 부분으로
-                new three.Vector3(-2, 0, -3), // 텍스트 시작 부분으로
               ],
               lineColor,
               lineAnimationProgress,
@@ -396,22 +344,60 @@ export function GridBackground({
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 0, 0.1), // 시작점 (중심)
-                new three.Vector3(-2, 0, 0.1), // 왼쪽으로
-                new three.Vector3(-2, 0, 2.7), // 아래쪽으로
-                new three.Vector3(-3, 0, 2.7), // 텍스트 시작 부분으로
+                new three.Vector3(-0.1, 0, 0),
+                new three.Vector3(-0.1, 0, 2.3),
+                new three.Vector3(0.5, 0, 2.3),
+                new three.Vector3(0.5, 0, 3.2),
+                new three.Vector3(0, 0, 3.2),
               ],
               lineColor,
               lineAnimationProgress,
             )}
           />
-          {/* ABOUT ME로 연결 (ㄹ자 형태, 수직/수평만) */}
           <primitive
             object={createAnimatedNeonPath(
               [
-                new three.Vector3(0, 0, 0), // 시작점 (중심)
-                new three.Vector3(3, 0, 0), // 오른쪽으로
-                new three.Vector3(3, 0, 0.8), // 아래쪽으로
+                new three.Vector3(0, 0, 0),
+                new three.Vector3(-3, 0, 0),
+                new three.Vector3(-3, 0, 1),
+                new three.Vector3(-4.1, 0, 1),
+                new three.Vector3(-4.1, 0, 0.4),
+              ],
+              lineColor,
+              lineAnimationProgress,
+            )}
+          />
+          <primitive
+            object={createAnimatedNeonPath(
+              [
+                new three.Vector3(0, 0, -0.1),
+                new three.Vector3(-1.5, 0, -0.1),
+                new three.Vector3(-1.5, 0, -2),
+                new three.Vector3(-2, 0, -2),
+                new three.Vector3(-2, 0, -3),
+              ],
+              lineColor,
+              lineAnimationProgress,
+            )}
+          />
+          <primitive
+            object={createAnimatedNeonPath(
+              [
+                new three.Vector3(0, 0, 0.1),
+                new three.Vector3(-2, 0, 0.1),
+                new three.Vector3(-2, 0, 2.7),
+                new three.Vector3(-3, 0, 2.7),
+              ],
+              lineColor,
+              lineAnimationProgress,
+            )}
+          />
+          <primitive
+            object={createAnimatedNeonPath(
+              [
+                new three.Vector3(0, 0, 0),
+                new three.Vector3(3, 0, 0),
+                new three.Vector3(3, 0, 0.8),
                 new three.Vector3(3.35, 0, 0.8),
                 new three.Vector3(3.35, 0, 0.6),
               ],
@@ -419,14 +405,9 @@ export function GridBackground({
               lineAnimationProgress,
             )}
           />
-          {/* SKILL로 연결 (ㄹ자 형태, 수직/수평만) */}
           <primitive
             object={createAnimatedNeonPath(
-              [
-                new three.Vector3(0, 0, 0.1), // 시작점 (중심)
-                new three.Vector3(2.3, 0, 0.1), // 오른쪽으로
-                new three.Vector3(2.3, 0, 1), // 아래쪽으로
-              ],
+              [new three.Vector3(0, 0, 0.1), new three.Vector3(2.3, 0, 0.1), new three.Vector3(2.3, 0, 1)],
               lineColor,
               lineAnimationProgress,
             )}
