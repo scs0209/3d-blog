@@ -24,6 +24,10 @@ export function AboutMePage({ isClosing = false, onClose }: AboutMePageProps) {
     setSelectedSectionKey(key);
   };
 
+  if (!selectedSection) {
+    return null;
+  }
+
   return (
     <div className='flex flex-col gap-5 h-full max-h-full overflow-hidden'>
       <div className='flex flex-wrap gap-3'>
