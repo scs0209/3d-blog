@@ -1,0 +1,41 @@
+---
+description: Next.js App Router Server/Client 컴포넌트 경계
+globs: "{app,src}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Server vs Client Component
+
+기본은 **Server Component**. `'use client'`는 필요할 때만 추가한다.
+상세 가이드: `ARCHITECTURE.md`의 Server/Client 섹션.
+
+## Server로 둘 것
+
+- `app/**/page.tsx`, `layout.tsx`, `loading.tsx` (인터랙션 없을 때)
+- `app/api/**/route.ts`
+- `src/entities/**/lib/*` 순수 함수 (트리 빌드, DTO 정규화 등)
+
+## Client로 둘 것 (`'use client'`)
+
+- `useState` / `useEffect` / `useTransition`
+- 클릭·폼·모달 open 상태
+- `useRouter` / `usePathname`, framer-motion
+- TanStack Query (`useQuery` 등)
+- `window` / `localStorage` 등 브라우저 API
+
+## 패턴
+
+```tsx
+// ✅ app/.../page.tsx (Server) → Client 위젯만 조합
+export default function Page() {
+  return <CategoryManagement />;
+}
+
+// ✅ entities/.../lib/build-category-tree.ts — 'use client' 없음
+// ✅ widgets/.../CategoryTree.tsx — 접기/클릭 있으므로 'use client'
+```
+
+## 하지 말 것
+
+- 정적 마크업·metadata만 있는 파일에 `'use client'`
+- Client 경계를 부모까지 불필요하게 확장

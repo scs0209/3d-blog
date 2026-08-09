@@ -1,0 +1,30 @@
+---
+description: API/Swagger 변경 시 openapi-typescript 타입 재생성 필수
+globs: app/api/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# API 변경 후 타입 동기화
+
+`app/api/**`의 라우트·Swagger 주석을 바꾸면 OpenAPI 타입이 어긋날 수 있다.
+
+## 필수
+
+1. Swagger(`@swagger`) / request·response shape 변경 후 **반드시** 실행:
+   ```bash
+   pnpm run generate-types
+   ```
+2. 생성물: `src/shared/api/openapi-types.ts`
+3. 클라이언트/엔티티에서 API 응답을 쓸 때는 OpenAPI 타입을 기준으로 맞춘다.
+   - optional 필드(`slug?` 등)는 `?? ''` 등으로 정규화하거나 전용 mapper 사용
+   - 예: `toCategoryListItems()`
+
+## 하지 말 것
+
+- Swagger만 바꾸고 `generate-types`를 생략한 채 수동으로 `openapi-types.ts`를 대충 수정
+- OpenAPI optional을 무시하고 필수 `string`에 그대로 할당
+
+## 확인
+
+- [ ] `pnpm run generate-types` 실행됨
+- [ ] 관련 entity/feature 타입이 새 OpenAPI와 호환됨
