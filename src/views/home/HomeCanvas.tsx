@@ -1,12 +1,12 @@
 'use client';
 
-import { Suspense, useMemo, useEffect, useState } from 'react';
+import { OrbitControls, Sparkles, Stars, useFBX, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { SceneClickHandler, WalkingAvatar, Planet, FallingAstronaut, RoomModel } from '@/widgets/home';
-import { CanvasLoader, Earth, Scene, Sun } from '@/shared/ui';
-import { OrbitControls, Sparkles, Stars, useGLTF } from '@react-three/drei';
+import { useAnimationFrame, useMotionValue, useSpring } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import { motion, useMotionValue, useSpring, useAnimationFrame } from 'framer-motion';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { CanvasLoader, Earth, Scene, Sun } from '@/shared/ui';
+import { FallingAstronaut, Planet, RoomModel, SceneClickHandler, WalkingAvatar } from '@/widgets/home';
 
 export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) => void }) => {
   const { theme } = useTheme();
@@ -22,6 +22,8 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
       } else {
         useGLTF.preload('/space_boi.glb');
         useGLTF.preload('/WalkingAstro.glb');
+        useFBX.preload('/snp.fbx');
+        useFBX.preload('/Typing.fbx');
       }
     }, 100);
 
@@ -40,6 +42,9 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [displayTheme, setDisplayTheme] = useState(theme);
+  const isTransitioningRef = useRef(false);
+  const displayThemeRef = useRef(theme);
+  const themeRef = useRef(theme);
 
   const darkRadius = 20;
   const lightRadius = 100;
@@ -57,35 +62,79 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
 
   const radius = useMotionValue(displayTheme === 'dark' ? darkRadius : lightRadius);
   const spring = useSpring(radius, { stiffness: 80, damping: 20 });
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const starNodesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    displayThemeRef.current = displayTheme;
+  }, [displayTheme]);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
+
+  useEffect(() => {
+    isTransitioningRef.current = isTransitioning;
+  }, [isTransitioning]);
 
   useEffect(() => {
     if (theme !== displayTheme) {
       setIsTransitioning(true);
+      isTransitioningRef.current = true;
       if (theme === 'dark') {
         radius.set(darkRadius);
         setTimeout(() => {
           setDisplayTheme('dark');
+          displayThemeRef.current = 'dark';
           setIsTransitioning(false);
+          isTransitioningRef.current = false;
         }, 500);
       } else {
         setDisplayTheme('light');
+        displayThemeRef.current = 'light';
         setTimeout(() => {
           radius.set(lightRadius);
           setIsTransitioning(false);
+          isTransitioningRef.current = false;
         }, 50);
       }
     }
   }, [theme, displayTheme, radius]);
 
-  const [currentRadius, setCurrentRadius] = useState(radius.get());
-  const [overlayOpacity, setOverlayOpacity] = useState(displayTheme === 'dark' ? 1 : 0);
+  // React setState 없이 DOM만 갱신 — WalkingAvatar 리렌더/위치 리셋 방지
   useAnimationFrame(() => {
-    setCurrentRadius(spring.get());
-    if (displayTheme === 'dark' || (theme === 'dark' && isTransitioning)) {
-      setOverlayOpacity(1);
+    const overlay = overlayRef.current;
+    if (!overlay) {
+      return;
+    }
+
+    const currentRadius = spring.get();
+    const currentDisplayTheme = displayThemeRef.current;
+    const currentTheme = themeRef.current;
+    const transitioning = isTransitioningRef.current;
+
+    let overlayOpacity = 0;
+    if (currentDisplayTheme === 'dark' || (currentTheme === 'dark' && transitioning)) {
+      overlayOpacity = 1;
     } else {
       const progress = (currentRadius - darkRadius) / (lightRadius - darkRadius);
-      setOverlayOpacity(Math.max(0, 1 - progress));
+      overlayOpacity = Math.max(0, 1 - progress);
+    }
+
+    overlay.style.opacity = String(overlayOpacity);
+    overlay.style.background = `radial-gradient(circle at 50% 50%, transparent ${currentRadius}%, #000 ${currentRadius + 10}%)`;
+    overlay.style.display =
+      currentDisplayTheme === 'dark' || overlayOpacity > 0 ? 'block' : 'none';
+
+    const minDistance = currentRadius * 0.6;
+    for (const starEl of starNodesRef.current) {
+      if (!starEl) {
+        continue;
+      }
+      const x = Number(starEl.dataset.x);
+      const y = Number(starEl.dataset.y);
+      const distance = Math.hypot(x - 50, y - 50);
+      starEl.style.display = distance > minDistance ? 'block' : 'none';
     }
   });
 
@@ -110,9 +159,6 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
               <SceneClickHandler />
               <Stars radius={100} depth={100} count={4000} factor={4} saturation={0} fade speed={0.2} />
               <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
-              {/* <Suspense fallback={<CanvasLoader />}>
-                <AnimateAvatar scale={3000} position={[0, 5, 0]} />
-              </Suspense> */}
               <WalkingAvatar position={[0, 0.6, 0.5]} triggerSnp={triggerSnp} />
               <Sun scale={15} position={[70, 15, 30]} isCubeActive={isCubeActive} />
 
@@ -138,37 +184,35 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
         </Canvas>
       </div>
 
-      {(displayTheme === 'dark' || overlayOpacity > 0) && (
-        <motion.div
-          className='pointer-events-none absolute inset-0 z-10'
-          style={{
-            opacity: overlayOpacity,
-            background: `radial-gradient(circle at 50% 50%, transparent ${currentRadius}%, #000 ${currentRadius + 10}%)`,
-            transition: 'background 0.5s ease-in-out, opacity 0.4s ease-in-out',
-          }}
-        >
-          {stars.map((star) => {
-            const centerX = 50;
-            const centerY = 50;
-            const distance = Math.sqrt((star.x - centerX) ** 2 + (star.y - centerY) ** 2);
-            const minDistance = currentRadius * 0.6;
-
-            return distance > minDistance ? (
-              <div
-                key={star.id}
-                className='absolute w-0.5 h-0.5 bg-white rounded-full animate-pulse'
-                style={{
-                  left: `${star.x}%`,
-                  top: `${star.y}%`,
-                  animationDelay: `${star.delay}s`,
-                  animationDuration: `${star.duration}s`,
-                  opacity: star.opacity,
-                }}
-              />
-            ) : null;
-          })}
-        </motion.div>
-      )}
+      <div
+        ref={overlayRef}
+        className='pointer-events-none absolute inset-0 z-10'
+        style={{
+          opacity: displayTheme === 'dark' ? 1 : 0,
+          display: displayTheme === 'dark' ? 'block' : 'none',
+          background: `radial-gradient(circle at 50% 50%, transparent ${displayTheme === 'dark' ? darkRadius : lightRadius}%, #000 ${(displayTheme === 'dark' ? darkRadius : lightRadius) + 10}%)`,
+          transition: 'background 0.5s ease-in-out, opacity 0.4s ease-in-out',
+        }}
+      >
+        {stars.map((star, index) => (
+          <div
+            key={star.id}
+            ref={(el) => {
+              starNodesRef.current[index] = el;
+            }}
+            data-x={star.x}
+            data-y={star.y}
+            className='absolute w-0.5 h-0.5 bg-white rounded-full animate-pulse'
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              animationDelay: `${star.delay}s`,
+              animationDuration: `${star.duration}s`,
+              opacity: star.opacity,
+            }}
+          />
+        ))}
+      </div>
     </>
   );
 };
