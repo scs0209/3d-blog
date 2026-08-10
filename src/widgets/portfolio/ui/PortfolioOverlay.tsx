@@ -65,7 +65,7 @@ export function PortfolioOverlay({ isExiting, onExitComplete }: { isExiting?: bo
 
                     <div className='p-5 flex flex-1 min-h-0 flex-col'>
                       <p className={`${overlayStyles.subtitle} mb-3 shrink-0`}>{project.subtitle}</p>
-                      <p className={`${overlayStyles.body} flex-1`}>{project.description}</p>
+                      <p className={`${overlayStyles.body} flex-1 min-h-0 overflow-y-auto`}>{project.description}</p>
 
                       {(project.liveUrl || project.sourceUrl) && (
                         <div className='mt-auto flex gap-3 pt-4 shrink-0'>
