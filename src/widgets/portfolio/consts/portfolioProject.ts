@@ -17,6 +17,6 @@ export const portfolioProjects: PortfolioProject[] = [
     description:
       'Next.js App Router로 전체 페이지를 구현하고, Apollo Client로 GraphQL 연동과 상태 관리를 담당했습니다. Google 번역 API 다국어 지원과 Metatag·서버 컴포넌트 기반 SEO 최적화를 적용했습니다.',
     image: '/assets/images/project2.jpg',
-    sourceUrl: 'https://github.com/scs0209',
+    liveUrl: 'https://fashionbiz.co.kr/',
   },
 ];
