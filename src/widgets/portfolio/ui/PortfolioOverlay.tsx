@@ -52,38 +52,45 @@ export function PortfolioOverlay({ isExiting, onExitComplete }: { isExiting?: bo
             <AnimatePresence>
               {portfolioProjects.map((project, index) => (
                 <motion.div key={`${project.id}-${animationKey}`} variants={cardVariants}>
-                  <OverlayPanel className='overflow-hidden h-[480px] w-full flex flex-col'>
-                    <div className='h-40 border-b border-neon-cream/20 flex items-center justify-center bg-black/40'>
+                  <OverlayPanel
+                    className='overflow-hidden h-[480px] w-full'
+                    contentClassName='flex h-full flex-col'
+                  >
+                    <div className='h-40 shrink-0 border-b border-neon-cream/20 flex items-center justify-center bg-black/40'>
                       <div className='text-center'>
                         <p className={`${overlayStyles.kicker} mb-2`}>PROJECT {String(index + 1).padStart(2, '0')}</p>
                         <p className={`${overlayStyles.title} text-sm`}>{project.title}</p>
                       </div>
                     </div>
 
-                    <div className='p-5 flex flex-col flex-1 relative'>
-                      <p className={`${overlayStyles.subtitle} mb-3`}>{project.subtitle}</p>
-                      <p className={`${overlayStyles.body} line-clamp-6`}>{project.description}</p>
+                    <div className='p-5 flex flex-1 min-h-0 flex-col'>
+                      <p className={`${overlayStyles.subtitle} mb-3 shrink-0`}>{project.subtitle}</p>
+                      <p className={`${overlayStyles.body} flex-1 min-h-0 overflow-y-auto`}>{project.description}</p>
 
-                      <div className='absolute bottom-5 left-5 right-5 flex gap-3'>
-                        {project.liveUrl ? (
-                          <a
-                            href={project.liveUrl}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className={`${overlayStyles.button} flex-1 text-center text-xs`}
-                          >
-                            VIEW LIVE
-                          </a>
-                        ) : null}
-                        <a
-                          href={project.sourceUrl}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className={`${overlayStyles.buttonPrimary} flex-1 text-center text-xs py-2.5`}
-                        >
-                          SOURCE
-                        </a>
-                      </div>
+                      {(project.liveUrl || project.sourceUrl) && (
+                        <div className='mt-auto flex gap-3 pt-4 shrink-0'>
+                          {project.liveUrl ? (
+                            <a
+                              href={project.liveUrl}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              className={`${overlayStyles.button} flex-1 text-center text-xs`}
+                            >
+                              VIEW LIVE
+                            </a>
+                          ) : null}
+                          {project.sourceUrl ? (
+                            <a
+                              href={project.sourceUrl}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              className={`${overlayStyles.button} flex-1 text-center text-xs`}
+                            >
+                              SOURCE
+                            </a>
+                          ) : null}
+                        </div>
+                      )}
                     </div>
                   </OverlayPanel>
                 </motion.div>
