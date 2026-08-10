@@ -1,7 +1,7 @@
-import { Html, useProgress } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 
+/** useProgress는 에셋 로드 중 다른 컴포넌트 렌더에서 setState를 유발할 수 있어 사용하지 않음 */
 export const CanvasLoader = () => {
-  const { progress } = useProgress();
   return (
     <Html
       as='div'
@@ -22,7 +22,7 @@ export const CanvasLoader = () => {
           marginTop: 40,
         }}
       >
-        {progress.toFixed(2)}%
+        Loading…
       </p>
     </Html>
   );
