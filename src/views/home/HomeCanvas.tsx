@@ -1,18 +1,18 @@
 'use client';
 
-import { OrbitControls, Sparkles, Stars, useFBX, useGLTF } from '@react-three/drei';
+import { useFBX, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useAnimationFrame, useMotionValue, useSpring } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { CanvasLoader, Earth, Scene, Sun } from '@/shared/ui';
-import { FallingAstronaut, Planet, RoomModel, SceneClickHandler, WalkingAvatar } from '@/widgets/home';
+import * as three from 'three';
+import { CanvasLoader } from '@/shared/ui';
+import { CinematicCosmosScene, FallingAstronaut, PortalDiscoveryOverlay, RoomModel } from '@/widgets/home';
+import type { CosmosPortalId } from '@/widgets/home/model/cosmos-portals';
 
-export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) => void }) => {
+export const HomeCanvas = () => {
   const { theme } = useTheme();
-
-  const [triggerSnp, setTriggerSnp] = useState<number>(0);
-  const [isCubeActive, setIsCubeActive] = useState<boolean>(false);
+  const [activePortalId, setActivePortalId] = useState<CosmosPortalId | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -20,23 +20,14 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
         useGLTF.preload('/challenge_isometric_room--kidnap.glb');
         useGLTF.preload('/Falling.glb');
       } else {
-        useGLTF.preload('/space_boi.glb');
         useGLTF.preload('/WalkingAstro.glb');
         useFBX.preload('/snp.fbx');
         useFBX.preload('/Typing.fbx');
       }
     }, 100);
 
-    const delayedTimer = setTimeout(() => {
-      if (theme === 'light') {
-        useGLTF.preload('/floating_astronaut.glb');
-        useGLTF.preload('/earth_globe_hologram_2mb_looping_animation.glb');
-      }
-    }, 1000);
-
     return () => {
       clearTimeout(timer);
-      clearTimeout(delayedTimer);
     };
   }, [theme]);
 
@@ -64,6 +55,12 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
   const spring = useSpring(radius, { stiffness: 80, damping: 20 });
   const overlayRef = useRef<HTMLDivElement>(null);
   const starNodesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (displayTheme === 'dark') {
+      setActivePortalId(null);
+    }
+  }, [displayTheme]);
 
   useEffect(() => {
     displayThemeRef.current = displayTheme;
@@ -101,7 +98,6 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
     }
   }, [theme, displayTheme, radius]);
 
-  // React setState 없이 DOM만 갱신 — WalkingAvatar 리렌더/위치 리셋 방지
   useAnimationFrame(() => {
     const overlay = overlayRef.current;
     if (!overlay) {
@@ -123,8 +119,7 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
 
     overlay.style.opacity = String(overlayOpacity);
     overlay.style.background = `radial-gradient(circle at 50% 50%, transparent ${currentRadius}%, #000 ${currentRadius + 10}%)`;
-    overlay.style.display =
-      currentDisplayTheme === 'dark' || overlayOpacity > 0 ? 'block' : 'none';
+    overlay.style.display = currentDisplayTheme === 'dark' || overlayOpacity > 0 ? 'block' : 'none';
 
     const minDistance = currentRadius * 0.6;
     for (const starEl of starNodesRef.current) {
@@ -141,12 +136,20 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
   return (
     <>
       <div className='absolute inset-0'>
-        <Canvas camera={{ fov: 75, near: 0.1, zoom: 0.9, position: [-5.3, 3.1, -6.7] }}>
-          <ambientLight intensity={2} color='white' />
-          <directionalLight position={[5, 10, 5]} intensity={2} castShadow />
-
+        <Canvas
+          shadows
+          dpr={[1, 1.75]}
+          gl={{
+            antialias: true,
+            toneMapping: three.ACESFilmicToneMapping,
+            toneMappingExposure: 0.88,
+          }}
+          camera={{ fov: 36, near: 0.1, far: 500, position: [5.5, 2.1, 14] }}
+        >
           {displayTheme === 'dark' ? (
             <>
+              <ambientLight intensity={2} color='white' />
+              <directionalLight position={[5, 10, 5]} intensity={2} castShadow />
               <Suspense fallback={<CanvasLoader />}>
                 <RoomModel scale={0.013} position={[0, -3, 0]} rotation={[0, 4.4, 0]} />
               </Suspense>
@@ -156,34 +159,13 @@ export const HomeCanvas = ({ onCubeClick }: { onCubeClick?: (clicked: boolean) =
             </>
           ) : (
             <Suspense fallback={<CanvasLoader />}>
-              <SceneClickHandler />
-              <Stars radius={100} depth={100} count={4000} factor={4} saturation={0} fade speed={0.2} />
-              <Sparkles count={300} size={3} speed={0.02} opacity={1} scale={20} color='#fff3b0' />
-              <WalkingAvatar position={[0, 0.6, 0.5]} triggerSnp={triggerSnp} />
-              <Sun scale={15} position={[70, 15, 30]} isCubeActive={isCubeActive} />
-
-              <Earth scale={10} position={[-18, 0, 50]} />
-
-              <Scene
-                isCubeActive={isCubeActive}
-                onCubeClick={() => {
-                  setTriggerSnp(Date.now());
-                  const newState = !isCubeActive;
-                  setIsCubeActive(newState);
-                  onCubeClick?.(newState);
-                }}
-              />
-
-              <ambientLight intensity={0.5} />
-              <pointLight position={[5, 5, 5]} intensity={2} />
-              <OrbitControls makeDefault enableDamping dampingFactor={0.05} enablePan enableZoom />
-
-              <Planet scale={30} position={[0, -19, 0]} />
+              <CinematicCosmosScene onActivePortalChange={setActivePortalId} />
             </Suspense>
           )}
         </Canvas>
       </div>
 
+      {displayTheme !== 'dark' ? <PortalDiscoveryOverlay activePortalId={activePortalId} /> : null}
       <div
         ref={overlayRef}
         className='pointer-events-none absolute inset-0 z-10'

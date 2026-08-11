@@ -6,3 +6,6 @@ export { Planet } from './Planet';
 export { WalkingAvatar } from './WalkingAvatar';
 export { RoomModel } from './Room';
 export { FallingAstronaut } from './FallingAstronaut';
+export { CinematicCosmosScene } from './CinematicCosmosScene';
+export { PortalDiscoveryOverlay } from './PortalDiscoveryOverlay';
+export { PortalBeacon } from './PortalBeacon';
