@@ -128,14 +128,14 @@ body {
 @layer base {
   * {
     @apply border-border;
-    /* cursor: none !important; */
+    cursor: none !important;
   }
   body {
     @apply bg-background text-foreground;
-    /* cursor: none !important; 기본 커서 숨김 */
+    cursor: none !important;
   }
 
-  /* 모든 인터랙티브 요소의 커서도 숨김 */
+  /* CosmosCursor 사용 — 시스템 커서 숨김 */
   button,
   a,
   input,

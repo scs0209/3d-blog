@@ -4,9 +4,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import type * as React from 'react';
 import { QueryClient, defaultShouldDehydrateQuery, isServer } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
-import { LiquidCursor } from '@/shared/ui';
 import { ToastProvider } from '@/shared/ui/toast';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { CosmosCursor } from '@/widgets/home';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -42,7 +42,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <NuqsAdapter>
         <ToastProvider maxToasts={5}>
           <SessionProvider>
-            <LiquidCursor size={44} />
+            <CosmosCursor />
             {children}
           </SessionProvider>
         </ToastProvider>
