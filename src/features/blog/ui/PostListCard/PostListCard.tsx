@@ -1,8 +1,8 @@
 'use client';
 
 import type { PostResponse } from '@/entities/post/model/post';
-import { Tag } from '@/shared/ui';
 import { formatDateToYMD } from '@/shared/utils';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { motion } from 'framer-motion';
 import { Eye, LoaderCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -19,6 +19,7 @@ export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardP
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const href = `/blog/category/${categorySlug ?? post.category?.slug}/post/${post?.slug}`;
+  const categoryLabel = categoryName ?? post.category?.name;
 
   const handleNavigate = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
@@ -38,44 +39,40 @@ export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardP
       onClick={handleNavigate}
       onMouseEnter={() => router.prefetch(href)}
       aria-busy={isPending}
-      className={`block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 transition-opacity ${
+      className={`block rounded-lg transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/50 dark:focus-visible:ring-[#3de8ff]/50 ${
         isPending ? 'pointer-events-none opacity-60' : ''
       }`}
     >
       <motion.div
         key={`${post.id}-list`}
-        whileHover={
-          isPending
-            ? undefined
-            : {
-                scale: 1.015,
-                boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55',
-                backgroundColor: '#232946cc',
-              }
-        }
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className='rounded-lg px-4 py-3 transition cursor-pointer relative'
+        whileHover={isPending ? undefined : { x: 4 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+        className={`relative cursor-pointer rounded-xl px-4 py-3 transition ${blogTheme.listRow}`}
       >
+        <span className={blogTheme.listAccent} aria-hidden />
         {isPending && (
-          <span className='absolute right-4 top-4 text-cyan-300' aria-hidden>
+          <span className={`absolute right-4 top-4 ${blogTheme.textAccent}`} aria-hidden>
             <LoaderCircle className='size-4 animate-spin' />
           </span>
         )}
         <div className='flex items-center justify-between'>
-          <Tag color='neon' spacing='tight'>
-            #{categoryName ?? post.category?.name}
-          </Tag>
-          <span className='flex items-center justify-center gap-1 text-blue-300 text-xs'>
+          {categoryLabel && <span className={blogTheme.categoryPill}>#{categoryLabel}</span>}
+          <span className={`ml-auto flex items-center justify-center gap-1 text-xs ${blogTheme.textMuted}`}>
             <Eye size={15} className='inline-block' />
             {post?.views ?? 0}
           </span>
         </div>
-        <h2 className='text-lg font-extrabold text-blue-100 mt-1'>{post?.title}</h2>
-        <div className='flex items-center justify-between mt-2 text-xs text-blue-200'>
+        <h2
+          className={`mt-2 text-lg font-semibold transition-colors group-hover:text-[#ffc8a0] dark:group-hover:text-[#3de8ff] ${blogTheme.textPrimary}`}
+          style={{ fontFamily: 'var(--font-syne), sans-serif' }}
+        >
+          {post?.title}
+        </h2>
+        <div className={`mt-2 flex items-center justify-between text-xs ${blogTheme.textMuted}`}>
           <span>{post?.author ? post?.author?.name : '관리자'}</span>
           <span>{formatDateToYMD(post?.updatedAt ?? '')}</span>
         </div>
-        <hr className='my-6 border-blue-900/40' />
+        <hr className={`my-5 ${blogTheme.divider}`} />
       </motion.div>
     </Link>
   );
