@@ -190,35 +190,41 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 
-    // 24시간 내 중복 조회 체크
+    // IP당 24시간 내 중복 조회 체크 (PostView는 postId+ip 유니크)
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    const existingView = await prisma.postView.findFirst({
+    const existingView = await prisma.postView.findUnique({
       where: {
-        postId: post.id,
-        ip: clientIP,
-        createdAt: {
-          gte: twentyFourHoursAgo,
+        postId_ip: {
+          postId: post.id,
+          ip: clientIP,
         },
       },
     });
 
-    // 중복 조회가 아닌 경우에만 조회수 증가 및 기록 저장
-    if (!existingView) {
+    const shouldCountView = !existingView || existingView.createdAt < twentyFourHoursAgo;
+
+    if (shouldCountView) {
       await prisma.$transaction([
-        // 조회수 증가
         prisma.post.update({
           where: { id: post.id },
           data: { views: { increment: 1 } },
         }),
-        // 조회 기록 저장
-        prisma.postView.create({
-          data: {
-            postId: post.id,
-            ip: clientIP,
-            userAgent: userAgent,
-          },
-        }),
+        existingView
+          ? prisma.postView.update({
+              where: { id: existingView.id },
+              data: {
+                createdAt: new Date(),
+                userAgent,
+              },
+            })
+          : prisma.postView.create({
+              data: {
+                postId: post.id,
+                ip: clientIP,
+                userAgent,
+              },
+            }),
       ]);
     }
 
