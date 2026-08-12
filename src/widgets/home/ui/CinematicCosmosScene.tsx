@@ -434,12 +434,20 @@ const RealisticEarth = () => {
   );
 
   useLayoutEffect(() => {
+    if (!nightMap || !dayMap) {
+      return;
+    }
     nightMap.colorSpace = three.SRGBColorSpace;
     dayMap.colorSpace = three.SRGBColorSpace;
     nightMap.anisotropy = 16;
     dayMap.anisotropy = 8;
-    earthMat.uniforms.uNight.value = nightMap;
-    earthMat.uniforms.uDay.value = dayMap;
+    const { uNight, uDay } = earthMat.uniforms;
+    if (uNight) {
+      uNight.value = nightMap;
+    }
+    if (uDay) {
+      uDay.value = dayMap;
+    }
   }, [nightMap, dayMap, earthMat]);
 
   useFrame((_, delta) => {
@@ -589,7 +597,10 @@ const NeonPlanet = ({ position, radius, core, neon, accent, spin = 0.06 }: NeonP
   );
 
   useFrame(({ clock }, delta) => {
-    material.uniforms.uTime.value = clock.elapsedTime;
+    const uTime = material.uniforms.uTime;
+    if (uTime) {
+      uTime.value = clock.elapsedTime;
+    }
     if (meshRef.current) {
       meshRef.current.rotation.y += delta * spin;
     }
@@ -725,9 +736,13 @@ const NeonWisps = () => {
     const pos = points.geometry.attributes.position as three.BufferAttribute;
     const arr = pos.array as Float32Array;
     for (let i = 0; i < data.count; i += 1) {
-      arr[i * 3 + 1] += data.speeds[i] * delta;
-      if (arr[i * 3 + 1] > 3.2) {
-        arr[i * 3 + 1] = 0.2;
+      const yIndex = i * 3 + 1;
+      const speed = data.speeds[i] ?? 0.3;
+      const currentY = arr[yIndex] ?? 0;
+      const nextY = currentY + speed * delta;
+      arr[yIndex] = nextY;
+      if (nextY > 3.2) {
+        arr[yIndex] = 0.2;
         arr[i * 3] = (Math.random() - 0.5) * 28;
         arr[i * 3 + 2] = -Math.random() * 36 + 4;
       }

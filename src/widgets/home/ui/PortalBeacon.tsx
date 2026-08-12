@@ -180,9 +180,13 @@ export const PortalBeacon = ({ portal, active }: PortalBeaconProps) => {
       const pos = points.geometry.attributes.position as three.BufferAttribute;
       const arr = pos.array as Float32Array;
       for (let i = 0; i < PARTICLE_COUNT; i += 1) {
-        arr[i * 3 + 1] += particleData.speeds[i] * 0.016 * (active ? 1.35 : 0.45);
-        if (arr[i * 3 + 1] > 4.6) {
-          arr[i * 3 + 1] = 0;
+        const yIndex = i * 3 + 1;
+        const speed = particleData.speeds[i] ?? 0.5;
+        const currentY = arr[yIndex] ?? 0;
+        const nextY = currentY + speed * 0.016 * (active ? 1.35 : 0.45);
+        arr[yIndex] = nextY;
+        if (nextY > 4.6) {
+          arr[yIndex] = 0;
           const angle = Math.random() * Math.PI * 2;
           const r = particleData.radii[i] ?? 0.4;
           arr[i * 3] = Math.cos(angle) * r;
