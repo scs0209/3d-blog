@@ -566,3 +566,108 @@ pre {
 .ProseMirror .highlight.orange {
   background: rgba(249, 115, 22, 0.2);
 }
+
+/* Blog post prose — light: warm twilight / dark: cool deep space */
+.blog-prose .ProseMirror {
+  color: #ffe8d0;
+}
+
+.blog-prose .ProseMirror h1,
+.blog-prose .ProseMirror h2,
+.blog-prose .ProseMirror h3 {
+  color: #ffc8a0;
+}
+
+.blog-prose .ProseMirror p,
+.blog-prose .ProseMirror ul,
+.blog-prose .ProseMirror ol {
+  color: #ffe8d0;
+}
+
+.blog-prose .ProseMirror strong {
+  color: #ffb870;
+}
+
+.blog-prose .ProseMirror em {
+  color: #d4a8c0;
+}
+
+.blog-prose .ProseMirror a {
+  color: #ff9a3c;
+}
+
+.blog-prose .ProseMirror a:hover {
+  color: #ffc8a0;
+}
+
+.blog-prose .ProseMirror blockquote {
+  border-left-color: rgba(255, 154, 60, 0.45);
+  color: #d4a8c0;
+  background: rgba(255, 154, 60, 0.08);
+}
+
+.blog-prose .ProseMirror code {
+  color: #ffc8a0;
+  background: rgba(255, 154, 60, 0.15);
+}
+
+.blog-prose .ProseMirror pre {
+  background: #1c0e38;
+  border-color: rgba(255, 154, 60, 0.3);
+}
+
+.blog-prose .ProseMirror pre code {
+  color: #ffe8d0;
+}
+
+.dark .blog-prose .ProseMirror {
+  color: #c8e8ff;
+}
+
+.dark .blog-prose .ProseMirror h1,
+.dark .blog-prose .ProseMirror h2,
+.dark .blog-prose .ProseMirror h3 {
+  color: #e8f4ff;
+}
+
+.dark .blog-prose .ProseMirror p,
+.dark .blog-prose .ProseMirror ul,
+.dark .blog-prose .ProseMirror ol {
+  color: #c8e8ff;
+}
+
+.dark .blog-prose .ProseMirror strong {
+  color: #3de8ff;
+}
+
+.dark .blog-prose .ProseMirror em {
+  color: #7ec8ff;
+}
+
+.dark .blog-prose .ProseMirror a {
+  color: #3de8ff;
+}
+
+.dark .blog-prose .ProseMirror a:hover {
+  color: #7ec8ff;
+}
+
+.dark .blog-prose .ProseMirror blockquote {
+  border-left-color: rgba(61, 232, 255, 0.4);
+  color: #7ec8ff;
+  background: rgba(61, 232, 255, 0.06);
+}
+
+.dark .blog-prose .ProseMirror code {
+  color: #7ec8ff;
+  background: rgba(61, 232, 255, 0.12);
+}
+
+.dark .blog-prose .ProseMirror pre {
+  background: #070414;
+  border-color: rgba(61, 232, 255, 0.25);
+}
+
+.dark .blog-prose .ProseMirror pre code {
+  color: #c8e8ff;
+}

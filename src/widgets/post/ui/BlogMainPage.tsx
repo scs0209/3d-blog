@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { RecentPosts } from './RecentPosts';
 import { PostList } from './PostList';
 import { NoResults } from './NoResults';
+import { BlogSectionTitle } from './BlogSectionTitle';
 
 export const BlogMainPage = () => {
   const searchParams = useSearchParams();
@@ -39,11 +40,15 @@ export const BlogMainPage = () => {
 
   return (
     <div className='max-w-4xl mx-auto w-full'>
-      {/* 최근 포스트 섹션 */}
+      <BlogSectionTitle subtitle='최근에 올라온 글'>Recent</BlogSectionTitle>
       <RecentPosts posts={recentPosts} isLoading={isLoading} />
 
-      {/* 포스트 리스트 섹션 */}
-      <PostList posts={restPosts} isLoading={isLoading} />
+      {restPosts.length > 0 && (
+        <>
+          <BlogSectionTitle subtitle='더 많은 이야기'>Archive</BlogSectionTitle>
+          <PostList posts={restPosts} isLoading={isLoading} />
+        </>
+      )}
     </div>
   );
 };

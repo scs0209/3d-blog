@@ -6,6 +6,7 @@ import type { PostResponse } from '@/entities/post/model/post';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LoaderCircle } from 'lucide-react';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 
 type RecentPostsProps = {
   posts: PostResponse[];
@@ -36,6 +37,7 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
   return (
     <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
       {recentPosts.map((post, idx) => {
+        const postKey = post.id ?? post.slug ?? `recent-${idx}`;
         const href = `/blog/category/${post.category?.slug}/post/${post.slug}`;
         const isCardPending = isPending && pendingHref === href;
 
@@ -54,7 +56,7 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
         return (
           <Link
             href={href}
-            key={post.id ?? post.createdAt}
+            key={postKey}
             prefetch
             onClick={handleNavigate}
             onMouseEnter={() => {
@@ -68,14 +70,15 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
             }`}
           >
             {isCardPending && (
-              <span className='absolute right-3 top-3 z-20 text-cyan-300' aria-hidden>
+              <span className={`absolute right-3 top-3 z-20 ${blogTheme.textAccent}`} aria-hidden>
                 <LoaderCircle className='size-4 animate-spin' />
               </span>
             )}
             <AnimatePresence>
               {hoveredIndex === idx && (
                 <motion.span
-                  className='absolute inset-0 h-full w-full bg-slate-600/60 dark:bg-[#232946]/95 backdrop-blur-md block rounded-3xl pointer-events-none'
+                  key={`hover-${postKey}`}
+                  className='pointer-events-none absolute inset-0 block h-full w-full rounded-xl bg-[#ff9a3c]/8 backdrop-blur-md dark:bg-[#3de8ff]/8'
                   layoutId='hoverBackground'
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1, transition: { duration: 0.15 } }}
@@ -83,8 +86,8 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
                   style={{ willChange: 'opacity, background' }}
                 />
               )}
-              <PostCard post={post} />
             </AnimatePresence>
+            <PostCard post={post} />
           </Link>
         );
       })}

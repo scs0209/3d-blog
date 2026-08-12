@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQueryState, parseAsString, parseAsArrayOf } from 'nuqs';
 import { Search, X, Filter } from 'lucide-react';
 import { useCategories } from '@/features/category/model';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import type { SearchPill } from './SearchBar';
 
 const SearchBar = dynamic(() => import('./SearchBar').then((mod) => ({ default: mod.SearchBar })), { ssr: false });
@@ -101,7 +102,7 @@ export function BlogSearch() {
               animate={{ width: 380, opacity: 1 }}
               exit={{ width: 40, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 0.8 }}
-              className='flex items-center gap-2 bg-black/10 rounded-lg relative'
+              className='relative flex items-center gap-2 rounded-lg bg-[#12082a]/60 dark:bg-black/10'
             >
               <div className='flex-1 pl-2'>
                 <SearchBar
@@ -118,7 +119,7 @@ export function BlogSearch() {
                 onClick={() => setFilterOpen(!filterOpen)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className='p-1 text-blue-100 hover:text-white transition-all duration-200 rounded-full hover:bg-white/10'
+                className={`rounded-full p-1 transition-all duration-200 ${blogTheme.searchIcon}`}
               >
                 <Filter size={16} />
               </motion.button>
@@ -127,7 +128,7 @@ export function BlogSearch() {
                 onClick={toggleSearch}
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
-                className='p-1 mr-1 text-blue-100 hover:text-white transition-all duration-200 rounded-full hover:bg-white/10 flex-shrink-0'
+                className={`mr-1 flex-shrink-0 rounded-full p-1 transition-all duration-200 ${blogTheme.searchIcon}`}
               >
                 <X size={16} />
               </motion.button>
@@ -152,7 +153,7 @@ export function BlogSearch() {
               whileHover={{ scale: 1.1, rotate: 15 }}
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className='p-2 rounded-full text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-300'
+              className={`rounded-full p-2 transition-all duration-300 ${blogTheme.searchIcon}`}
             >
               <Search size={18} />
             </motion.button>
@@ -167,7 +168,7 @@ export function BlogSearch() {
           onClick={toggleSearch}
           whileHover={{ scale: 1.1, rotate: 15 }}
           whileTap={{ scale: 0.9 }}
-          className='p-2 rounded-full text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-300'
+          className={`rounded-full p-2 transition-all duration-300 ${blogTheme.searchIcon}`}
         >
           <Search size={18} />
         </motion.button>
@@ -178,7 +179,7 @@ export function BlogSearch() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className='fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex justify-center items-start p-4'
+              className='fixed inset-0 z-40 flex items-start justify-center bg-slate-900/40 p-4 backdrop-blur-sm dark:bg-black/50'
               onClick={toggleSearch}
             >
               <motion.div
@@ -186,7 +187,7 @@ export function BlogSearch() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className='w-full max-w-md bg-gray-800/80 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-4 mt-16 shadow-2xl'
+                className={`mt-16 w-full max-w-md rounded-2xl p-4 shadow-2xl ${blogTheme.searchPanel}`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className='flex items-center gap-2 mb-4'>
@@ -204,7 +205,7 @@ export function BlogSearch() {
                     onClick={() => setFilterOpen(!filterOpen)}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className='p-2 text-blue-100 hover:text-white transition-all duration-200 rounded-full hover:bg-white/10'
+                    className={`rounded-full p-2 transition-all duration-200 ${blogTheme.searchIcon}`}
                   >
                     <Filter size={20} />
                   </motion.button>

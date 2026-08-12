@@ -5,6 +5,9 @@ import { CommentSection } from '@/features/comment/ui';
 import { PostSummary } from '@/shared/ui/PostSummary';
 import type { Metadata } from 'next';
 import type { PostResponse } from '@/entities/post/model/post';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { PostBackButton } from '@/widgets/post/ui/PostBackButton';
+import { notFound } from 'next/navigation';
 
 const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
 
@@ -24,9 +27,10 @@ const extractDescription = (content: string, maxLength = 160) => {
 export async function generateMetadata({ params }: { params: Promise<{ postSlug: string }> }): Promise<Metadata> {
   const { postSlug } = await params;
   const decodedSlug = decodeURIComponent(postSlug);
-  const post = await getPostBySlug(decodedSlug);
 
-  const description = extractDescription(post.content ?? '');
+  try {
+    const post = await getPostBySlug(decodedSlug);
+    const description = extractDescription(post.content ?? '');
   const publishedDate = post.createdAt ? new Date(post.createdAt).toISOString() : '';
   const modifiedDate = post.updatedAt ? new Date(post.updatedAt).toISOString() : publishedDate;
   const postUrl = `${process.env.NEXT_PUBLIC_APP_URL}/blog/category/${post.category?.slug || 'uncategorized'}/post/${postSlug}`;
@@ -77,6 +81,11 @@ export async function generateMetadata({ params }: { params: Promise<{ postSlug:
       canonical: postUrl,
     },
   };
+  } catch {
+    return {
+      title: 'Post not found',
+    };
+  }
 }
 
 // JSON-LD 구조화 데이터 컴포넌트
@@ -121,50 +130,65 @@ const PostStructuredData = ({
 export default async function PostPage({
   params,
 }: {
-  params: Promise<{ postSlug: string }>;
+  params: Promise<{ slug: string; postSlug: string }>;
 }) {
-  const { postSlug } = await params;
+  const { slug, postSlug } = await params;
   const decodedSlug = decodeURIComponent(postSlug);
-  const post = await getPostBySlug(decodedSlug);
+  const categorySlug = decodeURIComponent(slug);
 
-  if (!post || !post.title || !post.content) {
-    return <div>Post not found</div>;
+  let post: PostResponse;
+  try {
+    post = await getPostBySlug(decodedSlug);
+  } catch {
+    notFound();
   }
+
+  if (!post?.title || !post?.content) {
+    notFound();
+  }
+
+  if (post.category?.slug && post.category.slug !== categorySlug) {
+    notFound();
+  }
+
+  const backHref = `/blog/category/${post.category?.slug ?? categorySlug}`;
 
   return (
     <>
       {/* SEO를 위한 구조화 데이터 */}
       <PostStructuredData post={post} />
 
-      <div>
+      <div className='mx-4 max-w-4xl lg:mx-auto'>
+        <PostBackButton href={backHref} />
+
         {/* 본문 영역 꾸밈 */}
-        <section className='relative md:bg-gradient-to-br md:from-[#181c2a]/90 md:via-[#232946]/90 md:to-[#232946]/80 md:border md:border-blue-400/30 md:rounded-2xl md:shadow-[0_0_24px_4px_#7dd3fc22] px-4 sm:px-6 md:px-8 py-8 mb-12 mt-4 max-w-4xl mx-4 md:overflow-hidden lg:mx-auto'>
-          <div className='absolute inset-0 pointer-events-none z-0 hidden md:block'>
-            <div className='w-full h-full bg-gradient-to-tr from-blue-900/20 via-fuchsia-900/10 to-blue-800/10 blur-[2px]' />
+        <section
+          className={`relative mb-12 mt-0 px-4 py-8 sm:px-6 md:rounded-2xl md:px-8 md:overflow-hidden ${blogTheme.postSection}`}
+        >
+          <div className='pointer-events-none absolute inset-0 z-0 hidden md:block'>
+            <div className='h-full w-full bg-gradient-to-tr from-[#8a4a68]/15 via-[#1c0e38]/20 to-[#ffc090]/10 blur-[2px] dark:from-cyan-900/20 dark:via-fuchsia-900/10 dark:to-cyan-800/10' />
           </div>
-          <h1 className='relative z-10 text-3xl font-extrabold text-blue-100 mb-4 md:drop-shadow-[0_2px_8px_#7dd3fc55]'>
+          <h1
+            className={`relative z-10 mb-4 text-3xl font-extrabold md:drop-shadow-sm dark:md:drop-shadow-[0_2px_8px_#7dd3fc55] ${blogTheme.textPrimary}`}
+          >
             {post.title}
           </h1>
-          <div className='relative z-10 flex items-center gap-3 mb-6 text-xs text-blue-200'>
+          <div className={`relative z-10 mb-6 flex items-center gap-3 text-xs ${blogTheme.textMuted}`}>
             <span className='font-mono'>{post.author?.name || 'Unknown Author'}</span>
             <span className='opacity-60'>|</span>
             <span>{formatDateToYMD(post?.createdAt ?? '')}</span>
             {post.category && (
               <>
                 <span className='opacity-60'>|</span>
-                <span className='text-blue-300'>{post.category.name}</span>
+                <span className={blogTheme.textAccent}>{post.category.name}</span>
               </>
             )}
           </div>
 
-          {/* 태그 표시 */}
           {post.tags && post.tags.length > 0 && (
-            <div className='relative z-10 flex flex-wrap gap-2 mb-6'>
-              {post.tags.map((tag: any) => (
-                <span
-                  key={tag.id}
-                  className='px-3 py-1 text-xs bg-blue-500/20 text-blue-200 rounded-full border border-blue-400/30'
-                >
+            <div className='relative z-10 mb-6 flex flex-wrap gap-2'>
+              {post.tags.map((tag) => (
+                <span key={tag.id} className={blogTheme.tagPill}>
                   #{tag.name}
                 </span>
               ))}
@@ -181,7 +205,6 @@ export default async function PostPage({
           </div>
         </section>
 
-        {/* 댓글 섹션 */}
         <CommentSection postId={post.id ?? 0} />
       </div>
     </>

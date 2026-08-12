@@ -11,8 +11,15 @@ const extensions = [...defaultExtensions];
 
 export default function NovelViewer({ content }: NovelViewerProps) {
   const processedValue = content ? preprocessHTML(content) : content;
-  
+
   return (
-    <EditorContent extensions={extensions} immediatelyRender={false} editable={false} initialContent={processedValue as any} />
+    <div className='blog-prose'>
+      <EditorContent
+        extensions={extensions}
+        immediatelyRender={false}
+        editable={false}
+        initialContent={processedValue as any}
+      />
+    </div>
   );
 }

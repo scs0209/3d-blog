@@ -1,10 +1,11 @@
 'use client';
 
-import { motion, useMotionValue, animate, AnimationPlaybackControlsWithThen } from 'framer-motion';
-import { CardPattern } from './CardPattern';
+import { type AnimationPlaybackControlsWithThen, animate, motion, useMotionValue } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
 import { formatDateToYMD } from '@/shared/utils';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { CardPattern } from './CardPattern';
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 export const generateRandomString = (length: number) => {
@@ -19,14 +20,16 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [_, setRandomString] = useState('');
-  const animationRef = useRef<{ x: AnimationPlaybackControlsWithThen; y: AnimationPlaybackControlsWithThen } | null>(null);
+  const animationRef = useRef<{ x: AnimationPlaybackControlsWithThen; y: AnimationPlaybackControlsWithThen } | null>(
+    null,
+  );
 
   useEffect(() => {
     const str = generateRandomString(1500);
     setRandomString(str);
   }, []);
 
-  function onMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent<HTMLDivElement>) {
+  const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent<HTMLDivElement>) => {
     const { left, top } = currentTarget.getBoundingClientRect();
     const targetX = clientX - left;
     const targetY = clientY - top;
@@ -38,28 +41,29 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
       x: animate(mouseX, targetX, { type: 'spring', stiffness: 200, damping: 30 }),
       y: animate(mouseY, targetY, { type: 'spring', stiffness: 200, damping: 30 }),
     };
-    const str = generateRandomString(1500);
-    setRandomString(str);
-  }
+    setRandomString(generateRandomString(1500));
+  };
 
   return (
     <motion.div
-      key={`${post.id}-card`}
-      whileHover={{ scale: 1.04, boxShadow: '0 0 16px #7dd3fc, 0 0 32px #7dd3fc55' }}
-      className='relative aspect-square bg-transparent rounded-xl border border-blue-300 shadow-[0_0_12px_#7dd3fc55] p-4 overflow-hidden transition'
+      whileHover={{ scale: 1.02, y: -2 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+      className={`relative aspect-square overflow-hidden rounded-xl p-4 transition ${blogTheme.card} ${blogTheme.cardHover}`}
     >
+      <span className={blogTheme.cardTopGlow} aria-hidden />
       <div
-        key={`${post.id}-card`}
-        onMouseMove={onMouseMove}
-        className='group/card rounded-3xl w-full relative flex flex-col items-center justify-between overflow-hidden bg-transparent h-full'
+        onMouseMove={handleMouseMove}
+        className='group/card relative flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-xl bg-transparent'
       >
-        <CardPattern mouseX={mouseX} mouseY={mouseY} />
-        {/* {post.thumbnail && (
-          <img src={post.thumbnail} alt={post.title} className='w-full h-1/2 object-cover rounded-md mb-2' />
-        )} */}
-        <span className='text-xs font-bold text-blue-200 mb-1'>{post.category?.name}</span>
-        <h2 className='text-base font-extrabold text-blue-100 text-center line-clamp-2 mb-1'>{post.title}</h2>
-        <span className='text-xs text-blue-300 mt-auto'>{formatDateToYMD(post.createdAt ?? '')}</span>
+        <CardPattern mouseX={mouseX} mouseY={mouseY} seed={post.id ?? post.slug ?? post.title} />
+        {post.category?.name && <span className={blogTheme.categoryPill}>{post.category.name}</span>}
+        <h2
+          className={`mb-1 line-clamp-2 text-center text-base font-semibold transition-colors group-hover/card:text-[#ffc8a0] dark:group-hover/card:text-[#3de8ff] ${blogTheme.textPrimary}`}
+          style={{ fontFamily: 'var(--font-syne), sans-serif' }}
+        >
+          {post.title}
+        </h2>
+        <span className={`mt-auto text-xs ${blogTheme.textMuted}`}>{formatDateToYMD(post.createdAt ?? '')}</span>
       </div>
     </motion.div>
   );

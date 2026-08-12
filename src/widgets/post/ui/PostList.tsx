@@ -1,6 +1,6 @@
-import { PostListCardSkeleton } from '@/shared/ui/skeleton';
-import { PostListCard } from '@/features/blog/ui';
 import type { PostResponse } from '@/entities/post/model/post';
+import { PostListCard } from '@/features/blog/ui';
+import { PostListCardSkeleton } from '@/shared/ui/skeleton';
 
 type PostListProps = {
   posts: PostResponse[];
@@ -10,9 +10,9 @@ type PostListProps = {
 export const PostList = ({ posts, isLoading }: PostListProps) => {
   if (isLoading) {
     return (
-      <div className='flex flex-col gap-8'>
-        {Array.from({ length: 5 }).map((_) => (
-          <PostListCardSkeleton key={`skeleton-list-${Math.random()}`} />
+      <div className='flex flex-col gap-8' aria-busy='true'>
+        {['a', 'b', 'c', 'd', 'e'].map((id) => (
+          <PostListCardSkeleton key={`skeleton-list-${id}`} />
         ))}
       </div>
     );

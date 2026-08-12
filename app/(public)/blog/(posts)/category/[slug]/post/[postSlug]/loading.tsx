@@ -1,27 +1,26 @@
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
+
 export default function PostDetailLoading() {
   return (
-    <div
-      className='max-w-4xl mx-4 lg:mx-auto mt-4 mb-12'
-      aria-busy='true'
-      aria-label='포스트 불러오는 중'
-    >
-      <section className='relative md:bg-gradient-to-br md:from-[#181c2a]/90 md:via-[#232946]/90 md:to-[#232946]/80 md:border md:border-blue-400/30 md:rounded-2xl md:shadow-[0_0_24px_4px_#7dd3fc22] px-4 sm:px-6 md:px-8 py-8 overflow-hidden'>
+    <div className='mx-4 mb-12 mt-4 max-w-4xl lg:mx-auto' aria-busy='true'>
+      <section className={`relative overflow-hidden px-4 py-8 sm:px-6 md:rounded-2xl md:px-8 ${blogTheme.postSection}`}>
+        <span className={blogTheme.cardTopGlow} aria-hidden />
         <div className='space-y-4'>
-          <div className='h-9 w-3/4 max-w-xl rounded-lg bg-blue-400/20 animate-pulse' />
+          <div className='h-9 w-3/4 max-w-xl animate-pulse rounded-lg bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
           <div className='flex items-center gap-3'>
-            <div className='h-3 w-20 rounded bg-blue-400/15 animate-pulse' />
-            <div className='h-3 w-24 rounded bg-blue-400/15 animate-pulse' />
-            <div className='h-3 w-16 rounded bg-blue-400/15 animate-pulse' />
+            <div className='h-3 w-20 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
+            <div className='h-3 w-24 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
+            <div className='h-3 w-16 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
           </div>
           <div className='flex flex-wrap gap-2 pt-2'>
-            <div className='h-6 w-14 rounded-full bg-blue-500/20 animate-pulse' />
-            <div className='h-6 w-16 rounded-full bg-blue-500/20 animate-pulse' />
-            <div className='h-6 w-12 rounded-full bg-blue-500/20 animate-pulse' />
+            <div className='h-6 w-14 animate-pulse rounded-full bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
+            <div className='h-6 w-16 animate-pulse rounded-full bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
+            <div className='h-6 w-12 animate-pulse rounded-full bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
           </div>
-          <div className='mt-6 space-y-3 rounded-xl border border-blue-400/20 bg-[#181c2a]/40 p-4'>
-            <div className='h-4 w-24 rounded bg-cyan-400/20 animate-pulse' />
-            <div className='h-3 w-full rounded bg-blue-400/15 animate-pulse' />
-            <div className='h-3 w-5/6 rounded bg-blue-400/15 animate-pulse' />
+          <div className={`mt-6 space-y-3 p-4 ${blogTheme.summaryBox}`}>
+            <div className='h-4 w-24 animate-pulse rounded bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
+            <div className='h-3 w-full animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
+            <div className='h-3 w-5/6 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
           </div>
           <div className='mt-8 space-y-3'>
             {['w88-1', 'w76-1', 'w64-1', 'w52-1', 'w88-2', 'w76-2', 'w64-2', 'w52-2'].map((id) => {
@@ -29,7 +28,7 @@ export default function PostDetailLoading() {
               return (
                 <div
                   key={id}
-                  className='h-4 rounded bg-blue-400/15 animate-pulse'
+                  className='h-4 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15'
                   style={{ width: `${width}%` }}
                 />
               );

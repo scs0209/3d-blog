@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import { SpaceBackground } from '@/widgets/post/ui';
-import BlogHeader from '@/widgets/post/ui/BlogHeader';
-import Sidebar from '@/widgets/post/ui/Sidebar';
+import { PostsLayoutShell } from '@/widgets/post/ui';
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -10,28 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function PostsLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <main className='flex flex-col items-center row-start-2 gap-8 sm:items-start bg-white min-h-screen'>
-      <div className='w-full h-screen overflow-hidden bg-gradient-to-b from-[#181c2a] via-[#232946] to-[#23234d] text-slate-100 font-mono relative'>
-        <SpaceBackground />
-
-        <div className='flex h-screen'>
-          {/* Main Content (왼쪽) */}
-          <main className='flex-1 h-screen overflow-y-auto p-4 lg:p-10 flex justify-center'>
-            <div className='w-full'>
-              <Suspense fallback={<div className='mb-8 h-16 max-w-4xl mx-auto w-full' />}>
-                <BlogHeader />
-              </Suspense>
-              {children}
-            </div>
-          </main>
-
-          {/* 데스크톱 사이드바 */}
-          <Suspense fallback={null}>
-            <Sidebar />
-          </Suspense>
-        </div>
-      </div>
-    </main>
-  );
+  return <PostsLayoutShell>{children}</PostsLayoutShell>;
 }

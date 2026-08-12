@@ -9,6 +9,7 @@ import {
   collectAncestorIds,
 } from '@/entities/category/lib/build-category-tree';
 import type { CategoryListItem } from '@/entities/category/model';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 
 type CategoryTreeProps = {
   categories: CategoryListItem[];
@@ -16,10 +17,7 @@ type CategoryTreeProps = {
   onSelect: (slug: string) => void;
 };
 
-const getActiveClassName = (isActive: boolean) =>
-  isActive
-    ? 'bg-blue-100 text-[#232946] border border-blue-300 shadow-[0_0_12px_#7dd3fc,0_0_24px_#7dd3fc55]'
-    : 'bg-transparent hover:bg-blue-900/40 text-blue-100 border-0';
+const getActiveClassName = (isActive: boolean) => (isActive ? blogTheme.navActive : blogTheme.navIdle);
 
 type CategoryTreeItemProps = {
   node: CategoryTreeNode<CategoryListItem>;
@@ -48,7 +46,7 @@ const CategoryTreeItem = ({
         {hasChildren ? (
           <button
             type='button'
-            className='shrink-0 p-0.5 rounded text-blue-200 hover:text-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+            className={`shrink-0 rounded p-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/40 dark:focus-visible:ring-[#3de8ff]/50 ${blogTheme.textMuted} hover:text-[#ff9a3c] dark:hover:text-[#3de8ff]`}
             aria-label={isExpanded ? `${node.name} 접기` : `${node.name} 펼치기`}
             aria-expanded={isExpanded}
             onClick={() => onToggle(node.id)}
@@ -60,15 +58,9 @@ const CategoryTreeItem = ({
         )}
         <motion.button
           type='button'
-          animate={{
-            boxShadow: isActive ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : 'none',
-          }}
-          whileHover={{
-            scale: 1.03,
-            boxShadow: isActive ? '0 0 12px #7dd3fc, 0 0 24px #7dd3fc55' : '0 0 8px #7dd3fc55',
-          }}
+          whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
-          className={`flex-1 flex items-center gap-2 text-left px-2 py-1 rounded-lg font-mono transition relative ${getActiveClassName(isActive)}`}
+          className={`relative flex flex-1 items-center gap-2 rounded-lg px-2 py-1 text-left text-sm transition ${getActiveClassName(isActive)}`}
           onClick={() => onSelect(node.slug)}
         >
           {hasChildren ? (

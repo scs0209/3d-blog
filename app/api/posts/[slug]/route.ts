@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import prisma from '@/shared/lib/db';
 
 /**
@@ -190,36 +191,57 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 
-    // 24시간 내 중복 조회 체크
+    // IP당 24시간 내 중복 조회 체크 (PostView는 postId+ip 유니크)
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    const existingView = await prisma.postView.findFirst({
-      where: {
-        postId: post.id,
-        ip: clientIP,
-        createdAt: {
-          gte: twentyFourHoursAgo,
-        },
-      },
-    });
+    try {
+      await prisma.$transaction(async (tx) => {
+        const existingView = await tx.postView.findUnique({
+          where: {
+            postId_ip: {
+              postId: post.id,
+              ip: clientIP,
+            },
+          },
+        });
 
-    // 중복 조회가 아닌 경우에만 조회수 증가 및 기록 저장
-    if (!existingView) {
-      await prisma.$transaction([
-        // 조회수 증가
-        prisma.post.update({
+        if (existingView && existingView.createdAt >= twentyFourHoursAgo) {
+          return;
+        }
+
+        await tx.post.update({
           where: { id: post.id },
           data: { views: { increment: 1 } },
-        }),
-        // 조회 기록 저장
-        prisma.postView.create({
-          data: {
+        });
+
+        await tx.postView.upsert({
+          where: {
+            postId_ip: {
+              postId: post.id,
+              ip: clientIP,
+            },
+          },
+          create: {
             postId: post.id,
             ip: clientIP,
-            userAgent: userAgent,
+            userAgent,
           },
-        }),
-      ]);
+          update: {
+            createdAt: new Date(),
+            userAgent,
+          },
+        });
+      });
+    } catch (error) {
+      // 동시 요청 레이스는 무시 (한 요청만 조회수 반영)
+      if (
+        !(
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          (error.code === 'P2002' || error.code === 'P2034')
+        )
+      ) {
+        throw error;
+      }
     }
 
     // 조회수 업데이트된 게시물 정보 반환

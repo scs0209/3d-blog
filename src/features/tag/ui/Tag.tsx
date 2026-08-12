@@ -2,20 +2,15 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 const colorCombos = [
-  'bg-blue-500 border-blue-200',
-  'bg-pink-500 border-pink-200',
-  'bg-green-500 border-green-200',
-  'bg-yellow-500 border-yellow-200',
-  'bg-purple-500 border-purple-200',
-  'bg-cyan-500 border-cyan-200',
-  'bg-fuchsia-500 border-fuchsia-200',
   'bg-orange-500 border-orange-200',
-  'bg-sky-500 border-sky-200',
   'bg-rose-500 border-rose-200',
+  'bg-amber-500 border-amber-200',
+  'bg-fuchsia-500 border-fuchsia-200',
+  'bg-cyan-500 border-cyan-200 dark:bg-cyan-500 dark:border-cyan-200',
+  'bg-indigo-500 border-indigo-200 dark:bg-indigo-500 dark:border-indigo-200',
 ];
 
 export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count: number }) => {
-  // 태그 이름을 해시로 변환해서 색상 인덱스 결정
   function hashString(str: string) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -30,16 +25,16 @@ export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count
   return (
     <motion.span
       key={tag.id}
-      whileHover={{ scale: 1.08, boxShadow: '0 0 8px #7dd3fc, 0 0 16px #7dd3fc55' }}
-      className='bg-blue-900/40 px-2 py-1 rounded-lg text-xs font-mono border border-blue-300 shadow-[0_0_8px_#7dd3fc55] transition relative'
+      whileHover={{ scale: 1.06 }}
+      className='relative rounded-lg border border-[#ff9a3c]/25 bg-[#ff9a3c]/8 px-2 py-1 text-xs font-mono shadow-[0_0_10px_rgba(255,154,60,0.1)] transition dark:border-[#3de8ff]/25 dark:bg-[#3de8ff]/8 dark:shadow-[0_0_10px_rgba(61,232,255,0.1)]'
     >
       <Link
         href={`/blog/${tag.name}`}
-        className='inline-block px-3 py-1 back drop-blur-sm text-blue-100 text-xs font-mono'
+        className='inline-block px-3 py-1 text-xs font-mono text-[#ffc8a0] backdrop-blur-sm dark:text-[#3de8ff]'
       >
         {tag.name}
         <motion.span
-          className={`absolute -top-1 -right-1 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full border-2 ${colorClass}`}
+          className={`absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 text-xs text-white ${colorClass}`}
           initial={{ scale: 0 }}
           whileInView={{ scale: 1 }}
           transition={{ delay: 0.2 }}
