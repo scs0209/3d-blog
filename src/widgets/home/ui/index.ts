@@ -4,8 +4,6 @@ export { SceneController } from './SceneController';
 export { SceneClickHandler } from './SceneClickHandler';
 export { Planet } from './Planet';
 export { WalkingAvatar } from './WalkingAvatar';
-export { RoomModel } from './Room';
-export { FallingAstronaut } from './FallingAstronaut';
 export { CinematicCosmosScene, type CosmosSceneTheme } from './CinematicCosmosScene';
 export { PortalDiscoveryOverlay } from './PortalDiscoveryOverlay';
 export { PortalBeacon } from './PortalBeacon';
