@@ -5,6 +5,7 @@ export { default as BlogHeader } from './BlogHeader';
 export { default as Sidebar } from './Sidebar';
 export { MobileNavbar } from './MobileNavbar';
 export { SpaceBackground } from './SpaceBackground';
+export { PostBackButton } from './PostBackButton';
 export { SearchBar } from './SearchBar';
 export { CategoryTree } from './CategoryTree';
 export * from './ComputerBackground/index';

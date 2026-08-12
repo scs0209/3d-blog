@@ -2,190 +2,274 @@
 
 import { motion } from 'framer-motion';
 
-// Tailwind 색상 클래스 배열
-const colorClasses = [
-  'bg-white',
-  'bg-blue-400',
-  'bg-purple-400',
-  'bg-pink-400',
-  'bg-yellow-400',
-  'bg-cyan-400',
-  'bg-fuchsia-400',
-];
-// 별 60개, 색상 랜덤
-const stars = Array.from({ length: 100 }).map((_, i) => {
-  const color = colorClasses[i % colorClasses.length];
-  const size = `${Math.random() * 2 + 1}px`;
-  const top = `${Math.random() * 100}%`;
-  const left = `${Math.random() * 100}%`;
-  const opacity = Math.random() * 0.7 + 0.3;
-  const duration = `${2 + Math.random() * 2}s`;
-  const delay = `${Math.random() * 2}s`;
+const twilightStars = Array.from({ length: 40 }).map((_, i) => {
+  const size = `${(i % 3) * 0.5 + 1.2}px`;
+  const top = `${(i * 19) % 100}%`;
+  const left = `${(i * 31) % 100}%`;
+  const opacity = 0.25 + ((i * 11) % 50) / 100;
   return (
     <span
-      key={`star-${Math.random()}`}
-      className={`absolute block rounded-full ${color} shadow-[0_0_8px_2px_#7dd3fc88] animate-pulse`}
+      key={`star-light-${Math.random()}`}
+      className='absolute block rounded-full bg-[#ffc8a0] dark:hidden'
       style={{
         width: size,
         height: size,
         top,
         left,
         opacity,
-        animationDuration: duration,
-        animationDelay: delay,
+        boxShadow: '0 0 6px rgba(255, 200, 160, 0.35)',
       }}
     />
   );
 });
 
-// 행성 생성
-const planets = [
+const darkStars = Array.from({ length: 90 }).map((_, i) => {
+  const size = `${(i % 4) * 0.35 + 0.8}px`;
+  const top = `${(i * 17) % 100}%`;
+  const left = `${(i * 29) % 100}%`;
+  const opacity = 0.2 + ((i * 13) % 60) / 100;
+  return (
+    <span
+      key={`star-dark-${Math.random()}`}
+      className='absolute hidden rounded-full bg-[#7ec8ff] dark:block'
+      style={{
+        width: size,
+        height: size,
+        top,
+        left,
+        opacity,
+        boxShadow: '0 0 8px rgba(61, 232, 255, 0.3)',
+      }}
+    />
+  );
+});
+
+type PlanetPalette = {
+  sphere: string;
+  bands?: string;
+  atmosphere: string;
+  ringStroke?: string;
+  ringFill?: string;
+};
+
+type PlanetConfig = {
+  id: string;
+  size: number;
+  top: string;
+  left: string;
+  floatDuration: number;
+  driftDuration: number;
+  hasRing?: boolean;
+  light: PlanetPalette;
+  dark: PlanetPalette;
+};
+
+const planets: PlanetConfig[] = [
   {
-    id: 'planet-1',
-    size: 80,
-    top: '15%',
-    left: '85%',
-    color: 'from-red-500 to-orange-500',
-    ringColor: 'border-yellow-500/20',
-    ringSize: 100,
-    duration: 120,
+    id: 'ember-giant',
+    size: 68,
+    top: '11%',
+    left: '86%',
+    floatDuration: 9,
+    driftDuration: 240,
+    hasRing: true,
+    light: {
+      sphere: 'radial-gradient(circle at 32% 28%, #ffd4a8 0%, #ff9a3c 28%, #c44d2a 62%, #3a1428 100%)',
+      bands:
+        'repeating-linear-gradient(175deg, transparent 0px, transparent 7px, rgba(255,220,180,0.07) 7px, rgba(255,220,180,0.07) 9px)',
+      atmosphere: 'rgba(255, 154, 60, 0.28)',
+      ringStroke: 'rgba(255, 200, 140, 0.35)',
+      ringFill: 'rgba(255, 180, 100, 0.06)',
+    },
+    dark: {
+      sphere: 'radial-gradient(circle at 32% 28%, #9ee8ff 0%, #3de8ff 24%, #1a6a9a 58%, #061428 100%)',
+      bands:
+        'repeating-linear-gradient(168deg, transparent 0px, transparent 6px, rgba(180,240,255,0.08) 6px, rgba(180,240,255,0.08) 8px)',
+      atmosphere: 'rgba(61, 232, 255, 0.22)',
+      ringStroke: 'rgba(126, 200, 255, 0.3)',
+      ringFill: 'rgba(61, 232, 255, 0.05)',
+    },
   },
   {
-    id: 'planet-2',
-    size: 40,
-    top: '70%',
-    left: '10%',
-    color: 'from-blue-500 to-purple-500',
-    ringColor: 'border-indigo-500/20',
-    ringSize: 55,
-    duration: 180,
+    id: 'dusk-moon',
+    size: 30,
+    top: '72%',
+    left: '9%',
+    floatDuration: 7,
+    driftDuration: 320,
+    light: {
+      sphere: 'radial-gradient(circle at 35% 30%, #f0d0c0 0%, #b88878 35%, #5a3848 72%, #1a0e18 100%)',
+      atmosphere: 'rgba(200, 140, 120, 0.12)',
+    },
+    dark: {
+      sphere: 'radial-gradient(circle at 35% 30%, #c8d8e8 0%, #788898 38%, #384858 74%, #0a0e14 100%)',
+      atmosphere: 'rgba(126, 200, 255, 0.1)',
+    },
   },
   {
-    id: 'planet-3',
-    size: 60,
+    id: 'violet-core',
+    size: 48,
     top: '30%',
-    left: '20%',
-    color: 'from-green-400 to-blue-400',
-    ringColor: 'border-green-300/20',
-    ringSize: 80,
-    duration: 150,
+    left: '14%',
+    floatDuration: 11,
+    driftDuration: 280,
+    hasRing: true,
+    light: {
+      sphere: 'radial-gradient(circle at 30% 26%, #f0c0e8 0%, #c878a8 30%, #6a2868 65%, #180818 100%)',
+      atmosphere: 'rgba(200, 120, 180, 0.2)',
+      ringStroke: 'rgba(232, 160, 200, 0.25)',
+      ringFill: 'rgba(200, 120, 180, 0.04)',
+    },
+    dark: {
+      sphere: 'radial-gradient(circle at 30% 26%, #c0d0ff 0%, #6366f1 32%, #312e81 68%, #0a0618 100%)',
+      atmosphere: 'rgba(99, 102, 241, 0.22)',
+      ringStroke: 'rgba(129, 140, 248, 0.28)',
+      ringFill: 'rgba(99, 102, 241, 0.05)',
+    },
   },
   {
-    id: 'planet-4',
-    size: 50,
-    top: '60%',
-    left: '70%',
-    color: 'from-yellow-400 to-pink-400',
-    ringColor: 'border-pink-300/20',
-    ringSize: 65,
-    duration: 100,
-  },
-  {
-    id: 'planet-5',
-    size: 35,
-    top: '40%',
-    left: '55%',
-    color: 'from-fuchsia-400 to-purple-500',
-    ringColor: 'border-fuchsia-300/20',
-    ringSize: 50,
-    duration: 90,
+    id: 'horizon-pebble',
+    size: 22,
+    top: '52%',
+    left: '78%',
+    floatDuration: 6,
+    driftDuration: 360,
+    light: {
+      sphere: 'radial-gradient(circle at 38% 32%, #ffe0b8 0%, #e89050 40%, #804020 100%)',
+      atmosphere: 'rgba(255, 180, 100, 0.15)',
+    },
+    dark: {
+      sphere: 'radial-gradient(circle at 38% 32%, #b8e8ff 0%, #4898c8 42%, #183858 100%)',
+      atmosphere: 'rgba(61, 232, 255, 0.12)',
+    },
   },
 ];
 
-export const SpaceBackground = () => {
-  // 행성/은하수 등 추가
+const PlanetRing = ({ size, stroke, fill }: { size: number; stroke: string; fill: string }) => {
+  const w = size * 2.15;
+  const h = size * 0.72;
   return (
-    <div className='absolute inset-0 z-10 pointer-events-none'>
-      {/* 별 */}
-      {stars}
-      {/* 행성들 */}
-      {planets.map((planet) => (
-        <motion.div
-          key={planet.id}
-          className='absolute'
-          style={{
-            top: planet.top,
-            left: planet.left,
-          }}
-          initial={{ rotate: 0 }}
-          animate={{ rotate: 360 }}
-          transition={{
-            duration: planet.duration,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: 'linear',
-          }}
-        >
-          {/* 행성 고리 */}
-          {planet.ringSize && (
-            <div
-              className={`absolute rounded-full border-4 ${planet.ringColor}`}
-              style={{
-                width: planet.ringSize,
-                height: planet.ringSize / 2,
-                top: planet.size / 2 - planet.ringSize / 4,
-                left: planet.size / 2 - planet.ringSize / 2,
-                transform: 'rotateX(75deg)',
-              }}
-            />
-          )}
+    <svg
+      className='pointer-events-none absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2'
+      width={w}
+      height={h}
+      viewBox={`0 0 ${w} ${h}`}
+      aria-hidden='true'
+    >
+      <ellipse cx={w / 2} cy={h / 2} rx={w / 2 - 2} ry={h / 2 - 2} fill={fill} />
+      <ellipse cx={w / 2} cy={h / 2} rx={w / 2 - 2} ry={h / 2 - 2} fill='none' stroke={stroke} strokeWidth='1.5' />
+      <ellipse
+        cx={w / 2}
+        cy={h / 2}
+        rx={w / 2 - 8}
+        ry={h / 2 - 5}
+        fill='none'
+        stroke={stroke}
+        strokeWidth='0.75'
+        opacity='0.5'
+      />
+    </svg>
+  );
+};
 
-          {/* 행성 본체 */}
-          <motion.div
-            className={`absolute rounded-full bg-gradient-to-br ${planet.color}`}
-            style={{
-              width: planet.size,
-              height: planet.size,
-            }}
-            animate={{ rotate: -360 }}
-            transition={{
-              duration: planet.duration * 0.8,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: 'linear',
-            }}
-          >
-            {/* 행성 표면 특징 */}
-            <div className='absolute w-3/4 h-1/2 bg-white/10 rounded-full top-1/4 left-1/8' />
-          </motion.div>
-        </motion.div>
-      ))}
-      {/* 은하수 느낌의 그라데이션 */}
-      <div className='absolute inset-0 pointer-events-none -z-10'>
-        {/* 여러 개의 큰 은하수 레이어 */}
-        {Array.from({ length: 5 }).map((_, i) => {
-          // 랜덤 위치, 각도, 색상, 투명도, 크기
-          const top = `${40 + Math.random() * 20}%`;
-          const left = `${10 + Math.random() * 60}%`;
-          const width = `${320 + Math.random() * 160}px`;
-          const height = `${24 + Math.random() * 24}px`;
-          const rotate = `${-15 + Math.random() * 30}`;
-          const opacity = 0.08 + Math.random() * 0.18;
-          // Tailwind 지원 색상 조합
-          const gradients = [
-            'from-blue-200 via-white to-pink-200',
-            'from-fuchsia-200 via-white to-blue-200',
-            'from-purple-200 via-blue-100 to-pink-100',
-            'from-cyan-200 via-white to-fuchsia-200',
-            'from-blue-300 via-white to-purple-200',
-          ];
-          const gradient = gradients[i % gradients.length];
-          return (
-            <span
-              key={`milkyway-${i}-${Math.random()}`}
-              className={`absolute rounded-full blur-3xl bg-gradient-to-r ${gradient}`}
-              style={{
-                top,
-                left,
-                width,
-                height,
-                opacity,
-                transform: `rotate(${rotate}deg)`,
-              }}
-            />
-          );
-        })}
-        <div className='absolute top-1/4 left-1/4 w-1/2 h-1/2 rounded-full bg-purple-500/20 blur-3xl' />
-        <div className='absolute bottom-0 right-0 w-1/3 h-1/3 rounded-full bg-pink-500/20 blur-3xl' />
+const PlanetSphere = ({ size, palette }: { size: number; palette: PlanetPalette }) => {
+  return (
+    <motion.div
+      className='relative overflow-hidden rounded-full'
+      style={{ width: size, height: size }}
+      animate={{ rotate: 360 }}
+      transition={{ duration: 280, repeat: Number.POSITIVE_INFINITY, ease: 'linear' }}
+    >
+      <div className='absolute inset-0 rounded-full' style={{ background: palette.sphere }} />
+      {palette.bands && (
+        <div className='absolute inset-0 rounded-full opacity-80' style={{ background: palette.bands }} />
+      )}
+      {/* terminator */}
+      <div
+        className='absolute inset-0 rounded-full'
+        style={{
+          background:
+            'radial-gradient(circle at 72% 50%, transparent 36%, rgba(0,0,0,0.15) 58%, rgba(0,0,0,0.55) 100%)',
+        }}
+      />
+      {/* specular */}
+      <div className='absolute left-[16%] top-[14%] h-[20%] w-[26%] rounded-full bg-white/30 blur-[1px]' />
+      <div className='absolute left-[22%] top-[20%] h-[8%] w-[10%] rounded-full bg-white/50' />
+    </motion.div>
+  );
+};
+
+const Planet = ({ planet }: { planet: PlanetConfig }) => {
+  return (
+    <motion.div
+      className='absolute'
+      style={{ top: planet.top, left: planet.left, width: planet.size, height: planet.size }}
+      animate={{ y: [0, -8, 0] }}
+      transition={{
+        duration: planet.floatDuration,
+        repeat: Number.POSITIVE_INFINITY,
+        ease: 'easeInOut',
+      }}
+      aria-hidden
+    >
+      {/* Light theme */}
+      <div className='absolute inset-0 dark:hidden' style={{ width: planet.size, height: planet.size }}>
+        <div
+          className='absolute inset-[-35%] rounded-full blur-2xl'
+          style={{ background: `radial-gradient(circle, ${planet.light.atmosphere} 0%, transparent 70%)` }}
+        />
+        {planet.hasRing && planet.light.ringStroke && (
+          <PlanetRing
+            size={planet.size}
+            stroke={planet.light.ringStroke}
+            fill={planet.light.ringFill ?? 'transparent'}
+          />
+        )}
+        <div className='absolute left-0 top-0'>
+          <PlanetSphere size={planet.size} palette={planet.light} />
+        </div>
       </div>
+
+      {/* Dark theme */}
+      <div className='absolute inset-0 hidden dark:block' style={{ width: planet.size, height: planet.size }}>
+        <div
+          className='absolute inset-[-35%] rounded-full blur-2xl'
+          style={{ background: `radial-gradient(circle, ${planet.dark.atmosphere} 0%, transparent 70%)` }}
+        />
+        {planet.hasRing && planet.dark.ringStroke && (
+          <PlanetRing size={planet.size} stroke={planet.dark.ringStroke} fill={planet.dark.ringFill ?? 'transparent'} />
+        )}
+        <div className='absolute left-0 top-0'>
+          <PlanetSphere size={planet.size} palette={planet.dark} />
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export const SpaceBackground = () => {
+  return (
+    <div className='pointer-events-none absolute inset-0 z-0 overflow-hidden' aria-hidden>
+      <div className='absolute inset-x-0 bottom-0 h-[45vh] bg-gradient-to-t from-[#ff9a3c]/25 via-[#8a4a68]/15 to-transparent dark:hidden' />
+      <div className='absolute bottom-[-10%] left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-[#ffc090]/30 blur-3xl dark:hidden' />
+      <div className='absolute inset-0 hidden bg-gradient-to-b from-[#000010]/80 via-transparent to-[#000008]/60 dark:block' />
+
+      <div className='absolute inset-0 opacity-60 dark:opacity-80'>
+        <span className='absolute left-[8%] top-[38%] h-5 w-80 rotate-[-12deg] rounded-full bg-gradient-to-r from-orange-200/20 via-white/10 to-rose-200/15 blur-2xl dark:from-blue-300/10 dark:via-white/8 dark:to-purple-300/10' />
+        <span className='absolute left-[30%] top-[48%] h-4 w-96 rotate-[8deg] rounded-full bg-gradient-to-r from-amber-200/15 via-white/8 to-fuchsia-200/12 blur-2xl dark:from-cyan-300/8 dark:via-white/6 dark:to-indigo-300/10' />
+      </div>
+
+      {twilightStars}
+      {darkStars}
+
+      <div className='absolute -left-32 top-[10%] h-96 w-96 rounded-full bg-[#8a4a68]/20 blur-3xl dark:bg-[#3de8ff]/6' />
+      <div className='absolute -right-24 top-[30%] h-72 w-72 rounded-full bg-[#ffc090]/15 blur-3xl dark:bg-[#6366f1]/8' />
+      <div className='absolute bottom-[20%] left-[20%] h-64 w-64 rounded-full bg-[#c878ff]/10 blur-3xl dark:hidden' />
+      <div className='absolute right-[10%] top-[15%] hidden h-56 w-56 rounded-full bg-[#3de8ff]/5 blur-3xl dark:block' />
+
+      {planets.map((planet) => (
+        <Planet key={planet.id} planet={planet} />
+      ))}
     </div>
   );
 };
