@@ -1043,6 +1043,14 @@ export const CinematicCosmosScene = ({
 
   const glowMap = useMemo(() => createGlowSprite(), []);
   const mistMap = useMemo(() => createMistTexture(), []);
+
+  useEffect(() => {
+    return () => {
+      glowMap?.dispose();
+      mistMap?.dispose();
+    };
+  }, [glowMap, mistMap]);
+
   const [activePortalId, setActivePortalId] = useState<CosmosPortalId | null>(null);
   const activePortalRef = useRef<CosmosPortalId | null>(null);
   const avatarWorldPos = useRef(new three.Vector3(0, 1.1, 1.5));

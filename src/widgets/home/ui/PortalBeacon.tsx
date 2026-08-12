@@ -136,7 +136,7 @@ const PortalReveal = ({
   });
 
   return (
-    <group ref={rootRef} position={[0, -0.85, 0]}>
+    <group ref={rootRef} position={[0, -0.85, 0]} dispose={null}>
       <primitive object={prepared.root} />
     </group>
   );

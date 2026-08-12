@@ -26,7 +26,9 @@ export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverla
     if (typeof window === 'undefined') {
       return;
     }
-    setAudioMuted(isCosmosAudioMuted() || window.localStorage.getItem('cosmos-audio-muted') === '1');
+    const nextMuted = isCosmosAudioMuted() || window.localStorage.getItem('cosmos-audio-muted') === '1';
+    setCosmosAudioMuted(nextMuted);
+    setAudioMuted(nextMuted);
     if (sessionStorage.getItem(COSMOS_PORTAL_HINT_KEY) === '1') {
       return;
     }

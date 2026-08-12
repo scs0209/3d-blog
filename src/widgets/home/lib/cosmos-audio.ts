@@ -23,6 +23,9 @@ const getCtx = () => {
     return null;
   }
   if (!audioCtx) {
+    if (typeof window !== 'undefined' && window.localStorage.getItem('cosmos-audio-muted') === '1') {
+      muted = true;
+    }
     const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     audioCtx = new Ctx();
     masterGain = audioCtx.createGain();
