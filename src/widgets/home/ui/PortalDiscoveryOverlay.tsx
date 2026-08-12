@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
+  isCosmosAudioMuted,
+  setCosmosAudioMuted,
+  unlockCosmosAudio,
+} from '@/widgets/home/lib/cosmos-audio';
+import {
   COSMOS_PORTAL_HINT_KEY,
   getCosmosPortal,
   type CosmosPortalId,
@@ -15,11 +20,13 @@ type PortalDiscoveryOverlayProps = {
 export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverlayProps) => {
   const portal = getCosmosPortal(activePortalId);
   const [showHint, setShowHint] = useState(false);
+  const [audioMuted, setAudioMuted] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
     }
+    setAudioMuted(isCosmosAudioMuted() || window.localStorage.getItem('cosmos-audio-muted') === '1');
     if (sessionStorage.getItem(COSMOS_PORTAL_HINT_KEY) === '1') {
       return;
     }
@@ -46,10 +53,27 @@ export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverla
     setShowHint(false);
   }, [activePortalId]);
 
+  const handleToggleMute = () => {
+    void unlockCosmosAudio();
+    const next = !audioMuted;
+    setCosmosAudioMuted(next);
+    setAudioMuted(next);
+  };
+
   const accent = portal?.accent ?? '#7ec8ff';
 
   return (
     <div className='pointer-events-none absolute inset-x-0 bottom-0 z-20'>
+      <button
+        type='button'
+        className='pointer-events-auto absolute bottom-4 right-4 z-30 rounded border border-white/20 bg-black/40 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/80 backdrop-blur-sm transition hover:bg-black/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70'
+        style={{ fontFamily: 'var(--font-syne), sans-serif' }}
+        onClick={handleToggleMute}
+        aria-pressed={audioMuted}
+        aria-label={audioMuted ? '사운드 켜기' : '사운드 끄기'}
+      >
+        {audioMuted ? 'Sound Off' : 'Sound On'}
+      </button>
       {/* 하단 대기 베일 — 카드 박스 없이 씬에 녹임 */}
       <div
         className={`pointer-events-none absolute inset-x-0 bottom-0 h-[42vh] transition-opacity duration-700 ${
@@ -77,11 +101,14 @@ export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverla
           </p>
         </div>
 
+        <p className='sr-only' aria-live='polite'>
+          {portal ? `${portal.label} 포털을 발견했습니다.` : ''}
+        </p>
+
         <div
           className={`flex w-full max-w-xl flex-col items-center text-center transition-all duration-700 ${
             portal ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
           }`}
-          aria-live='polite'
           aria-hidden={!portal}
         >
           {portal ? (

@@ -1,4 +1,6 @@
-import { useRef, useEffect, useLayoutEffect } from 'react';
+'use client';
+
+import { useRef, useEffect, useLayoutEffect, type ComponentProps } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, useFBX } from '@react-three/drei';
 import type { Group } from 'three';
@@ -27,7 +29,7 @@ const applyWalkOrientation = (avatar: Group, dx: number, dz: number) => {
   avatar.quaternion.multiplyQuaternions(_yawQ, _uprightQ);
 };
 
-/** 한글 IME에서도 동작하도록 e.code 사용. 리마운트해도 키 상태 유지 */
+/** 한글 IME에서도 동작하도록 e.code 사용 */
 const pressedCodes = new Set<string>();
 const CODE_W = 'KeyW';
 const CODE_A = 'KeyA';
@@ -35,38 +37,81 @@ const CODE_S = 'KeyS';
 const CODE_D = 'KeyD';
 const MOVE_CODES = new Set([CODE_W, CODE_A, CODE_S, CODE_D]);
 
-let keyListenersAttached = false;
+let keyListenerRefCount = 0;
+let detachKeyListeners: (() => void) | null = null;
 
-const ensureKeyListeners = () => {
-  if (keyListenersAttached || typeof window === 'undefined') {
+const isEditableTarget = (target: EventTarget | null) => {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  const tag = target.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+};
+
+const attachKeyListeners = () => {
+  if (typeof window === 'undefined') {
     return;
   }
-  keyListenersAttached = true;
+  keyListenerRefCount += 1;
+  if (detachKeyListeners) {
+    return;
+  }
 
-  window.addEventListener('keydown', (e) => {
-    if (!MOVE_CODES.has(e.code)) {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!MOVE_CODES.has(e.code) || isEditableTarget(e.target)) {
       return;
     }
     e.preventDefault();
     pressedCodes.add(e.code);
-  });
+  };
 
-  window.addEventListener('keyup', (e) => {
+  const handleKeyUp = (e: KeyboardEvent) => {
     if (!MOVE_CODES.has(e.code)) {
       return;
     }
     pressedCodes.delete(e.code);
-  });
+  };
 
-  window.addEventListener('blur', () => {
+  const handleBlur = () => {
     pressedCodes.clear();
-  });
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
+  window.addEventListener('blur', handleBlur);
+
+  detachKeyListeners = () => {
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
+    window.removeEventListener('blur', handleBlur);
+    pressedCodes.clear();
+    detachKeyListeners = null;
+  };
+};
+
+const releaseKeyListeners = () => {
+  keyListenerRefCount = Math.max(0, keyListenerRefCount - 1);
+  if (keyListenerRefCount === 0) {
+    detachKeyListeners?.();
+  }
 };
 
 type AvatarActions = {
   walk: three.AnimationAction | null;
   typing: three.AnimationAction | null;
   snp: three.AnimationAction | null;
+};
+
+type WalkingAvatarProps = ComponentProps<'group'> & {
+  triggerSnp?: number;
+  position?: [number, number, number];
+  /** cinematic: typing 없이 서 있고, 지평선(-Z) 방향으로 보행 */
+  variant?: 'default' | 'cinematic';
+  /** 부모 스케일/위치를 반영한 월드 좌표 (근접 포털 등) */
+  onWorldPosition?: (pos: three.Vector3) => void;
 };
 
 useGLTF.preload('/WalkingAstro.glb');
@@ -79,15 +124,7 @@ export function WalkingAvatar({
   variant = 'default',
   onWorldPosition,
   ...restProps
-}: {
-  triggerSnp?: number;
-  position?: [number, number, number];
-  /** cinematic: typing 없이 서 있고, 지평선(-Z) 방향으로 보행 */
-  variant?: 'default' | 'cinematic';
-  /** 부모 스케일/위치를 반영한 월드 좌표 (근접 포털 등) */
-  onWorldPosition?: (pos: three.Vector3) => void;
-  [key: string]: unknown;
-}) {
+}: WalkingAvatarProps) {
   const isCinematic = variant === 'cinematic';
   const group = useRef<Group>(null);
   const mixer = useRef<three.AnimationMixer | null>(null);
@@ -109,15 +146,20 @@ export function WalkingAvatar({
   const typingModel = useFBX('/Typing.fbx');
 
   useLayoutEffect(() => {
-    ensureKeyListeners();
+    attachKeyListeners();
     if (!group.current) {
-      return;
+      return () => {
+        releaseKeyListeners();
+      };
     }
     const [x, y, z] = spawnRef.current;
     group.current.position.set(x, y, z);
     if (isCinematic) {
       applyWalkOrientation(group.current, 0, -1);
     }
+    return () => {
+      releaseKeyListeners();
+    };
   }, [isCinematic]);
 
   useFrame((_, delta) => {
@@ -373,7 +415,9 @@ export function WalkingAvatar({
             </group>
           </group>
         </group>
-        <primitive object={nodes.mixamorigHips as unknown as three.Object3D} />
+        {nodes.mixamorigHips ? (
+          <primitive object={nodes.mixamorigHips as unknown as three.Object3D} />
+        ) : null}
       </group>
     </group>
   );

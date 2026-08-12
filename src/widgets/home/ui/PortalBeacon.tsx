@@ -2,9 +2,11 @@
 
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as three from 'three';
 import { COSMOS_PORTALS, type CosmosPortal, type CosmosPortalId } from '@/widgets/home/model/cosmos-portals';
+
+let sharedGlowTexture: three.CanvasTexture | null | undefined;
 
 const createSoftGlow = () => {
   if (typeof document === 'undefined') {
@@ -30,6 +32,13 @@ const createSoftGlow = () => {
   return texture;
 };
 
+const getSoftGlow = () => {
+  if (sharedGlowTexture === undefined) {
+    sharedGlowTexture = createSoftGlow();
+  }
+  return sharedGlowTexture;
+};
+
 const PARTICLE_COUNT = 28;
 
 const PortalReveal = ({
@@ -41,10 +50,12 @@ const PortalReveal = ({
 }) => {
   const rootRef = useRef<three.Group>(null);
   const progress = useRef(0);
+  const lastEase = useRef(-1);
   const { scene } = useGLTF(portal.revealModel);
 
   const prepared = useMemo(() => {
     const root = scene.clone(true);
+    const fadeMaterials: three.Material[] = [];
     root.traverse((obj) => {
       if (!(obj as three.Mesh).isMesh) {
         return;
@@ -67,6 +78,9 @@ const PortalReveal = ({
         if ('transparent' in next) {
           next.transparent = true;
         }
+        if (next && 'opacity' in next) {
+          fadeMaterials.push(next);
+        }
         return next;
       });
       mesh.material = tinted.length === 1 ? tinted[0]! : tinted;
@@ -86,8 +100,16 @@ const PortalReveal = ({
     root.position.z -= center.z;
     root.position.y -= box.min.y;
 
-    return root;
+    return { root, fadeMaterials };
   }, [scene, portal.accent, portal.revealHeight]);
+
+  useEffect(() => {
+    return () => {
+      for (const mat of prepared.fadeMaterials) {
+        mat.dispose();
+      }
+    };
+  }, [prepared]);
 
   useFrame((_, delta) => {
     const group = rootRef.current;
@@ -102,23 +124,20 @@ const PortalReveal = ({
     group.position.y = -0.85 + ease * 1.05;
     group.rotation.y += delta * (portal.id === 'portfolio' ? 0.2 + ease * 0.25 : 0.35 + ease * 0.55);
 
-    group.traverse((obj) => {
-      if (!(obj as three.Mesh).isMesh) {
-        return;
+    if (Math.abs(ease - lastEase.current) < 0.002 && !active && ease < 0.01) {
+      return;
+    }
+    lastEase.current = ease;
+    for (const mat of prepared.fadeMaterials) {
+      if ('opacity' in mat) {
+        mat.opacity = 0.15 + ease * 0.85;
       }
-      const mesh = obj as three.Mesh;
-      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-      for (const mat of mats) {
-        if (mat && 'opacity' in mat) {
-          mat.opacity = 0.15 + ease * 0.85;
-        }
-      }
-    });
+    }
   });
 
   return (
     <group ref={rootRef} position={[0, -0.85, 0]}>
-      <primitive object={prepared} />
+      <primitive object={prepared.root} />
     </group>
   );
 };
@@ -134,7 +153,7 @@ export const PortalBeacon = ({ portal, active }: PortalBeaconProps) => {
   const outerRingRef = useRef<three.Mesh>(null);
   const beamRef = useRef<three.Sprite>(null);
   const particlesRef = useRef<three.Points>(null);
-  const glowMap = useMemo(() => createSoftGlow(), []);
+  const glowMap = useMemo(() => getSoftGlow(), []);
   const color = useMemo(() => new three.Color(portal.accent), [portal.accent]);
 
   const particleData = useMemo(() => {
@@ -159,7 +178,13 @@ export const PortalBeacon = ({ portal, active }: PortalBeaconProps) => {
     return geometry;
   }, [particleData.positions]);
 
-  useFrame(({ clock }) => {
+  useEffect(() => {
+    return () => {
+      particleGeometry.dispose();
+    };
+  }, [particleGeometry]);
+
+  useFrame(({ clock }, delta) => {
     const t = clock.elapsedTime;
     const ring = ringRef.current;
     if (ring) {
@@ -183,7 +208,7 @@ export const PortalBeacon = ({ portal, active }: PortalBeaconProps) => {
         const yIndex = i * 3 + 1;
         const speed = particleData.speeds[i] ?? 0.5;
         const currentY = arr[yIndex] ?? 0;
-        const nextY = currentY + speed * 0.016 * (active ? 1.35 : 0.45);
+        const nextY = currentY + speed * delta * (active ? 1.35 : 0.45);
         arr[yIndex] = nextY;
         if (nextY > 4.6) {
           arr[yIndex] = 0;

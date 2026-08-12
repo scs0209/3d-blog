@@ -80,21 +80,27 @@ export const HomeCanvas = () => {
       isTransitioningRef.current = true;
       if (theme === 'dark') {
         radius.set(darkRadius);
-        setTimeout(() => {
+        const timer = window.setTimeout(() => {
           setDisplayTheme('dark');
           displayThemeRef.current = 'dark';
           setIsTransitioning(false);
           isTransitioningRef.current = false;
         }, 500);
-      } else {
-        setDisplayTheme('light');
-        displayThemeRef.current = 'light';
-        setTimeout(() => {
-          radius.set(lightRadius);
-          setIsTransitioning(false);
-          isTransitioningRef.current = false;
-        }, 50);
+        return () => {
+          window.clearTimeout(timer);
+        };
       }
+
+      setDisplayTheme('light');
+      displayThemeRef.current = 'light';
+      const timer = window.setTimeout(() => {
+        radius.set(lightRadius);
+        setIsTransitioning(false);
+        isTransitioningRef.current = false;
+      }, 50);
+      return () => {
+        window.clearTimeout(timer);
+      };
     }
   }, [theme, displayTheme, radius]);
 

@@ -51,7 +51,7 @@ const fbm = (x: number, z: number) => {
 };
 
 const createRockyTerrain = () => {
-  const geometry = new three.PlaneGeometry(380, 380, 256, 256);
+  const geometry = new three.PlaneGeometry(380, 380, 128, 128);
   geometry.rotateX(-Math.PI / 2);
   const positions = geometry.attributes.position;
   if (!positions) {
@@ -227,6 +227,12 @@ const SunsetSky = () => {
       }),
     [],
   );
+
+  useEffect(() => {
+    return () => {
+      material.dispose();
+    };
+  }, [material]);
 
   return (
     <mesh material={material} renderOrder={-10}>
@@ -450,6 +456,13 @@ const RealisticEarth = () => {
     }
   }, [nightMap, dayMap, earthMat]);
 
+  useEffect(() => {
+    return () => {
+      earthMat.dispose();
+      atmosphere.dispose();
+    };
+  }, [earthMat, atmosphere]);
+
   useFrame((_, delta) => {
     if (earthRef.current) {
       earthRef.current.rotation.y += delta * 0.008;
@@ -461,7 +474,7 @@ const RealisticEarth = () => {
       {/* 아시아·유럽 야경이 보이도록 초기 회전 */}
       <group ref={earthRef} rotation={[0.2, -0.55, 0.08]}>
         <mesh material={earthMat}>
-          <sphereGeometry args={[78, 128, 128]} />
+          <sphereGeometry args={[78, 64, 64]} />
         </mesh>
       </group>
       <mesh scale={1.03} material={atmosphere}>
@@ -605,6 +618,13 @@ const NeonPlanet = ({ position, radius, core, neon, accent, spin = 0.06 }: NeonP
       meshRef.current.rotation.y += delta * spin;
     }
   });
+
+  useEffect(() => {
+    return () => {
+      material.dispose();
+      glow.dispose();
+    };
+  }, [material, glow]);
 
   return (
     <group position={position}>
@@ -800,6 +820,12 @@ export const CinematicCosmosScene = ({
   onActivePortalChange?: (id: CosmosPortalId | null) => void;
 }) => {
   const terrain = useMemo(() => createRockyTerrain(), []);
+
+  useEffect(() => {
+    return () => {
+      terrain.dispose();
+    };
+  }, [terrain]);
   const glowMap = useMemo(() => createGlowSprite(), []);
   const mistMap = useMemo(() => createMistTexture(), []);
   const [activePortalId, setActivePortalId] = useState<CosmosPortalId | null>(null);

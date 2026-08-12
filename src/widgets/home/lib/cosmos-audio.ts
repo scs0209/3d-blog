@@ -5,15 +5,18 @@
 
 let audioCtx: AudioContext | null = null;
 let masterGain: GainNode | null = null;
-let unlocked = false;
+let muted = false;
 
 let walking = false;
 let footstepTimer: number | null = null;
 let stepToggle = false;
+let pendingFootstepRestart = false;
 
 let portalHumGain: GainNode | null = null;
 let portalHumOsc: OscillatorNode[] = [];
 let portalActive = false;
+
+const MASTER_VOLUME = 0.55;
 
 const getCtx = () => {
   if (typeof window === 'undefined') {
@@ -23,11 +26,23 @@ const getCtx = () => {
     const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     audioCtx = new Ctx();
     masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.55;
+    masterGain.gain.value = muted ? 0 : MASTER_VOLUME;
     masterGain.connect(audioCtx.destination);
   }
   return audioCtx;
 };
+
+export const setCosmosAudioMuted = (next: boolean) => {
+  muted = next;
+  if (masterGain) {
+    masterGain.gain.value = next ? 0 : MASTER_VOLUME;
+  }
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem('cosmos-audio-muted', next ? '1' : '0');
+  }
+};
+
+export const isCosmosAudioMuted = () => muted;
 
 export const unlockCosmosAudio = async () => {
   const ctx = getCtx();
@@ -41,14 +56,29 @@ export const unlockCosmosAudio = async () => {
       return;
     }
   }
-  unlocked = true;
+  if (pendingFootstepRestart && walking) {
+    pendingFootstepRestart = false;
+    clearFootstepTimer();
+    playFootstep();
+    footstepTimer = window.setInterval(() => {
+      if (!walking) {
+        return;
+      }
+      playFootstep();
+    }, 340);
+  }
 };
 
 const ensureUnlocked = () => {
-  if (!unlocked) {
-    void unlockCosmosAudio();
+  const ctx = getCtx();
+  if (!ctx) {
+    return false;
   }
-  return unlocked || (audioCtx?.state === 'running');
+  if (ctx.state === 'running') {
+    return true;
+  }
+  void unlockCosmosAudio();
+  return false;
 };
 
 const playNoiseBurst = ({
@@ -132,10 +162,16 @@ export const setCosmosWalking = (next: boolean) => {
   clearFootstepTimer();
 
   if (!next) {
+    pendingFootstepRestart = false;
     return;
   }
 
-  ensureUnlocked();
+  if (!ensureUnlocked()) {
+    pendingFootstepRestart = true;
+    return;
+  }
+
+  pendingFootstepRestart = false;
   playFootstep();
   footstepTimer = window.setInterval(() => {
     if (!walking) {
@@ -289,15 +325,20 @@ export const bindCosmosAudioUnlock = () => {
     return noop;
   }
 
+  muted = window.localStorage.getItem('cosmos-audio-muted') === '1';
+  if (masterGain) {
+    masterGain.gain.value = muted ? 0 : MASTER_VOLUME;
+  }
+
   const handleUnlock = () => {
     void unlockCosmosAudio();
   };
 
-  window.addEventListener('pointerdown', handleUnlock, { once: true });
-  window.addEventListener('keydown', handleUnlock, { once: true });
+  window.addEventListener('pointerdown', handleUnlock, { once: true, capture: true });
+  window.addEventListener('keydown', handleUnlock, { once: true, capture: true });
 
   return () => {
-    window.removeEventListener('pointerdown', handleUnlock);
-    window.removeEventListener('keydown', handleUnlock);
+    window.removeEventListener('pointerdown', handleUnlock, true);
+    window.removeEventListener('keydown', handleUnlock, true);
   };
 };
