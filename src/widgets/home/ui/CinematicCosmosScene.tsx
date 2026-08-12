@@ -176,7 +176,152 @@ const NEON_LANTERNS: Array<{ position: [number, number, number]; color: string; 
   { position: [0, 1.5, -6], color: '#5ad8ff', intensity: 3.2 },
 ];
 
-const SunsetSky = () => {
+export type CosmosSceneTheme = 'light' | 'dark';
+
+type CosmosThemePreset = {
+  background: string;
+  fog: string;
+  fogNear: number;
+  fogFar: number;
+  ambientIntensity: number;
+  ambientColor: string;
+  hemiSky: string;
+  hemiGround: string;
+  hemiIntensity: number;
+  keyIntensity: number;
+  keyColor: string;
+  rimIntensity: number;
+  rimColor: string;
+  fillIntensity: number;
+  fillColor: string;
+  lanternScale: number;
+  terrainColor: string;
+  terrainEnv: number;
+  starCount: number;
+  starFactor: number;
+  starSaturation: number;
+  wispCount: number;
+  wispSize: number;
+  wispOpacity: number;
+  mistOpacityScale: number;
+  sunCoreColor: string;
+  sunGlowColor: string;
+  sunGlowOpacity: number;
+  sunHaloOpacity: number;
+  sunLightIntensity: number;
+  sky: {
+    uTop: string;
+    uMid: string;
+    uHorizonCold: string;
+    uHorizonWarm: string;
+    uGlow: string;
+    uWarmAmount: number;
+  };
+  bloomThreshold: number;
+  bloomIntensity: number;
+  bloomRadius: number;
+  vignetteOffset: number;
+  vignetteDarkness: number;
+  exposure: number;
+};
+
+/** light = 황혼 산책 / dark = 심해 밤 — 조명만이 아니라 분위기 자체가 갈리게 */
+const COSMOS_THEME_PRESETS: Record<CosmosSceneTheme, CosmosThemePreset> = {
+  light: {
+    background: '#0a0618',
+    fog: '#1a1230',
+    fogNear: 85,
+    fogFar: 240,
+    ambientIntensity: 0.32,
+    ambientColor: '#4a2a78',
+    hemiSky: '#7a5ac8',
+    hemiGround: '#1a1020',
+    hemiIntensity: 0.95,
+    keyIntensity: 1.05,
+    keyColor: '#ffc8a0',
+    rimIntensity: 0.45,
+    rimColor: '#8890ff',
+    fillIntensity: 0.28,
+    fillColor: '#ff8ad0',
+    lanternScale: 0.85,
+    terrainColor: '#3a3450',
+    terrainEnv: 0.55,
+    starCount: 1600,
+    starFactor: 1.2,
+    starSaturation: 0.08,
+    wispCount: 36,
+    wispSize: 0.11,
+    wispOpacity: 0.55,
+    mistOpacityScale: 0.7,
+    sunCoreColor: '#ffe8d0',
+    sunGlowColor: '#d49870',
+    sunGlowOpacity: 0.38,
+    sunHaloOpacity: 0.2,
+    sunLightIntensity: 22,
+    sky: {
+      uTop: '#100828',
+      uMid: '#1c0e38',
+      uHorizonCold: '#2a1858',
+      uHorizonWarm: '#8a4a68',
+      uGlow: '#ffc090',
+      uWarmAmount: 1,
+    },
+    bloomThreshold: 0.48,
+    bloomIntensity: 1.05,
+    bloomRadius: 0.7,
+    vignetteOffset: 0.18,
+    vignetteDarkness: 0.42,
+    exposure: 0.98,
+  },
+  dark: {
+    background: '#000006',
+    fog: '#04040c',
+    fogNear: 28,
+    fogFar: 130,
+    ambientIntensity: 0.045,
+    ambientColor: '#0a1028',
+    hemiSky: '#142040',
+    hemiGround: '#020208',
+    hemiIntensity: 0.28,
+    keyIntensity: 0.08,
+    keyColor: '#607090',
+    rimIntensity: 0.55,
+    rimColor: '#3a6aff',
+    fillIntensity: 0.04,
+    fillColor: '#304080',
+    lanternScale: 1.55,
+    terrainColor: '#0e121c',
+    terrainEnv: 0.22,
+    starCount: 4200,
+    starFactor: 2.6,
+    starSaturation: 0.4,
+    wispCount: 160,
+    wispSize: 0.16,
+    wispOpacity: 0.85,
+    mistOpacityScale: 2.4,
+    sunCoreColor: '#8890a8',
+    sunGlowColor: '#405070',
+    sunGlowOpacity: 0.06,
+    sunHaloOpacity: 0.03,
+    sunLightIntensity: 1.2,
+    sky: {
+      uTop: '#000008',
+      uMid: '#020614',
+      uHorizonCold: '#061028',
+      uHorizonWarm: '#0c1830',
+      uGlow: '#203858',
+      uWarmAmount: 0.08,
+    },
+    bloomThreshold: 0.32,
+    bloomIntensity: 1.55,
+    bloomRadius: 0.85,
+    vignetteOffset: 0.32,
+    vignetteDarkness: 0.88,
+    exposure: 0.5,
+  },
+};
+
+const SunsetSky = ({ theme }: { theme: CosmosSceneTheme }) => {
   const material = useMemo(
     () =>
       new three.ShaderMaterial({
@@ -184,11 +329,12 @@ const SunsetSky = () => {
         depthWrite: false,
         fog: false,
         uniforms: {
-          uTop: { value: new three.Color('#070414') },
-          uMid: { value: new three.Color('#12082a') },
-          uHorizonCold: { value: new three.Color('#1a1040') },
-          uHorizonWarm: { value: new three.Color('#6a3a68') },
-          uGlow: { value: new three.Color('#e0a878') },
+          uTop: { value: new three.Color(COSMOS_THEME_PRESETS.light.sky.uTop) },
+          uMid: { value: new three.Color(COSMOS_THEME_PRESETS.light.sky.uMid) },
+          uHorizonCold: { value: new three.Color(COSMOS_THEME_PRESETS.light.sky.uHorizonCold) },
+          uHorizonWarm: { value: new three.Color(COSMOS_THEME_PRESETS.light.sky.uHorizonWarm) },
+          uGlow: { value: new three.Color(COSMOS_THEME_PRESETS.light.sky.uGlow) },
+          uWarmAmount: { value: COSMOS_THEME_PRESETS.light.sky.uWarmAmount },
           uSunDir: { value: new three.Vector3(0.58, 0.03, -0.81).normalize() },
         },
         vertexShader: `
@@ -205,6 +351,7 @@ const SunsetSky = () => {
           uniform vec3 uHorizonCold;
           uniform vec3 uHorizonWarm;
           uniform vec3 uGlow;
+          uniform float uWarmAmount;
           uniform vec3 uSunDir;
           varying vec3 vDir;
           void main() {
@@ -215,18 +362,34 @@ const SunsetSky = () => {
             float sunFacing = max(dot(dir, normalize(uSunDir)), 0.0);
             float band = exp(-pow((dir.y - 0.01) / 0.14, 2.0));
             float wideBand = exp(-pow((dir.y + 0.02) / 0.28, 2.0));
-            float sunset = pow(sunFacing, 6.5) * band;
-            float glow = pow(sunFacing, 26.0);
-            sky = mix(sky, uHorizonWarm, clamp(sunset * 0.45 + wideBand * 0.08 * sunFacing, 0.0, 0.55));
+            float sunset = pow(sunFacing, 6.5) * band * uWarmAmount;
+            float glow = pow(sunFacing, 26.0) * uWarmAmount;
+            sky = mix(sky, uHorizonWarm, clamp(sunset * 0.45 + wideBand * 0.08 * sunFacing * uWarmAmount, 0.0, 0.55));
             sky += uGlow * glow * 0.55;
-            sky += uHorizonWarm * band * 0.08 * sunFacing;
-            sky = mix(sky, vec3(0.08, 0.04, 0.16), 0.22);
+            sky += uHorizonWarm * band * 0.08 * sunFacing * uWarmAmount;
+            sky = mix(sky, vec3(0.08, 0.04, 0.16), 0.22 * uWarmAmount);
+            // 밤 모드: 차가운 보이드로 당김
+            sky = mix(sky, uTop * 0.35 + uHorizonCold * 0.65, 1.0 - uWarmAmount);
             gl_FragColor = vec4(sky, 1.0);
           }
         `,
       }),
     [],
   );
+
+  useEffect(() => {
+    const sky = COSMOS_THEME_PRESETS[theme].sky;
+    const { uTop, uMid, uHorizonCold, uHorizonWarm, uGlow, uWarmAmount } = material.uniforms;
+    if (!uTop || !uMid || !uHorizonCold || !uHorizonWarm || !uGlow || !uWarmAmount) {
+      return;
+    }
+    uTop.value.set(sky.uTop);
+    uMid.value.set(sky.uMid);
+    uHorizonCold.value.set(sky.uHorizonCold);
+    uHorizonWarm.value.set(sky.uHorizonWarm);
+    uGlow.value.set(sky.uGlow);
+    uWarmAmount.value = sky.uWarmAmount;
+  }, [material, theme]);
 
   useEffect(() => {
     return () => {
@@ -241,11 +404,23 @@ const SunsetSky = () => {
   );
 };
 
-const HorizonSun = ({ glowMap }: { glowMap: three.Texture | null }) => (
+const HorizonSun = ({
+  glowMap,
+  preset,
+}: {
+  glowMap: three.Texture | null;
+  preset: CosmosThemePreset;
+}) => (
   <group position={[72, 2.2, -145]}>
     <mesh>
       <sphereGeometry args={[1.05, 32, 32]} />
-      <meshBasicMaterial color='#ffe8d0' toneMapped={false} fog={false} />
+      <meshBasicMaterial
+        color={preset.sunCoreColor}
+        toneMapped={false}
+        fog={false}
+        transparent
+        opacity={Math.min(1, preset.sunGlowOpacity * 3.2)}
+      />
     </mesh>
     {glowMap ? (
       <>
@@ -255,7 +430,7 @@ const HorizonSun = ({ glowMap }: { glowMap: three.Texture | null }) => (
             transparent
             depthWrite={false}
             blending={three.AdditiveBlending}
-            opacity={0.28}
+            opacity={preset.sunGlowOpacity}
             toneMapped={false}
             fog={false}
           />
@@ -263,18 +438,18 @@ const HorizonSun = ({ glowMap }: { glowMap: three.Texture | null }) => (
         <sprite scale={[28, 16, 1]} renderOrder={1}>
           <spriteMaterial
             map={glowMap}
-            color='#c88868'
+            color={preset.sunGlowColor}
             transparent
             depthWrite={false}
             blending={three.AdditiveBlending}
-            opacity={0.14}
+            opacity={preset.sunHaloOpacity}
             toneMapped={false}
             fog={false}
           />
         </sprite>
       </>
     ) : null}
-    <pointLight color='#d4a888' intensity={16} distance={160} decay={2} />
+    <pointLight color={preset.sunGlowColor} intensity={preset.sunLightIntensity} distance={160} decay={2} />
   </group>
 );
 
@@ -694,14 +869,14 @@ const AvatarFollowCamera = ({
   return null;
 };
 
-const GroundMist = ({ map }: { map: three.Texture | null }) => {
+const GroundMist = ({ map, opacityScale }: { map: three.Texture | null; opacityScale: number }) => {
   if (!map) {
     return null;
   }
-  // 안개 거의 걷음 — 지평선만 살짝
   const sheets = [
     { position: [0, 0.8, -70] as [number, number, number], scale: [95, 14, 1] as [number, number, number], opacity: 0.1, rot: 0 },
     { position: [8, 1.1, -95] as [number, number, number], scale: [120, 18, 1] as [number, number, number], opacity: 0.08, rot: -0.02 },
+    { position: [-6, 0.55, -48] as [number, number, number], scale: [70, 10, 1] as [number, number, number], opacity: 0.07, rot: 0.03 },
   ];
   return (
     <group>
@@ -716,7 +891,7 @@ const GroundMist = ({ map }: { map: three.Texture | null }) => {
           <meshBasicMaterial
             map={map}
             transparent
-            opacity={sheet.opacity}
+            opacity={Math.min(0.55, sheet.opacity * opacityScale)}
             depthWrite={false}
             side={three.DoubleSide}
             toneMapped={false}
@@ -727,26 +902,47 @@ const GroundMist = ({ map }: { map: three.Texture | null }) => {
   );
 };
 
-const NeonWisps = () => {
+const NeonWisps = ({
+  count,
+  size,
+  opacity,
+  spread = 1,
+  color = '#ff6ad5',
+  heightRange = 2.4,
+}: {
+  count: number;
+  size: number;
+  opacity: number;
+  spread?: number;
+  color?: string;
+  heightRange?: number;
+}) => {
   const pointsRef = useRef<three.Points>(null);
   const data = useMemo(() => {
-    const count = 40;
     const positions = new Float32Array(count * 3);
     const speeds = new Float32Array(count);
+    const spanX = 28 * spread;
+    const spanZ = 36 * spread;
     for (let i = 0; i < count; i += 1) {
-      positions[i * 3] = (Math.random() - 0.5) * 28;
-      positions[i * 3 + 1] = 0.3 + Math.random() * 2.4;
-      positions[i * 3 + 2] = -Math.random() * 36 + 4;
-      speeds[i] = 0.25 + Math.random() * 0.55;
+      positions[i * 3] = (Math.random() - 0.5) * spanX;
+      positions[i * 3 + 1] = 0.2 + Math.random() * heightRange;
+      positions[i * 3 + 2] = -Math.random() * spanZ + 4;
+      speeds[i] = 0.18 + Math.random() * 0.7;
     }
-    return { positions, speeds, count };
-  }, []);
+    return { positions, speeds, count, spanX, spanZ, heightRange };
+  }, [count, heightRange, spread]);
 
   const geometry = useMemo(() => {
     const g = new three.BufferGeometry();
     g.setAttribute('position', new three.BufferAttribute(data.positions, 3));
     return g;
   }, [data.positions]);
+
+  useEffect(() => {
+    return () => {
+      geometry.dispose();
+    };
+  }, [geometry]);
 
   useFrame((_, delta) => {
     const points = pointsRef.current;
@@ -755,16 +951,17 @@ const NeonWisps = () => {
     }
     const pos = points.geometry.attributes.position as three.BufferAttribute;
     const arr = pos.array as Float32Array;
+    const maxY = data.heightRange + 1.1;
     for (let i = 0; i < data.count; i += 1) {
       const yIndex = i * 3 + 1;
       const speed = data.speeds[i] ?? 0.3;
       const currentY = arr[yIndex] ?? 0;
       const nextY = currentY + speed * delta;
       arr[yIndex] = nextY;
-      if (nextY > 3.2) {
-        arr[yIndex] = 0.2;
-        arr[i * 3] = (Math.random() - 0.5) * 28;
-        arr[i * 3 + 2] = -Math.random() * 36 + 4;
+      if (nextY > maxY) {
+        arr[yIndex] = 0.15;
+        arr[i * 3] = (Math.random() - 0.5) * data.spanX;
+        arr[i * 3 + 2] = -Math.random() * data.spanZ + 4;
       }
     }
     pos.needsUpdate = true;
@@ -773,10 +970,10 @@ const NeonWisps = () => {
   return (
     <points ref={pointsRef} geometry={geometry}>
       <pointsMaterial
-        color='#ff6ad5'
-        size={0.12}
+        color={color}
+        size={size}
         transparent
-        opacity={0.75}
+        opacity={opacity}
         depthWrite={false}
         blending={three.AdditiveBlending}
         toneMapped={false}
@@ -815,10 +1012,14 @@ const BrandTitle = () => (
 );
 
 export const CinematicCosmosScene = ({
+  theme = 'light',
   onActivePortalChange,
 }: {
+  theme?: CosmosSceneTheme;
   onActivePortalChange?: (id: CosmosPortalId | null) => void;
 }) => {
+  const preset = COSMOS_THEME_PRESETS[theme];
+  const { gl, scene } = useThree();
   const terrain = useMemo(() => createRockyTerrain(), []);
 
   useEffect(() => {
@@ -826,6 +1027,20 @@ export const CinematicCosmosScene = ({
       terrain.dispose();
     };
   }, [terrain]);
+
+  useEffect(() => {
+    gl.toneMappingExposure = preset.exposure;
+  }, [gl, preset.exposure]);
+
+  useEffect(() => {
+    scene.background = new three.Color(preset.background);
+    if (scene.fog instanceof three.Fog) {
+      scene.fog.color.set(preset.fog);
+      scene.fog.near = preset.fogNear;
+      scene.fog.far = preset.fogFar;
+    }
+  }, [scene, preset.background, preset.fog, preset.fogNear, preset.fogFar]);
+
   const glowMap = useMemo(() => createGlowSprite(), []);
   const mistMap = useMemo(() => createMistTexture(), []);
   const [activePortalId, setActivePortalId] = useState<CosmosPortalId | null>(null);
@@ -891,20 +1106,25 @@ export const CinematicCosmosScene = ({
   return (
     <>
       <AvatarFollowCamera target={avatarWorldPos} />
-      <color attach='background' args={['#070414']} />
-      <fog attach='fog' args={['#140c24', 70, 210]} />
+      <color attach='background' args={[preset.background]} />
+      <fog attach='fog' args={[preset.fog, preset.fogNear, preset.fogFar]} />
 
-      <SunsetSky />
+      <SunsetSky theme={theme} />
 
-      <ambientLight intensity={0.22} color='#3a2470' />
-      <hemisphereLight args={['#6a4ab8', '#120818', 0.75]} />
-      <directionalLight position={[55, 14, -65]} intensity={0.7} color='#e0a888' />
-      <directionalLight position={[-35, 18, -10]} intensity={0.55} color='#7a6aff' />
-      <directionalLight position={[8, 8, 20]} intensity={0.18} color='#ff6ad5' />
+      <ambientLight intensity={preset.ambientIntensity} color={preset.ambientColor} />
+      <hemisphereLight args={[preset.hemiSky, preset.hemiGround, preset.hemiIntensity]} />
+      <directionalLight position={[55, 14, -65]} intensity={preset.keyIntensity} color={preset.keyColor} />
+      <directionalLight position={[-35, 18, -10]} intensity={preset.rimIntensity} color={preset.rimColor} />
+      <directionalLight position={[8, 8, 20]} intensity={preset.fillIntensity} color={preset.fillColor} />
 
       {NEON_LANTERNS.map((lantern) => (
         <group key={lantern.position.join(',')} position={lantern.position}>
-          <pointLight color={lantern.color} intensity={lantern.intensity} distance={14} decay={2} />
+          <pointLight
+            color={lantern.color}
+            intensity={lantern.intensity * preset.lanternScale}
+            distance={14}
+            decay={2}
+          />
           <mesh>
             <sphereGeometry args={[0.08, 12, 12]} />
             <meshBasicMaterial color={lantern.color} toneMapped={false} />
@@ -912,18 +1132,26 @@ export const CinematicCosmosScene = ({
         </group>
       ))}
 
-      <Stars radius={320} depth={180} count={2200} factor={1.6} saturation={0.15} fade speed={0.005} />
+      <Stars
+        radius={320}
+        depth={180}
+        count={preset.starCount}
+        factor={preset.starFactor}
+        saturation={preset.starSaturation}
+        fade
+        speed={0.005}
+      />
 
       <mesh geometry={terrain} position={[0, -1.5, -22]} receiveShadow>
         <meshStandardMaterial
           map={diff}
           normalMap={nor}
           roughnessMap={rough}
-          color='#2a2840'
+          color={preset.terrainColor}
           roughness={0.92}
           metalness={0.08}
           normalScale={new three.Vector2(1.6, 1.6)}
-          envMapIntensity={0.45}
+          envMapIntensity={preset.terrainEnv}
         />
       </mesh>
 
@@ -936,9 +1164,34 @@ export const CinematicCosmosScene = ({
 
       <RealisticEarth />
       <CompanionWorlds />
-      <HorizonSun glowMap={glowMap} />
-      <GroundMist map={mistMap} />
-      <NeonWisps />
+      <HorizonSun glowMap={glowMap} preset={preset} />
+      <GroundMist map={mistMap} opacityScale={preset.mistOpacityScale} />
+      <NeonWisps
+        count={preset.wispCount}
+        size={preset.wispSize}
+        opacity={preset.wispOpacity}
+        color='#ff6ad5'
+      />
+      {theme === 'dark' ? (
+        <>
+          <NeonWisps
+            count={Math.round(preset.wispCount * 0.7)}
+            size={preset.wispSize * 0.7}
+            opacity={preset.wispOpacity * 0.65}
+            spread={1.45}
+            color='#5ad8ff'
+            heightRange={4.2}
+          />
+          <NeonWisps
+            count={Math.round(preset.wispCount * 0.45)}
+            size={preset.wispSize * 1.35}
+            opacity={preset.wispOpacity * 0.4}
+            spread={1.8}
+            color='#7a6aff'
+            heightRange={5.5}
+          />
+        </>
+      ) : null}
       <BrandTitle />
 
       {COSMOS_PORTALS.map((portal) => (
@@ -950,8 +1203,13 @@ export const CinematicCosmosScene = ({
       </group>
 
       <EffectComposer multisampling={4} enableNormalPass={false}>
-        <Bloom mipmapBlur luminanceThreshold={0.52} intensity={1.15} radius={0.72} />
-        <Vignette offset={0.2} darkness={0.55} />
+        <Bloom
+          mipmapBlur
+          luminanceThreshold={preset.bloomThreshold}
+          intensity={preset.bloomIntensity}
+          radius={preset.bloomRadius}
+        />
+        <Vignette offset={preset.vignetteOffset} darkness={preset.vignetteDarkness} />
       </EffectComposer>
     </>
   );
