@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
 import { useCreateComment, replyFormSchema, type ReplyFormSchema } from '../model';
 import { Button, useToast } from '@/shared/ui';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 
 type ReplyFormProps = {
   commentId?: number;
@@ -60,7 +61,7 @@ export function ReplyForm({ commentId, postId }: ReplyFormProps) {
           <textarea
             id={`reply-input-${commentId}`}
             {...register('content')}
-            className='w-full bg-[#232946] border border-blue-400/40 rounded-lg p-2 pr-14 text-slate-100 font-mono resize-none focus:outline-none focus:ring-2 focus:ring-blue-400/60'
+            className={`${blogTheme.commentInput} p-2 pr-14`}
             rows={2}
             placeholder={!isAuthenticated ? '로그인이 필요합니다' : '대댓글을 입력하세요...'}
             aria-label='대댓글 입력'

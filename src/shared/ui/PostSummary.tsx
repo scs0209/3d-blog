@@ -2,6 +2,7 @@
 
 import { usePostSummary } from '@/features/post/model';
 import { isValidSummary } from '@/features/post/utils';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import NovelViewer from './NovelViewer';
 
 interface PostSummaryProps {
@@ -17,32 +18,30 @@ export function PostSummary({ post }: PostSummaryProps) {
 
   if (isLoading) {
     return (
-      <div className='relative bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-400/30 rounded-lg p-4 mb-6'>
-        <div className='flex items-center gap-2 mb-2'>
-          <div className='w-4 h-4 bg-blue-400 rounded-full animate-pulse' />
-          <span className='text-blue-200 text-sm font-medium'>AI 요약 생성 중...</span>
+      <div className={`relative mb-6 ${blogTheme.summaryBox}`}>
+        <div className='mb-2 flex items-center gap-2'>
+          <div className='h-4 w-4 animate-pulse rounded-full bg-[#ff9a3c]/60 dark:bg-[#3de8ff]/60' />
+          <span className={`text-sm font-medium ${blogTheme.textAccent}`}>AI 요약 생성 중...</span>
         </div>
         <div className='space-y-2'>
-          <div className='h-3 bg-blue-800/30 rounded animate-pulse' />
-          <div className='h-3 bg-blue-800/30 rounded w-3/4 animate-pulse' />
+          <div className='h-3 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
+          <div className='h-3 w-3/4 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
         </div>
       </div>
     );
   }
 
   if (error || !isValidSummary(summary)) {
-    return null; // 에러나 유효하지 않은 요약은 표시하지 않음
+    return null;
   }
 
   return (
-    <div className='relative bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-400/30 rounded-lg p-4 mb-6'>
-      <div className='flex items-center gap-2 mb-3'>
-        <div className='w-4 h-4 bg-blue-400 rounded-full' />
-        <span className='text-blue-200 text-sm font-medium'>🤖 AI 요약</span>
+    <div className={`relative mb-6 ${blogTheme.summaryBox}`}>
+      <div className='mb-3 flex items-center gap-2'>
+        <div className='h-4 w-4 rounded-full bg-[#ff9a3c]/70 dark:bg-[#3de8ff]/70' />
+        <span className={`text-sm font-medium ${blogTheme.textAccent}`}>🤖 AI 요약</span>
       </div>
-      <div className='text-blue-100'>
-        <NovelViewer content={summary} />
-      </div>
+      <NovelViewer content={summary} />
     </div>
   );
-}
+};
