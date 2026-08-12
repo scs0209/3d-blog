@@ -23,7 +23,6 @@ export * from './HelloBot';
 export * from './MoveBot';
 export * from './FloatingActionButton';
 export * from './CyberpunkCursor';
-export * from './BlurCursor';
 export { Dropdown } from './Dropdown';
 export { Button } from './Button';
 export { BaseModal } from './BaseModal';

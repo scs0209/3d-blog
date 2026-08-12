@@ -1,9 +1,12 @@
-import { useRef, useEffect, useLayoutEffect } from 'react';
+'use client';
+
+import { useRef, useEffect, useLayoutEffect, type ComponentProps } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, useFBX } from '@react-three/drei';
 import type { Group } from 'three';
 import * as three from 'three';
 import type { GLTF } from 'three-stdlib';
+import { setCosmosWalking } from '@/widgets/home/lib/cosmos-audio';
 
 type GLTFResult = GLTF & {
   nodes: Record<string, three.SkinnedMesh>;
@@ -26,7 +29,7 @@ const applyWalkOrientation = (avatar: Group, dx: number, dz: number) => {
   avatar.quaternion.multiplyQuaternions(_yawQ, _uprightQ);
 };
 
-/** 한글 IME에서도 동작하도록 e.code 사용. 리마운트해도 키 상태 유지 */
+/** 한글 IME에서도 동작하도록 e.code 사용 */
 const pressedCodes = new Set<string>();
 const CODE_W = 'KeyW';
 const CODE_A = 'KeyA';
@@ -34,38 +37,81 @@ const CODE_S = 'KeyS';
 const CODE_D = 'KeyD';
 const MOVE_CODES = new Set([CODE_W, CODE_A, CODE_S, CODE_D]);
 
-let keyListenersAttached = false;
+let keyListenerRefCount = 0;
+let detachKeyListeners: (() => void) | null = null;
 
-const ensureKeyListeners = () => {
-  if (keyListenersAttached || typeof window === 'undefined') {
+const isEditableTarget = (target: EventTarget | null) => {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  const tag = target.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+};
+
+const attachKeyListeners = () => {
+  if (typeof window === 'undefined') {
     return;
   }
-  keyListenersAttached = true;
+  keyListenerRefCount += 1;
+  if (detachKeyListeners) {
+    return;
+  }
 
-  window.addEventListener('keydown', (e) => {
-    if (!MOVE_CODES.has(e.code)) {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!MOVE_CODES.has(e.code) || isEditableTarget(e.target)) {
       return;
     }
     e.preventDefault();
     pressedCodes.add(e.code);
-  });
+  };
 
-  window.addEventListener('keyup', (e) => {
+  const handleKeyUp = (e: KeyboardEvent) => {
     if (!MOVE_CODES.has(e.code)) {
       return;
     }
     pressedCodes.delete(e.code);
-  });
+  };
 
-  window.addEventListener('blur', () => {
+  const handleBlur = () => {
     pressedCodes.clear();
-  });
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
+  window.addEventListener('blur', handleBlur);
+
+  detachKeyListeners = () => {
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
+    window.removeEventListener('blur', handleBlur);
+    pressedCodes.clear();
+    detachKeyListeners = null;
+  };
+};
+
+const releaseKeyListeners = () => {
+  keyListenerRefCount = Math.max(0, keyListenerRefCount - 1);
+  if (keyListenerRefCount === 0) {
+    detachKeyListeners?.();
+  }
 };
 
 type AvatarActions = {
   walk: three.AnimationAction | null;
   typing: three.AnimationAction | null;
   snp: three.AnimationAction | null;
+};
+
+type WalkingAvatarProps = ComponentProps<'group'> & {
+  triggerSnp?: number;
+  position?: [number, number, number];
+  /** cinematic: typing 없이 서 있고, 지평선(-Z) 방향으로 보행 */
+  variant?: 'default' | 'cinematic';
+  /** 부모 스케일/위치를 반영한 월드 좌표 (근접 포털 등) */
+  onWorldPosition?: (pos: three.Vector3) => void;
 };
 
 useGLTF.preload('/WalkingAstro.glb');
@@ -75,23 +121,22 @@ useFBX.preload('/Typing.fbx');
 export function WalkingAvatar({
   triggerSnp,
   position = [0, 0.6, 0.5],
+  variant = 'default',
+  onWorldPosition,
   ...restProps
-}: {
-  triggerSnp?: number;
-  position?: [number, number, number];
-  [key: string]: unknown;
-}) {
+}: WalkingAvatarProps) {
+  const isCinematic = variant === 'cinematic';
   const group = useRef<Group>(null);
   const mixer = useRef<three.AnimationMixer | null>(null);
   const actionsRef = useRef<AvatarActions>({ walk: null, typing: null, snp: null });
   const isWalkingRef = useRef(false);
   // React props로 position을 넘기지 않음 — 매 렌더 덮어쓰기 방지
-  const spawnRef = useRef<[number, number, number]>([
-    position[0],
-    position[1],
-    position[2],
-  ]);
+  const spawnRef = useRef<[number, number, number]>([position[0], position[1], position[2]]);
   const offsetRef = useRef(new three.Vector3(0, 0, 0));
+  const facingRef = useRef(isCinematic ? Math.PI : 0);
+  const worldPosRef = useRef(new three.Vector3());
+  const onWorldPositionRef = useRef(onWorldPosition);
+  onWorldPositionRef.current = onWorldPosition;
 
   const { nodes, materials, animations: gltfAnimations } = useGLTF(
     '/WalkingAstro.glb',
@@ -101,13 +146,21 @@ export function WalkingAvatar({
   const typingModel = useFBX('/Typing.fbx');
 
   useLayoutEffect(() => {
-    ensureKeyListeners();
+    attachKeyListeners();
     if (!group.current) {
-      return;
+      return () => {
+        releaseKeyListeners();
+      };
     }
     const [x, y, z] = spawnRef.current;
     group.current.position.set(x, y, z);
-  }, []);
+    if (isCinematic) {
+      applyWalkOrientation(group.current, 0, -1);
+    }
+    return () => {
+      releaseKeyListeners();
+    };
+  }, [isCinematic]);
 
   useFrame((_, delta) => {
     mixer.current?.update(delta);
@@ -120,52 +173,80 @@ export function WalkingAvatar({
     let dx = 0;
     let dz = 0;
     if (pressedCodes.has(CODE_W)) {
-      dz += 1;
+      // cinematic: 카메라 뒤→지평선(-Z)이 전진
+      dz += isCinematic ? -1 : 1;
     }
     if (pressedCodes.has(CODE_S)) {
-      dz -= 1;
+      dz += isCinematic ? 1 : -1;
     }
     if (pressedCodes.has(CODE_A)) {
-      dx += 1;
+      dx += isCinematic ? -1 : 1;
     }
     if (pressedCodes.has(CODE_D)) {
-      dx -= 1;
+      dx += isCinematic ? 1 : -1;
     }
 
     const isMoving = dx !== 0 || dz !== 0;
+    const speed = isCinematic ? MOVE_SPEED * 2.1 : MOVE_SPEED;
 
     if (isMoving) {
       const length = Math.hypot(dx, dz);
       dx /= length;
       dz /= length;
 
-      offsetRef.current.x += dx * MOVE_SPEED * delta;
-      offsetRef.current.z += dz * MOVE_SPEED * delta;
+      offsetRef.current.x += dx * speed * delta;
+      offsetRef.current.z += dz * speed * delta;
       applyWalkOrientation(avatar, dx, dz);
+      facingRef.current = Math.atan2(dx, dz);
 
       if (!isWalkingRef.current) {
         isWalkingRef.current = true;
+        if (isCinematic) {
+          setCosmosWalking(true);
+        }
         const { walk, typing, snp } = actionsRef.current;
         typing?.fadeOut(0.15);
         snp?.stop();
         if (walk) {
-          walk.reset().fadeIn(0.15).play();
+          // reset()하면 bind 포즈로 돌아가며 π/2와 겹쳐 눕음 → unpause만
+          walk.enabled = true;
+          walk.paused = false;
+          walk.setEffectiveWeight(1);
+          if (!walk.isRunning()) {
+            walk.play();
+          }
         }
       }
     } else if (isWalkingRef.current) {
       isWalkingRef.current = false;
-      avatar.quaternion.identity();
-
+      if (isCinematic) {
+        setCosmosWalking(false);
+      }
       const { walk, typing } = actionsRef.current;
-      walk?.fadeOut(0.15);
-      if (typing) {
-        typing.reset().fadeIn(0.15).play();
+
+      if (isCinematic) {
+        if (walk) {
+          walk.paused = true;
+          walk.time = 0.2;
+        }
+        applyWalkOrientation(avatar, Math.sin(facingRef.current), Math.cos(facingRef.current));
+      } else {
+        walk?.fadeOut(0.2);
+        avatar.quaternion.identity();
+        if (typing) {
+          typing.reset().fadeIn(0.15).play();
+        }
       }
     }
 
-    // 매 프레임 위치 강제 적용 (React/R3F props 덮어쓰기 방지)
     const [sx, sy, sz] = spawnRef.current;
     avatar.position.set(sx + offsetRef.current.x, sy, sz + offsetRef.current.z);
+
+    const reportWorldPosition = onWorldPositionRef.current;
+    if (reportWorldPosition) {
+      avatar.getWorldPosition(worldPosRef.current);
+      reportWorldPosition(worldPosRef.current);
+    }
   });
 
   useEffect(() => {
@@ -186,7 +267,7 @@ export function WalkingAvatar({
     }
 
     const typingClip = typingModel.animations?.[0];
-    if (typingClip) {
+    if (typingClip && !isCinematic) {
       const typingAction = currentMixer.clipAction(typingClip);
       typingAction.setEffectiveTimeScale(1);
       typingAction.setEffectiveWeight(1);
@@ -195,10 +276,20 @@ export function WalkingAvatar({
       actionsRef.current.typing = typingAction;
     }
 
+    if (isCinematic && walkClip) {
+      // 서 있는 실루엣: walk 클립 첫 프레임에 고정
+      const walkAction = actionsRef.current.walk;
+      if (walkAction) {
+        walkAction.play();
+        walkAction.paused = true;
+        walkAction.time = 0.15;
+      }
+    }
+
     const snpClip = snpModel.animations?.[0];
     let onFinished: ((e: { action: three.AnimationAction }) => void) | undefined;
 
-    if (snpClip) {
+    if (snpClip && !isCinematic) {
       const snpAction = currentMixer.clipAction(snpClip);
       snpAction.setEffectiveTimeScale(1);
       snpAction.setEffectiveWeight(1);
@@ -224,10 +315,12 @@ export function WalkingAvatar({
         mixer.current = null;
       }
       actionsRef.current = { walk: null, typing: null, snp: null };
+      if (isCinematic) {
+        setCosmosWalking(false);
+      }
     };
-    // FBX/GLTF 객체 identity가 매 렌더 바뀌지 않도록 클립 존재 여부만 의존
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
-  }, [gltfAnimations, typingModel.animations, snpModel.animations]);
+  }, [gltfAnimations, typingModel.animations, snpModel.animations, isCinematic]);
 
   useEffect(() => {
     if (!triggerSnp || isWalkingRef.current) {
@@ -322,7 +415,9 @@ export function WalkingAvatar({
             </group>
           </group>
         </group>
-        <primitive object={nodes.mixamorigHips as unknown as three.Object3D} />
+        {nodes.mixamorigHips ? (
+          <primitive object={nodes.mixamorigHips as unknown as three.Object3D} />
+        ) : null}
       </group>
     </group>
   );

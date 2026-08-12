@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Syne } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
 import type { Metadata } from 'next';
@@ -16,6 +16,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+});
+
+const syne = Syne({
+  variable: '--font-syne',
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
 });
 
 // SEO 메타데이터
@@ -89,7 +95,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='ko' suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <Providers>
             <VisitorLogger />

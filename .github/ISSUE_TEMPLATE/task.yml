@@ -64,7 +64,7 @@ body:
       placeholder: |
         예: 
         - src/views/home/HomeCanvas.tsx
-        - src/widgets/home/ui/FallingAstronaut.tsx
+        - src/widgets/home/ui/WalkingAvatar.tsx
         - .github/workflows/code-review.yml
     validations:
       required: true
