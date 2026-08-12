@@ -1,51 +1,66 @@
-import { motion } from 'framer-motion';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 
 export const SidebarSkeleton = () => {
   return (
-    <motion.aside
-      initial={{ x: '100%', opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      className='hidden lg:flex h-screen flex-shrink-0 flex-col gap-8 w-80 p-6 bg-[#181c2a]/80 border-l border-blue-300 shadow-[0_0_16px_4px_#7dd3fc55] backdrop-blur-sm z-10 relative'
+    <aside
+      className={`relative z-10 hidden h-screen w-80 flex-shrink-0 flex-col gap-8 p-6 lg:flex ${blogTheme.sidebar}`}
       style={{ minWidth: 320 }}
+      aria-busy='true'
+      aria-label='사이드바 불러오는 중'
     >
-      {/* Visitor Counter 스켈레톤 */}
-      <div className='space-y-3'>
-        <div className='h-6 bg-blue-400/20 rounded animate-pulse' />
-        <div className='h-4 bg-blue-400/20 rounded w-3/4 animate-pulse' />
-        <div className='h-8 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-lg animate-pulse' />
+      <div className={`relative rounded-xl px-3 py-2.5 ${blogTheme.card}`}>
+        <span className={blogTheme.cardTopGlow} aria-hidden />
+        <div className='flex flex-row items-end justify-center gap-5'>
+          <div className='flex flex-col items-center'>
+            <div className='mb-1.5 h-2.5 w-8 animate-pulse rounded bg-[#ff9a3c]/25 dark:bg-[#3de8ff]/25' />
+            <div className='flex space-x-0.5'>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={`visitor-today-${i}`}
+                  className='h-7 w-5 animate-pulse rounded-md bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15'
+                />
+              ))}
+            </div>
+          </div>
+          <div className='mb-3 h-8 w-px bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/15' aria-hidden />
+          <div className='flex flex-col items-center'>
+            <div className='mb-1.5 h-2.5 w-8 animate-pulse rounded bg-[#e878a0]/25 dark:bg-[#7ec8ff]/25' />
+            <div className='flex space-x-0.5'>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={`visitor-total-${i}`}
+                  className='h-7 w-5 animate-pulse rounded-md bg-[#c878ff]/15 dark:bg-[#6366f1]/15'
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Category 섹션 스켈레톤 */}
       <div>
-        <div className='px-3 py-2 flex items-center justify-between'>
-          <div className='h-6 bg-blue-400/20 rounded w-24 animate-pulse' />
-        </div>
-        <nav className='flex flex-col gap-2 px-3 py-4'>
-          {/* 전체 메뉴 스켈레톤 */}
-          <div className='h-8 bg-blue-400/20 rounded-lg animate-pulse' />
-
-          {/* 카테고리 메뉴 스켈레톤들 */}
-          {Array.from({ length: 6 }).map((_) => (
+        <div className='mb-3 h-4 w-24 animate-pulse rounded bg-[#ff9a3c]/25 dark:bg-[#3de8ff]/25' />
+        <nav className='flex flex-col gap-2'>
+          <div className='h-8 animate-pulse rounded-lg bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
+          {[0, 1, 2, 3, 4, 5].map((i) => (
             <div
-              key={`sidebar-category-skeleton-${Math.random()}`}
-              className='h-8 bg-blue-400/20 rounded-lg animate-pulse'
+              key={`sidebar-category-${i}`}
+              className='h-8 animate-pulse rounded-lg bg-[#ff9a3c]/12 dark:bg-[#3de8ff]/12'
             />
           ))}
         </nav>
       </div>
 
-      {/* Tags 섹션 스켈레톤 */}
       <div>
-        <div className='h-5 bg-blue-400/20 rounded w-16 mb-2 animate-pulse' />
+        <div className='mb-2 h-4 w-16 animate-pulse rounded bg-[#ff9a3c]/25 dark:bg-[#3de8ff]/25' />
         <div className='flex flex-wrap gap-2'>
-          {Array.from({ length: 8 }).map((_) => (
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
             <div
-              key={`sidebar-tag-skeleton-${Math.random()}`}
-              className='h-6 bg-purple-400/20 rounded-full px-3 w-16 animate-pulse'
+              key={`sidebar-tag-${i}`}
+              className='h-6 w-16 animate-pulse rounded-full bg-[#e878a0]/15 dark:bg-[#7ec8ff]/15'
             />
           ))}
         </div>
       </div>
-    </motion.aside>
+    </aside>
   );
 };

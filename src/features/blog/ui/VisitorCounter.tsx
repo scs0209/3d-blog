@@ -50,7 +50,42 @@ export const VisitorCounter = () => {
   }, [data?.total, animate, counterRef]);
 
   if (isLoading) {
-    return <div className={`mb-4 text-sm ${blogTheme.textMuted}`}>Loading...</div>;
+    return (
+      <div className='relative mb-4 w-full' aria-busy='true'>
+        <div className={`relative flex flex-col items-center rounded-xl px-3 py-2.5 ${blogTheme.card}`}>
+          <span className={blogTheme.cardTopGlow} aria-hidden />
+          <div className='flex flex-row items-end gap-5'>
+            <div className='flex flex-col items-center'>
+              <div className='mb-1.5 h-2.5 w-8 animate-pulse rounded bg-[#ff9a3c]/25 dark:bg-[#3de8ff]/25' />
+              <div className='flex space-x-0.5'>
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={`today-skel-${i}`}
+                    className='h-7 w-5 animate-pulse rounded-md border border-[#ff9a3c]/20 bg-[#ff9a3c]/15 dark:border-[#3de8ff]/20 dark:bg-[#3de8ff]/15'
+                  />
+                ))}
+              </div>
+            </div>
+            <div className='mb-3 h-8 w-px bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/15' aria-hidden />
+            <div className='flex flex-col items-center'>
+              <div className='mb-1.5 h-2.5 w-8 animate-pulse rounded bg-[#e878a0]/25 dark:bg-[#7ec8ff]/25' />
+              <div className='flex space-x-0.5'>
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={`total-skel-${i}`}
+                    className='h-7 w-5 animate-pulse rounded-md border border-[#e878a0]/20 bg-[#c878ff]/15 dark:border-[#7ec8ff]/20 dark:bg-[#6366f1]/15'
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div
+            className='mt-1.5 h-1.5 w-1.5 animate-pulse rounded-full bg-[#ff9a3c]/40 dark:bg-[#3de8ff]/40'
+            aria-hidden
+          />
+        </div>
+      </div>
+    );
   }
 
   const todayDigits = formatNumber(data?.today).split('');
@@ -75,7 +110,7 @@ export const VisitorCounter = () => {
             </span>
             <div className='flex space-x-0.5'>
               {todayDigits.map((digit, idx) => (
-                <Digit key={`today-${idx}-${digit}`} digit={digit} index={idx} variant='today' />
+                <Digit key={`today-${digit}-${idx}`} digit={digit} index={idx} variant='today' />
               ))}
             </div>
           </div>
