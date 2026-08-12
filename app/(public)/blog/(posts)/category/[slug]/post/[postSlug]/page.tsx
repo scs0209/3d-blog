@@ -147,6 +147,10 @@ export default async function PostPage({
     notFound();
   }
 
+  if (post.category?.slug && post.category.slug !== categorySlug) {
+    notFound();
+  }
+
   const backHref = `/blog/category/${post.category?.slug ?? categorySlug}`;
 
   return (

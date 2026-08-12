@@ -71,7 +71,7 @@ export const blogTheme = {
   summaryBox:
     'rounded-lg border border-[#ff9a3c]/25 bg-gradient-to-r from-[#ff9a3c]/8 to-[#8a4a68]/10 p-4 dark:border-[#3de8ff]/20 dark:from-[#3de8ff]/6 dark:to-[#6366f1]/8',
   commentSection:
-    'relative mt-10 max-w-4xl rounded-2xl px-4 py-8 sm:px-6 md:border md:px-8 md:backdrop-blur-sm md:overflow-hidden mx-4 lg:mx-auto md:border-[#ff9a3c]/20 md:bg-gradient-to-br md:from-[#2a1545]/90 md:via-[#1c0e38]/85 md:to-[#12082a]/80 md:shadow-[0_0_32px_rgba(255,154,60,0.08)] dark:md:border-[#3de8ff]/15 dark:md:from-[#0a0618]/90 dark:md:via-[#070414]/90 dark:md:to-[#000008]/85 dark:md:shadow-[0_0_32px_rgba(61,232,255,0.08)]',
+    'relative mt-10 max-w-4xl rounded-2xl px-4 py-8 sm:px-6 md:border md:px-8 md:backdrop-blur-sm md:overflow-hidden md:border-[#ff9a3c]/20 md:bg-gradient-to-br md:from-[#2a1545]/90 md:via-[#1c0e38]/85 md:to-[#12082a]/80 md:shadow-[0_0_32px_rgba(255,154,60,0.08)] dark:md:border-[#3de8ff]/15 dark:md:from-[#0a0618]/90 dark:md:via-[#070414]/90 dark:md:to-[#000008]/85 dark:md:shadow-[0_0_32px_rgba(61,232,255,0.08)]',
   commentCard:
     'relative rounded-xl border border-[#ff9a3c]/20 bg-gradient-to-br from-[#2a1545]/70 to-[#1c0e38]/60 p-4 dark:border-[#3de8ff]/15 dark:from-[#0a0618]/80 dark:to-[#070414]/60',
   commentReplyCard:

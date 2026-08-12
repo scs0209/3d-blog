@@ -75,7 +75,7 @@ export const VisitorCounter = () => {
             </span>
             <div className='flex space-x-0.5'>
               {todayDigits.map((digit, idx) => (
-                <Digit key={`today-${digit}`} digit={digit} index={idx} variant='today' />
+                <Digit key={`today-${idx}-${digit}`} digit={digit} index={idx} variant='today' />
               ))}
             </div>
           </div>
@@ -88,7 +88,7 @@ export const VisitorCounter = () => {
             </span>
             <div className='flex space-x-0.5'>
               {totalDigits.map((digit, idx) => (
-                <Digit key={`total-${digit}`} digit={digit} index={idx} variant='total' />
+                <Digit key={`total-${idx}-${digit}`} digit={digit} index={idx} variant='total' />
               ))}
             </div>
           </div>

@@ -85,10 +85,16 @@ export const fetcher = async <P extends Path, M extends Method<P>>({
     let message = `Request failed: ${res.status} ${res.statusText}`;
     try {
       const errorBody = await res.json();
-      if (typeof errorBody?.error === 'string') {
+      if (typeof errorBody?.error === 'string' && errorBody.error.trim() !== '') {
         message = errorBody.error;
       }
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw error;
+      }
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw error;
+      }
       // ignore non-json error bodies
     }
     throw new Error(message);

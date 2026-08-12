@@ -42,6 +42,8 @@ export default function BlogHeader() {
         <div className='flex items-center'>
           <button
             type='button'
+            onClick={() => handleNavigation('/blog')}
+            aria-label='블로그 홈으로 이동'
             className='m-0 flex cursor-pointer select-none items-center gap-2 border-none bg-transparent p-0 text-base font-semibold tracking-wide focus:outline-none'
             style={syne}
           >
@@ -177,6 +179,8 @@ export default function BlogHeader() {
           <div className='relative flex h-10 items-center justify-center px-12'>
             <button
               type='button'
+              onClick={() => handleNavigation('/blog')}
+              aria-label='블로그 홈으로 이동'
               className='flex items-center gap-2 border-none bg-transparent p-0 text-base font-semibold'
               style={syne}
             >

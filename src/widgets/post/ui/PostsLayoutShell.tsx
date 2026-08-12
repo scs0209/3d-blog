@@ -12,7 +12,7 @@ type PostsLayoutShellProps = {
 
 export const PostsLayoutShell = ({ children }: PostsLayoutShellProps) => {
   return (
-    <main className={blogTheme.shellRoot}>
+    <div className={blogTheme.shellRoot}>
       <div className={`relative h-screen w-full overflow-hidden ${blogTheme.shell}`}>
         <SpaceBackground />
 
@@ -36,6 +36,6 @@ export const PostsLayoutShell = ({ children }: PostsLayoutShellProps) => {
           aria-hidden
         />
       </div>
-    </main>
+    </div>
   );
 };

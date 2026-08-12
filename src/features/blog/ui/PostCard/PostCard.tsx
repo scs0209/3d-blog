@@ -55,7 +55,7 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
         onMouseMove={handleMouseMove}
         className='group/card relative flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-xl bg-transparent'
       >
-        <CardPattern mouseX={mouseX} mouseY={mouseY} />
+        <CardPattern mouseX={mouseX} mouseY={mouseY} seed={post.id ?? post.slug ?? post.title} />
         {post.category?.name && <span className={blogTheme.categoryPill}>{post.category.name}</span>}
         <h2
           className={`mb-1 line-clamp-2 text-center text-base font-semibold transition-colors group-hover/card:text-[#ffc8a0] dark:group-hover/card:text-[#3de8ff] ${blogTheme.textPrimary}`}

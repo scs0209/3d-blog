@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import prisma from '@/shared/lib/db';
 
 /**
@@ -193,39 +194,54 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     // IP당 24시간 내 중복 조회 체크 (PostView는 postId+ip 유니크)
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    const existingView = await prisma.postView.findUnique({
-      where: {
-        postId_ip: {
-          postId: post.id,
-          ip: clientIP,
-        },
-      },
-    });
+    try {
+      await prisma.$transaction(async (tx) => {
+        const existingView = await tx.postView.findUnique({
+          where: {
+            postId_ip: {
+              postId: post.id,
+              ip: clientIP,
+            },
+          },
+        });
 
-    const shouldCountView = !existingView || existingView.createdAt < twentyFourHoursAgo;
+        if (existingView && existingView.createdAt >= twentyFourHoursAgo) {
+          return;
+        }
 
-    if (shouldCountView) {
-      await prisma.$transaction([
-        prisma.post.update({
+        await tx.post.update({
           where: { id: post.id },
           data: { views: { increment: 1 } },
-        }),
-        existingView
-          ? prisma.postView.update({
-              where: { id: existingView.id },
-              data: {
-                createdAt: new Date(),
-                userAgent,
-              },
-            })
-          : prisma.postView.create({
-              data: {
-                postId: post.id,
-                ip: clientIP,
-                userAgent,
-              },
-            }),
-      ]);
+        });
+
+        await tx.postView.upsert({
+          where: {
+            postId_ip: {
+              postId: post.id,
+              ip: clientIP,
+            },
+          },
+          create: {
+            postId: post.id,
+            ip: clientIP,
+            userAgent,
+          },
+          update: {
+            createdAt: new Date(),
+            userAgent,
+          },
+        });
+      });
+    } catch (error) {
+      // 동시 요청 레이스는 무시 (한 요청만 조회수 반영)
+      if (
+        !(
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          (error.code === 'P2002' || error.code === 'P2034')
+        )
+      ) {
+        throw error;
+      }
     }
 
     // 조회수 업데이트된 게시물 정보 반환

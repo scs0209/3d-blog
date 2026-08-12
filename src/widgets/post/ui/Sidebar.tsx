@@ -46,7 +46,7 @@ export default function Sidebar() {
           >
             <button
               type='button'
-              className={`absolute left-[-40px] top-4 z-20 m-0 border-none bg-transparent p-0 outline-none transition hover:text-[#3de8ff] ${blogTheme.textMuted}`}
+              className={`absolute left-[-40px] top-4 z-20 m-0 border-none bg-transparent p-0 outline-none transition hover:text-[#ff9a3c] dark:hover:text-[#3de8ff] ${blogTheme.textMuted}`}
               onClick={() => setSidebarOpen(false)}
               aria-label='사이드바 접기'
             >
@@ -102,7 +102,7 @@ export default function Sidebar() {
       {!sidebarOpen && (
         <button
           type='button'
-          className={`fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 border-none bg-transparent p-0 outline-none transition hover:text-[#3de8ff] lg:flex ${blogTheme.textMuted}`}
+          className={`fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 border-none bg-transparent p-0 outline-none transition hover:text-[#ff9a3c] dark:hover:text-[#3de8ff] lg:flex ${blogTheme.textMuted}`}
           onClick={() => setSidebarOpen(true)}
           aria-label='사이드바 열기'
         >

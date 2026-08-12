@@ -6,6 +6,8 @@ export { default as Sidebar } from './Sidebar';
 export { MobileNavbar } from './MobileNavbar';
 export { SpaceBackground } from './SpaceBackground';
 export { PostBackButton } from './PostBackButton';
+export { PostsLayoutShell } from './PostsLayoutShell';
+export { BlogSectionTitle } from './BlogSectionTitle';
 export { SearchBar } from './SearchBar';
 export { CategoryTree } from './CategoryTree';
 export * from './ComputerBackground/index';

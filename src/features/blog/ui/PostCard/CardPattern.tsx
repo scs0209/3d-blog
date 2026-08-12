@@ -15,12 +15,33 @@ const coolGradients = [
   'bg-gradient-to-r from-teal-500 via-cyan-400 to-blue-600',
 ];
 
-export const CardPattern = ({ mouseX, mouseY }: { mouseX: MotionValue<number>; mouseY: MotionValue<number> }) => {
+const hashSeed = (seed: string) => {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash);
+};
+
+type CardPatternProps = {
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+  seed?: string | number;
+};
+
+export const CardPattern = ({ mouseX, mouseY, seed = 'card' }: CardPatternProps) => {
   const maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`;
   const style = { maskImage, WebkitMaskImage: maskImage };
+  const seedKey = String(seed);
 
-  const warmGradient = useMemo(() => warmGradients[Math.floor(Math.random() * warmGradients.length)], []);
-  const coolGradient = useMemo(() => coolGradients[Math.floor(Math.random() * coolGradients.length)], []);
+  const warmGradient = useMemo(
+    () => warmGradients[hashSeed(`${seedKey}-warm`) % warmGradients.length],
+    [seedKey],
+  );
+  const coolGradient = useMemo(
+    () => coolGradients[hashSeed(`${seedKey}-cool`) % coolGradients.length],
+    [seedKey],
+  );
 
   return (
     <div className='pointer-events-none'>

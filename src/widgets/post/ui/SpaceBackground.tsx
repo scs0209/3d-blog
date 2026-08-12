@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 const twilightStars = Array.from({ length: 40 }).map((_, i) => {
   const size = `${(i % 3) * 0.5 + 1.2}px`;
@@ -9,7 +11,7 @@ const twilightStars = Array.from({ length: 40 }).map((_, i) => {
   const opacity = 0.25 + ((i * 11) % 50) / 100;
   return (
     <span
-      key={`star-light-${Math.random()}`}
+      key={`star-light-${i}`}
       className='absolute block rounded-full bg-[#ffc8a0] dark:hidden'
       style={{
         width: size,
@@ -30,7 +32,7 @@ const darkStars = Array.from({ length: 90 }).map((_, i) => {
   const opacity = 0.2 + ((i * 13) % 60) / 100;
   return (
     <span
-      key={`star-dark-${Math.random()}`}
+      key={`star-dark-${i}`}
       className='absolute hidden rounded-full bg-[#7ec8ff] dark:block'
       style={{
         width: size,
@@ -172,19 +174,26 @@ const PlanetRing = ({ size, stroke, fill }: { size: number; stroke: string; fill
   );
 };
 
-const PlanetSphere = ({ size, palette }: { size: number; palette: PlanetPalette }) => {
+const PlanetSphere = ({
+  size,
+  palette,
+  driftDuration,
+}: {
+  size: number;
+  palette: PlanetPalette;
+  driftDuration: number;
+}) => {
   return (
     <motion.div
       className='relative overflow-hidden rounded-full'
       style={{ width: size, height: size }}
       animate={{ rotate: 360 }}
-      transition={{ duration: 280, repeat: Number.POSITIVE_INFINITY, ease: 'linear' }}
+      transition={{ duration: driftDuration, repeat: Number.POSITIVE_INFINITY, ease: 'linear' }}
     >
       <div className='absolute inset-0 rounded-full' style={{ background: palette.sphere }} />
       {palette.bands && (
         <div className='absolute inset-0 rounded-full opacity-80' style={{ background: palette.bands }} />
       )}
-      {/* terminator */}
       <div
         className='absolute inset-0 rounded-full'
         style={{
@@ -192,14 +201,15 @@ const PlanetSphere = ({ size, palette }: { size: number; palette: PlanetPalette 
             'radial-gradient(circle at 72% 50%, transparent 36%, rgba(0,0,0,0.15) 58%, rgba(0,0,0,0.55) 100%)',
         }}
       />
-      {/* specular */}
       <div className='absolute left-[16%] top-[14%] h-[20%] w-[26%] rounded-full bg-white/30 blur-[1px]' />
       <div className='absolute left-[22%] top-[20%] h-[8%] w-[10%] rounded-full bg-white/50' />
     </motion.div>
   );
 };
 
-const Planet = ({ planet }: { planet: PlanetConfig }) => {
+const Planet = ({ planet, isDark }: { planet: PlanetConfig; isDark: boolean }) => {
+  const palette = isDark ? planet.dark : planet.light;
+
   return (
     <motion.div
       className='absolute'
@@ -212,35 +222,16 @@ const Planet = ({ planet }: { planet: PlanetConfig }) => {
       }}
       aria-hidden
     >
-      {/* Light theme */}
-      <div className='absolute inset-0 dark:hidden' style={{ width: planet.size, height: planet.size }}>
+      <div className='absolute inset-0' style={{ width: planet.size, height: planet.size }}>
         <div
           className='absolute inset-[-35%] rounded-full blur-2xl'
-          style={{ background: `radial-gradient(circle, ${planet.light.atmosphere} 0%, transparent 70%)` }}
+          style={{ background: `radial-gradient(circle, ${palette.atmosphere} 0%, transparent 70%)` }}
         />
-        {planet.hasRing && planet.light.ringStroke && (
-          <PlanetRing
-            size={planet.size}
-            stroke={planet.light.ringStroke}
-            fill={planet.light.ringFill ?? 'transparent'}
-          />
+        {planet.hasRing && palette.ringStroke && (
+          <PlanetRing size={planet.size} stroke={palette.ringStroke} fill={palette.ringFill ?? 'transparent'} />
         )}
         <div className='absolute left-0 top-0'>
-          <PlanetSphere size={planet.size} palette={planet.light} />
-        </div>
-      </div>
-
-      {/* Dark theme */}
-      <div className='absolute inset-0 hidden dark:block' style={{ width: planet.size, height: planet.size }}>
-        <div
-          className='absolute inset-[-35%] rounded-full blur-2xl'
-          style={{ background: `radial-gradient(circle, ${planet.dark.atmosphere} 0%, transparent 70%)` }}
-        />
-        {planet.hasRing && planet.dark.ringStroke && (
-          <PlanetRing size={planet.size} stroke={planet.dark.ringStroke} fill={planet.dark.ringFill ?? 'transparent'} />
-        )}
-        <div className='absolute left-0 top-0'>
-          <PlanetSphere size={planet.size} palette={planet.dark} />
+          <PlanetSphere size={planet.size} palette={palette} driftDuration={planet.driftDuration} />
         </div>
       </div>
     </motion.div>
@@ -248,27 +239,36 @@ const Planet = ({ planet }: { planet: PlanetConfig }) => {
 };
 
 export const SpaceBackground = () => {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted ? resolvedTheme === 'dark' : false;
+
   return (
     <div className='pointer-events-none absolute inset-0 z-0 overflow-hidden' aria-hidden>
-      <div className='absolute inset-x-0 bottom-0 h-[45vh] bg-gradient-to-t from-[#ff9a3c]/25 via-[#8a4a68]/15 to-transparent dark:hidden' />
+      <div className='absolute inset-x-0 bottom-0 h-[45vh] bg-gradient-to-t from-[#ff9a3c]/25 via-[#8a4a68]/[0.15] to-transparent dark:hidden' />
       <div className='absolute bottom-[-10%] left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-[#ffc090]/30 blur-3xl dark:hidden' />
       <div className='absolute inset-0 hidden bg-gradient-to-b from-[#000010]/80 via-transparent to-[#000008]/60 dark:block' />
 
       <div className='absolute inset-0 opacity-60 dark:opacity-80'>
-        <span className='absolute left-[8%] top-[38%] h-5 w-80 rotate-[-12deg] rounded-full bg-gradient-to-r from-orange-200/20 via-white/10 to-rose-200/15 blur-2xl dark:from-blue-300/10 dark:via-white/8 dark:to-purple-300/10' />
-        <span className='absolute left-[30%] top-[48%] h-4 w-96 rotate-[8deg] rounded-full bg-gradient-to-r from-amber-200/15 via-white/8 to-fuchsia-200/12 blur-2xl dark:from-cyan-300/8 dark:via-white/6 dark:to-indigo-300/10' />
+        <span className='absolute left-[8%] top-[38%] h-5 w-80 rotate-[-12deg] rounded-full bg-gradient-to-r from-orange-200/20 via-white/10 to-rose-200/[0.15] blur-2xl dark:from-blue-300/10 dark:via-white/[0.08] dark:to-purple-300/10' />
+        <span className='absolute left-[30%] top-[48%] h-4 w-96 rotate-[8deg] rounded-full bg-gradient-to-r from-amber-200/[0.15] via-white/[0.08] to-fuchsia-200/[0.12] blur-2xl dark:from-cyan-300/[0.08] dark:via-white/[0.06] dark:to-indigo-300/10' />
       </div>
 
       {twilightStars}
       {darkStars}
 
-      <div className='absolute -left-32 top-[10%] h-96 w-96 rounded-full bg-[#8a4a68]/20 blur-3xl dark:bg-[#3de8ff]/6' />
-      <div className='absolute -right-24 top-[30%] h-72 w-72 rounded-full bg-[#ffc090]/15 blur-3xl dark:bg-[#6366f1]/8' />
+      <div className='absolute -left-32 top-[10%] h-96 w-96 rounded-full bg-[#8a4a68]/20 blur-3xl dark:bg-[#3de8ff]/[0.06]' />
+      <div className='absolute -right-24 top-[30%] h-72 w-72 rounded-full bg-[#ffc090]/[0.15] blur-3xl dark:bg-[#6366f1]/[0.08]' />
       <div className='absolute bottom-[20%] left-[20%] h-64 w-64 rounded-full bg-[#c878ff]/10 blur-3xl dark:hidden' />
       <div className='absolute right-[10%] top-[15%] hidden h-56 w-56 rounded-full bg-[#3de8ff]/5 blur-3xl dark:block' />
 
       {planets.map((planet) => (
-        <Planet key={planet.id} planet={planet} />
+        <Planet key={planet.id} planet={planet} isDark={isDark} />
       ))}
     </div>
   );

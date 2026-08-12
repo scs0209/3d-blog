@@ -43,7 +43,7 @@ export const MobileNavbar = ({
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className={`fixed inset-0 z-40 flex justify-end backdrop-blur-sm lg:hidden ${blogTheme.overlay}`}
+          className={`fixed inset-0 z-50 flex justify-end backdrop-blur-sm lg:hidden ${blogTheme.overlay}`}
         >
           <motion.div
             initial={{ x: 80, opacity: 0 }}

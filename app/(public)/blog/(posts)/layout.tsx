@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { PostsLayoutShell } from '@/widgets/post/ui/PostsLayoutShell';
+import { PostsLayoutShell } from '@/widgets/post/ui';
 
 export const metadata: Metadata = {
   title: 'Blog',
