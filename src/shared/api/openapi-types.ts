@@ -2151,7 +2151,7 @@ export interface paths {
         };
         /**
          * 오늘 방문자 수와 총 방문자 수 조회
-         * @description VisitorLog를 기반으로 오늘 방문자 수와 전체 방문자 수를 반환합니다.
+         * @description VisitorDaily 일별 집계를 합산해 오늘/전체 순방문자를 반환합니다.
          */
         get: {
             parameters: {
@@ -2186,7 +2186,7 @@ export interface paths {
         put?: never;
         /**
          * 방문자 기록 추가
-         * @description 방문자의 ip, userAgent, path를 VisitorLog에 기록합니다.
+         * @description visitor_day 쿠키로 당일 중복을 막고 VisitorDaily.count만 증가시킵니다.
          */
         post: {
             parameters: {

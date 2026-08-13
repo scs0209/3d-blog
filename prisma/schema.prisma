@@ -104,12 +104,10 @@ model PostView {
   @@unique([postId, ip])
 }
 
-model VisitorLog {
-  id        Int      @id @default(autoincrement())
-  ip        String
-  userAgent String?
-  path      String
-  createdAt DateTime @default(now())
+/** 일별 순방문자 집계 — raw 로그 대신 하루 1행만 유지 */
+model VisitorDaily {
+  date  String @id // YYYY-MM-DD (Asia/Seoul)
+  count Int    @default(0)
 }
 
 enum Role {
