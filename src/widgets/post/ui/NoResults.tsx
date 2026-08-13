@@ -13,7 +13,14 @@ interface NoResultsProps {
 
 export const NoResults = ({ searchTerm, category, tags }: NoResultsProps) => {
   const router = useRouter();
-  const hasFilters = searchTerm || category || (tags && tags.length > 0);
+  const hasFilters = Boolean(searchTerm || category || (tags && tags.length > 0));
+  const filterLabel = [
+    searchTerm ? `"${searchTerm}"` : null,
+    category ? `카테고리: ${category}` : null,
+    tags?.length ? `태그: ${tags.map((tag) => `#${tag}`).join(' ')}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <motion.div
@@ -29,11 +36,17 @@ export const NoResults = ({ searchTerm, category, tags }: NoResultsProps) => {
       </div>
 
       <h2
-        className={`mb-6 text-center text-xl font-semibold ${blogTheme.textPrimary}`}
+        className={`mb-2 text-center text-xl font-semibold ${blogTheme.textPrimary}`}
         style={{ fontFamily: 'var(--font-syne), sans-serif' }}
       >
         {hasFilters ? '검색 결과가 없습니다' : '아직 게시물이 없습니다'}
       </h2>
+
+      {hasFilters && filterLabel ? (
+        <p className={`mb-6 text-center text-sm ${blogTheme.textMuted}`}>{filterLabel}</p>
+      ) : (
+        <div className='mb-6' />
+      )}
 
       <button
         type='button'

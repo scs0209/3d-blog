@@ -77,6 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     });
 
+    // 태그 검색 페이지 URL (/blog/all?tags=name)
     const tagPages = tags.map((tag) => ({
       url: `${baseUrl}/blog/all?tags=${encodeURIComponent(tag.name)}`,
       lastModified: tag.createdAt || new Date(),
