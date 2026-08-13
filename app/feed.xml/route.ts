@@ -30,7 +30,7 @@ export async function GET() {
 
   const items = posts
     .map((post) => {
-      const link = getPostUrl(post.category?.slug, post.slug);
+      const link = `${getPostUrl(post.category?.slug, post.slug)}?utm_source=rss&utm_medium=feed`;
       const description = extractDescription(post.content ?? '');
       const pubDate = (post.createdAt ?? new Date()).toUTCString();
       const categories = [
