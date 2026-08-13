@@ -25,7 +25,7 @@ const ProtectLayout = ({ children }: { children: React.ReactNode }) => {
 
           <div className='relative z-10 flex h-full min-h-0 flex-col'>
             <div className='flex flex-shrink-0 items-center gap-4 p-6 pb-4'>
-              <SidebarTrigger className={adminTheme.headerTrigger} aria-label='사이드바 열기' />
+              <SidebarTrigger className={adminTheme.headerTrigger} aria-label='사이드바 열기/닫기' />
               <div className='h-6 w-px bg-[#ff9a3c]/30 dark:bg-[#3de8ff]/25' aria-hidden />
               <AdminHeaderTitle />
               <div className='ml-auto'>

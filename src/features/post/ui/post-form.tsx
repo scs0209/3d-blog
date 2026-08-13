@@ -167,7 +167,8 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
                       <p className={`shrink-0 text-xs ${adminTheme.textMuted}`}>등록된 태그가 없습니다</p>
                     ) : (
                       tags.map((tag) => {
-                        const id = tag.id?.toString() ?? '';
+                        if (tag.id == null) return null;
+                        const id = String(tag.id);
                         const selected = selectedTagIds.includes(id);
 
                         return (

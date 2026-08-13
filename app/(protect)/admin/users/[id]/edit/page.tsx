@@ -17,15 +17,13 @@ function UserEditFormSkeleton() {
         <span className={adminTheme.cardTopGlow} aria-hidden />
         <Skeleton className='mb-6 h-8 w-1/4 bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
         <div className='space-y-6'>
-          <div className='space-y-2'>
-            <Skeleton className='h-4 w-16 bg-[#ff9a3c]/10 dark:bg-[#3de8ff]/10' />
-            <Skeleton className='h-10 w-full bg-[#ff9a3c]/10 dark:bg-[#3de8ff]/10' />
-          </div>
-          <div className='space-y-2'>
-            <Skeleton className='h-4 w-16 bg-[#ff9a3c]/10 dark:bg-[#3de8ff]/10' />
-            <Skeleton className='h-10 w-full bg-[#ff9a3c]/10 dark:bg-[#3de8ff]/10' />
-          </div>
-          <Skeleton className='h-10 w-full bg-[#ff9a3c]/10 dark:bg-[#3de8ff]/10' />
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className='space-y-2'>
+              <Skeleton className='h-4 w-16 bg-[#ff9a3c]/10 dark:bg-[#3de8ff]/10' />
+              <Skeleton className='h-10 w-full bg-[#ff9a3c]/10 dark:bg-[#3de8ff]/10' />
+            </div>
+          ))}
+          <Skeleton className='h-10 w-28 bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
         </div>
       </div>
     </div>

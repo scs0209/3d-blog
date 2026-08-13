@@ -13,6 +13,7 @@ import { CategorySelector, TagsSelector } from '@/features/admin/post/ui';
 import type { CategorySelectorRef } from '@/features/admin/post/ui/category-selector';
 import type { TagsSelectorRef } from '@/features/admin/post/ui/tags-selector';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/shadcn-ui/lib/utils';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 
@@ -22,6 +23,7 @@ interface PostUpdateClientProps {
 
 export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
   const toast = useToast();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [post, setPost] = useState<PostResponse>(initialPost);
   const [content, setContent] = useState(initialPost.content ?? '');
@@ -57,8 +59,9 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
     const result = await deletePostAction(Number(initialPost.id));
 
     if (result.success) {
-      setPost(null as unknown as PostResponse);
       toast.success('포스트를 삭제했습니다');
+      router.push('/admin');
+      router.refresh();
     } else {
       toast.error(result.error || '포스트 삭제에 실패했습니다');
     }

@@ -54,7 +54,7 @@ const CategoryRow = ({ node, depth, onEdit, onDelete }: CategoryRowProps) => {
           )}
           <div className='min-w-0'>
             <p className='truncate font-medium'>{node.name}</p>
-            <p className='truncate text-xs text-white/50'>
+            <p className={`truncate text-xs ${adminTheme.textMuted}`}>
               /{node.slug}
               {hasChildren ? ` · 하위 ${node._count?.children ?? node.children.length}` : ''}
             </p>

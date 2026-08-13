@@ -10,7 +10,13 @@ export const CreateTagModal = () => {
 
   return (
     <Modal
-      trigger={<Button variant='ghost' className='w-full h-full opacity-0 absolute inset-0 cursor-pointer' />}
+      trigger={
+        <Button
+          variant='ghost'
+          className='absolute inset-0 h-full w-full cursor-pointer opacity-0'
+          aria-label='태그 추가'
+        />
+      }
       title='태그 생성'
       description='태그의 이름을 입력하세요.'
       open={open}

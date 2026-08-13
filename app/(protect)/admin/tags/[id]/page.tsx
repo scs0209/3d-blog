@@ -1,6 +1,7 @@
 'use client';
 
 import { deleteTag, getTagDetail, updateTag } from '@/features/tag/api/tag-api';
+import { toast } from '@/shared/ui/toast/useToast';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ export default function TagDetailPage({
   const router = useRouter();
   const [tag, setTag] = useState<TagDetail | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -35,11 +36,15 @@ export default function TagDetailPage({
       try {
         const { id: tagId } = await params;
         const id = Number.parseInt(tagId, 10);
+        if (!Number.isInteger(id) || id <= 0) {
+          setLoadError('잘못된 태그 주소입니다.');
+          return;
+        }
         const data = await getTagDetail(id);
         setTag(data);
         setName(data.name);
       } catch {
-        setError('태그를 불러오지 못했습니다.');
+        setLoadError('태그를 불러오지 못했습니다.');
       }
     };
 
@@ -54,8 +59,9 @@ export default function TagDetailPage({
       const updatedTag = await updateTag(tag.id, { name });
       setTag((prevTag) => ({ ...prevTag!, ...updatedTag }));
       setIsEditing(false);
+      toast.success('태그를 수정했습니다');
     } catch {
-      setError('태그 수정에 실패했습니다.');
+      toast.error('태그 수정에 실패했습니다');
     }
   };
 
@@ -64,16 +70,17 @@ export default function TagDetailPage({
 
     try {
       await deleteTag(tag.id);
+      toast.success('태그를 삭제했습니다');
       router.push('/admin');
     } catch {
-      setError('태그 삭제에 실패했습니다.');
+      toast.error('태그 삭제에 실패했습니다');
     }
   };
 
-  if (error) {
+  if (loadError) {
     return (
       <div className={`p-6 ${adminTheme.card}`}>
-        <p className='text-red-300'>{error}</p>
+        <p className='text-red-300'>{loadError}</p>
       </div>
     );
   }
