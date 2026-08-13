@@ -7,6 +7,7 @@ import { SessionProvider } from 'next-auth/react';
 import { ToastProvider } from '@/shared/ui/toast';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { CosmosCursor } from '@/widgets/home';
+import { AnalyticsProvider } from '@/shared/ui/AnalyticsProvider';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -43,6 +44,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <ToastProvider maxToasts={5}>
           <SessionProvider>
             <CosmosCursor />
+            <AnalyticsProvider />
             {children}
           </SessionProvider>
         </ToastProvider>

@@ -7,7 +7,9 @@ import type { Metadata } from 'next';
 import type { PostResponse } from '@/entities/post/model/post';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { PostBackButton } from '@/widgets/post/ui/PostBackButton';
+import { PostViewTracker } from '@/widgets/post/ui/PostViewTracker';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
 
@@ -157,6 +159,13 @@ export default async function PostPage({
     <>
       {/* SEO를 위한 구조화 데이터 */}
       <PostStructuredData post={post} />
+      <Suspense fallback={null}>
+        <PostViewTracker
+          postId={post.id ?? post.slug ?? 'unknown'}
+          slug={post.slug ?? decodedSlug}
+          categorySlug={post.category?.slug}
+        />
+      </Suspense>
 
       <div className='mx-4 max-w-4xl lg:mx-auto'>
         <PostBackButton href={backHref} />
