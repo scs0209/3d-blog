@@ -57,7 +57,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { type GetPostListResponse, usePostList } from '@/features/post/model';
 import { useRouter } from 'next/navigation';
 import { deletePost } from '@/features/post/api/post-api';
+import { Tag, type ColorToken } from '@/shared/ui/Tag';
 import { toast } from '@/shared/ui/toast/useToast';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
+
+const TAG_COLORS: ColorToken[] = ['orange', 'cyan', 'amber', 'rose', 'violet', 'emerald', 'sky', 'fuchsiaToBlue'];
+
+const hashTagColor = (name: string): ColorToken => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length] ?? 'orange';
+};
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -119,16 +131,57 @@ const columns = [
   }),
   columnHelper.display({
     id: 'header',
-    header: 'Header',
+    header: '제목',
     cell: ({ row }) => {
-      return <div>{row.original?.title ?? ''}</div>;
+      return <div className={`max-w-[280px] truncate font-medium ${adminTheme.textPrimary}`}>{row.original?.title ?? ''}</div>;
     },
     enableHiding: false,
   }),
+  columnHelper.display({
+    id: 'category',
+    header: '카테고리',
+    cell: ({ row }) => {
+      const categoryName = row.original?.category?.name;
+      if (!categoryName) {
+        return <span className={adminTheme.textMuted}>—</span>;
+      }
+
+      return (
+        <Tag color='orange' size='sm' type='glass' spacing='tight'>
+          {categoryName}
+        </Tag>
+      );
+    },
+  }),
+  columnHelper.display({
+    id: 'tags',
+    header: '태그',
+    cell: ({ row }) => {
+      const tags = row.original?.tags ?? [];
+      if (tags.length === 0) {
+        return <span className={adminTheme.textMuted}>—</span>;
+      }
+
+      return (
+        <div className='flex max-w-[220px] flex-wrap gap-1'>
+          {tags.slice(0, 3).map((tag) => (
+            <Tag key={tag.id} color={hashTagColor(tag.name ?? '')} size='sm' type='glass' spacing='tight'>
+              {tag.name}
+            </Tag>
+          ))}
+          {tags.length > 3 && (
+            <Tag color='slate' size='sm' type='glass' spacing='tight'>
+              +{tags.length - 3}
+            </Tag>
+          )}
+        </div>
+      );
+    },
+  }),
   columnHelper.accessor('author.name', {
-    header: 'Author',
+    header: '작성자',
     cell: ({ getValue }) => {
-      return <div>{getValue() ?? ''}</div>;
+      return <div className={adminTheme.textMuted}>{getValue() ?? ''}</div>;
     },
   }),
   columnHelper.display({
@@ -138,11 +191,11 @@ const columns = [
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='data-[state=open]:bg-muted text-muted-foreground flex size-8' size='icon'>
             <EllipsisVertical />
-            <span className='sr-only'>Open menu</span>
+            <span className='sr-only'>메뉴 열기</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-32'>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuItem>수정</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant='destructive'
@@ -150,11 +203,11 @@ const columns = [
               e.preventDefault();
               e.stopPropagation();
               await deletePost(row.original?.id ?? 0);
-              toast.success('Post deleted successfully');
+              toast.success('게시물을 삭제했습니다');
               table.options.meta?.refetch?.();
             }}
           >
-            Delete
+            삭제
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -308,7 +361,7 @@ export function PostTable() {
           </DropdownMenu>
         </div>
       </div>
-      <div className='overflow-hidden rounded-lg border glass-card-static mx-6'>
+      <div className={adminTheme.tableWrap}>
         <DndContext
           collisionDetection={closestCenter}
           modifiers={[restrictToVerticalAxis]}
@@ -348,8 +401,8 @@ export function PostTable() {
           </Table>
         </DndContext>
       </div>
-      <div className='flex items-center justify-between mx-6'>
-        <div className='text-muted-foreground hidden flex-1 text-sm lg:flex'>
+      <div className={`flex items-center justify-between mx-6`}>
+        <div className={`hidden flex-1 text-sm lg:flex ${adminTheme.textMuted}`}>
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
           selected.
         </div>

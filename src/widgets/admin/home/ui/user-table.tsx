@@ -43,6 +43,7 @@ import { useUser } from '@/features/user/model/use-user';
 import { useRouter } from 'next/navigation';
 import { deleteUser } from '@/features/user/api/user-api';
 import { toast } from '@/shared/ui/toast/useToast';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import router from 'next/router';
 
 declare module '@tanstack/react-table' {
@@ -210,9 +211,9 @@ export function UserTable() {
 
   if (isLoading) {
     return (
-      <div className='glass-card-static p-8'>
+      <div className={`p-8 ${adminTheme.tableWrap}`}>
         <div className='flex items-center justify-center'>
-          <div className='text-muted-foreground'>Loading users...</div>
+          <div className={adminTheme.textMuted}>사용자를 불러오는 중...</div>
         </div>
       </div>
     );
@@ -250,7 +251,7 @@ export function UserTable() {
           </DropdownMenu>
         </div>
       </div>
-      <div className='glass-card-static rounded-lg overflow-hidden mx-6'>
+      <div className={adminTheme.tableWrap}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
