@@ -9,14 +9,19 @@ interface PostSummaryProps {
     id: string | number;
     title: string;
     content: string | null;
+    updatedAt?: string | Date | null;
   };
 }
 
 export function PostSummary({ post }: PostSummaryProps) {
+  const revisedAt =
+    post.updatedAt instanceof Date ? post.updatedAt.toISOString() : (post.updatedAt ?? '');
+
   const { summary, isLoading, error, refetch, isFetching } = usePostSummary({
     postId: post.id,
     content: post.content ?? '',
     title: post.title ?? '',
+    revisedAt,
   });
 
   if (isLoading) {

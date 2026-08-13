@@ -110,6 +110,15 @@ model VisitorDaily {
   count Int    @default(0)
 }
 
+/** 브라우저(visitorId)당 하루 1회 집계를 원자적으로 보장 */
+model VisitorClaim {
+  date      String
+  visitorId String
+  createdAt DateTime @default(now())
+
+  @@id([date, visitorId])
+}
+
 enum Role {
   ADMIN
   USER

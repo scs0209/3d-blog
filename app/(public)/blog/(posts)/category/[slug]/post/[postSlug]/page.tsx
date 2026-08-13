@@ -202,6 +202,7 @@ export default async function PostPage({
                 id: post.id ?? post.slug ?? 'unknown',
                 title: post.title ?? '',
                 content: post.content ?? null,
+                updatedAt: post.updatedAt ?? null,
               }}
             />
           </div>

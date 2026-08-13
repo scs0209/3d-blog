@@ -1,8 +1,10 @@
+import { Prisma } from '@prisma/client';
 import { type NextRequest, NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
 
-const VISITOR_COOKIE = 'visitor_day';
+const VISITOR_DAY_COOKIE = 'visitor_day';
 const SEOUL_TZ = 'Asia/Seoul';
+const VISITOR_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /** Asia/Seoul 기준 YYYY-MM-DD */
 const getSeoulDateKey = (date = new Date()) =>
@@ -31,6 +33,18 @@ const getSecondsUntilSeoulMidnight = () => {
   const minutes = get('minute');
   const seconds = get('second');
   return 24 * 60 * 60 - (hours * 3600 + minutes * 60 + seconds);
+};
+
+const setVisitorDayCookie = (response: NextResponse, todayKey: string) => {
+  response.cookies.set({
+    name: VISITOR_DAY_COOKIE,
+    value: todayKey,
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: Math.max(getSecondsUntilSeoulMidnight(), 60),
+  });
 };
 
 /**
@@ -79,41 +93,75 @@ export async function GET() {
  * /api/visitor:
  *   post:
  *     summary: 오늘 순방문자 카운트 (+1, 브라우저당 1회)
- *     description: visitor_day 쿠키로 당일 중복을 막고 VisitorDaily.count만 증가시킵니다. IP/UA/path는 저장하지 않습니다.
+ *     description: visitorId 클레임과 visitor_day 쿠키로 당일 중복을 원자적으로 막고 VisitorDaily.count만 증가시킵니다.
  *     tags:
  *       - Visitor
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - visitorId
+ *             properties:
+ *               visitorId:
+ *                 type: string
+ *                 format: uuid
+ *               path:
+ *                 type: string
+ *                 description: 하위 호환용(저장하지 않음)
  *     responses:
  *       200:
  *         description: 이미 집계됨 또는 집계 성공
+ *       400:
+ *         description: visitorId 형식 오류
  *       500:
  *         description: 서버 에러
  */
 export async function POST(req: NextRequest) {
   try {
     const todayKey = getSeoulDateKey();
-    const alreadyCounted = req.cookies.get(VISITOR_COOKIE)?.value === todayKey;
+    const alreadyCounted = req.cookies.get(VISITOR_DAY_COOKIE)?.value === todayKey;
 
     if (alreadyCounted) {
       return NextResponse.json({ ok: true, counted: false });
     }
 
-    await prisma.visitorDaily.upsert({
-      where: { date: todayKey },
-      create: { date: todayKey, count: 1 },
-      update: { count: { increment: 1 } },
-    });
+    let body: { visitorId?: unknown; path?: unknown } = {};
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
+    }
+
+    const visitorId = typeof body.visitorId === 'string' ? body.visitorId.trim() : '';
+    if (!VISITOR_ID_RE.test(visitorId)) {
+      return NextResponse.json({ error: '유효한 visitorId가 필요합니다.' }, { status: 400 });
+    }
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.visitorClaim.create({
+          data: { date: todayKey, visitorId },
+        });
+        await tx.visitorDaily.upsert({
+          where: { date: todayKey },
+          create: { date: todayKey, count: 1 },
+          update: { count: { increment: 1 } },
+        });
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const response = NextResponse.json({ ok: true, counted: false });
+        setVisitorDayCookie(response, todayKey);
+        return response;
+      }
+      throw error;
+    }
 
     const response = NextResponse.json({ ok: true, counted: true });
-    response.cookies.set({
-      name: VISITOR_COOKIE,
-      value: todayKey,
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: Math.max(getSecondsUntilSeoulMidnight(), 60),
-    });
-
+    setVisitorDayCookie(response, todayKey);
     return response;
   } catch (error) {
     console.error('Failed to log visitor:', error);
