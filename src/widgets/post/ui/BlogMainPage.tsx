@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { usePost } from '@/features/post/model';
 import { useSearchParams } from 'next/navigation';
+import { AnalyticsEvents, trackEvent } from '@/shared/lib/analytics';
 import { RecentPosts } from './RecentPosts';
 import { PostList } from './PostList';
 import { NoResults } from './NoResults';
@@ -9,28 +11,56 @@ import { BlogSectionTitle } from './BlogSectionTitle';
 
 export const BlogMainPage = () => {
   const searchParams = useSearchParams();
-  const search = searchParams.get('search');
-  const category = searchParams.get('category');
-  const tagsParam = searchParams.get('tags');
-  const tags = tagsParam?.split(',').filter(Boolean) ?? [];
+  const search = searchParams.get('search') ?? '';
+  const category = searchParams.get('category') ?? '';
+  const tagsParam = searchParams.get('tags') ?? '';
+  const tags = tagsParam.split(',').filter(Boolean);
   const hasFilters = Boolean(search || category || tags.length > 0);
 
   const { posts, isLoading } = usePost({
-    search: search ?? '',
-    category: category ?? '',
-    tags: tagsParam ?? '',
+    search,
+    category,
+    tags: tagsParam,
     page: 1,
     limit: 10,
   });
 
   const postsData = posts?.pages?.flatMap((page) => page.data ?? []) ?? [];
+  const trackedKeyRef = useRef<string>('');
+
+  useEffect(() => {
+    if (isLoading || !hasFilters) return;
+
+    const key = `${search}|${category}|${tagsParam}|${postsData.length}`;
+    if (trackedKeyRef.current === key) return;
+    trackedKeyRef.current = key;
+
+    trackEvent(AnalyticsEvents.blogSearchSubmit, {
+      query_length: search.length,
+      has_query: Boolean(search),
+      has_category: Boolean(category),
+      has_tag: tags.length > 0,
+      tag_count: tags.length,
+      result_count: postsData.length,
+    });
+
+    if (postsData.length === 0) {
+      trackEvent(AnalyticsEvents.blogSearchZeroResult, {
+        query_length: search.length,
+        has_query: Boolean(search),
+        has_category: Boolean(category),
+        has_tag: tags.length > 0,
+        tag_count: tags.length,
+      });
+    }
+  }, [isLoading, hasFilters, search, category, tagsParam, tags.length, postsData.length]);
 
   if (!isLoading && postsData.length === 0) {
     return (
       <div className='mx-auto w-full max-w-4xl'>
         <NoResults
-          searchTerm={search ?? undefined}
-          category={category ?? undefined}
+          searchTerm={search || undefined}
+          category={category || undefined}
           tags={tags.length > 0 ? tags : undefined}
         />
       </div>
