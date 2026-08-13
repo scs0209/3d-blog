@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Button } from '@/shadcn-ui/components/ui/button';
+import { useEffect, forwardRef, useImperativeHandle, useState } from 'react';
 import { useTags } from '@/features/tag/model';
-import { Tag, Plus } from 'lucide-react';
+import { Tag as TagIcon } from 'lucide-react';
+import { Tag, type ColorToken } from '@/shared/ui/Tag';
+import { cn } from '@/shadcn-ui/lib/utils';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 
 export interface TagsSelectorRef {
   getSelectedTagIds: () => string[];
@@ -14,79 +16,82 @@ interface TagsSelectorProps {
   initialTagIds?: string[];
 }
 
-export const TagsSelector = forwardRef<TagsSelectorRef, TagsSelectorProps>(
-  ({ initialTagIds = [] }, ref) => {
-    const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialTagIds);
-    const { data: tags } = useTags();
+const TAG_COLORS: ColorToken[] = ['orange', 'cyan', 'amber', 'rose', 'violet', 'emerald', 'sky'];
 
-    // 초기값이 변경되면 내부 상태도 업데이트
-    useEffect(() => {
-      setSelectedTagIds(initialTagIds);
-    }, [initialTagIds]);
-
-    // ref를 통해 외부에서 접근할 수 있는 메서드들
-    useImperativeHandle(ref, () => ({
-      getSelectedTagIds: () => selectedTagIds,
-      setSelectedTagIds: (tagIds: string[]) => setSelectedTagIds(tagIds),
-    }));
-
-    const handleTagToggle = (tagId: string) => {
-      const newTagIds = selectedTagIds.includes(tagId) 
-        ? selectedTagIds.filter(id => id !== tagId)
-        : [...selectedTagIds, tagId];
-      
-      setSelectedTagIds(newTagIds);
-    };
-
-    if (!tags || tags.length === 0) {
-      return (
-        <div className='space-y-2'>
-          <label className='text-xs font-medium text-muted-foreground flex items-center gap-1'>
-            <Tag className='w-3 h-3 text-blue-400' />
-            태그
-          </label>
-          <div className='flex items-center justify-center py-4 px-3 border border-dashed border-muted-foreground/20 rounded-md bg-muted/5'>
-            <div className='text-center space-y-1'>
-              <Tag className='w-4 h-4 text-muted-foreground/50 mx-auto' />
-              <p className='text-xs text-muted-foreground'>태그 없음</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className='space-y-2'>
-        <label className='text-xs font-medium text-muted-foreground flex items-center gap-1'>
-          <Tag className='w-3 h-3 text-blue-400' />
-          태그
-          <span className='text-xs text-muted-foreground ml-1'>
-            ({selectedTagIds.length})
-          </span>
-        </label>
-        <div className='flex flex-wrap gap-1.5 min-h-[40px] p-2 border border-muted-foreground/20 rounded-md bg-muted/5'>
-          {tags.map((tag) => (
-            <Button
-              key={tag.id}
-              variant={selectedTagIds.includes(tag.id?.toString() ?? '') ? 'default' : 'outline'}
-              size='sm'
-              onClick={() => handleTagToggle(tag.id?.toString() ?? '')}
-              className={`h-7 px-2 text-xs transition-all duration-200 ${
-                selectedTagIds.includes(tag.id?.toString() ?? '')
-                  ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600 shadow-sm'
-                  : 'bg-muted/20 border-muted-foreground/30 text-foreground hover:bg-muted/40 hover:border-muted-foreground/50'
-              }`}
-            >
-              {selectedTagIds.includes(tag.id?.toString() ?? '') ? (
-                <Plus className='w-2.5 h-2.5 mr-1 rotate-45' />
-              ) : (
-                <Plus className='w-2.5 h-2.5 mr-1' />
-              )}
-              {tag.name}
-            </Button>
-          ))}
-        </div>
-      </div>
-    );
+const hashTagColor = (name: string): ColorToken => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-);
+  return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length] ?? 'orange';
+};
+
+export const TagsSelector = forwardRef<TagsSelectorRef, TagsSelectorProps>(({ initialTagIds = [] }, ref) => {
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialTagIds);
+  const { data: tags } = useTags();
+
+  useEffect(() => {
+    setSelectedTagIds(initialTagIds);
+  }, [initialTagIds]);
+
+  useImperativeHandle(ref, () => ({
+    getSelectedTagIds: () => selectedTagIds,
+    setSelectedTagIds: (tagIds: string[]) => setSelectedTagIds(tagIds),
+  }));
+
+  const handleTagToggle = (tagId: string) => {
+    const newTagIds = selectedTagIds.includes(tagId)
+      ? selectedTagIds.filter((id) => id !== tagId)
+      : [...selectedTagIds, tagId];
+
+    setSelectedTagIds(newTagIds);
+  };
+
+  return (
+    <div className='space-y-2'>
+      <span className={`flex h-4 items-center gap-1.5 ${adminTheme.sectionLabel}`}>
+        <TagIcon className='h-3 w-3' />
+        태그
+        {tags && tags.length > 0 && (
+          <span className={`ml-1 normal-case tracking-normal ${adminTheme.textMuted}`}>({selectedTagIds.length})</span>
+        )}
+      </span>
+      <div className={adminTheme.fieldBox}>
+        {!tags || tags.length === 0 ? (
+          <p className={`shrink-0 text-xs ${adminTheme.textMuted}`}>등록된 태그 없음</p>
+        ) : (
+          tags.map((tag) => {
+            const id = tag.id?.toString() ?? '';
+            const selected = selectedTagIds.includes(id);
+
+            return (
+              <button
+                key={tag.id}
+                type='button'
+                onClick={() => handleTagToggle(id)}
+                aria-pressed={selected}
+                aria-label={`${tag.name} 태그 ${selected ? '해제' : '선택'}`}
+                className={cn(
+                  'shrink-0 rounded-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/40 dark:focus-visible:ring-[#3de8ff]/40',
+                  selected ? 'scale-[1.02]' : 'opacity-70 hover:opacity-100',
+                )}
+              >
+                <Tag
+                  color={hashTagColor(tag.name ?? '')}
+                  size='sm'
+                  type={selected ? 'solid' : 'glass'}
+                  spacing='tight'
+                  className='mb-0 cursor-pointer'
+                >
+                  {tag.name}
+                </Tag>
+              </button>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+});
+
+TagsSelector.displayName = 'TagsSelector';

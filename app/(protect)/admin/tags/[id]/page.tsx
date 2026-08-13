@@ -1,8 +1,9 @@
 'use client';
 
+import { deleteTag, getTagDetail, updateTag } from '@/features/tag/api/tag-api';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { deleteTag, getTagDetail, updateTag } from '@/features/tag/api/tag-api';
 
 interface TagDetail {
   id: number;
@@ -33,79 +34,78 @@ export default function TagDetailPage({
     const fetchTag = async () => {
       try {
         const { id: tagId } = await params;
-        const id = Number.parseInt(tagId);
+        const id = Number.parseInt(tagId, 10);
         const data = await getTagDetail(id);
         setTag(data);
         setName(data.name);
-      } catch (err) {
-        setError('Failed to load tag');
+      } catch {
+        setError('태그를 불러오지 못했습니다.');
       }
     };
 
-    fetchTag();
+    void fetchTag();
   }, [params]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tag) {
-      return;
-    }
+    if (!tag) return;
+
     try {
       const updatedTag = await updateTag(tag.id, { name });
       setTag((prevTag) => ({ ...prevTag!, ...updatedTag }));
       setIsEditing(false);
-    } catch (err) {
-      setError('Failed to update tag');
+    } catch {
+      setError('태그 수정에 실패했습니다.');
     }
   };
 
   const handleDelete = async () => {
-    if (!tag) {
-      return;
-    }
+    if (!tag) return;
+
     try {
       await deleteTag(tag.id);
-      router.push('/');
-    } catch (err) {
-      setError('Failed to delete tag');
+      router.push('/admin');
+    } catch {
+      setError('태그 삭제에 실패했습니다.');
     }
   };
 
   if (error) {
     return (
-      <div className='p-4'>
-        <p className='text-red-500'>{error}</p>
+      <div className={`p-6 ${adminTheme.card}`}>
+        <p className='text-red-300'>{error}</p>
       </div>
     );
   }
 
   if (!tag) {
     return (
-      <div className='p-4'>
-        <p>Loading...</p>
+      <div className={`p-6 ${adminTheme.card}`}>
+        <p className={adminTheme.textMuted}>불러오는 중...</p>
       </div>
     );
   }
 
   return (
-    <div className='p-4 max-w-3xl mx-auto'>
-      <div className='bg-white rounded-lg shadow p-6'>
-        <div className='flex justify-between items-center mb-6'>
-          <h1 className='text-2xl font-bold'>Tag Details</h1>
-          <div className='space-x-2'>
+    <div className='mx-auto max-w-3xl space-y-4 p-2'>
+      <div className={`relative p-6 ${adminTheme.card}`}>
+        <span className={adminTheme.cardTopGlow} aria-hidden />
+        <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
+          <h2 className={`text-2xl font-bold ${adminTheme.headerTitle}`}>태그 상세</h2>
+          <div className='flex gap-2'>
             <button
               type='button'
               onClick={() => setIsEditing(!isEditing)}
-              className='px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50'
+              className={`rounded-lg px-3 py-2 text-sm ${adminTheme.navIdle} border border-[#ff9a3c]/25 dark:border-[#3de8ff]/20`}
             >
-              {isEditing ? 'Cancel' : 'Edit'}
+              {isEditing ? '취소' : '수정'}
             </button>
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(true)}
-              className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700'
+              className='rounded-lg border border-red-400/40 bg-red-500/15 px-3 py-2 text-sm text-red-200 hover:bg-red-500/25'
             >
-              Delete
+              삭제
             </button>
           </div>
         </div>
@@ -113,40 +113,40 @@ export default function TagDetailPage({
         {isEditing ? (
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div>
-              <label htmlFor='name' className='block font-medium mb-1'>
-                Tag Name
+              <label htmlFor='name' className={`mb-1 block text-sm font-medium ${adminTheme.textMuted}`}>
+                태그 이름
               </label>
               <input
                 id='name'
                 type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                className={`w-full rounded-lg border border-[#ff9a3c]/30 bg-[#2a1545]/60 px-3 py-2 ${adminTheme.textPrimary} outline-none focus:ring-2 focus:ring-[#ff9a3c]/35 dark:border-[#3de8ff]/25 dark:bg-[#070414]/70 dark:focus:ring-[#3de8ff]/35`}
                 required
               />
             </div>
-            <button type='submit' className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700'>
-              Save Changes
+            <button type='submit' className={`rounded-lg px-4 py-2 text-sm font-medium ${adminTheme.navCta}`}>
+              저장
             </button>
           </form>
         ) : (
           <div className='space-y-4'>
             <div>
-              <h3 className='font-medium mb-1'>Tag Name</h3>
-              <p>{tag.name}</p>
+              <h3 className={`mb-1 text-sm ${adminTheme.sectionLabel}`}>이름</h3>
+              <p className={adminTheme.textPrimary}>{tag.name}</p>
             </div>
             <div>
-              <h3 className='font-medium mb-1'>Created At</h3>
-              <p>{new Date(tag.createdAt).toLocaleDateString()}</p>
+              <h3 className={`mb-1 text-sm ${adminTheme.sectionLabel}`}>생성일</h3>
+              <p className={adminTheme.textMuted}>{new Date(tag.createdAt).toLocaleDateString('ko-KR')}</p>
             </div>
             <div>
-              <h3 className='font-medium mb-1'>Post Count</h3>
-              <p>{tag._count.posts}</p>
+              <h3 className={`mb-1 text-sm ${adminTheme.sectionLabel}`}>연결된 글</h3>
+              <p className={adminTheme.textPrimary}>{tag._count.posts}</p>
             </div>
             {tag.posts.length > 0 && (
               <div>
-                <h3 className='font-medium mb-2'>Related Posts</h3>
-                <ul className='list-disc pl-5 space-y-1'>
+                <h3 className={`mb-2 text-sm ${adminTheme.sectionLabel}`}>관련 포스트</h3>
+                <ul className={`list-disc space-y-1 pl-5 ${adminTheme.textMuted}`}>
                   {tag.posts.map((post) => (
                     <li key={post.id}>{post.title}</li>
                   ))}
@@ -158,24 +158,25 @@ export default function TagDetailPage({
       </div>
 
       {isDeleteModalOpen && (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center'>
-          <div className='bg-white rounded-lg p-6 max-w-md w-full mx-4'>
-            <h2 className='text-xl font-bold mb-4'>Delete Tag</h2>
-            <p className='mb-6'>Are you sure you want to delete this tag? This action cannot be undone.</p>
-            <div className='flex justify-end space-x-2'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4'>
+          <div className={`w-full max-w-md p-6 ${adminTheme.card}`} role='dialog' aria-modal='true' aria-label='태그 삭제 확인'>
+            <span className={adminTheme.cardTopGlow} aria-hidden />
+            <h2 className={`mb-3 text-xl font-bold ${adminTheme.headerTitle}`}>태그 삭제</h2>
+            <p className={`mb-6 ${adminTheme.textMuted}`}>이 태그를 삭제할까요? 이 작업은 되돌릴 수 없습니다.</p>
+            <div className='flex justify-end gap-2'>
               <button
                 type='button'
                 onClick={() => setIsDeleteModalOpen(false)}
-                className='px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50'
+                className={`rounded-lg px-3 py-2 text-sm ${adminTheme.navIdle} border border-[#ff9a3c]/25 dark:border-[#3de8ff]/20`}
               >
-                Cancel
+                취소
               </button>
               <button
                 type='button'
                 onClick={handleDelete}
-                className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700'
+                className='rounded-lg border border-red-400/40 bg-red-500/20 px-3 py-2 text-sm text-red-100 hover:bg-red-500/30'
               >
-                Delete
+                삭제
               </button>
             </div>
           </div>
