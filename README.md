@@ -20,9 +20,6 @@
     - [프로젝트 실행 (Running the Project)](#프로젝트-실행-running-the-project)
   - [프로젝트 구조 (Project Structure)](#프로젝트-구조-project-structure)
   - [사용 가능한 스크립트 (Available Scripts)](#사용-가능한-스크립트-available-scripts)
-  - [AI PR 자동 작성 (AI PR Auto Writer)](#ai-pr-자동-작성-ai-pr-auto-writer)
-    - [설정 방법](#설정-방법)
-    - [기능](#기능)
   - [개인 프로젝트 노트 (Personal Project Note)](#개인-프로젝트-노트-personal-project-note)
   - [기여하기 (Contributing)](#기여하기-contributing)
   - [라이선스 (License)](#라이선스-license)
@@ -37,7 +34,6 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
 ![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-000000?style=flat-square&logo=react&logoColor=61DAFB)
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-000000?style=flat-square&logo=openai&logoColor=white)
-![Gemini](https://img.shields.io/badge/Gemini-4285F4?style=flat-square&logo=google&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
@@ -87,7 +83,7 @@
 ### AI 기술 스택
 
 *   **OpenRouter API:** 다양한 AI 모델에 접근할 수 있는 통합 API 플랫폼
-*   **DeepSeek Chat:** 현재 사용 중인 AI 모델 (`deepseek/deepseek-chat-v3-0324:free`)
+*   **Free model auto-router:** 현재 사용 중인 모델 (`openrouter/free`, `OPENROUTER_SUMMARY_MODEL`로 변경 가능)
 
 
 ## 아키텍처 패턴: Feature-Sliced Design (FSD)
@@ -238,35 +234,6 @@ FSD 아키텍처와 Next.js App Router를 적용함에 따라, 프로젝트의 �
 *   `pnpm start`: 프로덕션 서버를 시작합니다.
 *   `pnpm lint`: ESLint를 사용하여 코드베이스를 검사합니다.
 *   `pnpm generate-types`: OpenAPI 명세로부터 API 타입을 생성합니다. (출력: `src/shared/api/openapi-types.ts`)
-
-## AI PR 자동 작성 (AI PR Auto Writer)
-
-이 프로젝트는 GitHub Actions를 통해 PR이 생성되거나 업데이트될 때 자동으로 AI가 PR 제목과 본문을 생성하는 기능을 제공합니다.
-
-### 설정 방법
-
-1. **GitHub Secrets 설정**
-   - GitHub 저장소의 Settings > Secrets and variables > Actions로 이동
-   - `GEMINI_API_KEY` 시크릿을 추가하고 Google Gemini API 키를 입력
-
-2. **로컬 테스트**
-   ```bash
-   # 환경 변수 설정
-   export GEMINI_API_KEY="your_api_key_here"
-   
-   # 스크립트 실행
-   node scripts/ai-pr.mjs HEAD~2 HEAD
-   ```
-
-3. **GitHub Actions 워크플로우**
-   - `.github/workflows/ai-pr.yml` 파일이 자동으로 PR을 분석하고 AI로 내용을 생성
-   - PR이 열리거나 업데이트될 때마다 자동 실행
-
-### 기능
-- **변경사항 분석**: git diff를 통해 변경된 파일들을 자동 분석
-- **파일 타입 분류**: 코드, 설정, 문서 파일을 자동으로 분류
-- **AI 기반 생성**: Gemini 2.5 Pro를 사용하여 PR 제목과 본문 자동 생성
-- **한국어 지원**: 한국어로 PR 내용 생성
 *   `pnpm exec prisma migrate dev`: Prisma 마이그레이션을 실행하여 데이터베이스 스키마를 업데이트합니다.
 *   `pnpm exec prisma studio`: Prisma Studio를 열어 데이터베이스를 보고 관리합니다.
 

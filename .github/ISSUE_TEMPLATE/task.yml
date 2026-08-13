@@ -65,7 +65,7 @@ body:
         예: 
         - src/views/home/HomeCanvas.tsx
         - src/widgets/home/ui/WalkingAvatar.tsx
-        - .github/workflows/code-review.yml
+        - app/api/summarize/route.ts
     validations:
       required: true
 
