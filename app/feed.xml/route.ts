@@ -1,5 +1,5 @@
-import prisma from '@/shared/lib/db';
 import { baseUrl, extractDescription, getPostUrl } from '@/shared/consts/baseUrl';
+import prisma from '@/shared/lib/db';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
