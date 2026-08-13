@@ -18,6 +18,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/blog/all`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/portfolio`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
@@ -71,9 +77,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     });
 
-    // 태그 페이지 URL 생성
+    // 태그 검색 페이지 URL 생성 (/blog/all?tags=name)
     const tagPages = tags.map((tag) => ({
-      url: `${baseUrl}/blog/tags/${tag.name}`,
+      url: `${baseUrl}/blog/all?tags=${encodeURIComponent(tag.name)}`,
       lastModified: tag.createdAt || new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.5,

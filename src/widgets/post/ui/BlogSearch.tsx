@@ -73,7 +73,7 @@ export function BlogSearch() {
     setSearchExpanded(!searchExpanded);
     if (!searchExpanded) {
       setTimeout(() => {
-        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
         searchInput?.focus();
       }, 150);
     }
@@ -82,8 +82,8 @@ export function BlogSearch() {
   const shouldShowSearch = pathname === '/blog/all';
 
   const searchBarPlaceholder = useMemo(() => {
-    if (pills.length > 0) return 'Add to search...';
-    return 'Search posts, tags, or categories...';
+    if (pills.length > 0) return '검색어 추가...';
+    return '제목·본문·태그 검색...';
   }, [pills.length]);
 
   if (!shouldShowSearch) {
@@ -120,6 +120,8 @@ export function BlogSearch() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className={`rounded-full p-1 transition-all duration-200 ${blogTheme.searchIcon}`}
+                aria-label='검색 필터'
+                aria-expanded={filterOpen}
               >
                 <Filter size={16} />
               </motion.button>
@@ -154,6 +156,7 @@ export function BlogSearch() {
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.2 }}
               className={`rounded-full p-2 transition-all duration-300 ${blogTheme.searchIcon}`}
+              aria-label='검색 열기'
             >
               <Search size={18} />
             </motion.button>
