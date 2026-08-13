@@ -197,7 +197,13 @@ export default async function PostPage({
 
           {/* AI 요약 표시 */}
           <div className='relative z-10 p-2'>
-            <PostSummary post={post as any} />
+            <PostSummary
+              post={{
+                id: post.id ?? post.slug ?? 'unknown',
+                title: post.title ?? '',
+                content: post.content ?? null,
+              }}
+            />
           </div>
 
           <div className='relative z-10'>
