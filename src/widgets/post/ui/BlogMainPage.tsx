@@ -67,6 +67,23 @@ export const BlogMainPage = () => {
     );
   }
 
+  if (hasFilters) {
+    const filterLabel = [
+      search ? `"${search}"` : null,
+      category ? `카테고리 ${category}` : null,
+      tags.length > 0 ? `태그 ${tags.map((tag) => `#${tag}`).join(' ')}` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+
+    return (
+      <div className='mx-auto w-full max-w-4xl'>
+        <BlogSectionTitle subtitle={filterLabel || '조건에 맞는 글'}>검색 결과</BlogSectionTitle>
+        <PostList posts={postsData} isLoading={isLoading} />
+      </div>
+    );
+  }
+
   const recentPosts = postsData.slice(0, 6);
   const restPosts = postsData.slice(6);
 

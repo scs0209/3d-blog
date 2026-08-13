@@ -1270,11 +1270,11 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description 게시물 검색어 (title, content) */
+                    /** @description 게시물 검색어 (title, content, tag name) */
                     search?: string;
                     /** @description 카테고리 slug로 필터링 */
                     category?: string;
-                    /** @description 태그 ID들을 쉼표로 구분하여 필터링 */
+                    /** @description 태그 ID 또는 이름을 쉼표로 구분하여 필터링 */
                     tags?: string;
                     /** @description 페이지 번호 */
                     page?: number;
@@ -2197,7 +2197,7 @@ export interface paths {
         };
         put?: never;
         /**
-         * 방문자 기록 추가
+         * 오늘 순방문자 카운트 (+1, 브라우저당 1회)
          * @description visitorId 클레임과 visitor_day 쿠키로 당일 중복을 원자적으로 막고 VisitorDaily.count만 증가시킵니다.
          */
         post: {
@@ -2210,8 +2210,9 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": {
+                        /** Format: uuid */
                         visitorId: string;
-                        /** 하위 호환용(저장하지 않음) */
+                        /** @description 하위 호환용(저장하지 않음) */
                         path?: string;
                     };
                 };

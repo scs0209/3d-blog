@@ -13,7 +13,7 @@ import prisma from '@/shared/lib/db';
  *         name: search
  *         schema:
  *           type: string
- *         description: 게시물 검색어 (title, content)
+ *         description: 게시물 검색어 (title, content, tag name)
  *       - in: query
  *         name: category
  *         schema:
@@ -23,7 +23,7 @@ import prisma from '@/shared/lib/db';
  *         name: tags
  *         schema:
  *           type: string
- *         description: 태그 ID들을 쉼표로 구분하여 필터링
+ *         description: 태그 ID 또는 이름을 쉼표로 구분하여 필터링
  *       - in: query
  *         name: page
  *         schema:
@@ -116,11 +116,12 @@ export async function GET(req: NextRequest) {
 
     const whereClause: any = {};
 
-    // 검색어 필터링
+    // 검색어 필터링 (제목·본문·태그명)
     if (search) {
       whereClause.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { content: { contains: search, mode: 'insensitive' } },
+        { tags: { some: { name: { contains: search, mode: 'insensitive' } } } },
       ];
     }
 
@@ -131,18 +132,38 @@ export async function GET(req: NextRequest) {
       };
     }
 
-    // 태그 필터링
+    // 태그 필터링 (숫자 ID 또는 이름)
     if (tags) {
-      const tagIds = tags
+      const tagTokens = tags
         .split(',')
-        .map((id) => Number.parseInt(id.trim(), 10))
+        .map((token) => token.trim())
         .filter(Boolean);
-      if (tagIds.length > 0) {
-        whereClause.tags = {
-          some: {
-            id: { in: tagIds },
-          },
-        };
+
+      if (tagTokens.length > 0) {
+        const tagIds: number[] = [];
+        const tagNames: string[] = [];
+
+        for (const token of tagTokens) {
+          if (/^\d+$/.test(token)) {
+            tagIds.push(Number(token));
+          } else {
+            tagNames.push(token);
+          }
+        }
+
+        const tagConditions = [];
+        if (tagIds.length > 0) {
+          tagConditions.push({ id: { in: tagIds } });
+        }
+        if (tagNames.length > 0) {
+          tagConditions.push({ name: { in: tagNames, mode: 'insensitive' as const } });
+        }
+
+        if (tagConditions.length > 0) {
+          whereClause.tags = {
+            some: tagConditions.length === 1 ? tagConditions[0] : { OR: tagConditions },
+          };
+        }
       }
     }
 

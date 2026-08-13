@@ -8,23 +8,11 @@ import type { PostResponse } from '@/entities/post/model/post';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { PostBackButton } from '@/widgets/post/ui/PostBackButton';
 import { PostViewTracker } from '@/widgets/post/ui/PostViewTracker';
+import { extractDescription, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
-
-// HTML 태그 제거 및 description 추출 함수
-const extractDescription = (content: string, maxLength = 160) => {
-  const plainText = content
-    .replace(/<[^>]*>/g, '') // HTML 태그 제거
-    .replace(/\s+/g, ' ') // 연속 공백을 단일 공백으로
-    .trim();
-
-  if (plainText.length <= maxLength) {
-    return plainText;
-  }
-  return `${plainText.substring(0, maxLength).replace(/\s+\S*$/, '')}...`;
-};
 
 export async function generateMetadata({ params }: { params: Promise<{ postSlug: string }> }): Promise<Metadata> {
   const { postSlug } = await params;
@@ -33,75 +21,72 @@ export async function generateMetadata({ params }: { params: Promise<{ postSlug:
   try {
     const post = await getPostBySlug(decodedSlug);
     const description = extractDescription(post.content ?? '');
-  const publishedDate = post.createdAt ? new Date(post.createdAt).toISOString() : '';
-  const modifiedDate = post.updatedAt ? new Date(post.updatedAt).toISOString() : publishedDate;
-  const postUrl = `${process.env.NEXT_PUBLIC_APP_URL}/blog/category/${post.category?.slug || 'uncategorized'}/post/${postSlug}`;
-  const imageUrl = '/logo.png';
+    const publishedDate = post.createdAt ? new Date(post.createdAt).toISOString() : undefined;
+    const modifiedDate = post.updatedAt ? new Date(post.updatedAt).toISOString() : publishedDate;
+    const postUrl = getPostUrl(post.category?.slug, postSlug);
+    const keywords =
+      post.tags
+        ?.map((tag) => tag.name)
+        .filter((name): name is string => Boolean(name))
+        .join(', ') || undefined;
 
-  return {
-    title: post.title,
-    description,
-    keywords: post.tags?.map((tag) => tag.name).join(', ') || '',
-    authors: post.author?.name ? [{ name: post.author.name }] : [],
-    openGraph: {
+    return {
       title: post.title,
       description,
-      type: 'article',
-      publishedTime: publishedDate,
-      modifiedTime: modifiedDate,
-      authors: post.author?.name ? [post.author.name] : [],
-      tags: post.tags?.map((tag) => tag.name).filter((name): name is string => name !== undefined) || [],
-      images: [
-        {
-          url: imageUrl, // 기본 이미지 또는 포스트 대표 이미지
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-      siteName: '3D Blog',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: post.title,
-      description,
-      images: ['/logo.png'], // 기본 이미지 또는 포스트 대표 이미지
-      creator: post.author?.name || '@3dblog',
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
+      keywords,
+      authors: post.author?.name ? [{ name: post.author.name }] : [],
+      openGraph: {
+        title: post.title ?? undefined,
+        description,
+        type: 'article',
+        url: postUrl,
+        publishedTime: publishedDate,
+        modifiedTime: modifiedDate,
+        authors: post.author?.name ? [post.author.name] : [],
+        tags: post.tags?.map((tag) => tag.name).filter((name): name is string => Boolean(name)) || [],
+        siteName: '3D Blog',
+        locale: 'ko_KR',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: post.title ?? undefined,
+        description,
+        creator: post.author?.name || '@3dblog',
+      },
+      robots: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
-    },
-    alternates: {
-      canonical: postUrl,
-    },
-  };
+      alternates: {
+        canonical: postUrl,
+      },
+    };
   } catch {
     return {
-      title: 'Post not found',
+      title: '포스트를 찾을 수 없습니다',
     };
   }
 }
 
-// JSON-LD 구조화 데이터 컴포넌트
-const PostStructuredData = ({
-  post,
-}: {
-  post: PostResponse;
-}) => {
+const PostStructuredData = ({ post }: { post: PostResponse }) => {
+  const postUrl = getPostUrl(post.category?.slug, post.slug ?? '');
+  const imageUrl = toAbsoluteUrl(
+    `/blog/category/${post.category?.slug || 'uncategorized'}/post/${encodeURIComponent(post.slug ?? '')}/opengraph-image`,
+  );
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: extractDescription(post.content ?? ''),
-    image: '/logo.png', // 기본 이미지 또는 포스트 대표 이미지
+    image: [imageUrl],
     author: {
       '@type': 'Person',
       name: post.author?.name || 'Unknown Author',
@@ -111,15 +96,16 @@ const PostStructuredData = ({
       name: '3D Blog',
       logo: {
         '@type': 'ImageObject',
-        url: '/logo.png',
+        url: toAbsoluteUrl('/opengraph-image'),
       },
     },
-    datePublished: post.createdAt ? new Date(post.createdAt).toISOString() : '',
-    dateModified: post.updatedAt ? new Date(post.updatedAt).toISOString() : '',
+    datePublished: post.createdAt ? new Date(post.createdAt).toISOString() : undefined,
+    dateModified: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `/blog/category/${post.category?.slug || 'uncategorized'}/post/${post.slug}`,
+      '@id': postUrl,
     },
+    url: postUrl,
     ...(post.tags &&
       post.tags.length > 0 && {
         keywords: post.tags.map((tag) => tag.name).join(', '),
@@ -157,7 +143,6 @@ export default async function PostPage({
 
   return (
     <>
-      {/* SEO를 위한 구조화 데이터 */}
       <PostStructuredData post={post} />
       <Suspense fallback={null}>
         <PostViewTracker
@@ -170,7 +155,6 @@ export default async function PostPage({
       <div className='mx-4 max-w-4xl lg:mx-auto'>
         <PostBackButton href={backHref} />
 
-        {/* 본문 영역 꾸밈 */}
         <section
           className={`relative mb-12 mt-0 px-4 py-8 sm:px-6 md:rounded-2xl md:px-8 md:overflow-hidden ${blogTheme.postSection}`}
         >
@@ -204,7 +188,6 @@ export default async function PostPage({
             </div>
           )}
 
-          {/* AI 요약 표시 */}
           <div className='relative z-10 p-2'>
             <PostSummary
               post={{

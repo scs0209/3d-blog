@@ -1,1 +1,26 @@
-export const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http//localhost:3000';
+export const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000').replace(/\/$/, '');
+
+export const toAbsoluteUrl = (path: string) => {
+  if (!path) return baseUrl;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
+};
+
+export const getPostPath = (categorySlug: string | null | undefined, postSlug: string) =>
+  `/blog/category/${categorySlug || 'uncategorized'}/post/${encodeURIComponent(postSlug)}`;
+
+export const getPostUrl = (categorySlug: string | null | undefined, postSlug: string) =>
+  toAbsoluteUrl(getPostPath(categorySlug, postSlug));
+
+export const extractDescription = (content: string, maxLength = 160) => {
+  const plainText = content
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (plainText.length <= maxLength) {
+    return plainText;
+  }
+
+  return `${plainText.substring(0, maxLength).replace(/\s+\S*$/, '')}...`;
+};

@@ -6,19 +6,11 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/blog', '/blog/category/*', '/blog/category/*/post/*', '/blog/tags/*', '/portfolio'],
-        disallow: [
-          '/admin/*',
-          '/api/*',
-          '/login',
-          '/sign-up',
-          '/(protect)/*',
-          '/swagger/*',
-          '/_next/*',
-          '/favicon.ico',
-        ],
+        allow: ['/', '/blog', '/blog/all', '/blog/category/*', '/blog/category/*/post/*', '/portfolio', '/feed.xml'],
+        disallow: ['/admin', '/admin/*', '/api/*', '/login', '/sign-up', '/swagger', '/swagger/*'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }

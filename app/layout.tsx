@@ -39,6 +39,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   alternates: {
     canonical: '/',
+    types: {
+      'application/rss+xml': `${baseUrl}/feed.xml`,
+    },
   },
   openGraph: {
     type: 'website',
@@ -47,28 +50,11 @@ export const metadata: Metadata = {
     title: '3D Blog',
     description: '웹 개발 기록과 Three.js로 만든 3D 홈·포트폴리오.',
     siteName: '3D Blog',
-    images: [
-      {
-        url: '/logo.png',
-        width: 1200,
-        height: 630,
-        alt: '3D Blog 로고',
-        type: 'image/png',
-      },
-      {
-        url: '/logo.png',
-        width: 800,
-        height: 800,
-        alt: '3D Blog 로고',
-        type: 'image/png',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: '3D Blog',
     description: '웹 개발 기록과 Three.js로 만든 3D 홈·포트폴리오.',
-    images: ['/logo.png', '/logo-square.png'],
   },
   robots: {
     index: true,
