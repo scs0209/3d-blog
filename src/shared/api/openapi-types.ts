@@ -1695,7 +1695,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description 필수 필드 누락 */
+                /** @description 필수 필드 누락 또는 본문이 너무 짧음 */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -1707,8 +1707,20 @@ export interface paths {
                         };
                     };
                 };
-                /** @description 서버 오류 또는 AI 요약 생성 실패 */
+                /** @description 서버 설정 오류 또는 예외 */
                 500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example 요약 생성에 실패했습니다. */
+                            error?: string;
+                        };
+                    };
+                };
+                /** @description OpenRouter 호출 실패 또는 빈 요약 */
+                502: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -2151,7 +2163,7 @@ export interface paths {
         };
         /**
          * 오늘 방문자 수와 총 방문자 수 조회
-         * @description VisitorLog를 기반으로 오늘 방문자 수와 전체 방문자 수를 반환합니다.
+         * @description VisitorDaily 일별 집계를 합산해 오늘/전체 순방문자를 반환합니다.
          */
         get: {
             parameters: {
@@ -2186,7 +2198,7 @@ export interface paths {
         put?: never;
         /**
          * 방문자 기록 추가
-         * @description 방문자의 ip, userAgent, path를 VisitorLog에 기록합니다.
+         * @description visitorId 클레임과 visitor_day 쿠키로 당일 중복을 원자적으로 막고 VisitorDaily.count만 증가시킵니다.
          */
         post: {
             parameters: {
@@ -2198,13 +2210,22 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": {
+                        visitorId: string;
+                        /** 하위 호환용(저장하지 않음) */
                         path?: string;
                     };
                 };
             };
             responses: {
-                /** @description 기록 성공 */
-                201: {
+                /** @description 이미 집계됨 또는 집계 성공 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description visitorId 형식 오류 */
+                400: {
                     headers: {
                         [name: string]: unknown;
                     };

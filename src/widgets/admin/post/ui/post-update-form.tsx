@@ -13,6 +13,7 @@ import { updatePostAction, deletePostAction } from '@/features/admin/post/api';
 import { CategorySelector, TagsSelector } from '@/features/admin/post/ui';
 import type { CategorySelectorRef } from '@/features/admin/post/ui/category-selector';
 import type { TagsSelectorRef } from '@/features/admin/post/ui/tags-selector';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface PostUpdateClientProps {
   initialPost: PostResponse;
@@ -20,6 +21,7 @@ interface PostUpdateClientProps {
 
 export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [post, setPost] = useState<PostResponse>(initialPost);
   const [content, setContent] = useState(initialPost.content ?? '');
 
@@ -42,6 +44,9 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
     if (result.success && result.post) {
       setPost(result.post);
       toast.success('Post updated successfully');
+      void queryClient.invalidateQueries({
+        queryKey: ['post', 'summary', String(initialPost.id)],
+      });
     } else {
       toast.error(result.error || 'Failed to update post');
     }

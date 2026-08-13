@@ -1,12 +1,58 @@
-import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
+import { type NextRequest, NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
+
+const VISITOR_DAY_COOKIE = 'visitor_day';
+const SEOUL_TZ = 'Asia/Seoul';
+const VISITOR_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/** Asia/Seoul 기준 YYYY-MM-DD */
+const getSeoulDateKey = (date = new Date()) =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: SEOUL_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+
+/** 서울 자정까지 남은 초 (쿠키 Max-Age) */
+const getSecondsUntilSeoulMidnight = () => {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: SEOUL_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(new Date());
+
+  const get = (type: Intl.DateTimeFormatPartTypes) => Number(parts.find((p) => p.type === type)?.value ?? 0);
+  const hours = get('hour');
+  const minutes = get('minute');
+  const seconds = get('second');
+  return 24 * 60 * 60 - (hours * 3600 + minutes * 60 + seconds);
+};
+
+const setVisitorDayCookie = (response: NextResponse, todayKey: string) => {
+  response.cookies.set({
+    name: VISITOR_DAY_COOKIE,
+    value: todayKey,
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: Math.max(getSecondsUntilSeoulMidnight(), 60),
+  });
+};
 
 /**
  * @swagger
  * /api/visitor:
  *   get:
  *     summary: 오늘 방문자 수와 총 방문자 수 조회
- *     description: VisitorLog를 기반으로 오늘 방문자 수와 전체 방문자 수를 반환합니다.
+ *     description: VisitorDaily 일별 집계를 합산해 오늘/전체 순방문자를 반환합니다.
  *     tags:
  *       - Visitor
  *     responses:
@@ -26,28 +72,18 @@ import prisma from '@/shared/lib/db';
  */
 export async function GET() {
   try {
-    // ! 유틸 함수로 빼기
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999);
+    const todayKey = getSeoulDateKey();
+    const [todayRow, aggregate] = await Promise.all([
+      prisma.visitorDaily.findUnique({ where: { date: todayKey } }),
+      prisma.visitorDaily.aggregate({ _sum: { count: true } }),
+    ]);
 
-    // 오늘 방문자 수 (ip 기준 유니크)
-    const todayVisitors = await prisma.visitorLog.groupBy({
-      by: ['ip'],
-      where: {
-        createdAt: {
-          gte: todayStart,
-          lte: todayEnd,
-        },
-      },
+    return NextResponse.json({
+      today: todayRow?.count ?? 0,
+      total: aggregate._sum.count ?? 0,
     });
-    // 전체 방문자 수 (ip 기준 유니크)
-    const totalVisitors = await prisma.visitorLog.groupBy({
-      by: ['ip'],
-    });
-    return NextResponse.json({ today: todayVisitors.length, total: totalVisitors.length });
   } catch (error) {
+    console.error('Failed to fetch visitor stats:', error);
     return NextResponse.json({ error: 'Failed to fetch visitor stats' }, { status: 500 });
   }
 }
@@ -56,8 +92,8 @@ export async function GET() {
  * @swagger
  * /api/visitor:
  *   post:
- *     summary: 방문자 기록 추가
- *     description: 방문자의 ip, userAgent, path를 VisitorLog에 기록합니다.
+ *     summary: 오늘 순방문자 카운트 (+1, 브라우저당 1회)
+ *     description: visitorId 클레임과 visitor_day 쿠키로 당일 중복을 원자적으로 막고 VisitorDaily.count만 증가시킵니다.
  *     tags:
  *       - Visitor
  *     requestBody:
@@ -66,26 +102,69 @@ export async function GET() {
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - visitorId
  *             properties:
+ *               visitorId:
+ *                 type: string
+ *                 format: uuid
  *               path:
  *                 type: string
+ *                 description: 하위 호환용(저장하지 않음)
  *     responses:
- *       201:
- *         description: 기록 성공
+ *       200:
+ *         description: 이미 집계됨 또는 집계 성공
+ *       400:
+ *         description: visitorId 형식 오류
  *       500:
  *         description: 서버 에러
  */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { path } = await req.json();
-    // 실제 서비스에서는 IP 추출을 프록시 환경에 맞게 조정 필요
-    const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0] || 'unknown';
-    const userAgent = req.headers.get('user-agent') || '';
-    await prisma.visitorLog.create({
-      data: { ip, userAgent, path },
-    });
-    return NextResponse.json({ ok: true }, { status: 201 });
+    const todayKey = getSeoulDateKey();
+    const alreadyCounted = req.cookies.get(VISITOR_DAY_COOKIE)?.value === todayKey;
+
+    if (alreadyCounted) {
+      return NextResponse.json({ ok: true, counted: false });
+    }
+
+    let body: { visitorId?: unknown; path?: unknown } = {};
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
+    }
+
+    const visitorId = typeof body.visitorId === 'string' ? body.visitorId.trim() : '';
+    if (!VISITOR_ID_RE.test(visitorId)) {
+      return NextResponse.json({ error: '유효한 visitorId가 필요합니다.' }, { status: 400 });
+    }
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.visitorClaim.create({
+          data: { date: todayKey, visitorId },
+        });
+        await tx.visitorDaily.upsert({
+          where: { date: todayKey },
+          create: { date: todayKey, count: 1 },
+          update: { count: { increment: 1 } },
+        });
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const response = NextResponse.json({ ok: true, counted: false });
+        setVisitorDayCookie(response, todayKey);
+        return response;
+      }
+      throw error;
+    }
+
+    const response = NextResponse.json({ ok: true, counted: true });
+    setVisitorDayCookie(response, todayKey);
+    return response;
   } catch (error) {
+    console.error('Failed to log visitor:', error);
     return NextResponse.json({ error: 'Failed to log visitor' }, { status: 500 });
   }
 }
