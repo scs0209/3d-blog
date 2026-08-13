@@ -18,6 +18,7 @@ import { Button } from '@/shadcn-ui/components/ui/button';
 import { queryKeys } from '@/shared/queryKeys';
 import Modal from '@/shared/ui/modal';
 import { toast } from '@/shared/ui/toast/useToast';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 
 const toCategoryFormData = (category: CategoryListItem): Category => ({
   id: String(category.id),
@@ -40,20 +41,20 @@ const CategoryRow = ({ node, depth, onEdit, onDelete }: CategoryRowProps) => {
   return (
     <div className='flex flex-col gap-2'>
       <div
-        className='flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 px-3 py-2'
+        className={`flex items-center justify-between gap-3 rounded-xl px-3 py-2 ${adminTheme.surface}`}
         style={{ marginLeft: depth * 16 }}
       >
-        <div className='flex min-w-0 items-center gap-2 text-white/90'>
+        <div className={`flex min-w-0 items-center gap-2 ${adminTheme.textPrimary}`}>
           {hasChildren ? (
-            <FolderOpen size={16} className='shrink-0 text-cyan-300' aria-hidden />
+            <FolderOpen size={16} className={`shrink-0 ${adminTheme.textAccent}`} aria-hidden />
           ) : depth > 0 ? (
-            <FileText size={16} className='shrink-0 text-blue-200' aria-hidden />
+            <FileText size={16} className={`shrink-0 ${adminTheme.textMuted}`} aria-hidden />
           ) : (
-            <Folder size={16} className='shrink-0 text-blue-300' aria-hidden />
+            <Folder size={16} className={`shrink-0 ${adminTheme.textAccent}`} aria-hidden />
           )}
           <div className='min-w-0'>
             <p className='truncate font-medium'>{node.name}</p>
-            <p className='truncate text-xs text-white/50'>
+            <p className={`truncate text-xs ${adminTheme.textMuted}`}>
               /{node.slug}
               {hasChildren ? ` · 하위 ${node._count?.children ?? node.children.length}` : ''}
             </p>
@@ -166,16 +167,16 @@ export const CategoryManagement = () => {
         </Modal>
       </div>
 
-      <div className='rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-sm'>
-        <div className='mb-4 flex items-center justify-between text-sm text-white/60'>
+      <div className={`rounded-2xl p-4 ${adminTheme.surface}`}>
+        <div className={`mb-4 flex items-center justify-between text-sm ${adminTheme.textMuted}`}>
           <span>총 {flatCount}개</span>
           <span>수정에서 부모 카테고리를 바꾸면 트리 위치가 변경됩니다.</span>
         </div>
 
         {isLoading ? (
-          <p className='text-white/70'>불러오는 중...</p>
+          <p className={adminTheme.textMuted}>불러오는 중...</p>
         ) : tree.length === 0 ? (
-          <p className='text-white/70'>카테고리가 없습니다. 새 카테고리를 만들어 주세요.</p>
+          <p className={adminTheme.textMuted}>카테고리가 없습니다. 새 카테고리를 만들어 주세요.</p>
         ) : (
           <div className='flex flex-col gap-2'>
             {tree.map((node) => (

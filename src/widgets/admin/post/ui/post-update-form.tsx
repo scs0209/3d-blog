@@ -6,14 +6,16 @@ import { formatDateToYMD } from '@/shared/utils';
 import type { PostResponse } from '@/entities/post/model/post';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { Button } from '@/shadcn-ui/components/ui/button';
-import { CardContent, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
-import { Tag as TagComponent, useToast } from '@/shared/ui';
-import { Save, Trash2, Calendar, User, Tag, Loader2 } from 'lucide-react';
+import { useToast } from '@/shared/ui';
+import { Tag as TagIcon, Save, Trash2, Calendar, User, Loader2 } from 'lucide-react';
 import { updatePostAction, deletePostAction } from '@/features/admin/post/api';
 import { CategorySelector, TagsSelector } from '@/features/admin/post/ui';
 import type { CategorySelectorRef } from '@/features/admin/post/ui/category-selector';
 import type { TagsSelectorRef } from '@/features/admin/post/ui/tags-selector';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { cn } from '@/shadcn-ui/lib/utils';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 
 interface PostUpdateClientProps {
   initialPost: PostResponse;
@@ -21,16 +23,15 @@ interface PostUpdateClientProps {
 
 export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
   const toast = useToast();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [post, setPost] = useState<PostResponse>(initialPost);
   const [content, setContent] = useState(initialPost.content ?? '');
 
-  // refs for child components
   const categoryRef = useRef<CategorySelectorRef>(null);
   const tagsRef = useRef<TagsSelectorRef>(null);
 
-  // React 19: useActionState for update action
-  const [, updateAction, isUpdatePending] = useActionState(async (prevState: any, formData: FormData) => {
+  const [, updateAction, isUpdatePending] = useActionState(async (_prevState: unknown, _formData: FormData) => {
     const categoryId = categoryRef.current?.getSelectedCategoryId() ?? '';
     const tagIds = tagsRef.current?.getSelectedTagIds() ?? [];
 
@@ -43,137 +44,111 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
 
     if (result.success && result.post) {
       setPost(result.post);
-      toast.success('Post updated successfully');
+      toast.success('포스트를 저장했습니다');
       void queryClient.invalidateQueries({
         queryKey: ['post', 'summary', String(initialPost.id)],
       });
     } else {
-      toast.error(result.error || 'Failed to update post');
+      toast.error(result.error || '포스트 저장에 실패했습니다');
     }
 
     return result;
   }, null);
 
-  // React 19: useActionState for delete action
-  const [, deleteAction, isDeletePending] = useActionState(async (prevState: any) => {
+  const [, deleteAction, isDeletePending] = useActionState(async (_prevState: unknown) => {
     const result = await deletePostAction(Number(initialPost.id));
 
     if (result.success) {
-      setPost(null as any);
-      toast.success('Post deleted successfully');
+      toast.success('포스트를 삭제했습니다');
+      router.push('/admin');
+      router.refresh();
     } else {
-      toast.error(result.error || 'Failed to delete post');
+      toast.error(result.error || '포스트 삭제에 실패했습니다');
     }
 
     return result;
   }, null);
 
-  // React 19: useOptimistic for optimistic UI updates
   const [optimisticPost, setOptimisticPost] = useOptimistic(post, (_currentPost, newPost: PostResponse) => newPost);
 
-  // React 19: Optimistic update helper
   const handleOptimisticUpdate = () => {
     const optimisticUpdate = {
       ...post,
-      content: content,
+      content,
       updatedAt: new Date().toISOString(),
     };
     setOptimisticPost(optimisticUpdate);
   };
 
-  // Use optimistic post for display, fallback to actual post
   const displayPost = optimisticPost || post;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className='min-h-screen p-4 lg:p-6 space-y-6'
+      transition={{ duration: 0.35 }}
+      className='mx-auto max-w-5xl space-y-5 pb-8'
     >
-      {/* Header Card */}
-      <CardHeader className='pb-4'>
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-          <CardTitle className='text-2xl lg:text-3xl font-bold text-blue-100 mb-4 leading-tight'>
-            {displayPost.title}
-          </CardTitle>
-        </motion.div>
+      <div className={`relative overflow-hidden p-5 sm:p-6 ${adminTheme.surface}`}>
+        <span className={adminTheme.cardTopGlow} aria-hidden />
 
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className='space-y-4'>
-          {/* Meta Info */}
-          <div className='flex flex-wrap items-center gap-4 text-sm text-blue-200'>
+        <h2 className={`mb-4 text-2xl font-bold leading-tight lg:text-3xl ${adminTheme.textPrimary}`}>
+          {displayPost.title}
+        </h2>
+
+        <div className={`mb-5 flex flex-wrap items-center gap-4 text-sm ${adminTheme.textMuted}`}>
+          <div className='flex items-center gap-2'>
+            <User className={`h-4 w-4 ${adminTheme.textAccent}`} />
+            <span className={`font-medium ${adminTheme.textPrimary}`}>{displayPost.author?.name || '작성자 없음'}</span>
+          </div>
+
+          <div className='flex items-center gap-2'>
+            <Calendar className={`h-4 w-4 ${adminTheme.textAccent}`} />
+            <span>{formatDateToYMD(displayPost?.createdAt ?? '')}</span>
+          </div>
+
+          {displayPost.category && (
             <div className='flex items-center gap-2'>
-              <User className='h-4 w-4 text-blue-400' />
-              <span className='font-medium'>{displayPost.author?.name || 'Unknown Author'}</span>
+              <TagIcon className={`h-4 w-4 ${adminTheme.textAccent}`} />
+              <span className={adminTheme.pill}>{displayPost.category.name}</span>
             </div>
+          )}
 
+          {optimisticPost !== post && (
             <div className='flex items-center gap-2'>
-              <Calendar className='h-4 w-4 text-blue-400' />
-              <span>{formatDateToYMD(displayPost?.createdAt ?? '')}</span>
+              <Loader2 className={`h-3 w-3 animate-spin ${adminTheme.textAccent}`} />
+              <span className={`text-xs ${adminTheme.textAccent}`}>업데이트 중...</span>
             </div>
+          )}
+        </div>
 
-            {displayPost.category && (
-              <div className='flex items-center gap-2'>
-                <Tag className='h-4 w-4 text-blue-400' />
-                <TagComponent color='blue' type='solid' className='bg-blue-500/20 text-blue-300 border-blue-400/30'>
-                  {displayPost.category.name}
-                </TagComponent>
-              </div>
-            )}
+        <div className='grid gap-4 sm:grid-cols-2'>
+          <CategorySelector ref={categoryRef} initialCategoryId={initialPost.category?.id?.toString() ?? ''} />
+          <TagsSelector
+            ref={tagsRef}
+            initialTagIds={
+              initialPost.tags?.map((tag) => tag.id?.toString()).filter((id): id is string => Boolean(id)) ?? []
+            }
+          />
+        </div>
+      </div>
 
-            {/* Show if optimistic update is happening */}
-            {optimisticPost !== post && (
-              <div className='flex items-center gap-2'>
-                <Loader2 className='h-3 w-3 animate-spin text-amber-400' />
-                <span className='text-xs text-amber-300'>업데이트 중...</span>
-              </div>
-            )}
-          </div>
+      <div className='space-y-2'>
+        <p className={adminTheme.sectionLabel}>본문</p>
+        <NovelEditor value={content} onChange={setContent} />
+      </div>
 
-          {/* Category and Tags - Inline */}
-          <div className='flex flex-col sm:flex-row gap-4'>
-            <div className='flex-1'>
-              <CategorySelector ref={categoryRef} initialCategoryId={initialPost.category?.id?.toString() ?? ''} />
-            </div>
-            <div className='flex-1'>
-              <TagsSelector
-                ref={tagsRef}
-                initialTagIds={
-                  initialPost.tags?.map((tag) => tag.id?.toString()).filter((id): id is string => Boolean(id)) ?? []
-                }
-              />
-            </div>
-          </div>
-        </motion.div>
-      </CardHeader>
-
-      {/* Editor Card */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-        <CardContent className='p-6 w-full justify-center flex'>
-          <div className='prose prose-invert max-w-none'>
-            <NovelEditor value={content} onChange={setContent} />
-          </div>
-        </CardContent>
-      </motion.div>
-
-      {/* Action Buttons */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className='flex gap-4 justify-end'
-      >
+      <div className='flex flex-wrap justify-end gap-3 border-t border-[#ff9a3c]/15 pt-4 dark:border-[#3de8ff]/15'>
         <form action={updateAction} className='contents'>
           <Button
             type='submit'
-            variant='glass'
             size='lg'
             disabled={isUpdatePending}
-            className='flex items-center gap-2'
+            className={cn('flex items-center gap-2', adminTheme.primaryBtn)}
             onClick={handleOptimisticUpdate}
           >
             {isUpdatePending ? <Loader2 className='h-4 w-4 animate-spin' /> : <Save className='h-4 w-4' />}
-            {isUpdatePending ? '업데이트 중...' : '포스트 저장'}
+            {isUpdatePending ? '저장 중...' : '포스트 저장'}
           </Button>
         </form>
 
@@ -183,13 +158,13 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
             variant='destructive'
             size='lg'
             disabled={isDeletePending}
-            className='bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-300 hover:text-red-200 backdrop-blur-md transition-all duration-300'
+            className='border border-red-400/30 bg-red-500/20 text-red-300 backdrop-blur-md transition-all duration-300 hover:bg-red-500/30 hover:text-red-200'
           >
             {isDeletePending ? <Loader2 className='h-4 w-4 animate-spin' /> : <Trash2 className='h-4 w-4' />}
             {isDeletePending ? '삭제 중...' : '포스트 삭제'}
           </Button>
         </form>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

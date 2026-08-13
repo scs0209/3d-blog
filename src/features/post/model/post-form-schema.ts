@@ -5,6 +5,7 @@ export const postFormSchema = z.object({
   content: z.string().min(1, { message: '내용을 입력해주세요.' }),
   categoryId: z.string().min(1, { message: '카테고리를 선택해주세요.' }),
   categoryName: z.string().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 export type PostFormSchema = z.infer<typeof postFormSchema>;

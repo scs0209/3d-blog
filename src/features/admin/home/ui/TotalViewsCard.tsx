@@ -1,6 +1,7 @@
 import { getStats } from '../api/stats-api';
-import { Card, CardHeader, CardTitle, CardAction, CardFooter, CardDescription } from '@/shadcn-ui/components/ui/card';
+import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import { Tag } from '@/shared/ui/Tag';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { TrendingUp } from 'lucide-react';
 
 export async function TotalViewsCard() {
@@ -8,19 +9,22 @@ export async function TotalViewsCard() {
   const { total, thisMonth, lastMonth } = stats.views;
 
   return (
-    <Card className='aspect-video glass-card-float-shimmer shadow-glass'>
-      <CardHeader>
-        <CardDescription>Total Views</CardDescription>
-        <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>{total}</CardTitle>
+    <Card className={adminTheme.card}>
+      <span className={adminTheme.cardTopGlow} aria-hidden />
+      <CardHeader className='pb-0'>
+        <CardDescription className={adminTheme.sectionLabel}>조회수</CardDescription>
+        <CardTitle className={`text-2xl font-semibold tabular-nums @[250px]/card:text-3xl ${adminTheme.textPrimary}`}>
+          {total.toLocaleString()}
+        </CardTitle>
         <CardAction>
-          <Tag color='green' size='sm' type='glass' className='flex items-center gap-2'>
-            <TrendingUp />+{thisMonth}
+          <Tag color='amber' size='sm' type='glass' className='flex items-center gap-1.5 border-white/20'>
+            <TrendingUp className='h-3.5 w-3.5' />+{thisMonth}
           </Tag>
         </CardAction>
       </CardHeader>
-      <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-        <div className='line-clamp-1 flex gap-2 font-medium'>This month: {thisMonth} views</div>
-        <div className='text-muted-foreground'>Last month: {lastMonth} views</div>
+      <CardFooter className='flex-col items-start gap-1 pt-2 text-sm'>
+        <div className={`font-medium ${adminTheme.textPrimary}`}>이번 달 {thisMonth}</div>
+        <div className={adminTheme.textMuted}>지난달 {lastMonth}</div>
       </CardFooter>
     </Card>
   );
