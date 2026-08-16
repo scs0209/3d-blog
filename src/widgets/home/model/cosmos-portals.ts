@@ -1,5 +1,7 @@
 export type CosmosPortalId = 'blog' | 'portfolio' | 'about';
 
+export type CosmosPortalKind = 'beacon' | 'door';
+
 export type CosmosPortal = {
   id: CosmosPortalId;
   label: string;
@@ -13,6 +15,7 @@ export type CosmosPortal = {
   /** 다가가면 솟아오르는 프리뷰 모델 */
   revealModel: string;
   revealHeight: number;
+  kind?: CosmosPortalKind;
 };
 
 /**
@@ -36,13 +39,14 @@ export const COSMOS_PORTALS: readonly CosmosPortal[] = [
     id: 'portfolio',
     label: 'Portfolio',
     href: '/portfolio',
-    description: 'Selected projects and work.',
+    description: 'Walk through the door.',
     cta: 'Enter',
     position: [9.5, -0.12, -9],
     radius: 4.8,
-    accent: '#ff9a3c',
-    revealModel: '/cosmos/books/book_encyclopedia_set_01_1k.gltf',
-    revealHeight: 1.45,
+    accent: '#E5D6C4',
+    revealModel: '/sci-fi_door..glb',
+    revealHeight: 3.2,
+    kind: 'door',
   },
   {
     id: 'about',

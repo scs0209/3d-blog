@@ -128,22 +128,13 @@ body {
 @layer base {
   * {
     @apply border-border;
-    cursor: none !important;
   }
   body {
     @apply bg-background text-foreground;
-    cursor: none !important;
   }
 
-  /* CosmosCursor 사용 — 시스템 커서 숨김 */
-  button,
-  a,
-  input,
-  textarea,
-  select,
-  [role="button"],
-  [onclick],
-  .cursor-pointer {
+  html.cosmos-cursor-active,
+  html.cosmos-cursor-active * {
     cursor: none !important;
   }
 }
@@ -670,4 +661,34 @@ pre {
 
 .dark .blog-prose .ProseMirror pre code {
   color: #c8e8ff;
+}
+
+.void-scanlines::after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(2, 1, 10, 0.18) 2px,
+    rgba(2, 1, 10, 0.18) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+.void-os-desktop {
+  background-color: #050816;
+  background-image:
+    radial-gradient(ellipse at 18% 12%, rgba(90, 60, 180, 0.38), transparent 46%),
+    radial-gradient(ellipse at 82% 78%, rgba(26, 80, 140, 0.32), transparent 42%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 106, 213, 0.12), transparent 38%),
+    radial-gradient(1px 1px at 12% 18%, #d8f4ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 64%, #5ad8ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 46% 22%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 63% 71%, #7a5ac8 50%, transparent 51%),
+    radial-gradient(1px 1px at 81% 34%, #5ad8ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 91% 88%, #ff6ad5 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 8% 82%, #d8f4ff 50%, transparent 51%);
 }

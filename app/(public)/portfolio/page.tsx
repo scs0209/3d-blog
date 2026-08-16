@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
-import { PortfolioClient } from '@/widgets/portfolio/ui/PortfolioClient';
+import { PortfolioView } from '@/views/portfolio';
 
 export const metadata: Metadata = {
   title: 'Portfolio',
-  description: '3D 인터랙티브 포트폴리오 - 프로젝트, 스킬, 경력을 3D 환경에서 탐험하세요',
+  description: '3D desk and desktop OS portfolio',
   openGraph: {
     title: 'Portfolio',
-    description: '3D 인터랙티브 포트폴리오',
+    description: '3D desk and desktop OS portfolio',
   },
 };
 
 export default function PortfolioPage() {
-  return <PortfolioClient />;
+  return <PortfolioView />;
 }

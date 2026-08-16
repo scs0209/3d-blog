@@ -112,6 +112,8 @@ type WalkingAvatarProps = ComponentProps<'group'> & {
   variant?: 'default' | 'cinematic';
   /** 부모 스케일/위치를 반영한 월드 좌표 (근접 포털 등) */
   onWorldPosition?: (pos: three.Vector3) => void;
+  /** true면 WASD 이동을 멈춤 (포탈 진입 연출) */
+  locked?: boolean;
 };
 
 useGLTF.preload('/WalkingAstro.glb');
@@ -123,6 +125,7 @@ export function WalkingAvatar({
   position = [0, 0.6, 0.5],
   variant = 'default',
   onWorldPosition,
+  locked = false,
   ...restProps
 }: WalkingAvatarProps) {
   const isCinematic = variant === 'cinematic';
@@ -172,18 +175,19 @@ export function WalkingAvatar({
 
     let dx = 0;
     let dz = 0;
-    if (pressedCodes.has(CODE_W)) {
-      // cinematic: 카메라 뒤→지평선(-Z)이 전진
-      dz += isCinematic ? -1 : 1;
-    }
-    if (pressedCodes.has(CODE_S)) {
-      dz += isCinematic ? 1 : -1;
-    }
-    if (pressedCodes.has(CODE_A)) {
-      dx += isCinematic ? -1 : 1;
-    }
-    if (pressedCodes.has(CODE_D)) {
-      dx += isCinematic ? 1 : -1;
+    if (!locked) {
+      if (pressedCodes.has(CODE_W)) {
+        dz += isCinematic ? -1 : 1;
+      }
+      if (pressedCodes.has(CODE_S)) {
+        dz += isCinematic ? 1 : -1;
+      }
+      if (pressedCodes.has(CODE_A)) {
+        dx += isCinematic ? -1 : 1;
+      }
+      if (pressedCodes.has(CODE_D)) {
+        dx += isCinematic ? 1 : -1;
+      }
     }
 
     const isMoving = dx !== 0 || dz !== 0;

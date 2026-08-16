@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 type CosmosCursorProps = {
@@ -16,6 +17,7 @@ const INTERACTIVE_SELECTOR =
  * 따뜻한 주황 레티클 — 게임 HUD 느낌 없이 탐험용 조준점.
  */
 export const CosmosCursor = ({ accent = DEFAULT_ACCENT }: CosmosCursorProps) => {
+  const pathname = usePathname();
   const rootRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
@@ -44,7 +46,7 @@ export const CosmosCursor = ({ accent = DEFAULT_ACCENT }: CosmosCursorProps) => 
   }, []);
 
   useEffect(() => {
-    if (!enabled) {
+    if (!enabled || pathname?.startsWith('/portfolio')) {
       return;
     }
 
@@ -123,9 +125,9 @@ export const CosmosCursor = ({ accent = DEFAULT_ACCENT }: CosmosCursorProps) => 
       document.documentElement.removeEventListener('mouseleave', handleLeave);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [enabled]);
+  }, [enabled, pathname]);
 
-  if (!enabled) {
+  if (!enabled || pathname?.startsWith('/portfolio')) {
     return null;
   }
 
