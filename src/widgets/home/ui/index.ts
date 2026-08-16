@@ -1,8 +1,3 @@
-export { AnimateAvatar } from './AnimateAvatar';
-export { CameraController } from './CameraCotroller';
-export { SceneController } from './SceneController';
-export { SceneClickHandler } from './SceneClickHandler';
-export { Planet } from './Planet';
 export { WalkingAvatar } from './WalkingAvatar';
 export { CinematicCosmosScene, type CinematicCosmosSceneProps, type CosmosSceneTheme } from './CinematicCosmosScene';
 export { PortalDiscoveryOverlay } from './PortalDiscoveryOverlay';
