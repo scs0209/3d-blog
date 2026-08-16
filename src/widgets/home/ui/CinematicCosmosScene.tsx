@@ -5,9 +5,10 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import * as three from 'three';
-import { COSMOS_PORTALS, type CosmosPortalId } from '@/widgets/home/model/cosmos-portals';
 import { bindCosmosAudioUnlock, setCosmosPortalActive } from '@/widgets/home/lib/cosmos-audio';
+import { COSMOS_PORTALS, type CosmosPortalId } from '@/widgets/home/model/cosmos-portals';
 import { PortalBeacon, resolveActivePortalId } from './PortalBeacon';
+import { PortfolioPortalDoor } from './PortfolioPortalDoor';
 import { WalkingAvatar } from './WalkingAvatar';
 
 const ROCK_PATHS = [
@@ -846,15 +847,35 @@ const CompanionWorlds = () => (
 /** 아바타를 부드럽게 추적하는 시네마틱 카메라 */
 const AvatarFollowCamera = ({
   target,
+  enteringPortfolio,
 }: {
   target: MutableRefObject<three.Vector3>;
+  enteringPortfolio: boolean;
 }) => {
   const { camera } = useThree();
   const desired = useRef(new three.Vector3(5.5, 2.1, 14));
   const look = useRef(new three.Vector3(0.5, 1.35, -8));
   const smoothLook = useRef(new three.Vector3(0.5, 1.35, -8));
+  const portfolio = COSMOS_PORTALS.find((item) => item.id === 'portfolio');
 
   useFrame((_, delta) => {
+    if (enteringPortfolio && portfolio) {
+      const [px, py, pz] = portfolio.position;
+      const throughX = px;
+      const throughZ = pz - 1.5;
+      const len = Math.hypot(throughX, throughZ) || 1;
+      const nx = throughX / len;
+      const nz = throughZ / len;
+      desired.current.set(px + nx * 0.35, py + 1.85, pz + nz * 0.35);
+      look.current.set(px + nx * 8, py + 1.45, pz + nz * 8);
+      const camEase = 1 - Math.exp(-1.7 * delta);
+      const lookEase = 1 - Math.exp(-2.1 * delta);
+      camera.position.lerp(desired.current, camEase);
+      smoothLook.current.lerp(look.current, lookEase);
+      camera.lookAt(smoothLook.current);
+      return;
+    }
+
     const t = target.current;
     desired.current.set(t.x + 5.2, t.y + 2.55, t.z + 11.8);
     look.current.set(t.x + 0.35, t.y + 1.4, t.z - 7.5);
@@ -1011,13 +1032,19 @@ const BrandTitle = () => (
   </group>
 );
 
+export type CinematicCosmosSceneProps = {
+  theme?: CosmosSceneTheme;
+  onActivePortalChange?: (id: CosmosPortalId | null) => void;
+  enteringPortfolio?: boolean;
+  onWalkThroughPortfolio?: () => void;
+};
+
 export const CinematicCosmosScene = ({
   theme = 'light',
   onActivePortalChange,
-}: {
-  theme?: CosmosSceneTheme;
-  onActivePortalChange?: (id: CosmosPortalId | null) => void;
-}) => {
+  enteringPortfolio = false,
+  onWalkThroughPortfolio,
+}: CinematicCosmosSceneProps) => {
   const preset = COSMOS_THEME_PRESETS[theme];
   const { gl, scene } = useThree();
   const terrain = useMemo(() => createRockyTerrain(), []);
@@ -1056,6 +1083,11 @@ export const CinematicCosmosScene = ({
   const avatarWorldPos = useRef(new three.Vector3(0, 1.1, 1.5));
   const onActivePortalChangeRef = useRef(onActivePortalChange);
   onActivePortalChangeRef.current = onActivePortalChange;
+  const onWalkThroughPortfolioRef = useRef(onWalkThroughPortfolio);
+  onWalkThroughPortfolioRef.current = onWalkThroughPortfolio;
+  const enteringPortfolioRef = useRef(enteringPortfolio);
+  enteringPortfolioRef.current = enteringPortfolio;
+  const portfolioPortal = COSMOS_PORTALS.find((item) => item.id === 'portfolio');
 
   const [diff, nor, rough] = useTexture([
     '/cosmos/textures/dark_rock_diff_2k.jpg',
@@ -1103,17 +1135,26 @@ export const CinematicCosmosScene = ({
       avatarZ: pos.z,
       portals: COSMOS_PORTALS,
     });
-    if (nextId === activePortalRef.current) {
+    if (nextId !== activePortalRef.current) {
+      activePortalRef.current = nextId;
+      setActivePortalId(nextId);
+      onActivePortalChangeRef.current?.(nextId);
+    }
+
+    if (enteringPortfolioRef.current || !portfolioPortal) {
       return;
     }
-    activePortalRef.current = nextId;
-    setActivePortalId(nextId);
-    onActivePortalChangeRef.current?.(nextId);
-  }, []);
+
+    const [px, , pz] = portfolioPortal.position;
+    const dist = Math.hypot(pos.x - px, pos.z - pz);
+    if (dist <= 1.45) {
+      onWalkThroughPortfolioRef.current?.();
+    }
+  }, [portfolioPortal]);
 
   return (
     <>
-      <AvatarFollowCamera target={avatarWorldPos} />
+      <AvatarFollowCamera target={avatarWorldPos} enteringPortfolio={enteringPortfolio} />
       <color attach='background' args={[preset.background]} />
       <fog attach='fog' args={[preset.fog, preset.fogNear, preset.fogFar]} />
 
@@ -1206,8 +1247,20 @@ export const CinematicCosmosScene = ({
         <PortalBeacon key={portal.id} portal={portal} active={activePortalId === portal.id} />
       ))}
 
+      {portfolioPortal ? (
+        <PortfolioPortalDoor
+          portal={portfolioPortal}
+          open={activePortalId === 'portfolio' || enteringPortfolio}
+        />
+      ) : null}
+
       <group position={[0, -0.08, 1.5]} scale={1.25}>
-        <WalkingAvatar variant='cinematic' position={[0, 0, 0]} onWorldPosition={handleWorldPosition} />
+        <WalkingAvatar
+          variant='cinematic'
+          position={[0, 0, 0]}
+          onWorldPosition={handleWorldPosition}
+          locked={enteringPortfolio}
+        />
       </group>
 
       <EffectComposer multisampling={4} enableNormalPass={false}>

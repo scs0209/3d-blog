@@ -280,37 +280,41 @@ export const PortalBeacon = ({ portal, active }: PortalBeaconProps) => {
               toneMapped={false}
             />
           </sprite>
-          <sprite ref={beamRef} position={[0, 2.6, 0]} scale={active ? [1.7, 6.2, 1] : [1.1, 4.2, 1]} renderOrder={1}>
-            <spriteMaterial
-              map={glowMap}
-              color={color}
-              transparent
-              depthWrite={false}
-              blending={three.AdditiveBlending}
-              opacity={0.16}
-              toneMapped={false}
-            />
-          </sprite>
+          {portal.kind === 'door' ? null : (
+            <sprite ref={beamRef} position={[0, 2.6, 0]} scale={active ? [1.7, 6.2, 1] : [1.1, 4.2, 1]} renderOrder={1}>
+              <spriteMaterial
+                map={glowMap}
+                color={color}
+                transparent
+                depthWrite={false}
+                blending={three.AdditiveBlending}
+                opacity={0.16}
+                toneMapped={false}
+              />
+            </sprite>
+          )}
         </>
       ) : null}
 
-      <points ref={particlesRef} geometry={particleGeometry}>
-        <pointsMaterial
-          color={color}
-          size={0.06}
-          transparent
-          opacity={0.28}
-          depthWrite={false}
-          blending={three.AdditiveBlending}
-          toneMapped={false}
-          sizeAttenuation
-        />
-      </points>
+      {portal.kind === 'door' ? null : (
+        <points ref={particlesRef} geometry={particleGeometry}>
+          <pointsMaterial
+            color={color}
+            size={0.06}
+            transparent
+            opacity={0.28}
+            depthWrite={false}
+            blending={three.AdditiveBlending}
+            toneMapped={false}
+            sizeAttenuation
+          />
+        </points>
+      )}
 
       <pointLight color={color} intensity={active ? 9 : 3.2} distance={12} decay={2} position={[0, 1.1, 0]} />
       <pointLight color={color} intensity={active ? 4 : 1.4} distance={6} decay={2} position={[0, 0.35, 0]} />
 
-      <PortalReveal portal={portal} active={active} />
+      {portal.kind === 'door' ? null : <PortalReveal portal={portal} active={active} />}
     </group>
   );
 };

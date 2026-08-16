@@ -2,22 +2,20 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import {
-  isCosmosAudioMuted,
-  setCosmosAudioMuted,
-  unlockCosmosAudio,
-} from '@/widgets/home/lib/cosmos-audio';
-import {
-  COSMOS_PORTAL_HINT_KEY,
-  getCosmosPortal,
-  type CosmosPortalId,
-} from '@/widgets/home/model/cosmos-portals';
+import { isCosmosAudioMuted, setCosmosAudioMuted, unlockCosmosAudio } from '@/widgets/home/lib/cosmos-audio';
+import { COSMOS_PORTAL_HINT_KEY, type CosmosPortalId, getCosmosPortal } from '@/widgets/home/model/cosmos-portals';
 
 type PortalDiscoveryOverlayProps = {
   activePortalId: CosmosPortalId | null;
+  enteringPortfolio?: boolean;
+  onEnterPortfolio?: () => void;
 };
 
-export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverlayProps) => {
+export const PortalDiscoveryOverlay = ({
+  activePortalId,
+  enteringPortfolio = false,
+  onEnterPortfolio,
+}: PortalDiscoveryOverlayProps) => {
   const portal = getCosmosPortal(activePortalId);
   const [showHint, setShowHint] = useState(false);
   const [audioMuted, setAudioMuted] = useState(false);
@@ -54,6 +52,25 @@ export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverla
     sessionStorage.setItem(COSMOS_PORTAL_HINT_KEY, '1');
     setShowHint(false);
   }, [activePortalId]);
+
+  useEffect(() => {
+    if (activePortalId !== 'portfolio' || !onEnterPortfolio || enteringPortfolio) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' || event.repeat) {
+        return;
+      }
+      event.preventDefault();
+      onEnterPortfolio();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activePortalId, enteringPortfolio, onEnterPortfolio]);
 
   const handleToggleMute = () => {
     void unlockCosmosAudio();
@@ -109,9 +126,9 @@ export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverla
 
         <div
           className={`flex w-full max-w-xl flex-col items-center text-center transition-all duration-700 ${
-            portal ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
+            portal && !enteringPortfolio ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
           }`}
-          aria-hidden={!portal}
+          aria-hidden={!portal || enteringPortfolio}
         >
           {portal ? (
             <>
@@ -156,19 +173,38 @@ export const PortalDiscoveryOverlay = ({ activePortalId }: PortalDiscoveryOverla
                 {portal.description}
               </p>
 
-              <Link
-                href={portal.href}
-                className='pointer-events-auto mt-7 inline-flex min-w-[10.5rem] items-center justify-center border px-7 py-2.5 text-[13px] uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4'
-                style={{
-                  fontFamily: 'var(--font-syne), sans-serif',
-                  color: accent,
-                  borderColor: `${accent}99`,
-                  boxShadow: `0 0 0 1px ${accent}22, 0 0 28px ${accent}22`,
-                }}
-                aria-label={`${portal.label}: ${portal.cta}`}
-              >
-                {portal.cta}
-              </Link>
+              {portal.id === 'portfolio' && onEnterPortfolio ? (
+                <button
+                  type='button'
+                  className='pointer-events-auto mt-7 inline-flex min-w-[10.5rem] items-center justify-center border px-7 py-2.5 text-[13px] uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 disabled:opacity-40'
+                  style={{
+                    fontFamily: 'var(--font-syne), sans-serif',
+                    color: accent,
+                    borderColor: `${accent}99`,
+                    boxShadow: `0 0 0 1px ${accent}22, 0 0 28px ${accent}22`,
+                  }}
+                  onClick={onEnterPortfolio}
+                  disabled={enteringPortfolio}
+                  aria-label={`${portal.label}: ${portal.cta}`}
+                  tabIndex={0}
+                >
+                  {portal.cta}
+                </button>
+              ) : (
+                <Link
+                  href={portal.href}
+                  className='pointer-events-auto mt-7 inline-flex min-w-[10.5rem] items-center justify-center border px-7 py-2.5 text-[13px] uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4'
+                  style={{
+                    fontFamily: 'var(--font-syne), sans-serif',
+                    color: accent,
+                    borderColor: `${accent}99`,
+                    boxShadow: `0 0 0 1px ${accent}22, 0 0 28px ${accent}22`,
+                  }}
+                  aria-label={`${portal.label}: ${portal.cta}`}
+                >
+                  {portal.cta}
+                </Link>
+              )}
             </>
           ) : null}
         </div>

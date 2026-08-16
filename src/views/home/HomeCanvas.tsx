@@ -2,16 +2,21 @@
 
 import { useFBX, useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
+import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import * as three from 'three';
+import { PORTFOLIO_PORTAL_SESSION_KEY } from '@/entities/portfolio/model/cinematic-transition';
 import { CanvasLoader } from '@/shared/ui';
-import { CinematicCosmosScene, PortalDiscoveryOverlay, type CosmosSceneTheme } from '@/widgets/home';
+import { PortalDiscoveryOverlay, PortalEnterTransition } from '@/widgets/home';
 import type { CosmosPortalId } from '@/widgets/home/model/cosmos-portals';
+import { CinematicCosmosScene, type CosmosSceneTheme } from '@/widgets/home/ui/CinematicCosmosScene';
 
 export const HomeCanvas = () => {
+  const router = useRouter();
   const { theme, resolvedTheme } = useTheme();
   const [activePortalId, setActivePortalId] = useState<CosmosPortalId | null>(null);
+  const [enteringPortfolio, setEnteringPortfolio] = useState(false);
   const sceneTheme: CosmosSceneTheme = (resolvedTheme ?? theme) === 'dark' ? 'dark' : 'light';
 
   useEffect(() => {
@@ -25,6 +30,15 @@ export const HomeCanvas = () => {
       clearTimeout(timer);
     };
   }, []);
+
+  const handleEnterPortfolio = useCallback(() => {
+    setEnteringPortfolio(true);
+  }, []);
+
+  const handleEnterComplete = useCallback(() => {
+    sessionStorage.setItem(PORTFOLIO_PORTAL_SESSION_KEY, '1');
+    router.push('/portfolio');
+  }, [router]);
 
   return (
     <>
@@ -40,12 +54,22 @@ export const HomeCanvas = () => {
           camera={{ fov: 36, near: 0.1, far: 500, position: [5.5, 2.1, 14] }}
         >
           <Suspense fallback={<CanvasLoader />}>
-            <CinematicCosmosScene theme={sceneTheme} onActivePortalChange={setActivePortalId} />
+            <CinematicCosmosScene
+              theme={sceneTheme}
+              onActivePortalChange={setActivePortalId}
+              enteringPortfolio={enteringPortfolio}
+              onWalkThroughPortfolio={handleEnterPortfolio}
+            />
           </Suspense>
         </Canvas>
       </div>
 
-      <PortalDiscoveryOverlay activePortalId={activePortalId} />
+      <PortalDiscoveryOverlay
+        activePortalId={activePortalId}
+        enteringPortfolio={enteringPortfolio}
+        onEnterPortfolio={handleEnterPortfolio}
+      />
+      <PortalEnterTransition active={enteringPortfolio} onComplete={handleEnterComplete} />
     </>
   );
 };
