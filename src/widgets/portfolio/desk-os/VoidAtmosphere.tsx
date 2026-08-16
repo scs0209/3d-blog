@@ -167,7 +167,10 @@ const VoidMotes = () => {
   }, []);
 
   useFrame((state, delta) => {
-    material.uniforms.uTime.value = state.clock.elapsedTime;
+    const timeUniform = material.uniforms.uTime;
+    if (timeUniform) {
+      timeUniform.value = state.clock.elapsedTime;
+    }
     const attr = pointsRef.current?.geometry.getAttribute('position');
     const motion = drift.current;
     if (!attr || !motion) {
@@ -178,15 +181,23 @@ const VoidMotes = () => {
     for (let i = 0; i < SNOW_COUNT; i += 1) {
       const px = i * 3;
       const mx = i * 4;
-      const phase = motion[mx + 3];
-      positions[px] += (motion[mx] + Math.sin(time * 0.45 + phase) * 48) * delta;
-      positions[px + 1] -= motion[mx + 1] * delta;
-      positions[px + 2] += (motion[mx + 2] + Math.cos(time * 0.38 + phase) * 36) * delta;
-      if (positions[px + 1] < SNOW_RESET_Y) {
+      const x = positions[px] ?? 0;
+      const y = positions[px + 1] ?? 0;
+      const z = positions[px + 2] ?? 0;
+      const vx = motion[mx] ?? 0;
+      const vy = motion[mx + 1] ?? 0;
+      const vz = motion[mx + 2] ?? 0;
+      const phase = motion[mx + 3] ?? 0;
+      const nextY = y - vy * delta;
+      if (nextY < SNOW_RESET_Y) {
         positions[px] = (Math.random() - 0.5) * SNOW_SPAN;
         positions[px + 1] = SNOW_TOP_Y + Math.random() * 3500;
         positions[px + 2] = (Math.random() - 0.5) * SNOW_SPAN;
+        continue;
       }
+      positions[px] = x + (vx + Math.sin(time * 0.45 + phase) * 48) * delta;
+      positions[px + 1] = nextY;
+      positions[px + 2] = z + (vz + Math.cos(time * 0.38 + phase) * 36) * delta;
     }
     attr.needsUpdate = true;
   });
