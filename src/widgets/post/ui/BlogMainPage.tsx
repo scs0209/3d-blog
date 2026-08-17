@@ -2,11 +2,12 @@
 
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { getPostList } from '@/features/post/api/post-api';
 import type { GetPostListParams, GetPostListResponse } from '@/features/post/model';
 import { AnalyticsEvents, trackEvent } from '@/shared/lib/analytics';
 import { queryKeys } from '@/shared/queryKeys';
+import { useBlogScrollRoot } from '@/widgets/post/ui/BlogScrollContext';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { BlogSectionTitle } from './BlogSectionTitle';
 import { NoResults } from './NoResults';
@@ -25,6 +26,7 @@ type LoadMorePostsProps = {
 
 const LoadMorePosts = ({ hasNextPage, isFetchingNextPage, onLoadMore }: LoadMorePostsProps) => {
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollRoot = useBlogScrollRoot();
 
   useEffect(() => {
     if (!hasNextPage) return;
@@ -38,12 +40,16 @@ const LoadMorePosts = ({ hasNextPage, isFetchingNextPage, onLoadMore }: LoadMore
           onLoadMore();
         }
       },
-      { rootMargin: '240px' },
+      {
+        root: scrollRoot,
+        rootMargin: '320px',
+        threshold: 0,
+      },
     );
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, onLoadMore]);
+  }, [hasNextPage, isFetchingNextPage, onLoadMore, scrollRoot]);
 
   if (!hasNextPage && !isFetchingNextPage) {
     return null;
@@ -109,10 +115,10 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
   const showLoading = isLoading && postsData.length === 0;
   const trackedKeyRef = useRef<string>('');
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (!hasNextPage || isFetchingNextPage) return;
     fetchNextPage();
-  };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const handleRetry = () => {
     refetch();

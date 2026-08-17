@@ -663,6 +663,33 @@ pre {
   color: #c8e8ff;
 }
 
+/* Mermaid SVG — blog-prose color 상속으로 글자가 사라지는 문제 방지 */
+.blog-prose .mermaid-diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.blog-prose .mermaid-diagram .nodeLabel,
+.blog-prose .mermaid-diagram .label,
+.blog-prose .mermaid-diagram .cluster-label,
+.blog-prose .mermaid-diagram text,
+.blog-prose .mermaid-diagram .messageText,
+.blog-prose .mermaid-diagram .loopText {
+  fill: #ffe8d0 !important;
+  color: #ffe8d0 !important;
+}
+
+.dark .blog-prose .mermaid-diagram .nodeLabel,
+.dark .blog-prose .mermaid-diagram .label,
+.dark .blog-prose .mermaid-diagram .cluster-label,
+.dark .blog-prose .mermaid-diagram text,
+.dark .blog-prose .mermaid-diagram .messageText,
+.dark .blog-prose .mermaid-diagram .loopText {
+  fill: #c8e8ff !important;
+  color: #c8e8ff !important;
+}
+
 .void-scanlines::after {
   pointer-events: none;
   content: "";
