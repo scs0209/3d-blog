@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { getBaseUrl } from '@/shared/lib/get-base-url';
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 /** 개별 free 모델은 자주 deprecated 되므로 auto-router 사용 */
@@ -124,7 +125,7 @@ export async function POST(request: NextRequest) {
       headers: {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+        'HTTP-Referer': getBaseUrl(),
         'X-Title': '3d-blog',
       },
       body: JSON.stringify({

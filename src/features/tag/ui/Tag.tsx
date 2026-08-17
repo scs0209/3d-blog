@@ -10,6 +10,8 @@ const colorCombos = [
   'bg-indigo-500 border-indigo-200 dark:bg-indigo-500 dark:border-indigo-200',
 ];
 
+const getTagHref = (name: string) => `/blog/all?tags=${encodeURIComponent(name)}`;
+
 export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count: number }) => {
   function hashString(str: string) {
     let hash = 0;
@@ -29,7 +31,7 @@ export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count
       className='relative rounded-lg border border-[#ff9a3c]/25 bg-[#ff9a3c]/8 px-2 py-1 text-xs font-mono shadow-[0_0_10px_rgba(255,154,60,0.1)] transition dark:border-[#3de8ff]/25 dark:bg-[#3de8ff]/8 dark:shadow-[0_0_10px_rgba(61,232,255,0.1)]'
     >
       <Link
-        href={`/blog/${tag.name}`}
+        href={getTagHref(tag.name ?? '')}
         className='inline-block px-3 py-1 text-xs font-mono text-[#ffc8a0] backdrop-blur-sm dark:text-[#3de8ff]'
       >
         {tag.name}

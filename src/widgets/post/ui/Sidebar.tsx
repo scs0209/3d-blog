@@ -1,9 +1,9 @@
 'use client';
 
 import { toCategoryListItems } from '@/entities/category';
+import { getTagPostCount } from '@/entities/tag/lib/get-tag-post-count';
 import { VisitorCounter } from '@/features/blog/ui';
-import { useCategories } from '@/features/category/model';
-import { useTags } from '@/features/tag/model/use-tags';
+import { useSidebarData } from '@/features/sidebar/model/use-sidebar-data';
 import { Tag } from '@/features/tag/ui';
 import { SidebarSkeleton } from '@/shared/ui/skeleton';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -16,10 +16,10 @@ import { CategoryTree } from './CategoryTree';
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { data, isLoading } = useCategories();
+  const { data: sidebarData, isLoading } = useSidebarData();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { data: tags } = useTags();
-  const categories = useMemo(() => toCategoryListItems(data), [data]);
+  const categories = useMemo(() => toCategoryListItems(sidebarData?.categories), [sidebarData?.categories]);
+  const tags = sidebarData?.tags;
 
   const currentCategorySlug = (() => {
     const match = pathname.match(/^\/blog\/category\/([^/]+)/);
@@ -91,7 +91,7 @@ export default function Sidebar() {
               </div>
               <div className='flex flex-wrap gap-2'>
                 {tags?.map((tag) => (
-                  <Tag key={tag.id} tag={tag} count={tag.count?.posts ?? 0} />
+                  <Tag key={tag.id} tag={tag} count={getTagPostCount(tag)} />
                 ))}
               </div>
             </div>
