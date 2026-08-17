@@ -1,6 +1,7 @@
 'use client';
 
 import type { PostResponse } from '@/entities/post/model/post';
+import { getPostPath } from '@/shared/consts/baseUrl';
 import { formatDateToYMD } from '@/shared/utils';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { motion } from 'framer-motion';
@@ -18,7 +19,7 @@ type PostListCardProps = {
 export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const href = `/blog/category/${categorySlug ?? post.category?.slug}/post/${post?.slug}`;
+  const href = getPostPath(categorySlug ?? post.category?.slug, post.slug ?? '');
   const categoryLabel = categoryName ?? post.category?.name;
 
   const handleNavigate = (event: React.MouseEvent<HTMLAnchorElement>) => {

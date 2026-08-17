@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import prisma from '@/shared/lib/db';
+import { decodePathSegment } from '@/shared/lib/decode-path-segment';
+import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
 
 /**
  * @swagger
@@ -127,7 +129,8 @@ import prisma from '@/shared/lib/db';
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const { slug } = await params;
+    const { slug: rawSlug } = await params;
+    const slug = decodePathSegment(rawSlug);
     if (!slug || typeof slug !== 'string') {
       return NextResponse.json({ error: 'Invalid post slug' }, { status: 400 });
     }
@@ -142,50 +145,52 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
     // 먼저 게시물 조회
-    const post = await prisma.post.findUnique({
-      where: { slug },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        category: true,
-        tags: true,
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-              },
+    const post = await withPrismaRetry(() =>
+      prisma.post.findUnique({
+        where: { slug },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
             },
-            replies: {
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
+          },
+          category: true,
+          tags: true,
+          comments: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              replies: {
+                include: {
+                  author: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
                   },
                 },
               },
             },
           },
-        },
-        likes: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
+          likes: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      }),
+    );
 
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
@@ -245,50 +250,52 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     }
 
     // 조회수 업데이트된 게시물 정보 반환
-    const updatedPost = await prisma.post.findUnique({
-      where: { slug },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        category: true,
-        tags: true,
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-              },
+    const updatedPost = await withPrismaRetry(() =>
+      prisma.post.findUnique({
+        where: { slug },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
             },
-            replies: {
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
+          },
+          category: true,
+          tags: true,
+          comments: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              replies: {
+                include: {
+                  author: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
                   },
                 },
               },
             },
           },
-        },
-        likes: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
+          likes: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      }),
+    );
 
     return NextResponse.json(updatedPost, { status: 200 });
   } catch (error) {
