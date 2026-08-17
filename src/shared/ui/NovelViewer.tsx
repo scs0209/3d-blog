@@ -1,13 +1,11 @@
 'use client';
 import { preprocessHTML } from '../utils';
-import { defaultExtensions } from './TextEditor/extensions';
+import { viewerExtensions } from './TextEditor/viewerExtensions';
 import { EditorContent } from 'novel';
 
 type NovelViewerProps = {
   content: string;
 };
-
-const extensions = [...defaultExtensions];
 
 export default function NovelViewer({ content }: NovelViewerProps) {
   const processedValue = content ? preprocessHTML(content) : content;
@@ -15,7 +13,7 @@ export default function NovelViewer({ content }: NovelViewerProps) {
   return (
     <div className='blog-prose'>
       <EditorContent
-        extensions={extensions}
+        extensions={viewerExtensions}
         immediatelyRender={false}
         editable={false}
         initialContent={processedValue as any}

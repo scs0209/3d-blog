@@ -6,8 +6,16 @@ import { useCategoryPosts } from '@/features/category/model';
 import { PostListCardSkeleton } from '@/shared/ui/skeleton';
 
 export default function BlogPostPage() {
-  const { slug } = useParams();
-  const { data: categoryPosts, isLoading: isCategoryPostsLoading } = useCategoryPosts(slug as string, 1, 10);
+  const { slug: rawSlug } = useParams();
+  const slug = (() => {
+    const value = String(rawSlug ?? '');
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  })();
+  const { data: categoryPosts, isLoading: isCategoryPostsLoading } = useCategoryPosts(slug, 1, 10);
 
   if (isCategoryPostsLoading) {
     return (

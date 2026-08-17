@@ -1276,11 +1276,4 @@ export const CinematicCosmosScene = ({
   );
 };
 
-for (const path of ROCK_PATHS) {
-  useGLTF.preload(path);
-}
-useTexture.preload('/cosmos/textures/dark_rock_diff_2k.jpg');
-useTexture.preload('/cosmos/textures/dark_rock_nor_2k.jpg');
-useTexture.preload('/cosmos/textures/dark_rock_rough_2k.jpg');
-useTexture.preload('/cosmos/textures/earth_black_marble.jpg');
-useTexture.preload('/cosmos/textures/earth_day_hq.jpg');
+// 텍스처/록 모델 preload는 홈 씬 마운트 경로(HomeCanvas)에서만 수행

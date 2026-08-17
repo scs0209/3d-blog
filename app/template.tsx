@@ -1,51 +1,62 @@
 'use client';
+
 import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 const transitionVariants = {
   initial: {
     x: '100%',
-    width: '100%',
   },
   animate: {
-    x: '0%',
-    width: '0%',
+    x: '100%',
   },
   exit: {
     x: ['0%', '100%'],
-    width: ['0%', '100%'],
   },
 };
 
+/**
+ * 페이지 전환 오버레이.
+ * width 애니메이션은 CLS를 유발하므로 transform만 사용.
+ * 블로그 읽기 경로에서는 오버레이를 생략해 LCP/CLS를 지킨다.
+ */
 export default function Template({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const skipTransition = pathname?.startsWith('/blog');
+
+  if (skipTransition) {
+    return children;
+  }
+
   return (
     <>
       {children}
-      {/* 첫 번째 레이어 */}
       <motion.div
-        className='fixed top-0 bottom-0 right-full w-screen h-screen z-30 bg-gradient-to-br from-slate-800 to-slate-900'
+        className='pointer-events-none fixed inset-y-0 right-0 z-30 h-screen w-screen origin-right bg-gradient-to-br from-slate-800 to-slate-900'
         variants={transitionVariants}
         initial='initial'
         animate='animate'
         exit='exit'
         transition={{ delay: 0, duration: 0.7, ease: 'easeInOut' }}
+        aria-hidden
       />
-      {/* 두 번째 레이어 */}
       <motion.div
-        className='fixed top-0 bottom-0 right-full w-screen h-screen z-31 bg-gradient-to-br from-gray-800 to-blue-900'
+        className='pointer-events-none fixed inset-y-0 right-0 z-31 h-screen w-screen origin-right bg-gradient-to-br from-gray-800 to-blue-900'
         variants={transitionVariants}
         initial='initial'
         animate='animate'
         exit='exit'
         transition={{ delay: 0.1, duration: 0.7, ease: 'easeInOut' }}
+        aria-hidden
       />
-      {/* 세 번째 레이어 */}
       <motion.div
-        className='fixed top-0 bottom-0 right-full w-screen h-screen z-32 bg-gradient-to-br from-blue-900 to-indigo-900'
+        className='pointer-events-none fixed inset-y-0 right-0 z-32 h-screen w-screen origin-right bg-gradient-to-br from-blue-900 to-indigo-900'
         variants={transitionVariants}
         initial='initial'
         animate='animate'
         exit='exit'
         transition={{ delay: 0.2, duration: 0.7, ease: 'easeInOut' }}
+        aria-hidden
       />
     </>
   );

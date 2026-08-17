@@ -1,18 +1,20 @@
-import { getPostBySlug } from '@/features/post/api/post-api';
-import { formatDateToYMD } from '@/shared/utils';
-import dynamic from 'next/dynamic';
-import { CommentSection } from '@/features/comment/ui';
-import { PostSummary } from '@/shared/ui/PostSummary';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
+import { CommentSection } from '@/features/comment/ui';
+import { getPostBySlug } from '@/features/post/api/post-api';
+import { extractDescription, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
+import PostHtmlViewer from '@/shared/ui/PostHtmlViewer';
+import { formatDateToYMD } from '@/shared/utils';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { PostBackButton } from '@/widgets/post/ui/PostBackButton';
 import { PostViewTracker } from '@/widgets/post/ui/PostViewTracker';
-import { extractDescription, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
-import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 
-const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'));
+const PostSummary = dynamic(() => import('@/shared/ui/PostSummary').then((mod) => mod.PostSummary), {
+  loading: () => <div className='mb-6 min-h-[88px]' aria-hidden />,
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ postSlug: string }> }): Promise<Metadata> {
   const { postSlug } = await params;
@@ -115,11 +117,7 @@ const PostStructuredData = ({ post }: { post: PostResponse }) => {
   return <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />;
 };
 
-export default async function PostPage({
-  params,
-}: {
-  params: Promise<{ slug: string; postSlug: string }>;
-}) {
+export default async function PostPage({ params }: { params: Promise<{ slug: string; postSlug: string }> }) {
   const { slug, postSlug } = await params;
   const decodedSlug = decodeURIComponent(postSlug);
   const categorySlug = decodeURIComponent(slug);
@@ -188,7 +186,7 @@ export default async function PostPage({
             </div>
           )}
 
-          <div className='relative z-10 p-2'>
+          <div className='relative z-10 mb-2 min-h-[88px] p-2'>
             <PostSummary
               post={{
                 id: post.id ?? post.slug ?? 'unknown',
@@ -200,7 +198,7 @@ export default async function PostPage({
           </div>
 
           <div className='relative z-10'>
-            <NovelViewer content={post.content ?? ''} />
+            <PostHtmlViewer content={post.content ?? ''} />
           </div>
         </section>
 

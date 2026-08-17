@@ -1,16 +1,17 @@
 'use client';
 
-import { useFBX, useGLTF } from '@react-three/drei';
+import { useFBX, useGLTF, useTexture } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import * as three from 'three';
 import { PORTFOLIO_PORTAL_SESSION_KEY } from '@/entities/portfolio/model/cinematic-transition';
-import { CanvasLoader } from '@/shared/ui';
-import { PortalDiscoveryOverlay, PortalEnterTransition } from '@/widgets/home';
+import { CanvasLoader } from '@/shared/ui/Loader';
 import type { CosmosPortalId } from '@/widgets/home/model/cosmos-portals';
 import { CinematicCosmosScene, type CosmosSceneTheme } from '@/widgets/home/ui/CinematicCosmosScene';
+import { PortalDiscoveryOverlay } from '@/widgets/home/ui/PortalDiscoveryOverlay';
+import { PortalEnterTransition } from '@/widgets/home/ui/PortalEnterTransition';
 
 export const HomeCanvas = () => {
   const router = useRouter();
@@ -24,6 +25,11 @@ export const HomeCanvas = () => {
       useGLTF.preload('/WalkingAstro.glb');
       useFBX.preload('/snp.fbx');
       useFBX.preload('/Typing.fbx');
+      useTexture.preload('/cosmos/textures/dark_rock_diff_2k.jpg');
+      useTexture.preload('/cosmos/textures/dark_rock_nor_2k.jpg');
+      useTexture.preload('/cosmos/textures/dark_rock_rough_2k.jpg');
+      useTexture.preload('/cosmos/textures/earth_black_marble.jpg');
+      useTexture.preload('/cosmos/textures/earth_day_hq.jpg');
     }, 100);
 
     return () => {

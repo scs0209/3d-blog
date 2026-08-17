@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import { SpaceBackground } from '@/widgets/post/ui';
+import { SpaceBackground } from '@/widgets/post/ui/SpaceBackground';
 import BlogHeader from '@/widgets/post/ui/BlogHeader';
 import Sidebar from '@/widgets/post/ui/Sidebar';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
