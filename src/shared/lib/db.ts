@@ -13,4 +13,5 @@ const prisma = globalThis.prisma ?? prismaClientSingleton();
 
 export default prisma;
 
-if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma;
+// Vercel serverless: 인스턴스당 PrismaClient 1개만 유지 (연결 폭주 방지)
+globalThis.prisma = prisma;

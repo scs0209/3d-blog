@@ -6,7 +6,7 @@ import type { PostResponse } from '@/entities/post/model/post';
 import { CommentSection } from '@/features/comment/ui';
 import { getPostBySlug } from '@/features/post/api/post-api';
 import { extractDescription, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
-import PostHtmlViewer from '@/shared/ui/PostHtmlViewer';
+import { PostHtmlViewerClient } from '@/shared/ui/PostHtmlViewerClient';
 import { formatDateToYMD } from '@/shared/utils';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { PostBackButton } from '@/widgets/post/ui/PostBackButton';
@@ -198,7 +198,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           </div>
 
           <div className='relative z-10'>
-            <PostHtmlViewer content={post.content ?? ''} />
+            <PostHtmlViewerClient content={post.content ?? ''} />
           </div>
         </section>
 

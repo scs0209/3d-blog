@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { parseCategoryParentId } from '@/entities/category';
 import prisma from '@/shared/lib/db';
-import { auth } from '@/shared/utils/auth';
 import { createSlug } from '@/shared/utils/create-slug';
 
 /**
@@ -100,7 +99,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(categories);
   } catch (error) {
-    console.error('GET /api/categories error:', error);
+    console.error('GET /api/category/all error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -148,6 +147,7 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
   try {
+    const { auth } = await import('@/shared/utils/auth');
     const session = await auth();
     if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });

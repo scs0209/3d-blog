@@ -56,6 +56,7 @@ export async function GET() {
     }));
     return NextResponse.json(result);
   } catch (error) {
+    console.error('GET /api/tags error:', error);
     return NextResponse.json({ error: 'Failed to fetch tags' }, { status: 500 });
   }
 }

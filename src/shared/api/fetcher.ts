@@ -1,6 +1,7 @@
 /* eslint-disable */
 // biome-ignore lint/style/useNodejsImportProtocol: <explanation>
 import qs, { type ParsedUrlQueryInput } from 'querystring';
+import { getBaseUrl } from '@/shared/lib/get-base-url';
 import type { paths } from './openapi-types';
 
 type Path = keyof paths;
@@ -86,8 +87,7 @@ export const fetcher = async <P extends Path, M extends Method<P>>({
   // 서버 환경에서 finalUrl이 /로 시작하면 절대경로로 변환 (URL이 path를 1회 인코딩)
   const isServer = typeof window === 'undefined';
   if (isServer && finalUrl.startsWith('/')) {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    finalUrl = new URL(finalUrl, baseUrl).href;
+    finalUrl = new URL(finalUrl, getBaseUrl()).href;
   }
 
   const res = await fetch(finalUrl, {
