@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { preprocessHTML } from '@/shared/utils';
+import { preprocessHTML, sanitizePostHtml, sanitizeSvgHtml } from '@/shared/utils';
 
 type PostHtmlViewerProps = {
   content: string;
@@ -28,7 +28,8 @@ const enhanceCodeBlocks = async (root: HTMLElement) => {
         const { svg } = await mermaid.render(id, source);
         const pre = block.closest('pre');
         if (pre) {
-          pre.outerHTML = `<div class="mermaid-diagram my-4 overflow-x-auto">${svg}</div>`;
+          const safeSvg = sanitizeSvgHtml(svg);
+          pre.outerHTML = `<div class="mermaid-diagram my-4 overflow-x-auto">${safeSvg}</div>`;
         }
       } catch {
         // 원본 코드 블록 유지
@@ -43,7 +44,7 @@ const enhanceCodeBlocks = async (root: HTMLElement) => {
  */
 export default function PostHtmlViewer({ content }: PostHtmlViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const html = content ? preprocessHTML(content) : '';
+  const html = content ? sanitizePostHtml(preprocessHTML(content)) : '';
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -52,12 +53,7 @@ export default function PostHtmlViewer({ content }: PostHtmlViewerProps) {
 
   return (
     <div className='blog-prose'>
-      <div
-        ref={containerRef}
-        className='ProseMirror'
-        // 관리자 작성 HTML — XSS는 관리자 권한 콘텐츠로 제한됨
-        dangerouslySetInnerHTML={{ __html: typeof html === 'string' ? html : '' }}
-      />
+      <div ref={containerRef} className='ProseMirror' dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }

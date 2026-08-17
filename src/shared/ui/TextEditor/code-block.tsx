@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import { useSession } from 'next-auth/react';
+import { useEffect, useRef } from 'react';
 
 let mermaidInitialized = false;
 
@@ -65,7 +65,9 @@ export default function CodeBlock(props: any) {
           previewer.current.innerHTML = svg;
         }
       } catch (error) {
-        console.error('Mermaid rendering error:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Mermaid rendering error:', error);
+        }
         if (!cancelled && previewer.current) {
           const message = error instanceof Error ? error.message : 'Unknown error';
           previewer.current.innerHTML = `<div style="color: red; padding: 1rem;">Mermaid 구문 오류: ${message}</div>`;
