@@ -10,7 +10,12 @@ type CommentSectionProps = {
 };
 
 export async function CommentSection({ postId }: CommentSectionProps) {
-  const comments = await getComments({ postId });
+  let comments: Awaited<ReturnType<typeof getComments>> = [];
+  try {
+    comments = await getComments({ postId });
+  } catch {
+    comments = [];
+  }
 
   return (
     <section className={blogTheme.commentSection}>
