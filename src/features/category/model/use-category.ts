@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getCategories, getCategoryPosts } from '../api/category-api';
 import { queryKeys } from '@/shared/queryKeys';
+import { getNextPageParamFromMeta } from '@/shared/lib/pagination';
 import type { CategoryResponse, CategoryWithPosts } from '@/entities/category/model';
 
 const getAllCategories = () => getCategories();
@@ -24,4 +25,31 @@ export const useCategoryPosts = (slug: string, page = 1, limit = 10) => {
   });
 
   return { data, isLoading, error };
+};
+
+export const useCategoryPostsInfinite = (slug: string, limit = 10) => {
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
+    useInfiniteQuery<CategoryWithPosts>({
+      queryKey: [...queryKeys.category.posts(slug, 1, limit).queryKey, 'infinite'],
+      queryFn: ({ pageParam = 1 }) => getCategoryPosts(slug, pageParam as number, limit),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => getNextPageParamFromMeta(lastPage),
+      staleTime: 60_000,
+      enabled: Boolean(slug),
+    });
+
+  const categoryInfo = data?.pages[0];
+  const posts = data?.pages.flatMap((page) => page.posts ?? []) ?? [];
+
+  return {
+    categoryName: categoryInfo?.name,
+    categorySlug: categoryInfo?.slug,
+    posts,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  };
 };

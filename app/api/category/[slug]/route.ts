@@ -189,6 +189,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         limit,
         total: totalPosts,
         totalPages: Math.ceil(totalPosts / limit),
+        hasNextPage: page < Math.ceil(totalPosts / limit),
       },
     });
   } catch (error) {

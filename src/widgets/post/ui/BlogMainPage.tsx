@@ -6,9 +6,10 @@ import { useCallback, useEffect, useRef } from 'react';
 import { getPostList } from '@/features/post/api/post-api';
 import type { GetPostListParams, GetPostListResponse } from '@/features/post/model';
 import { AnalyticsEvents, trackEvent } from '@/shared/lib/analytics';
+import { getNextPageParamFromMeta } from '@/shared/lib/pagination';
 import { queryKeys } from '@/shared/queryKeys';
-import { useBlogScrollRoot } from '@/widgets/post/ui/BlogScrollContext';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { LoadMoreSentinel } from '@/widgets/post/ui/LoadMoreSentinel';
 import { BlogSectionTitle } from './BlogSectionTitle';
 import { NoResults } from './NoResults';
 import { PostList } from './PostList';
@@ -16,58 +17,6 @@ import { RecentPosts } from './RecentPosts';
 
 type BlogMainPageProps = {
   initialPosts?: GetPostListResponse;
-};
-
-type LoadMorePostsProps = {
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
-  onLoadMore: () => void;
-};
-
-const LoadMorePosts = ({ hasNextPage, isFetchingNextPage, onLoadMore }: LoadMorePostsProps) => {
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const scrollRoot = useBlogScrollRoot();
-
-  useEffect(() => {
-    if (!hasNextPage) return;
-
-    const node = sentinelRef.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && !isFetchingNextPage) {
-          onLoadMore();
-        }
-      },
-      {
-        root: scrollRoot,
-        rootMargin: '320px',
-        threshold: 0,
-      },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, onLoadMore, scrollRoot]);
-
-  if (!hasNextPage && !isFetchingNextPage) {
-    return null;
-  }
-
-  return (
-    <div ref={sentinelRef} className='mt-8 flex justify-center'>
-      <button
-        type='button'
-        onClick={onLoadMore}
-        disabled={isFetchingNextPage || !hasNextPage}
-        className={`rounded-lg px-4 py-2 text-sm transition disabled:opacity-60 ${blogTheme.navBtn}`}
-        aria-label='다음 글 불러오기'
-      >
-        {isFetchingNextPage ? '불러오는 중...' : '더 보기'}
-      </button>
-    </div>
-  );
 };
 
 export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
@@ -90,26 +39,19 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
 
   const { data, isLoading, isError, isSuccess, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useInfiniteQuery<GetPostListResponse>({
-    queryKey: queryKeys.post.all(listParams).queryKey,
-    queryFn: ({ pageParam = 1 }) => getPostList({ ...listParams, page: pageParam as number }),
-    initialPageParam: 1,
-    staleTime: 60_000,
-    initialData: canUseInitialData
-      ? {
-          pages: [initialPosts as GetPostListResponse],
-          pageParams: [1],
-        }
-      : undefined,
-    getNextPageParam: (lastPage) => {
-      const currentPage = lastPage.meta?.pagination?.currentPage;
-      const nextPageExists = lastPage.meta?.pagination?.hasNextPage;
-      if (nextPageExists && currentPage) {
-        return currentPage + 1;
-      }
-      return undefined;
-    },
-    placeholderData: keepPreviousData,
-  });
+      queryKey: queryKeys.post.all(listParams).queryKey,
+      queryFn: ({ pageParam = 1 }) => getPostList({ ...listParams, page: pageParam as number }),
+      initialPageParam: 1,
+      staleTime: 60_000,
+      initialData: canUseInitialData
+        ? {
+            pages: [initialPosts as GetPostListResponse],
+            pageParams: [1],
+          }
+        : undefined,
+      getNextPageParam: (lastPage) => getNextPageParamFromMeta(lastPage),
+      placeholderData: keepPreviousData,
+    });
 
   const postsData = data?.pages?.flatMap((page) => page.data ?? []) ?? [];
   const showLoading = isLoading && postsData.length === 0;
@@ -179,6 +121,14 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
     );
   }
 
+  const loadMore = (
+    <LoadMoreSentinel
+      hasNextPage={Boolean(hasNextPage)}
+      isFetchingNextPage={isFetchingNextPage}
+      onLoadMore={handleLoadMore}
+    />
+  );
+
   if (hasFilters) {
     const filterLabel = [
       search ? `"${search}"` : null,
@@ -192,11 +142,7 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
       <div className='mx-auto w-full max-w-4xl'>
         <BlogSectionTitle subtitle={filterLabel || '조건에 맞는 글'}>검색 결과</BlogSectionTitle>
         <PostList posts={postsData} isLoading={showLoading} />
-        <LoadMorePosts
-          hasNextPage={Boolean(hasNextPage)}
-          isFetchingNextPage={isFetchingNextPage}
-          onLoadMore={handleLoadMore}
-        />
+        {loadMore}
       </div>
     );
   }
@@ -215,11 +161,7 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
           <PostList posts={restPosts} isLoading={showLoading} />
         </>
       )}
-      <LoadMorePosts
-        hasNextPage={Boolean(hasNextPage)}
-        isFetchingNextPage={isFetchingNextPage}
-        onLoadMore={handleLoadMore}
-      />
+      {loadMore}
     </div>
   );
 };
