@@ -116,9 +116,7 @@ type WalkingAvatarProps = ComponentProps<'group'> & {
   locked?: boolean;
 };
 
-useGLTF.preload('/WalkingAstro.glb');
-useFBX.preload('/snp.fbx');
-useFBX.preload('/Typing.fbx');
+// preload는 HomeCanvas에서 홈 진입 시에만 수행
 
 export function WalkingAvatar({
   triggerSnp,

@@ -6,8 +6,14 @@ import { QueryClient, defaultShouldDehydrateQuery, isServer } from '@tanstack/re
 import { SessionProvider } from 'next-auth/react';
 import { ToastProvider } from '@/shared/ui/toast';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { CosmosCursor } from '@/widgets/home';
 import { AnalyticsProvider } from '@/shared/ui/AnalyticsProvider';
+import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
+
+const CosmosCursor = dynamic(
+  () => import('@/widgets/home/ui/CosmosCursor').then((mod) => mod.CosmosCursor),
+  { ssr: false },
+);
 
 function makeQueryClient() {
   return new QueryClient({
@@ -35,6 +41,14 @@ export function getQueryClient() {
   return browserQueryClient;
 }
 
+const HomeOnlyCosmosCursor = () => {
+  const pathname = usePathname();
+  if (pathname !== '/') {
+    return null;
+  }
+  return <CosmosCursor />;
+};
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
@@ -43,7 +57,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <NuqsAdapter>
         <ToastProvider maxToasts={5}>
           <SessionProvider>
-            <CosmosCursor />
+            <HomeOnlyCosmosCursor />
             <AnalyticsProvider />
             {children}
           </SessionProvider>
