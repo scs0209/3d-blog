@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { preprocessHTML } from '@/shared/utils/process-html';
+import { getCodeBlockText, preprocessHTML } from '@/shared/utils/process-html';
 
 type PostHtmlViewerProps = {
   content: string;
@@ -9,8 +9,10 @@ type PostHtmlViewerProps = {
 
 let mermaidInitialized = false;
 
+const MERMAID_CODE_SELECTOR = 'pre code.language-mermaid, pre code[class*="language-mermaid"]';
+
 const enhanceCodeBlocks = async (root: HTMLElement) => {
-  const blocks = root.querySelectorAll('pre code.language-mermaid, pre code[class*="mermaid"]');
+  const blocks = root.querySelectorAll(MERMAID_CODE_SELECTOR);
   if (blocks.length === 0) return;
 
   const [{ default: mermaid }, { sanitizeSvgHtml }] = await Promise.all([
@@ -25,7 +27,7 @@ const enhanceCodeBlocks = async (root: HTMLElement) => {
 
   await Promise.all(
     Array.from(blocks).map(async (block, index) => {
-      const source = block.textContent?.trim();
+      const source = getCodeBlockText(block);
       if (!source) return;
       try {
         const id = `post-mermaid-${index}-${Date.now()}`;
@@ -35,8 +37,10 @@ const enhanceCodeBlocks = async (root: HTMLElement) => {
           const safeSvg = sanitizeSvgHtml(svg);
           pre.outerHTML = `<div class="mermaid-diagram my-4 overflow-x-auto">${safeSvg}</div>`;
         }
-      } catch {
-        // 원본 코드 블록 유지
+      } catch (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Mermaid render failed:', error);
+        }
       }
     }),
   );
@@ -50,24 +54,21 @@ export default function PostHtmlViewer({ content }: PostHtmlViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const preprocessed = content ? preprocessHTML(content) : '';
   const [html, setHtml] = useState(preprocessed);
+  const [isSanitized, setIsSanitized] = useState(false);
 
   useEffect(() => {
     if (!content) {
       setHtml('');
+      setIsSanitized(false);
       return;
     }
 
     let cancelled = false;
 
-    void import('@/shared/utils/sanitize-html').then(async ({ sanitizePostHtml }) => {
+    void import('@/shared/utils/sanitize-html').then(({ sanitizePostHtml }) => {
       if (cancelled) return;
-      const sanitized = sanitizePostHtml(preprocessHTML(content));
-      setHtml(sanitized);
-      requestAnimationFrame(() => {
-        if (!cancelled && containerRef.current) {
-          void enhanceCodeBlocks(containerRef.current);
-        }
-      });
+      setHtml(sanitizePostHtml(preprocessHTML(content)));
+      setIsSanitized(true);
     });
 
     return () => {
@@ -75,9 +76,15 @@ export default function PostHtmlViewer({ content }: PostHtmlViewerProps) {
     };
   }, [content]);
 
+  useEffect(() => {
+    if (!isSanitized || !html || !containerRef.current) return;
+
+    void enhanceCodeBlocks(containerRef.current);
+  }, [html, isSanitized]);
+
   return (
     <div className='blog-prose'>
       <div ref={containerRef} className='ProseMirror' dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
-}
+};
