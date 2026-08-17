@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { preprocessHTML, sanitizePostHtml, sanitizeSvgHtml } from '@/shared/utils';
+import { useEffect, useRef, useState } from 'react';
+import { preprocessHTML } from '@/shared/utils/process-html';
 
 type PostHtmlViewerProps = {
   content: string;
@@ -13,7 +13,11 @@ const enhanceCodeBlocks = async (root: HTMLElement) => {
   const blocks = root.querySelectorAll('pre code.language-mermaid, pre code[class*="mermaid"]');
   if (blocks.length === 0) return;
 
-  const mermaid = (await import('mermaid')).default;
+  const [{ default: mermaid }, { sanitizeSvgHtml }] = await Promise.all([
+    import('mermaid'),
+    import('@/shared/utils/sanitize-html'),
+  ]);
+
   if (!mermaidInitialized) {
     mermaid.initialize({ startOnLoad: false, theme: 'dark' });
     mermaidInitialized = true;
@@ -40,16 +44,36 @@ const enhanceCodeBlocks = async (root: HTMLElement) => {
 
 /**
  * 읽기 전용 HTML 본문 렌더러.
- * Novel/TipTap 런타임 없이 서버에서 내려준 HTML을 바로 표시해 JS 비용을 줄인다.
+ * DOMPurify(jsdom)는 Vercel serverless SSR에서 실패하므로 클라이언트에서만 sanitize한다.
  */
 export default function PostHtmlViewer({ content }: PostHtmlViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const html = content ? sanitizePostHtml(preprocessHTML(content)) : '';
+  const preprocessed = content ? preprocessHTML(content) : '';
+  const [html, setHtml] = useState(preprocessed);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    void enhanceCodeBlocks(containerRef.current);
-  }, [html]);
+    if (!content) {
+      setHtml('');
+      return;
+    }
+
+    let cancelled = false;
+
+    void import('@/shared/utils/sanitize-html').then(async ({ sanitizePostHtml }) => {
+      if (cancelled) return;
+      const sanitized = sanitizePostHtml(preprocessHTML(content));
+      setHtml(sanitized);
+      requestAnimationFrame(() => {
+        if (!cancelled && containerRef.current) {
+          void enhanceCodeBlocks(containerRef.current);
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [content]);
 
   return (
     <div className='blog-prose'>
