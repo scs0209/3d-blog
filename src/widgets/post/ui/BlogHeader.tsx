@@ -34,9 +34,6 @@ export default function BlogHeader() {
     <>
       <motion.div
         className={`relative mx-auto mb-8 hidden h-16 w-full max-w-4xl items-center justify-between rounded-xl p-4 lg:flex ${blogTheme.chromeBar}`}
-        initial={{ y: -16, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4 }}
       >
         <span className={blogTheme.chromeShine} aria-hidden />
         <div className='flex items-center'>
@@ -122,74 +119,75 @@ export default function BlogHeader() {
           transition={{ duration: 0.4 }}
         >
           <span className={blogTheme.chromeShine} aria-hidden />
-          <div className='absolute left-3 top-3'>
-            <Dropdown
-              placement='bottom-left'
-              contentClassName={`min-w-[100px] ${blogTheme.dropdown}`}
-              trigger={({ ref, onClick }) => (
-                <button
-                  ref={ref as React.RefObject<HTMLButtonElement>}
-                  type='button'
-                  onClick={onClick}
-                  className={`rounded-lg p-2 ${blogTheme.navBtn}`}
-                  title='페이지 이동'
-                >
-                  <Navigation size={14} className={blogTheme.textAccent} />
-                </button>
-              )}
-            >
-              <button
-                type='button'
-                onClick={() => handleNavigation('/')}
-                className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs ${blogTheme.dropdownItem}`}
+          <div className='relative flex h-10 items-center gap-2'>
+            <div className='flex shrink-0 items-center'>
+              <Dropdown
+                placement='bottom-left'
+                contentClassName={`min-w-[100px] ${blogTheme.dropdown}`}
+                trigger={({ ref, onClick }) => (
+                  <button
+                    ref={ref as React.RefObject<HTMLButtonElement>}
+                    type='button'
+                    onClick={onClick}
+                    className={`rounded-lg p-2 ${blogTheme.navBtn}`}
+                    title='페이지 이동'
+                    aria-label='페이지 이동'
+                  >
+                    <Navigation size={14} className={blogTheme.textAccent} />
+                  </button>
+                )}
               >
-                <Globe size={12} />
-                Home
-              </button>
-              <button
-                type='button'
-                onClick={() => handleNavigation('/blog')}
-                className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs ${blogTheme.dropdownItem}`}
-              >
-                <Home size={12} />
-                Blog
-              </button>
-              {isAuthenticated ? (
                 <button
                   type='button'
-                  onClick={handleLogout}
-                  className='flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10'
-                >
-                  <LogOut size={12} />
-                  Logout
-                </button>
-              ) : (
-                <button
-                  type='button'
-                  onClick={() => handleNavigation('/login')}
+                  onClick={() => handleNavigation('/')}
                   className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs ${blogTheme.dropdownItem}`}
                 >
-                  <User size={12} />
-                  Login
+                  <Globe size={12} />
+                  Home
                 </button>
-              )}
-            </Dropdown>
-          </div>
+                <button
+                  type='button'
+                  onClick={() => handleNavigation('/blog')}
+                  className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs ${blogTheme.dropdownItem}`}
+                >
+                  <Home size={12} />
+                  Blog
+                </button>
+                {isAuthenticated ? (
+                  <button
+                    type='button'
+                    onClick={handleLogout}
+                    className='flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10'
+                  >
+                    <LogOut size={12} />
+                    Logout
+                  </button>
+                ) : (
+                  <button
+                    type='button'
+                    onClick={() => handleNavigation('/login')}
+                    className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs ${blogTheme.dropdownItem}`}
+                  >
+                    <User size={12} />
+                    Login
+                  </button>
+                )}
+              </Dropdown>
+            </div>
 
-          <div className='relative flex h-10 items-center justify-center px-12'>
             <button
               type='button'
               onClick={() => handleNavigation('/blog')}
               aria-label='블로그 홈으로 이동'
-              className='flex items-center gap-2 border-none bg-transparent p-0 text-base font-semibold'
+              className='flex min-w-0 flex-1 items-center justify-center gap-1.5 border-none bg-transparent p-0 text-sm font-semibold sm:gap-2 sm:text-base'
               style={syne}
             >
-              <Image src='/logo.png' alt='logo' width={22} height={22} />
-              <span className={blogTheme.titleGradient}>3D Tech Blog</span>
+              <Image src='/logo.png' alt='logo' width={20} height={20} className='shrink-0' />
+              <span className={`truncate ${blogTheme.titleGradient}`}>3D Tech Blog</span>
             </button>
 
-            <div className='absolute right-0 top-0 flex items-center gap-2'>
-              <ThemeToggleButton variant='blog' className='h-8 w-8' />
+            <div className='flex shrink-0 items-center gap-1 sm:gap-2'>
+              <ThemeToggleButton variant='blog' className='h-8 w-8 shrink-0' />
               <BlogSearch />
               <button
                 type='button'

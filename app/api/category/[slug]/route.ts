@@ -108,7 +108,17 @@ import { auth } from '@/shared/utils/auth';
  */
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const { slug } = await params;
+    const { slug: rawSlug } = await params;
+    let slug = rawSlug;
+    for (let i = 0; i < 3; i++) {
+      try {
+        const decoded = decodeURIComponent(slug);
+        if (decoded === slug) break;
+        slug = decoded;
+      } catch {
+        break;
+      }
+    }
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
     const page = Number.parseInt(searchParams.get('page') || '1');
