@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery, keepPreviousData } from '@tanstack/react-query';
 import { getPostList } from '../api/post-api';
 import { queryKeys } from '@/shared/queryKeys';
+import { getNextPageParamFromMeta } from '@/shared/lib/pagination';
 import type { GetPostListResponse } from './post-types';
 import type { GetPostListParams } from './post-types';
 
@@ -10,19 +11,11 @@ export const usePost = <T extends GetPostListResponse>(params: GetPostListParams
     queryFn: ({ pageParam = 1 }) => getPostList({ ...params, page: pageParam as number }),
     select: (data) => data,
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      const currentPage = lastPage.meta?.pagination?.currentPage;
-      const hasNextPage = lastPage.meta?.pagination?.hasNextPage;
-      if (hasNextPage && currentPage) {
-        return currentPage + 1;
-      }
-      return undefined;
-    },
+    getNextPageParam: (lastPage) => getNextPageParamFromMeta(lastPage),
     getPreviousPageParam: (firstPage) => {
-      const currentPage = firstPage.meta?.pagination?.currentPage;
-      const hasPrevPage = firstPage.meta?.pagination?.hasPrevPage;
-      if (hasPrevPage && currentPage) {
-        return currentPage - 1;
+      const pagination = firstPage.meta?.pagination;
+      if (pagination?.hasPrevPage && pagination.currentPage) {
+        return pagination.currentPage - 1;
       }
       return undefined;
     },

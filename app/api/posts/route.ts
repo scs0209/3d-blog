@@ -184,12 +184,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       data: posts,
       meta: {
-        currentPage: page,
-        totalPages: Math.ceil(totalItems / limit),
-        totalItems,
-        itemsPerPage: limit,
-        hasNextPage: page < Math.ceil(totalItems / limit),
-        hasPrevPage: page > 1,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(totalItems / limit),
+          totalItems,
+          itemsPerPage: limit,
+          hasNextPage: page < Math.ceil(totalItems / limit),
+          hasPrevPage: page > 1,
+        },
       },
     });
   } catch (error) {

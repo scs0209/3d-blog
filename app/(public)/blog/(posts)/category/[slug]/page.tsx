@@ -1,9 +1,11 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { PostListCard } from '@/features/blog/ui';
-import { useCategoryPosts } from '@/features/category/model';
+import { useCategoryPostsInfinite } from '@/features/category/model';
 import { PostListCardSkeleton } from '@/shared/ui/skeleton';
+import { LoadMoreSentinel } from '@/widgets/post/ui/LoadMoreSentinel';
 
 export default function BlogPostPage() {
   const { slug: rawSlug } = useParams();
@@ -15,9 +17,23 @@ export default function BlogPostPage() {
       return value;
     }
   })();
-  const { data: categoryPosts, isLoading: isCategoryPostsLoading } = useCategoryPosts(slug, 1, 10);
 
-  if (isCategoryPostsLoading) {
+  const {
+    categoryName,
+    categorySlug,
+    posts,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useCategoryPostsInfinite(slug, 10);
+
+  const handleLoadMore = useCallback(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  if (isLoading && posts.length === 0) {
     return (
       <div className='mx-auto flex w-full max-w-4xl flex-col gap-8' aria-busy='true'>
         {['a', 'b', 'c', 'd', 'e'].map((id) => (
@@ -29,9 +45,19 @@ export default function BlogPostPage() {
 
   return (
     <div className='mx-auto w-full max-w-4xl'>
-      {categoryPosts?.posts?.map((post) => (
-        <PostListCard key={post.id} post={post} categoryName={categoryPosts?.name} categorySlug={categoryPosts?.slug} />
+      {posts.map((post) => (
+        <PostListCard
+          key={post.id}
+          post={post}
+          categoryName={categoryName}
+          categorySlug={categorySlug}
+        />
       ))}
+      <LoadMoreSentinel
+        hasNextPage={Boolean(hasNextPage)}
+        isFetchingNextPage={isFetchingNextPage}
+        onLoadMore={handleLoadMore}
+      />
     </div>
   );
-}
+};

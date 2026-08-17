@@ -1,12 +1,15 @@
-import { getStats } from '../api/stats-api';
+import type { AdminStats } from '../api/stats-api';
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import { Tag } from '@/shared/ui/Tag';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 
-export async function PostsCard() {
-  const stats = await getStats();
-  const { total, thisMonth, lastMonth } = stats.posts;
+type PostsCardProps = {
+  posts: AdminStats['posts'];
+};
+
+export function PostsCard({ posts }: PostsCardProps) {
+  const { total, thisMonth, lastMonth } = posts;
   const growthRate = lastMonth > 0 ? ((thisMonth - lastMonth) / lastMonth) * 100 : 0;
   const isPositive = growthRate >= 0;
 

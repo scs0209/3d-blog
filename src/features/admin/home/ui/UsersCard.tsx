@@ -1,12 +1,13 @@
-import { getUserCount } from '@/features/user/api/user-api';
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import { Tag } from '@/shared/ui/Tag';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { Users } from 'lucide-react';
 
-export async function UsersCard() {
-  const userCount = await getUserCount();
+type UsersCardProps = {
+  userCount: number;
+};
 
+export function UsersCard({ userCount }: UsersCardProps) {
   return (
     <Card className={adminTheme.card}>
       <span className={adminTheme.cardTopGlow} aria-hidden />

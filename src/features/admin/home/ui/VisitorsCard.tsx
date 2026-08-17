@@ -1,19 +1,21 @@
-import { getVisitor } from '@/features/visitor/api';
+import type { VisitorResponse } from '@/entities/visitor/model/visitor';
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import { Tag } from '@/shared/ui/Tag';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { TrendingUp } from 'lucide-react';
 
-export async function VisitorsCard() {
-  const visitor = await getVisitor();
+type VisitorsCardProps = {
+  visitor: VisitorResponse;
+};
 
+export function VisitorsCard({ visitor }: VisitorsCardProps) {
   return (
     <Card className={adminTheme.card}>
       <span className={adminTheme.cardTopGlow} aria-hidden />
       <CardHeader className='pb-0'>
         <CardDescription className={adminTheme.sectionLabel}>방문자</CardDescription>
         <CardTitle className={`text-2xl font-semibold tabular-nums @[250px]/card:text-3xl ${adminTheme.textPrimary}`}>
-          {visitor.total.toLocaleString()}
+          {(visitor.total ?? 0).toLocaleString()}
         </CardTitle>
         <CardAction>
           <Tag color='orange' size='sm' type='glass' className='flex items-center gap-1.5 border-white/20'>
