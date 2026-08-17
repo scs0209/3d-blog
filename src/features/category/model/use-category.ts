@@ -3,10 +3,7 @@ import { getCategories, getCategoryPosts } from '../api/category-api';
 import { queryKeys } from '@/shared/queryKeys';
 import type { CategoryResponse, CategoryWithPosts } from '@/entities/category/model';
 
-const getAllCategories = async () => {
-  const result = await getCategories;
-  return result;
-};
+const getAllCategories = () => getCategories();
 
 export const useCategories = <T extends CategoryResponse>() => {
   const { data, isLoading, error } = useQuery<T>({

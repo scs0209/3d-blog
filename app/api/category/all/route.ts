@@ -83,11 +83,20 @@ export async function GET(request: Request) {
         _count: {
           select: {
             children: true,
-            ...(includePostCount ? { posts: true } : {}),
+            posts: true,
           },
         },
       },
     });
+
+    if (!includePostCount) {
+      return NextResponse.json(
+        categories.map(({ _count, ...category }) => ({
+          ...category,
+          _count: { children: _count.children },
+        })),
+      );
+    }
 
     return NextResponse.json(categories);
   } catch (error) {
