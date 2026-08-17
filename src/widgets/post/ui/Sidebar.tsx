@@ -1,6 +1,7 @@
 'use client';
 
 import { toCategoryListItems } from '@/entities/category';
+import { getTagPostCount } from '@/entities/tag/lib/get-tag-post-count';
 import { VisitorCounter } from '@/features/blog/ui';
 import { useCategories } from '@/features/category/model';
 import { useTags } from '@/features/tag/model/use-tags';
@@ -91,7 +92,7 @@ export default function Sidebar() {
               </div>
               <div className='flex flex-wrap gap-2'>
                 {tags?.map((tag) => (
-                  <Tag key={tag.id} tag={tag} count={tag.count?.posts ?? 0} />
+                  <Tag key={tag.id} tag={tag} count={getTagPostCount(tag)} />
                 ))}
               </div>
             </div>
