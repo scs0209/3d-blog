@@ -2,8 +2,7 @@
 
 import { toCategoryListItems } from '@/entities/category';
 import { getTagPostCount } from '@/entities/tag/lib/get-tag-post-count';
-import { useCategories } from '@/features/category/model';
-import { useTags } from '@/features/tag/model/use-tags';
+import { useSidebarData } from '@/features/sidebar/model/use-sidebar-data';
 import { Tag } from '@/features/tag/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
@@ -18,11 +17,11 @@ export const MobileNavbar = ({
   menuOpen: boolean;
   setMenuOpen: (menuOpen: boolean) => void;
 }) => {
-  const { data } = useCategories();
-  const { data: tags } = useTags();
+  const { data: sidebarData } = useSidebarData();
   const router = useRouter();
   const pathname = usePathname();
-  const categories = useMemo(() => toCategoryListItems(data), [data]);
+  const categories = useMemo(() => toCategoryListItems(sidebarData?.categories), [sidebarData?.categories]);
+  const tags = sidebarData?.tags;
 
   const currentCategorySlug = (() => {
     const match = pathname.match(/^\/blog\/category\/([^/]+)/);

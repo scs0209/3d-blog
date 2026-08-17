@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/shared/lib/db';
+import { READ_API_CACHE_HEADERS } from '@/shared/lib/api-cache-headers';
+import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
 
 /**
  * @swagger
@@ -43,18 +45,20 @@ import prisma from '@/shared/lib/db';
  */
 export async function GET() {
   try {
-    const tags = await prisma.tag.findMany({
-      include: {
-        _count: {
-          select: { posts: true },
+    const tags = await withPrismaRetry(() =>
+      prisma.tag.findMany({
+        include: {
+          _count: {
+            select: { posts: true },
+          },
         },
-      },
-    });
+      }),
+    );
     const result = tags.map(({ _count, ...tag }) => ({
       ...tag,
       count: _count.posts,
     }));
-    return NextResponse.json(result);
+    return NextResponse.json(result, { headers: READ_API_CACHE_HEADERS });
   } catch (error) {
     console.error('GET /api/tags error:', error);
     return NextResponse.json({ error: 'Failed to fetch tags' }, { status: 500 });

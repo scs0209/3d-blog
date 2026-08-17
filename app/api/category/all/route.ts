@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { parseCategoryParentId } from '@/entities/category';
 import prisma from '@/shared/lib/db';
+import { READ_API_CACHE_HEADERS } from '@/shared/lib/api-cache-headers';
+import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
 import { createSlug } from '@/shared/utils/create-slug';
 
 /**
@@ -74,19 +76,21 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const includePostCount = searchParams.get('includePostCount') === 'true';
 
-    const categories = await prisma.category.findMany({
-      orderBy: {
-        name: 'asc',
-      },
-      include: {
-        _count: {
-          select: {
-            children: true,
-            posts: true,
+    const categories = await withPrismaRetry(() =>
+      prisma.category.findMany({
+        orderBy: {
+          name: 'asc',
+        },
+        include: {
+          _count: {
+            select: {
+              children: true,
+              posts: true,
+            },
           },
         },
-      },
-    });
+      }),
+    );
 
     if (!includePostCount) {
       return NextResponse.json(
@@ -94,10 +98,11 @@ export async function GET(request: Request) {
           ...category,
           _count: { children: _count.children },
         })),
+        { headers: READ_API_CACHE_HEADERS },
       );
     }
 
-    return NextResponse.json(categories);
+    return NextResponse.json(categories, { headers: READ_API_CACHE_HEADERS });
   } catch (error) {
     console.error('GET /api/category/all error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
