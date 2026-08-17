@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
 import { CommentSection } from '@/features/comment/ui';
-import { getPostBySlug } from '@/features/post/api/post-api';
-import { extractDescription, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
+import { getPostBySlugOnServer } from '@/features/post/api/get-post-by-slug.server';
+import { extractDescription, getPostPath, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
+import { decodePathSegment } from '@/shared/lib/decode-path-segment';
 import { PostContentViewer } from '@/shared/ui/PostContentViewer';
 import { formatDateToYMD } from '@/shared/utils';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
@@ -18,10 +19,15 @@ const PostSummary = dynamic(() => import('@/shared/ui/PostSummary').then((mod) =
 
 export async function generateMetadata({ params }: { params: Promise<{ postSlug: string }> }): Promise<Metadata> {
   const { postSlug } = await params;
-  const decodedSlug = decodeURIComponent(postSlug);
+  const decodedSlug = decodePathSegment(postSlug);
 
   try {
-    const post = await getPostBySlug(decodedSlug);
+    const post = await getPostBySlugOnServer(decodedSlug);
+    if (!post) {
+      return {
+        title: '포스트를 찾을 수 없습니다',
+      };
+    }
     const description = extractDescription(post.content ?? '');
     const publishedDate = post.createdAt ? new Date(post.createdAt).toISOString() : undefined;
     const modifiedDate = post.updatedAt ? new Date(post.updatedAt).toISOString() : publishedDate;
@@ -119,22 +125,17 @@ const PostStructuredData = ({ post }: { post: PostResponse }) => {
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string; postSlug: string }> }) {
   const { slug, postSlug } = await params;
-  const decodedSlug = decodeURIComponent(postSlug);
-  const categorySlug = decodeURIComponent(slug);
+  const decodedSlug = decodePathSegment(postSlug);
+  const categorySlug = decodePathSegment(slug);
 
-  let post: PostResponse;
-  try {
-    post = await getPostBySlug(decodedSlug);
-  } catch {
-    notFound();
-  }
+  const post = await getPostBySlugOnServer(decodedSlug);
 
   if (!post?.title || !post?.content) {
     notFound();
   }
 
   if (post.category?.slug && post.category.slug !== categorySlug) {
-    notFound();
+    redirect(getPostPath(post.category.slug, decodedSlug));
   }
 
   const backHref = `/blog/category/${post.category?.slug ?? categorySlug}`;

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PostCardSkeleton } from '@/shared/ui/skeleton';
 import { PostCard } from '@/features/blog/ui';
 import type { PostResponse } from '@/entities/post/model/post';
+import { getPostPath } from '@/shared/consts/baseUrl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LoaderCircle } from 'lucide-react';
@@ -38,7 +39,7 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
     <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
       {recentPosts.map((post, idx) => {
         const postKey = post.id ?? post.slug ?? `recent-${idx}`;
-        const href = `/blog/category/${post.category?.slug}/post/${post.slug}`;
+        const href = getPostPath(post.category?.slug, post.slug ?? '');
         const isCardPending = isPending && pendingHref === href;
 
         const handleNavigate = (event: React.MouseEvent<HTMLAnchorElement>) => {
