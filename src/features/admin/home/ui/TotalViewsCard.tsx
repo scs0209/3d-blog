@@ -1,12 +1,15 @@
-import { getStats } from '../api/stats-api';
+import type { AdminStats } from '../api/stats-api';
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import { Tag } from '@/shared/ui/Tag';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { TrendingUp } from 'lucide-react';
 
-export async function TotalViewsCard() {
-  const stats = await getStats();
-  const { total, thisMonth, lastMonth } = stats.views;
+type TotalViewsCardProps = {
+  views: AdminStats['views'];
+};
+
+export function TotalViewsCard({ views }: TotalViewsCardProps) {
+  const { total, thisMonth, lastMonth } = views;
 
   return (
     <Card className={adminTheme.card}>

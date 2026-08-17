@@ -1,9 +1,18 @@
 /* eslint-disable */
 import { PrismaClient } from '@prisma/client';
+import { getDatabaseUrl } from './get-database-url';
 
 const prismaClientSingleton = () => {
+  const databaseUrl = getDatabaseUrl();
   return new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    ...(databaseUrl
+      ? {
+          datasources: {
+            db: { url: databaseUrl },
+          },
+        }
+      : {}),
   });
 };
 

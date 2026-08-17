@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getStats } from '@/features/admin/home/api/stats-api';
+import { READ_API_CACHE_HEADERS } from '@/shared/lib/api-cache-headers';
+import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
 
 /**
  * @swagger
@@ -78,8 +80,8 @@ import { getStats } from '@/features/admin/home/api/stats-api';
  */
 export async function GET() {
   try {
-    const stats = await getStats();
-    return NextResponse.json(stats);
+    const stats = await withPrismaRetry(() => getStats());
+    return NextResponse.json(stats, { headers: READ_API_CACHE_HEADERS });
   } catch (error) {
     console.error('Error fetching stats:', error);
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
