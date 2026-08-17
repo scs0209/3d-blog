@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import { getPostList } from '@/features/post/api/post-api';
 import type { GetPostListParams, GetPostListResponse } from '@/features/post/model';
 import { AnalyticsEvents, trackEvent } from '@/shared/lib/analytics';
 import { queryKeys } from '@/shared/queryKeys';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { BlogSectionTitle } from './BlogSectionTitle';
 import { NoResults } from './NoResults';
 import { PostList } from './PostList';
@@ -14,6 +15,53 @@ import { RecentPosts } from './RecentPosts';
 
 type BlogMainPageProps = {
   initialPosts?: GetPostListResponse;
+};
+
+type LoadMorePostsProps = {
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMore: () => void;
+};
+
+const LoadMorePosts = ({ hasNextPage, isFetchingNextPage, onLoadMore }: LoadMorePostsProps) => {
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!hasNextPage) return;
+
+    const node = sentinelRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && !isFetchingNextPage) {
+          onLoadMore();
+        }
+      },
+      { rootMargin: '240px' },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, onLoadMore]);
+
+  if (!hasNextPage && !isFetchingNextPage) {
+    return null;
+  }
+
+  return (
+    <div ref={sentinelRef} className='mt-8 flex justify-center'>
+      <button
+        type='button'
+        onClick={onLoadMore}
+        disabled={isFetchingNextPage || !hasNextPage}
+        className={`rounded-lg px-4 py-2 text-sm transition disabled:opacity-60 ${blogTheme.navBtn}`}
+        aria-label='다음 글 불러오기'
+      >
+        {isFetchingNextPage ? '불러오는 중...' : '더 보기'}
+      </button>
+    </div>
+  );
 };
 
 export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
@@ -34,7 +82,8 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
 
   const canUseInitialData = Boolean(initialPosts) && !hasFilters;
 
-  const { data, isLoading } = useInfiniteQuery<GetPostListResponse>({
+  const { data, isLoading, isError, isSuccess, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
+    useInfiniteQuery<GetPostListResponse>({
     queryKey: queryKeys.post.all(listParams).queryKey,
     queryFn: ({ pageParam = 1 }) => getPostList({ ...listParams, page: pageParam as number }),
     initialPageParam: 1,
@@ -47,8 +96,8 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
       : undefined,
     getNextPageParam: (lastPage) => {
       const currentPage = lastPage.meta?.pagination?.currentPage;
-      const hasNextPage = lastPage.meta?.pagination?.hasNextPage;
-      if (hasNextPage && currentPage) {
+      const nextPageExists = lastPage.meta?.pagination?.hasNextPage;
+      if (nextPageExists && currentPage) {
         return currentPage + 1;
       }
       return undefined;
@@ -60,8 +109,17 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
   const showLoading = isLoading && postsData.length === 0;
   const trackedKeyRef = useRef<string>('');
 
+  const handleLoadMore = () => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    fetchNextPage();
+  };
+
+  const handleRetry = () => {
+    refetch();
+  };
+
   useEffect(() => {
-    if (showLoading || !hasFilters) return;
+    if (!isSuccess || showLoading || !hasFilters) return;
 
     const key = `${search}|${category}|${tagsParam}|${postsData.length}`;
     if (trackedKeyRef.current === key) return;
@@ -85,9 +143,25 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
         tag_count: tags.length,
       });
     }
-  }, [showLoading, hasFilters, search, category, tagsParam, tags.length, postsData.length]);
+  }, [isSuccess, showLoading, hasFilters, search, category, tagsParam, tags.length, postsData.length]);
 
-  if (!showLoading && postsData.length === 0) {
+  if (isError && postsData.length === 0) {
+    return (
+      <div className='mx-auto flex min-h-[40vh] w-full max-w-4xl flex-col items-center justify-center gap-4 px-4 py-16'>
+        <p className={`text-center text-sm ${blogTheme.textMuted}`}>글을 불러오지 못했습니다.</p>
+        <button
+          type='button'
+          onClick={handleRetry}
+          className={`rounded-lg px-4 py-2 text-sm ${blogTheme.navBtn}`}
+          aria-label='글 목록 다시 불러오기'
+        >
+          다시 시도
+        </button>
+      </div>
+    );
+  }
+
+  if (isSuccess && !showLoading && postsData.length === 0) {
     return (
       <div className='mx-auto w-full max-w-4xl'>
         <NoResults
@@ -112,6 +186,11 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
       <div className='mx-auto w-full max-w-4xl'>
         <BlogSectionTitle subtitle={filterLabel || '조건에 맞는 글'}>검색 결과</BlogSectionTitle>
         <PostList posts={postsData} isLoading={showLoading} />
+        <LoadMorePosts
+          hasNextPage={Boolean(hasNextPage)}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={handleLoadMore}
+        />
       </div>
     );
   }
@@ -130,6 +209,11 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
           <PostList posts={restPosts} isLoading={showLoading} />
         </>
       )}
+      <LoadMorePosts
+        hasNextPage={Boolean(hasNextPage)}
+        isFetchingNextPage={isFetchingNextPage}
+        onLoadMore={handleLoadMore}
+      />
     </div>
   );
 };
