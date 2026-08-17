@@ -1,7 +1,6 @@
 import {
   AIHighlight,
   CharacterCount,
-  CodeBlockLowlight,
   Color,
   CustomKeymap,
   GlobalDragHandle,
@@ -22,12 +21,9 @@ import {
   Youtube,
 } from 'novel/extensions';
 import { TableKit } from '@tiptap/extension-table';
-import { ReactNodeViewRenderer } from '@tiptap/react';
-import CodeBlock from './code-block';
 import { UploadImagesPlugin } from 'novel/plugins';
-
 import { cx } from 'class-variance-authority';
-import { all, createLowlight } from 'lowlight';
+import { createCodeBlockExtension } from './code-block-extension';
 
 // TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 const aiHighlight = AIHighlight;
@@ -120,27 +116,7 @@ const starterKit = StarterKit.configure({
   gapcursor: false,
 });
 
-const lowlight = createLowlight(all);
-
-const codeBlockLowlight = CodeBlockLowlight.extend({
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      mode: {
-        default: 0, // MODE.EDIT
-        parseHTML: (element) => Number.parseInt(element.getAttribute('data-mode') || '0'),
-        renderHTML: (attributes) => {
-          return {
-            'data-mode': attributes.mode,
-          };
-        },
-      },
-    };
-  },
-  addNodeView() {
-    return ReactNodeViewRenderer(CodeBlock);
-  },
-}).configure({ lowlight });
+const codeBlockLowlight = createCodeBlockExtension('all');
 
 const youtube = Youtube.configure({
   HTMLAttributes: {
