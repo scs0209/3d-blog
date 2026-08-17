@@ -678,6 +678,26 @@ pre {
   mix-blend-mode: multiply;
 }
 
+@keyframes blog-planet-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.blog-planet-float {
+  animation: blog-planet-float var(--float-duration, 8s) ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-planet-float {
+    animation: none;
+  }
+}
+
 .void-os-desktop {
   background-color: #050816;
   background-image:

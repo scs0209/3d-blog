@@ -1,23 +1,31 @@
 import { useEffect, useRef } from 'react';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
-import mermaid from 'mermaid';
 import { useSession } from 'next-auth/react';
 
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'dark',
-  themeVariables: {
-    primaryColor: '#00ff88',
-    primaryTextColor: '#ffffff',
-    primaryBorderColor: '#00ff88',
-    lineColor: '#00ff88',
-    sectionBkgColor: '#1a1a1a',
-    altSectionBkgColor: '#2a2a2a',
-    gridColor: '#333333',
-    secondaryColor: '#333333',
-    tertiaryColor: '#444444',
-  },
-});
+let mermaidInitialized = false;
+
+const ensureMermaid = async () => {
+  const mermaid = (await import('mermaid')).default;
+  if (!mermaidInitialized) {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#00ff88',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#00ff88',
+        lineColor: '#00ff88',
+        sectionBkgColor: '#1a1a1a',
+        altSectionBkgColor: '#2a2a2a',
+        gridColor: '#333333',
+        secondaryColor: '#333333',
+        tertiaryColor: '#444444',
+      },
+    });
+    mermaidInitialized = true;
+  }
+  return mermaid;
+};
 
 export enum Mode {
   Preview = 0,
@@ -36,32 +44,40 @@ export default function CodeBlock(props: any) {
   const isMermaid = defaultLanguage === 'mermaid';
 
   useEffect(() => {
-    if (mode === Mode.Preview && previewer.current && isMermaid && textContent.trim()) {
-      try {
-        const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    if (mode !== Mode.Preview || !previewer.current || !isMermaid || !textContent.trim()) {
+      return;
+    }
 
-        // HTML 엔티티 디코딩
+    let cancelled = false;
+
+    const renderMermaid = async () => {
+      try {
+        const mermaid = await ensureMermaid();
+        if (cancelled || !previewer.current) return;
+
+        const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const textarea = document.createElement('textarea');
         textarea.innerHTML = textContent;
         const decodedTextContent = textarea.value;
 
-        mermaid
-          .render(id, decodedTextContent)
-          .then(({ svg }) => {
-            if (previewer.current) {
-              previewer.current.innerHTML = svg;
-            }
-          })
-          .catch((error) => {
-            console.error('Mermaid rendering error:', error);
-            if (previewer.current) {
-              previewer.current.innerHTML = `<div style="color: red; padding: 1rem;">Mermaid 구문 오류: ${error.message}</div>`;
-            }
-          });
-      } catch (e) {
-        console.log(e);
+        const { svg } = await mermaid.render(id, decodedTextContent);
+        if (!cancelled && previewer.current) {
+          previewer.current.innerHTML = svg;
+        }
+      } catch (error) {
+        console.error('Mermaid rendering error:', error);
+        if (!cancelled && previewer.current) {
+          const message = error instanceof Error ? error.message : 'Unknown error';
+          previewer.current.innerHTML = `<div style="color: red; padding: 1rem;">Mermaid 구문 오류: ${message}</div>`;
+        }
       }
-    }
+    };
+
+    void renderMermaid();
+
+    return () => {
+      cancelled = true;
+    };
   }, [mode, textContent, isMermaid]);
 
   return (

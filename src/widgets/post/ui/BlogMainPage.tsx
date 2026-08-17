@@ -1,15 +1,22 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePost } from '@/features/post/model';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
+import { getPostList } from '@/features/post/api/post-api';
+import type { GetPostListParams, GetPostListResponse } from '@/features/post/model';
 import { AnalyticsEvents, trackEvent } from '@/shared/lib/analytics';
-import { RecentPosts } from './RecentPosts';
-import { PostList } from './PostList';
-import { NoResults } from './NoResults';
+import { queryKeys } from '@/shared/queryKeys';
 import { BlogSectionTitle } from './BlogSectionTitle';
+import { NoResults } from './NoResults';
+import { PostList } from './PostList';
+import { RecentPosts } from './RecentPosts';
 
-export const BlogMainPage = () => {
+type BlogMainPageProps = {
+  initialPosts?: GetPostListResponse;
+};
+
+export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
   const searchParams = useSearchParams();
   const search = searchParams.get('search') ?? '';
   const category = searchParams.get('category') ?? '';
@@ -17,19 +24,44 @@ export const BlogMainPage = () => {
   const tags = tagsParam.split(',').filter(Boolean);
   const hasFilters = Boolean(search || category || tags.length > 0);
 
-  const { posts, isLoading } = usePost({
+  const listParams: GetPostListParams = {
     search,
     category,
     tags: tagsParam,
     page: 1,
     limit: 10,
+  };
+
+  const canUseInitialData = Boolean(initialPosts) && !hasFilters;
+
+  const { data, isLoading } = useInfiniteQuery<GetPostListResponse>({
+    queryKey: queryKeys.post.all(listParams).queryKey,
+    queryFn: ({ pageParam = 1 }) => getPostList({ ...listParams, page: pageParam as number }),
+    initialPageParam: 1,
+    staleTime: 60_000,
+    initialData: canUseInitialData
+      ? {
+          pages: [initialPosts as GetPostListResponse],
+          pageParams: [1],
+        }
+      : undefined,
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage.meta?.pagination?.currentPage;
+      const hasNextPage = lastPage.meta?.pagination?.hasNextPage;
+      if (hasNextPage && currentPage) {
+        return currentPage + 1;
+      }
+      return undefined;
+    },
+    placeholderData: keepPreviousData,
   });
 
-  const postsData = posts?.pages?.flatMap((page) => page.data ?? []) ?? [];
+  const postsData = data?.pages?.flatMap((page) => page.data ?? []) ?? [];
+  const showLoading = isLoading && postsData.length === 0;
   const trackedKeyRef = useRef<string>('');
 
   useEffect(() => {
-    if (isLoading || !hasFilters) return;
+    if (showLoading || !hasFilters) return;
 
     const key = `${search}|${category}|${tagsParam}|${postsData.length}`;
     if (trackedKeyRef.current === key) return;
@@ -53,9 +85,9 @@ export const BlogMainPage = () => {
         tag_count: tags.length,
       });
     }
-  }, [isLoading, hasFilters, search, category, tagsParam, tags.length, postsData.length]);
+  }, [showLoading, hasFilters, search, category, tagsParam, tags.length, postsData.length]);
 
-  if (!isLoading && postsData.length === 0) {
+  if (!showLoading && postsData.length === 0) {
     return (
       <div className='mx-auto w-full max-w-4xl'>
         <NoResults
@@ -79,7 +111,7 @@ export const BlogMainPage = () => {
     return (
       <div className='mx-auto w-full max-w-4xl'>
         <BlogSectionTitle subtitle={filterLabel || '조건에 맞는 글'}>검색 결과</BlogSectionTitle>
-        <PostList posts={postsData} isLoading={isLoading} />
+        <PostList posts={postsData} isLoading={showLoading} />
       </div>
     );
   }
@@ -90,12 +122,12 @@ export const BlogMainPage = () => {
   return (
     <div className='mx-auto w-full max-w-4xl'>
       <BlogSectionTitle subtitle='최근에 올라온 글'>Recent</BlogSectionTitle>
-      <RecentPosts posts={recentPosts} isLoading={isLoading} />
+      <RecentPosts posts={recentPosts} isLoading={showLoading} />
 
       {restPosts.length > 0 && (
         <>
           <BlogSectionTitle subtitle='더 많은 이야기'>Archive</BlogSectionTitle>
-          <PostList posts={restPosts} isLoading={isLoading} />
+          <PostList posts={restPosts} isLoading={showLoading} />
         </>
       )}
     </div>
