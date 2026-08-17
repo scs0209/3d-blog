@@ -1,19 +1,19 @@
 'use client';
 
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Suspense, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { MeshReflectorMaterial } from '@react-three/drei';
-import { Macintosh } from '@/widgets/post/ui/Macintosh';
-import { ComputerBackground } from '@/widgets/post/ui/ComputerBackground';
-import { CanvasLoader } from '@/shared/ui/Loader';
-import { AnimatedText } from '@/shared/ui/AnimatedText';
-import { WatchRobot } from '@/shared/ui/WatchRobot';
-import { HelloBot } from '@/shared/ui/HelloBot';
-import { MoveBot } from '@/shared/ui/MoveBot';
-import { FloatingActionButton } from '@/shared/ui/FloatingActionButton';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { AnimatedText } from '@/shared/ui/AnimatedText';
+import { FloatingActionButton } from '@/shared/ui/FloatingActionButton';
+import { HelloBot } from '@/shared/ui/HelloBot';
+import { CanvasLoader } from '@/shared/ui/Loader';
+import { MoveBot } from '@/shared/ui/MoveBot';
+import { WatchRobot } from '@/shared/ui/WatchRobot';
+import { ComputerBackground } from '@/widgets/post/ui/ComputerBackground';
+import { Macintosh } from '@/widgets/post/ui/Macintosh';
 
 function AnimatedCamera({ cameraPos }: { cameraPos: { x: number; y: number; z: number } }) {
   const { camera } = useThree();
@@ -30,6 +30,7 @@ const BlogLandingScene = () => {
   const [htmlOpacity, setHtmlOpacity] = useState(1);
   const [isNavigating, setIsNavigating] = useState(false);
   const [enableEffects, setEnableEffects] = useState(false);
+  const navigateTimeoutRef = useRef<number | null>(null);
 
   const handleWheel = (e: React.WheelEvent) => {
     if (!isNavigating) {
@@ -51,13 +52,23 @@ const BlogLandingScene = () => {
   }, [htmlScale]);
 
   useEffect(() => {
-    if (!isNavigating && htmlScale >= 8) {
-      setIsNavigating(true);
-      setTimeout(() => {
-        router.push('/blog/all');
-      }, 300);
+    if (htmlScale < 8 || navigateTimeoutRef.current != null) {
+      return;
     }
-  }, [htmlScale, isNavigating, router]);
+
+    setIsNavigating(true);
+    navigateTimeoutRef.current = window.setTimeout(() => {
+      router.push('/blog/all');
+    }, 300);
+  }, [htmlScale, router]);
+
+  useEffect(() => {
+    return () => {
+      if (navigateTimeoutRef.current != null) {
+        window.clearTimeout(navigateTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } })
@@ -89,14 +100,7 @@ const BlogLandingScene = () => {
           >
             <color attach='background' args={['black']} />
             <hemisphereLight intensity={0.15} groundColor='black' />
-            <spotLight
-              decay={0}
-              position={[10, 20, 10]}
-              angle={0.12}
-              penumbra={1}
-              intensity={1}
-              castShadow={false}
-            />
+            <spotLight decay={0} position={[10, 20, 10]} angle={0.12} penumbra={1} intensity={1} castShadow={false} />
             <Suspense fallback={<CanvasLoader />}>
               <Macintosh
                 scale={0.25}
