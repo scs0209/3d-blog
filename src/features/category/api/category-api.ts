@@ -1,9 +1,10 @@
 import type { Category } from '@/entities/category/model';
-import type { CategoryFormSchema } from '../model/category-schema';
 import { fetcher } from '@/shared/api';
+import type { CategoryFormSchema } from '../model/category-schema';
 
 // 카테고리 목록 조회
-export const getCategories = fetcher({ url: '/api/category/all', method: 'get', query: { includePostCount: false } });
+export const getCategories = () =>
+  fetcher({ url: '/api/category/all', method: 'get', query: { includePostCount: false } });
 
 // 새 카테고리 생성
 export const createCategory = async ({ name, description, parentId }: CategoryFormSchema) => {
