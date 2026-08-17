@@ -1,5 +1,4 @@
 import {
-  CodeBlockLowlight,
   Color,
   HighlightExtension,
   HorizontalRule,
@@ -16,7 +15,7 @@ import {
 } from 'novel/extensions';
 import { TableKit } from '@tiptap/extension-table';
 import { cx } from 'class-variance-authority';
-import { common, createLowlight } from 'lowlight';
+import { createCodeBlockExtension } from './code-block-extension';
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
@@ -91,14 +90,7 @@ const starterKit = StarterKit.configure({
   gapcursor: false,
 });
 
-const lowlight = createLowlight(common);
-
-const codeBlockLowlight = CodeBlockLowlight.configure({
-  lowlight,
-  HTMLAttributes: {
-    class: cx('rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium'),
-  },
-});
+const codeBlockLowlight = createCodeBlockExtension('all');
 
 const youtube = Youtube.configure({
   HTMLAttributes: {

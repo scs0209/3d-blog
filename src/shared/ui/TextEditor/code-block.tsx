@@ -32,19 +32,31 @@ export enum Mode {
   Edit = 1,
 }
 
-export default function CodeBlock(props: any) {
+type CodeBlockProps = {
+  editor: { isEditable: boolean };
+  node: {
+    attrs: { language?: string | null; mode?: number };
+    textContent: string;
+  };
+  updateAttributes: (attrs: Record<string, unknown>) => void;
+  extension: { options: { lowlight: { listLanguages: () => string[] } } };
+};
+
+export default function CodeBlock(props: CodeBlockProps) {
   const { data: session } = useSession();
   const isAdmin = session?.user.role === 'ADMIN';
-  const { node, updateAttributes, extension } = props;
+  const { editor, node, updateAttributes, extension } = props;
   const {
     attrs: { language: defaultLanguage, mode = Mode.Edit },
     textContent,
   } = node;
   const previewer = useRef<HTMLPreElement>(null);
+  const isReadOnly = !editor.isEditable;
   const isMermaid = defaultLanguage === 'mermaid';
+  const effectiveMode = isReadOnly && isMermaid ? Mode.Preview : mode;
 
   useEffect(() => {
-    if (mode !== Mode.Preview || !previewer.current || !isMermaid || !textContent.trim()) {
+    if (effectiveMode !== Mode.Preview || !previewer.current || !isMermaid || !textContent.trim()) {
       return;
     }
 
@@ -55,7 +67,7 @@ export default function CodeBlock(props: any) {
         const mermaid = await ensureMermaid();
         if (cancelled || !previewer.current) return;
 
-        const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const id = `mermaid-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
         const textarea = document.createElement('textarea');
         textarea.innerHTML = textContent;
         const decodedTextContent = textarea.value;
@@ -80,25 +92,35 @@ export default function CodeBlock(props: any) {
     return () => {
       cancelled = true;
     };
-  }, [mode, textContent, isMermaid]);
+  }, [effectiveMode, textContent, isMermaid]);
+
+  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (isReadOnly) return;
+    updateAttributes({
+      language: event.target.value,
+      mode,
+    });
+  };
+
+  const handleToggleMermaidPreview = () => {
+    if (isReadOnly) return;
+    updateAttributes({
+      language: defaultLanguage,
+      mode: mode === Mode.Edit ? Mode.Preview : Mode.Edit,
+    });
+  };
 
   return (
-    <NodeViewWrapper>
-      <pre>
-        {/* 상단 컨트롤 바 */}
+    <NodeViewWrapper className='not-prose my-4'>
+      <div className='overflow-hidden rounded-md border border-gray-600 bg-slate-900'>
         <div className='flex items-center justify-between bg-gray-800 px-3 py-2'>
           <div className='flex items-center gap-2'>
-            {isMermaid && isAdmin && (
+            {isMermaid && isAdmin && !isReadOnly && (
               <button
                 type='button'
                 contentEditable={false}
-                onClick={() => {
-                  updateAttributes({
-                    language: defaultLanguage,
-                    mode: mode === Mode.Edit ? Mode.Preview : Mode.Edit,
-                  });
-                }}
-                className='text-xs font-medium px-3 py-1.5 rounded-md bg-gray-700 hover:bg-gray-600 transition-colors text-white'
+                onClick={handleToggleMermaidPreview}
+                className='rounded-md bg-gray-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-gray-600'
               >
                 {mode === Mode.Edit ? '미리보기' : '편집'}
               </button>
@@ -107,14 +129,11 @@ export default function CodeBlock(props: any) {
 
           <select
             contentEditable={false}
-            defaultValue={defaultLanguage}
-            onChange={(event) =>
-              updateAttributes({
-                language: event.target.value,
-                mode: mode,
-              })
-            }
-            className='text-xs px-3 py-1.5 rounded-md bg-gray-700 border border-gray-600 hover:bg-gray-600 transition-colors text-white'
+            value={defaultLanguage ?? 'null'}
+            onChange={handleLanguageChange}
+            disabled={isReadOnly}
+            aria-label='코드 블록 언어'
+            className='rounded-md border border-gray-600 bg-gray-700 px-3 py-1.5 text-xs text-white transition-colors hover:bg-gray-600 disabled:cursor-default disabled:opacity-90'
           >
             <option value='null' className='bg-gray-800 text-white'>
               auto
@@ -133,13 +152,22 @@ export default function CodeBlock(props: any) {
           </select>
         </div>
 
-        {/* 코드 블록 컨텐츠 */}
-        <pre hidden={isMermaid && mode === Mode.Preview} className='text-sm text-gray-100 overflow-x-auto'>
+        <pre
+          hidden={isMermaid && effectiveMode === Mode.Preview}
+          className='overflow-x-auto bg-slate-900 p-4 text-sm text-gray-100'
+        >
           <NodeViewContent as='code' />
         </pre>
 
-        {isMermaid && <pre contentEditable={false} hidden={mode === Mode.Edit} ref={previewer} />}
-      </pre>
+        {isMermaid && (
+          <pre
+            contentEditable={false}
+            hidden={effectiveMode === Mode.Edit}
+            ref={previewer}
+            className='overflow-x-auto bg-slate-900 p-4'
+          />
+        )}
+      </div>
     </NodeViewWrapper>
   );
 }
