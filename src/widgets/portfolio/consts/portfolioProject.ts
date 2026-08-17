@@ -6,7 +6,7 @@ export const portfolioProjects: PortfolioProject[] = [
     title: '3D Blog & Portfolio',
     subtitle: '개인 블로그 / 포트폴리오 (2025.01 - 진행중)',
     description:
-      'FSD 아키텍처로 설계한 Next.js 기반 블로그·포트폴리오입니다. React Three Fiber 3D 씬, OpenRouter AI 본문 요약, OpenAPI 타입 자동화까지 제품과 DX를 함께 실험하고 있습니다.',
+      'Next.js와 React Three Fiber로 만든 개인 블로그·포트폴리오입니다. 홈 3D 씬과 글 페이지 번들을 나눠 블로그 Lighthouse를 52→80으로 올렸고, OpenRouter로 본문 요약을 붙였습니다.',
     image: '/assets/images/portfolio.png',
     sourceUrl: 'https://github.com/scs0209/3d-blog',
   },
