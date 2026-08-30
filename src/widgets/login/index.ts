@@ -1,1 +1,2 @@
-export { default as SpacePortal } from './ui/SpacePortal';
+export { AuthLayout } from './ui/AuthLayout';
+export { authTheme } from './ui/auth-theme';

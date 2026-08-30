@@ -76,28 +76,12 @@ export const Navbar = () => {
                 </div>
               </button>
             ) : (
-              <>
-                <Link
-                  href='/login'
-                  className='text-white text-sm font-semibold py-2 px-4 border border-[#858585] rounded-xl transition-all duration-300 hover:border-[#ffffff] hover:shadow-[0_0_10px_#ffffff]'
-                >
-                  Log In
-                </Link>
-                <Link
-                  href='/sign-up'
-                  className='group relative overflow-hidden text-sm font-semibold py-2 px-4 rounded-xl bg-[#E5E4DF]'
-                >
-                  <div className='relative flex overflow-hidden'>
-                    <span className='block transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-[100%]'>
-                      Sign up
-                    </span>
-                    <span className='block absolute left-0 -translate-y-full transition-transform duration-[600ms] ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-y-0'>
-                      Sign up
-                    </span>
-                  </div>
-                  <div className='absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-[#0066FF] via-[#6942EF] to-[#FF00E5] blur-md opacity-80' />
-                </Link>
-              </>
+              <Link
+                href='/login'
+                className='text-white text-sm font-semibold py-2 px-4 border border-[#858585] rounded-xl transition-all duration-300 hover:border-[#ffffff] hover:shadow-[0_0_10px_#ffffff]'
+              >
+                Log In
+              </Link>
             )}
           </div>
         </div>
@@ -198,22 +182,13 @@ export const Navbar = () => {
                     <span className='font-medium'>Sign Out</span>
                   </button>
                 ) : (
-                  <div className='space-y-4'>
-                    <Link
-                      href='/login'
-                      onClick={() => setIsMenuOpen(false)}
-                      className='block w-full text-center py-4 px-6 text-lg text-white border border-gray-600 rounded-xl hover:border-white hover:bg-gray-800/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all duration-300'
-                    >
-                      Log In
-                    </Link>
-                    <Link
-                      href='/sign-up'
-                      onClick={() => setIsMenuOpen(false)}
-                      className='block w-full text-center py-4 px-6 text-lg bg-gradient-to-r from-[#0066FF] via-[#6942EF] to-[#FF00E5] text-white rounded-xl font-semibold hover:opacity-90 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] transition-all duration-300'
-                    >
-                      Sign Up
-                    </Link>
-                  </div>
+                  <Link
+                    href='/login'
+                    onClick={() => setIsMenuOpen(false)}
+                    className='block w-full text-center py-4 px-6 text-lg text-white border border-gray-600 rounded-xl hover:border-white hover:bg-gray-800/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all duration-300'
+                  >
+                    Log In
+                  </Link>
                 )}
               </div>
             </div>
