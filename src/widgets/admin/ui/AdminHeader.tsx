@@ -1,7 +1,7 @@
 'use client';
 
-import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { usePathname } from 'next/navigation';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 
 const TITLE_MAP: { match: (path: string) => boolean; title: string }[] = [
   { match: (p) => p === '/admin', title: '대시보드' },
