@@ -1568,7 +1568,7 @@ export interface paths {
         };
         /**
          * 사이트 통계 조회
-         * @description 게시물, 사용자, 댓글, 조회수, 방문자의 월별 통계를 조회합니다.
+         * @description 게시물·사용자·댓글·조회수의 월별 통계와 방문자의 오늘/누적 순방문자를 조회합니다.
          */
         get: {
             parameters: {

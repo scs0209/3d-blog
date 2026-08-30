@@ -3,6 +3,7 @@ import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } 
 import { Tag } from '@/shared/ui/Tag';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import type { AdminStats } from '../api/stats-api';
+import { getGrowthDisplay } from './get-growth-display';
 
 type UsersCardProps = {
   users: AdminStats['users'];
@@ -10,8 +11,7 @@ type UsersCardProps = {
 
 export function UsersCard({ users }: UsersCardProps) {
   const { total, thisMonth, lastMonth } = users;
-  const growthRate = lastMonth > 0 ? ((thisMonth - lastMonth) / lastMonth) * 100 : 0;
-  const isPositive = growthRate >= 0;
+  const { label, isPositive } = getGrowthDisplay(thisMonth, lastMonth);
 
   return (
     <Card className={adminTheme.card}>
@@ -29,7 +29,7 @@ export function UsersCard({ users }: UsersCardProps) {
             className='flex items-center gap-1.5 border-white/20'
           >
             {isPositive ? <TrendingUp className='h-3.5 w-3.5' /> : <TrendingDown className='h-3.5 w-3.5' />}
-            {Math.abs(growthRate).toFixed(1)}%
+            {label}
           </Tag>
         </CardAction>
       </CardHeader>

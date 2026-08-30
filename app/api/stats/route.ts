@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getStats } from '@/features/admin/home/api/stats-api';
 import { READ_API_CACHE_HEADERS } from '@/shared/lib/api-cache-headers';
-import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
 
 /**
  * @swagger
  * /api/stats:
  *   get:
  *     summary: 사이트 통계 조회
- *     description: 게시물, 사용자, 댓글, 조회수, 방문자의 월별 통계를 조회합니다.
+ *     description: 게시물·사용자·댓글·조회수의 월별 통계와 방문자의 오늘/누적 순방문자를 조회합니다.
  *     tags:
  *       - Stats
  *     responses:
@@ -89,7 +88,7 @@ import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
  */
 export async function GET() {
   try {
-    const stats = await withPrismaRetry(() => getStats());
+    const stats = await getStats();
     return NextResponse.json(stats, { headers: READ_API_CACHE_HEADERS });
   } catch (error) {
     console.error('Error fetching stats:', error);

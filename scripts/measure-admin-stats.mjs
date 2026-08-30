@@ -21,22 +21,21 @@ const sequentialStats = async () => {
   const now = new Date();
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
   const totalPosts = await prisma.post.count();
   const thisMonthPosts = await prisma.post.count({ where: { createdAt: { gte: thisMonthStart } } });
   const lastMonthPosts = await prisma.post.count({
-    where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
+    where: { createdAt: { gte: lastMonthStart, lt: thisMonthStart } },
   });
   const totalUsers = await prisma.user.count();
   const thisMonthUsers = await prisma.user.count({ where: { createdAt: { gte: thisMonthStart } } });
   const lastMonthUsers = await prisma.user.count({
-    where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
+    where: { createdAt: { gte: lastMonthStart, lt: thisMonthStart } },
   });
   const totalComments = await prisma.comment.count();
   const thisMonthComments = await prisma.comment.count({ where: { createdAt: { gte: thisMonthStart } } });
   const lastMonthComments = await prisma.comment.count({
-    where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
+    where: { createdAt: { gte: lastMonthStart, lt: thisMonthStart } },
   });
   const totalViews = await prisma.post.aggregate({ _sum: { views: true } });
   const thisMonthViews = await prisma.post.aggregate({
@@ -45,7 +44,7 @@ const sequentialStats = async () => {
   });
   const lastMonthViews = await prisma.post.aggregate({
     _sum: { views: true },
-    where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
+    where: { createdAt: { gte: lastMonthStart, lt: thisMonthStart } },
   });
   const extraUserCount = await prisma.user.count();
   const todayKey = new Intl.DateTimeFormat('en-CA', {
@@ -70,7 +69,6 @@ const singleQueryStats = async () => {
   const now = new Date();
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
   const todayKey = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Seoul',
     year: 'numeric',
@@ -82,16 +80,16 @@ const singleQueryStats = async () => {
     SELECT
       (SELECT COUNT(*)::int FROM "Post") AS "totalPosts",
       (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthPosts",
-      (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthPosts",
+      (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthPosts",
       (SELECT COUNT(*)::int FROM "User") AS "totalUsers",
       (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthUsers",
-      (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthUsers",
+      (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthUsers",
       (SELECT COUNT(*)::int FROM "Comment") AS "totalComments",
       (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthComments",
-      (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthComments",
+      (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthComments",
       (SELECT COALESCE(SUM("views"), 0)::int FROM "Post") AS "totalViews",
       (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthViews",
-      (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthViews",
+      (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthViews",
       (SELECT COALESCE((SELECT "count" FROM "VisitorDaily" WHERE "date" = ${todayKey}), 0)::int) AS "todayVisitors",
       (SELECT COALESCE(SUM("count"), 0)::int FROM "VisitorDaily") AS "totalVisitors"
   `;

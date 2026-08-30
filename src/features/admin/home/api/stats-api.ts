@@ -62,23 +62,22 @@ export const getStats = cache(async (): Promise<AdminStats> => {
     const now = new Date();
     const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
     const todayKey = getSeoulDateKey(now);
 
     const [row] = await prisma.$queryRaw<StatsRow[]>`
       SELECT
         (SELECT COUNT(*)::int FROM "Post") AS "totalPosts",
         (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthPosts",
-        (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthPosts",
+        (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthPosts",
         (SELECT COUNT(*)::int FROM "User") AS "totalUsers",
         (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthUsers",
-        (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthUsers",
+        (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthUsers",
         (SELECT COUNT(*)::int FROM "Comment") AS "totalComments",
         (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthComments",
-        (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthComments",
+        (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthComments",
         (SELECT COALESCE(SUM("views"), 0)::int FROM "Post") AS "totalViews",
         (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthViews",
-        (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" <= ${lastMonthEnd}) AS "lastMonthViews",
+        (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthViews",
         (SELECT COALESCE((SELECT "count" FROM "VisitorDaily" WHERE "date" = ${todayKey}), 0)::int) AS "todayVisitors",
         (SELECT COALESCE(SUM("count"), 0)::int FROM "VisitorDaily") AS "totalVisitors"
     `;
