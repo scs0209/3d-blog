@@ -6,6 +6,8 @@ import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
+import type { PerspectiveCamera } from 'three';
+import { useViewportProfile } from '@/shared/hooks/use-viewport-profile';
 import { AnimatedText } from '@/shared/ui/AnimatedText';
 import { FloatingActionButton } from '@/shared/ui/FloatingActionButton';
 import { HelloBot } from '@/shared/ui/HelloBot';
@@ -15,17 +17,37 @@ import { WatchRobot } from '@/shared/ui/WatchRobot';
 import { ComputerBackground } from '@/widgets/post/ui/ComputerBackground';
 import { Macintosh } from '@/widgets/post/ui/Macintosh';
 
-function AnimatedCamera({ cameraPos }: { cameraPos: { x: number; y: number; z: number } }) {
-  const { camera } = useThree();
+function ResponsiveBlogCamera() {
+  const { camera, size } = useThree();
+
   useFrame(() => {
-    camera.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
-    camera.updateProjectionMatrix();
+    const cam = camera as PerspectiveCamera;
+    const aspect = size.width / Math.max(size.height, 1);
+    const mobile = size.width < 768;
+
+    if (mobile && aspect < 0.72) {
+      cam.fov = 74;
+      camera.position.set(-0.04, 1.58, 10.4);
+    } else if (mobile) {
+      cam.fov = 68;
+      camera.position.set(-0.1, 1.46, 9.1);
+    } else if (aspect < 1.1) {
+      cam.fov = 66;
+      camera.position.set(-0.14, 1.42, 8.2);
+    } else {
+      cam.fov = 70;
+      camera.position.set(-0.16, 1.4, 7.5);
+    }
+
+    cam.updateProjectionMatrix();
   });
+
   return null;
 }
 
 const BlogLandingScene = () => {
   const router = useRouter();
+  const { isMobile } = useViewportProfile();
   const [htmlScale, setHtmlScale] = useState(1);
   const [htmlOpacity, setHtmlOpacity] = useState(1);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -93,7 +115,7 @@ const BlogLandingScene = () => {
           className='h-full w-full'
         >
           <Canvas
-            dpr={[1, 1.25]}
+            dpr={isMobile ? [1, 1.1] : [1, 1.25]}
             performance={{ min: 0.5 }}
             camera={{ fov: 70, near: 1, zoom: 15, position: [-0.2, 1.5, 8.88] }}
             eventPrefix='client'
@@ -103,19 +125,31 @@ const BlogLandingScene = () => {
             <spotLight decay={0} position={[10, 20, 10]} angle={0.12} penumbra={1} intensity={1} castShadow={false} />
             <Suspense fallback={<CanvasLoader />}>
               <Macintosh
-                scale={0.25}
+                scale={isMobile ? 0.2 : 0.25}
                 htmlScale={htmlScale}
                 htmlOpacity={htmlOpacity}
                 showFullPage={false}
-                position={[-0.08, 0.08, 0]}
+                position={isMobile ? [-0.04, 0.06, 0] : [-0.08, 0.08, 0]}
                 rotation={[0, Math.PI / 6, 0]}
               />
-              <ComputerBackground scale={0.11} position={[0, 0.001, 0]} />
+              <ComputerBackground scale={isMobile ? 0.095 : 0.11} position={[0, 0.001, 0]} />
               <AnimatedText />
-              <WatchRobot scale={0.002} position={[0.1, 0.12, 0.3]} rotation={[0, -Math.PI / 1.5, 0]} />
-              <HelloBot scale={0.06} position={[0.18, 0.18, -0.16]} rotation={[0, -Math.PI / 4, 0]} />
-              <MoveBot scale={0.05} position={[0.4, 0, 0.7]} rotation={[0, -Math.PI / 4, 0]} />
-              <AnimatedCamera cameraPos={{ x: -0.16, y: 1.4, z: 7.5 }} />
+              <WatchRobot
+                scale={0.002}
+                position={isMobile ? [0.06, 0.1, 0.28] : [0.1, 0.12, 0.3]}
+                rotation={[0, -Math.PI / 1.5, 0]}
+              />
+              <HelloBot
+                scale={isMobile ? 0.05 : 0.06}
+                position={isMobile ? [0.14, 0.15, -0.14] : [0.18, 0.18, -0.16]}
+                rotation={[0, -Math.PI / 4, 0]}
+              />
+              <MoveBot
+                scale={isMobile ? 0.042 : 0.05}
+                position={isMobile ? [0.28, 0, 0.62] : [0.4, 0, 0.7]}
+                rotation={[0, -Math.PI / 4, 0]}
+              />
+              <ResponsiveBlogCamera />
               <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={[50, 50]} />
                 <MeshReflectorMaterial
@@ -140,9 +174,9 @@ const BlogLandingScene = () => {
           </Canvas>
           <FloatingActionButton />
 
-          <div className='absolute bottom-8 left-1/2 -translate-x-1/2 transform text-center text-white'>
+          <div className='absolute bottom-4 left-1/2 w-[min(92vw,20rem)] -translate-x-1/2 transform text-center text-white sm:bottom-8'>
             <div className='animate-pulse duration-[3000ms]'>
-              <p className='mb-2 text-sm opacity-80'>스크롤하여 블로그 보기</p>
+              <p className='mb-2 text-xs opacity-80 sm:text-sm'>스크롤하여 블로그 보기</p>
               <div className='relative mx-auto h-10 w-6 rounded-full border-2 border-white/70'>
                 <div
                   className='mx-auto mt-2 h-3 w-1 translate-y-0 transform animate-bounce rounded-full bg-white duration-[2500ms]'

@@ -11,7 +11,7 @@ const HomeCanvas = dynamic(() => import('@/views/home').then((mod) => mod.HomeCa
 
 const HomePage = () => {
   return (
-    <div className='relative w-screen h-screen overflow-hidden scene-wrapper dark:bg-none'>
+    <div className='relative h-[100dvh] w-screen overflow-hidden scene-wrapper dark:bg-none'>
       <Navbar />
 
       <Suspense fallback={<div className='absolute inset-0 bg-[#070414]' aria-hidden />}>

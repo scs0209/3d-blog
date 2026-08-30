@@ -78,13 +78,15 @@ export function FloatingActionButton() {
 
   return (
     <>
-      <div ref={buttonRef} className='fixed top-6 right-6 z-50'>
+      <div ref={buttonRef} className='fixed top-4 right-4 z-50 sm:top-6 sm:right-6'>
         {/* 메인 플로팅 버튼 */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsOpen(!isOpen)}
-          className='w-14 h-14 rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 flex items-center justify-center group relative overflow-hidden'
+          aria-label={isOpen ? '메뉴 닫기' : '메뉴 열기'}
+          aria-expanded={isOpen}
+          className='flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 shadow-lg transition-all duration-300 hover:shadow-cyan-500/50 group relative overflow-hidden sm:h-14 sm:w-14'
           style={{
             boxShadow: '0 0 20px rgba(0, 255, 208, 0.4), 0 0 40px rgba(0, 255, 208, 0.2)',
           }}

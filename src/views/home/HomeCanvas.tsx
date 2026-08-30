@@ -7,18 +7,28 @@ import { useTheme } from 'next-themes';
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import * as three from 'three';
 import { PORTFOLIO_PORTAL_SESSION_KEY } from '@/entities/portfolio/model/cinematic-transition';
+import { useViewportProfile } from '@/shared/hooks/use-viewport-profile';
 import { CanvasLoader } from '@/shared/ui/Loader';
 import type { CosmosPortalId } from '@/widgets/home/model/cosmos-portals';
 import { CinematicCosmosScene, type CosmosSceneTheme } from '@/widgets/home/ui/CinematicCosmosScene';
+import { MobileWalkControls } from '@/widgets/home/ui/MobileWalkControls';
 import { PortalDiscoveryOverlay } from '@/widgets/home/ui/PortalDiscoveryOverlay';
 import { PortalEnterTransition } from '@/widgets/home/ui/PortalEnterTransition';
 
 export const HomeCanvas = () => {
   const router = useRouter();
   const { theme, resolvedTheme } = useTheme();
+  const { isMobile, isPortrait } = useViewportProfile();
   const [activePortalId, setActivePortalId] = useState<CosmosPortalId | null>(null);
   const [enteringPortfolio, setEnteringPortfolio] = useState(false);
   const sceneTheme: CosmosSceneTheme = (resolvedTheme ?? theme) === 'dark' ? 'dark' : 'light';
+
+  const cameraFov = isMobile ? (isPortrait ? 50 : 42) : 36;
+  const cameraPosition: [number, number, number] = isMobile
+    ? isPortrait
+      ? [2.8, 3.5, 11.5]
+      : [4.5, 2.4, 13.5]
+    : [5.5, 2.1, 14];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -51,13 +61,13 @@ export const HomeCanvas = () => {
       <div className='absolute inset-0'>
         <Canvas
           shadows
-          dpr={[1, 1.75]}
+          dpr={isMobile ? [1, 1.25] : [1, 1.75]}
           gl={{
             antialias: true,
             toneMapping: three.ACESFilmicToneMapping,
             toneMappingExposure: 0.88,
           }}
-          camera={{ fov: 36, near: 0.1, far: 500, position: [5.5, 2.1, 14] }}
+          camera={{ fov: cameraFov, near: 0.1, far: 500, position: cameraPosition }}
         >
           <Suspense fallback={<CanvasLoader />}>
             <CinematicCosmosScene
@@ -70,6 +80,7 @@ export const HomeCanvas = () => {
         </Canvas>
       </div>
 
+      <MobileWalkControls />
       <PortalDiscoveryOverlay
         activePortalId={activePortalId}
         enteringPortfolio={enteringPortfolio}

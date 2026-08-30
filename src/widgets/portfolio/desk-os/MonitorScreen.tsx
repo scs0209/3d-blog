@@ -12,9 +12,10 @@ type MonitorScreenProps = {
   mode: DeskCameraMode;
   started: boolean;
   onEnterMonitor: () => void;
+  onNavigate: (href: string) => void;
 };
 
-export const MonitorScreen = ({ mode, started, onEnterMonitor }: MonitorScreenProps) => {
+export const MonitorScreen = ({ mode, started, onEnterMonitor, onNavigate }: MonitorScreenProps) => {
   const canUseScreen = started && mode === 'monitor';
 
   const handleScreenPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -65,7 +66,7 @@ export const MonitorScreen = ({ mode, started, onEnterMonitor }: MonitorScreenPr
               cursor: canUseScreen ? 'default' : 'pointer',
             }}
           >
-            <DesktopOs interactive={canUseScreen} />
+            <DesktopOs interactive={canUseScreen} onNavigate={onNavigate} />
           </div>
         </Html>
       </mesh>

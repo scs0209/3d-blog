@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useViewportProfile } from '@/shared/hooks/use-viewport-profile';
 import { isCosmosAudioMuted, setCosmosAudioMuted, unlockCosmosAudio } from '@/widgets/home/lib/cosmos-audio';
 import { COSMOS_PORTAL_HINT_KEY, type CosmosPortalId, getCosmosPortal } from '@/widgets/home/model/cosmos-portals';
 
@@ -17,6 +18,7 @@ export const PortalDiscoveryOverlay = ({
   onEnterPortfolio,
 }: PortalDiscoveryOverlayProps) => {
   const portal = getCosmosPortal(activePortalId);
+  const { isMobile, coarsePointer } = useViewportProfile();
   const [showHint, setShowHint] = useState(false);
   const [audioMuted, setAudioMuted] = useState(false);
 
@@ -85,7 +87,7 @@ export const PortalDiscoveryOverlay = ({
     <div className='pointer-events-none absolute inset-x-0 bottom-0 z-20'>
       <button
         type='button'
-        className='pointer-events-auto absolute bottom-4 right-4 z-30 rounded border border-white/20 bg-black/40 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/80 backdrop-blur-sm transition hover:bg-black/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70'
+        className='pointer-events-auto absolute right-3 top-[4.5rem] z-30 rounded border border-white/20 bg-black/40 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/80 backdrop-blur-sm transition hover:bg-black/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 sm:bottom-4 sm:right-4 sm:top-auto sm:px-3 sm:py-1.5 sm:text-[11px]'
         style={{ fontFamily: 'var(--font-syne), sans-serif' }}
         onClick={handleToggleMute}
         aria-pressed={audioMuted}
@@ -116,7 +118,7 @@ export const PortalDiscoveryOverlay = ({
             className='text-[13px] tracking-[0.22em] text-white/65'
             style={{ fontFamily: 'var(--font-syne), sans-serif' }}
           >
-            WASD로 걸어 포털을 발견하세요
+            WASD{isMobile || coarsePointer ? ' 또는 조이스틱' : ''}으로 걸어 포털을 발견하세요
           </p>
         </div>
 
@@ -156,7 +158,7 @@ export const PortalDiscoveryOverlay = ({
               </div>
 
               <h2
-                className='text-5xl font-semibold tracking-tight md:text-6xl'
+                className='text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl'
                 style={{
                   fontFamily: 'var(--font-syne), sans-serif',
                   color: accent,
