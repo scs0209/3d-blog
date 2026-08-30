@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -36,10 +37,6 @@ const SignupForm = () => {
     }
   };
 
-  const handleLoginClick = () => {
-    router.push('/login');
-  };
-
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -60,10 +57,16 @@ const SignupForm = () => {
             id='name'
             autoComplete='name'
             placeholder='홍길동'
+            aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? 'name-error' : undefined}
             {...register('name')}
             className={authTheme.input}
           />
-          {errors.name && <p className={authTheme.error}>{errors.name.message}</p>}
+          {errors.name && (
+            <p id='name-error' className={authTheme.error}>
+              {errors.name.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -75,10 +78,16 @@ const SignupForm = () => {
             id='email'
             autoComplete='email'
             placeholder='you@example.com'
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? 'email-error' : undefined}
             {...register('email')}
             className={authTheme.input}
           />
-          {errors.email && <p className={authTheme.error}>{errors.email.message}</p>}
+          {errors.email && (
+            <p id='email-error' className={authTheme.error}>
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -91,6 +100,8 @@ const SignupForm = () => {
               id='password'
               autoComplete='new-password'
               placeholder='••••••••'
+              aria-invalid={Boolean(errors.password)}
+              aria-describedby={errors.password ? 'password-error' : undefined}
               {...register('password')}
               className={`${authTheme.input} pr-11`}
             />
@@ -103,7 +114,11 @@ const SignupForm = () => {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {errors.password && <p className={authTheme.error}>{errors.password.message}</p>}
+          {errors.password && (
+            <p id='password-error' className={authTheme.error}>
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -116,6 +131,8 @@ const SignupForm = () => {
               id='confirmPassword'
               autoComplete='new-password'
               placeholder='••••••••'
+              aria-invalid={Boolean(errors.confirmPassword)}
+              aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
               {...register('confirmPassword')}
               className={`${authTheme.input} pr-11`}
             />
@@ -128,10 +145,18 @@ const SignupForm = () => {
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {errors.confirmPassword && <p className={authTheme.error}>{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && (
+            <p id='confirm-password-error' className={authTheme.error}>
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
 
-        {errors.root && <p className={authTheme.rootError}>{errors.root.message}</p>}
+        {errors.root && (
+          <p role='alert' className={authTheme.rootError}>
+            {errors.root.message}
+          </p>
+        )}
 
         <button type='submit' disabled={isSubmitting} className={authTheme.submitBtn}>
           {isSubmitting ? '가입 중…' : '회원가입'}
@@ -140,9 +165,9 @@ const SignupForm = () => {
 
       <p className={`mt-6 ${authTheme.footer}`}>
         이미 계정이 있으신가요?{' '}
-        <button type='button' onClick={handleLoginClick} className={authTheme.linkBtn}>
+        <Link href='/login' className={authTheme.linkBtn}>
           로그인
-        </button>
+        </Link>
       </p>
     </>
   );

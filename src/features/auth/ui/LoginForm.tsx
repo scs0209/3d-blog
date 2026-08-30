@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -33,10 +34,6 @@ const LoginForm = () => {
     }
   };
 
-  const handleSignupClick = () => {
-    router.push('/sign-up');
-  };
-
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-5'>
@@ -49,10 +46,16 @@ const LoginForm = () => {
             id='email'
             autoComplete='email'
             placeholder='you@example.com'
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? 'email-error' : undefined}
             {...register('email')}
             className={authTheme.input}
           />
-          {errors.email && <p className={authTheme.error}>{errors.email.message}</p>}
+          {errors.email && (
+            <p id='email-error' className={authTheme.error}>
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -64,13 +67,23 @@ const LoginForm = () => {
             id='password'
             autoComplete='current-password'
             placeholder='••••••••'
+            aria-invalid={Boolean(errors.password)}
+            aria-describedby={errors.password ? 'password-error' : undefined}
             {...register('password')}
             className={authTheme.input}
           />
-          {errors.password && <p className={authTheme.error}>{errors.password.message}</p>}
+          {errors.password && (
+            <p id='password-error' className={authTheme.error}>
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
-        {errors.root && <p className={authTheme.rootError}>{errors.root.message}</p>}
+        {errors.root && (
+          <p role='alert' className={authTheme.rootError}>
+            {errors.root.message}
+          </p>
+        )}
 
         <button type='submit' disabled={isSubmitting} className={authTheme.submitBtn}>
           {isSubmitting ? '로그인 중…' : '로그인'}
@@ -79,9 +92,9 @@ const LoginForm = () => {
 
       <p className={`mt-6 ${authTheme.footer}`}>
         계정이 없으신가요?{' '}
-        <button type='button' onClick={handleSignupClick} className={authTheme.linkBtn}>
+        <Link href='/sign-up' className={authTheme.linkBtn}>
           회원가입
-        </button>
+        </Link>
       </p>
     </>
   );
