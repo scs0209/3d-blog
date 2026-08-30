@@ -4,7 +4,6 @@ import type { AnimationClip } from 'three';
 export const DESK_TYPIST_CLIPS = {
   model: '/Typing.glb',
   sitToStand: '/desk-os/animations/SitToStand.fbx',
-  rightTurn: '/desk-os/animations/RightTurn90.fbx',
   walk: '/desk-os/animations/Walking.fbx',
 } as const;
 
@@ -17,5 +16,17 @@ export const pickMixamoFbxClip = (clips: AnimationClip[]) =>
   clips.find((clip) => clip.duration > 0) ??
   clips[0];
 
-export const pickTypingClip = (clips: AnimationClip[]) =>
-  clips.reduce((longest, clip) => (clip.duration > longest.duration ? clip : longest));
+export const pickTypingClip = (clips: AnimationClip[]): AnimationClip | undefined => {
+  const first = clips[0];
+  if (!first) {
+    return undefined;
+  }
+
+  let longest = first;
+  for (const clip of clips.slice(1)) {
+    if (clip.duration > longest.duration) {
+      longest = clip;
+    }
+  }
+  return longest;
+};

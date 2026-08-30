@@ -230,7 +230,7 @@ export const DesktopOs = ({ interactive, compact = false, onNavigate }: DesktopO
               VOID OS
             </span>
           </div>
-          <ul className='flex-1 py-1'>
+          <ul className='flex min-h-0 flex-1 flex-col overflow-y-auto py-1'>
             {ICONS.map((id) => (
               <li key={id}>
                 <button
