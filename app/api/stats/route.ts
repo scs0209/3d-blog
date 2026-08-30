@@ -8,7 +8,7 @@ import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
  * /api/stats:
  *   get:
  *     summary: 사이트 통계 조회
- *     description: 게시물, 사용자, 댓글, 조회수의 월별 통계를 조회합니다.
+ *     description: 게시물, 사용자, 댓글, 조회수, 방문자의 월별 통계를 조회합니다.
  *     tags:
  *       - Stats
  *     responses:
@@ -67,6 +67,15 @@ import { withPrismaRetry } from '@/shared/lib/with-prisma-retry';
  *                     lastMonth:
  *                       type: integer
  *                       description: 저번달 조회수
+ *                 visitors:
+ *                   type: object
+ *                   properties:
+ *                     today:
+ *                       type: integer
+ *                       description: 오늘 순방문자 수
+ *                     total:
+ *                       type: integer
+ *                       description: 전체 순방문자 수
  *       500:
  *         description: 서버 에러
  *         content:
