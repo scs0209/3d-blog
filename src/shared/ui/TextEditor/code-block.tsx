@@ -82,7 +82,10 @@ export default function CodeBlock({ editor, node, updateAttributes, extension, g
         }
         if (!cancelled && previewer.current) {
           const message = error instanceof Error ? error.message : 'Unknown error';
-          previewer.current.innerHTML = `<div class="px-1 py-2 text-sm text-rose-300">Mermaid 구문 오류: ${message}</div>`;
+          const errorBox = document.createElement('div');
+          errorBox.className = 'px-1 py-2 text-sm text-rose-300';
+          errorBox.textContent = `Mermaid 구문 오류: ${message}`;
+          previewer.current.replaceChildren(errorBox);
         }
       }
     };

@@ -158,8 +158,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           className={`relative mb-12 mt-0 px-4 py-8 sm:px-6 md:rounded-2xl md:px-8 md:overflow-hidden ${blogTheme.postSection}`}
         >
           <h1
-            className={`mb-4 text-3xl font-bold tracking-tight md:text-4xl ${blogTheme.textPrimary}`}
-            style={{ fontFamily: 'var(--font-syne), sans-serif' }}
+            className={`mb-4 font-[family-name:var(--font-syne),sans-serif] text-3xl font-bold tracking-tight md:text-4xl ${blogTheme.textPrimary}`}
           >
             {post.title}
           </h1>
