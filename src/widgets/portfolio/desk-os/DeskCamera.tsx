@@ -53,30 +53,6 @@ const setCameraFov = (camera: three.Camera, fov: number) => {
   cam.updateProjectionMatrix();
 };
 
-const snapshotDeskCameraPose = (
-  size: { width: number; height: number },
-  mouse: { x: number; y: number },
-  pos: three.Vector3,
-  look: three.Vector3,
-) => {
-  const mobile = size.width < 768;
-  const portrait = size.height > size.width;
-  const aspect = size.height / Math.max(size.width, 1);
-  const screenY = CYBER_SCREEN.position[1];
-  const screenZ = CYBER_SCREEN.position[2];
-
-  if (mobile) {
-    pos.set(0, portrait ? 2200 : 2000, portrait ? 9200 : 7800);
-    look.set(0, screenY, screenZ);
-    return;
-  }
-
-  const mx = mouse.x - size.width / 2;
-  const my = -(mouse.y - size.height);
-  look.set(mx, my, KEYS.desk.look.z);
-  pos.set(mx, -(mouse.y - size.height * 2), KEYS.desk.pos.z + aspect * 3000 - 1800);
-};
-
 export const DeskCamera = ({ mode, started, freeCam, exiting }: DeskCameraProps) => {
   const { camera, size, clock } = useThree();
   const mouse = useRef({ x: 0, y: 0 });
@@ -106,13 +82,8 @@ export const DeskCamera = ({ mode, started, freeCam, exiting }: DeskCameraProps)
 
     if (exiting) {
       if (!exitFrozen.current) {
-        // idle에서 바로 퇴장 시 desk 포즈가 아직 적용되지 않았을 수 있음
-        if (mode === 'desk' && prevMode.current !== 'desk') {
-          snapshotDeskCameraPose(size, mouse.current, exitHoldPos.current, exitHoldLook.current);
-        } else {
-          exitHoldPos.current.copy(camera.position);
-          exitHoldLook.current.copy(look.current);
-        }
+        exitHoldPos.current.copy(camera.position);
+        exitHoldLook.current.copy(look.current);
         exitFrozen.current = true;
       }
       camera.position.copy(exitHoldPos.current);

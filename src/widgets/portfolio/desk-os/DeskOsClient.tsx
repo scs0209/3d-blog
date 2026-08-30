@@ -132,7 +132,6 @@ export const DeskOsClient = () => {
       }
 
       setBegun(true);
-      setMode('desk');
       setFreeCam(false);
       setExit({ href, progress: 0 });
       const startedAt = performance.now();
