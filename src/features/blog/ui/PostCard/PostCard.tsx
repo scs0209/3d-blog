@@ -20,6 +20,7 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [_, setRandomString] = useState('');
+  const cardRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<{ x: AnimationPlaybackControlsWithThen; y: AnimationPlaybackControlsWithThen } | null>(
     null,
   );
@@ -29,20 +30,32 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
     setRandomString(str);
   }, []);
 
-  const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent<HTMLDivElement>) => {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    const targetX = clientX - left;
-    const targetY = clientY - top;
-    if (animationRef.current) {
-      animationRef.current.x.stop();
-      animationRef.current.y.stop();
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) {
+      return;
     }
-    animationRef.current = {
-      x: animate(mouseX, targetX, { type: 'spring', stiffness: 200, damping: 30 }),
-      y: animate(mouseY, targetY, { type: 'spring', stiffness: 200, damping: 30 }),
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const { left, top } = card.getBoundingClientRect();
+      const targetX = event.clientX - left;
+      const targetY = event.clientY - top;
+      if (animationRef.current) {
+        animationRef.current.x.stop();
+        animationRef.current.y.stop();
+      }
+      animationRef.current = {
+        x: animate(mouseX, targetX, { type: 'spring', stiffness: 200, damping: 30 }),
+        y: animate(mouseY, targetY, { type: 'spring', stiffness: 200, damping: 30 }),
+      };
+      setRandomString(generateRandomString(1500));
     };
-    setRandomString(generateRandomString(1500));
-  };
+
+    card.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      card.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [mouseX, mouseY]);
 
   return (
     <motion.div
@@ -52,13 +65,13 @@ export const PostCard = ({ post }: { post: PostResponse }) => {
     >
       <span className={blogTheme.cardTopGlow} aria-hidden />
       <div
-        onMouseMove={handleMouseMove}
+        ref={cardRef}
         className='group/card relative flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-xl bg-transparent'
       >
         <CardPattern mouseX={mouseX} mouseY={mouseY} seed={post.id ?? post.slug ?? post.title} />
         {post.category?.name && <span className={blogTheme.categoryPill}>{post.category.name}</span>}
         <h2
-          className={`mb-1 line-clamp-2 text-center text-base font-semibold transition-colors group-hover/card:text-[#ffc8a0] dark:group-hover/card:text-[#3de8ff] ${blogTheme.textPrimary}`}
+          className={`mb-1 line-clamp-2 text-center text-[15px] font-semibold leading-snug transition-colors group-hover/card:text-[#ffd4b0] dark:group-hover/card:text-[#b8e4ff] ${blogTheme.textPrimary}`}
           style={{ fontFamily: 'var(--font-syne), sans-serif' }}
         >
           {post.title}

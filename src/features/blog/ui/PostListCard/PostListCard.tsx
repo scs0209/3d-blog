@@ -48,7 +48,7 @@ export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardP
         key={`${post.id}-list`}
         whileHover={isPending ? undefined : { x: 4 }}
         transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-        className={`relative cursor-pointer rounded-xl px-4 py-3 transition ${blogTheme.listRow}`}
+        className={`relative cursor-pointer rounded-xl px-4 py-4 transition ${blogTheme.listRow}`}
       >
         <span className={blogTheme.listAccent} aria-hidden />
         {isPending && (
@@ -58,18 +58,18 @@ export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardP
         )}
         <div className='flex items-center justify-between'>
           {categoryLabel && <span className={blogTheme.categoryPill}>#{categoryLabel}</span>}
-          <span className={`ml-auto flex items-center justify-center gap-1 text-xs ${blogTheme.textMuted}`}>
+          <span className={`ml-auto flex items-center justify-center gap-1 text-sm ${blogTheme.textMuted}`}>
             <Eye size={15} className='inline-block' />
             {post?.views ?? 0}
           </span>
         </div>
         <h2
-          className={`mt-2 text-lg font-semibold transition-colors group-hover:text-[#ffc8a0] dark:group-hover:text-[#3de8ff] ${blogTheme.textPrimary}`}
+          className={`mt-2.5 text-xl font-semibold leading-snug tracking-tight transition-colors group-hover:text-[#ffd4b0] dark:group-hover:text-[#b8e4ff] ${blogTheme.textPrimary}`}
           style={{ fontFamily: 'var(--font-syne), sans-serif' }}
         >
           {post?.title}
         </h2>
-        <div className={`mt-2 flex items-center justify-between text-xs ${blogTheme.textMuted}`}>
+        <div className={`mt-2.5 flex items-center justify-between text-sm ${blogTheme.textMuted}`}>
           <span>{post?.author ? post?.author?.name : '관리자'}</span>
           <span>{formatDateToYMD(post?.updatedAt ?? '')}</span>
         </div>

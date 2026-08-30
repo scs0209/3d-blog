@@ -1,3 +1,4 @@
+import type { NodeViewProps } from '@tiptap/react';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
@@ -11,15 +12,18 @@ const ensureMermaid = async () => {
       startOnLoad: false,
       theme: 'dark',
       themeVariables: {
-        primaryColor: '#00ff88',
-        primaryTextColor: '#ffffff',
-        primaryBorderColor: '#00ff88',
-        lineColor: '#00ff88',
-        sectionBkgColor: '#1a1a1a',
-        altSectionBkgColor: '#2a2a2a',
-        gridColor: '#333333',
-        secondaryColor: '#333333',
-        tertiaryColor: '#444444',
+        primaryColor: '#2a1545',
+        primaryTextColor: '#f5f0e8',
+        primaryBorderColor: '#ff9a3c',
+        lineColor: '#ffb870',
+        secondaryColor: '#1c0e38',
+        tertiaryColor: '#12082a',
+        background: '#12091c',
+        mainBkg: '#1c0e38',
+        nodeBorder: '#ff9a3c',
+        clusterBkg: '#1a1424',
+        titleColor: '#f5f0e8',
+        edgeLabelBackground: '#1c0e38',
       },
     });
     mermaidInitialized = true;
@@ -32,20 +36,16 @@ export enum Mode {
   Edit = 1,
 }
 
-type CodeBlockProps = {
-  editor: { isEditable: boolean };
-  node: {
-    attrs: { language?: string | null; mode?: number };
-    textContent: string;
-  };
-  updateAttributes: (attrs: Record<string, unknown>) => void;
-  extension: { options: { lowlight: { listLanguages: () => string[] } } };
+const isFormControlEvent = (event: Event) => {
+  const target = event.target as HTMLElement | null;
+  return Boolean(target?.closest('select, button, option'));
 };
 
-export default function CodeBlock(props: CodeBlockProps) {
+export const shouldStopCodeBlockEvent = ({ event }: { event: Event }) => isFormControlEvent(event);
+
+export default function CodeBlock({ editor, node, updateAttributes, extension, getPos }: NodeViewProps) {
   const { data: session } = useSession();
   const isAdmin = session?.user.role === 'ADMIN';
-  const { editor, node, updateAttributes, extension } = props;
   const {
     attrs: { language: defaultLanguage, mode = Mode.Edit },
     textContent,
@@ -82,7 +82,7 @@ export default function CodeBlock(props: CodeBlockProps) {
         }
         if (!cancelled && previewer.current) {
           const message = error instanceof Error ? error.message : 'Unknown error';
-          previewer.current.innerHTML = `<div style="color: red; padding: 1rem;">Mermaid 구문 오류: ${message}</div>`;
+          previewer.current.innerHTML = `<div class="px-1 py-2 text-sm text-rose-300">Mermaid 구문 오류: ${message}</div>`;
         }
       }
     };
@@ -94,68 +94,86 @@ export default function CodeBlock(props: CodeBlockProps) {
     };
   }, [effectiveMode, textContent, isMermaid]);
 
+  const applyAttributes = (attrs: Record<string, unknown>) => {
+    if (editor.isEditable) {
+      updateAttributes(attrs);
+      return;
+    }
+
+    const pos = getPos();
+    if (typeof pos !== 'number') {
+      updateAttributes(attrs);
+      return;
+    }
+
+    editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs }));
+  };
+
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    if (isReadOnly) return;
-    updateAttributes({
-      language: event.target.value,
-      mode,
+    const language = event.target.value === 'null' ? null : event.target.value;
+    applyAttributes({
+      language,
+      mode: language === 'mermaid' && isReadOnly ? Mode.Preview : mode,
     });
   };
 
   const handleToggleMermaidPreview = () => {
-    if (isReadOnly) return;
-    updateAttributes({
+    applyAttributes({
       language: defaultLanguage,
       mode: mode === Mode.Edit ? Mode.Preview : Mode.Edit,
     });
   };
 
+  const handleControlMouseDown = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
   return (
-    <NodeViewWrapper className='not-prose my-4'>
-      <div className='overflow-hidden rounded-md border border-gray-600 bg-slate-900'>
-        <div className='flex items-center justify-between bg-gray-800 px-3 py-2'>
-          <div className='flex items-center gap-2'>
-            {isMermaid && isAdmin && !isReadOnly && (
-              <button
-                type='button'
-                contentEditable={false}
-                onClick={handleToggleMermaidPreview}
-                className='rounded-md bg-gray-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-gray-600'
-              >
-                {mode === Mode.Edit ? '미리보기' : '편집'}
-              </button>
-            )}
+    <NodeViewWrapper className='code-block-root not-prose my-6'>
+      <div className='relative overflow-hidden rounded-2xl border border-[#ff9a3c]/20 bg-[#12091c]/92 shadow-[0_16px_48px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,200,160,0.12)] backdrop-blur-md dark:border-[#3de8ff]/15 dark:bg-[#070b12]/92 dark:shadow-[0_16px_48px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]'>
+        <span
+          className='pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#ff9a3c]/55 to-transparent dark:via-[#3de8ff]/45'
+          aria-hidden
+        />
+
+        <div className='code-block-toolbar pointer-events-auto flex items-center justify-between gap-3 px-4 py-2.5'>
+          <div className='flex min-w-0 items-center gap-3'>
+            <div className='code-block-dots' aria-hidden='true' />
+            <select
+              contentEditable={false}
+              value={defaultLanguage ?? 'null'}
+              onMouseDown={handleControlMouseDown}
+              onChange={handleLanguageChange}
+              aria-label='코드 블록 언어'
+              className='code-block-lang-select'
+            >
+              <option value='null'>auto</option>
+              <option value='mermaid'>mermaid</option>
+              <option disabled>—</option>
+              {extension.options.lowlight.listLanguages().map((lang: string) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <select
-            contentEditable={false}
-            value={defaultLanguage ?? 'null'}
-            onChange={handleLanguageChange}
-            disabled={isReadOnly}
-            aria-label='코드 블록 언어'
-            className='rounded-md border border-gray-600 bg-gray-700 px-3 py-1.5 text-xs text-white transition-colors hover:bg-gray-600 disabled:cursor-default disabled:opacity-90'
-          >
-            <option value='null' className='bg-gray-800 text-white'>
-              auto
-            </option>
-            <option value='mermaid' className='bg-gray-800 text-white'>
-              mermaid
-            </option>
-            <option disabled className='bg-gray-800 text-white'>
-              —
-            </option>
-            {extension.options.lowlight.listLanguages().map((lang: string) => (
-              <option key={lang} value={lang} className='bg-gray-800 text-white'>
-                {lang}
-              </option>
-            ))}
-          </select>
+          {isMermaid && isAdmin && (
+            <button
+              type='button'
+              contentEditable={false}
+              onMouseDown={handleControlMouseDown}
+              onClick={handleToggleMermaidPreview}
+              className='shrink-0 rounded-full border border-[#ff9a3c]/30 bg-[#ff9a3c]/10 px-2.5 py-1 text-[11px] font-medium tracking-wide text-[#ffd4b0] transition-colors hover:border-[#ff9a3c]/55 hover:bg-[#ff9a3c]/16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/45 dark:border-[#3de8ff]/30 dark:bg-[#3de8ff]/10 dark:text-[#b8e4ff] dark:hover:border-[#3de8ff]/50 dark:hover:bg-[#3de8ff]/16 dark:focus-visible:ring-[#3de8ff]/40'
+            >
+              {effectiveMode === Mode.Edit ? '미리보기' : '편집'}
+            </button>
+          )}
         </div>
 
-        <pre
-          hidden={isMermaid && effectiveMode === Mode.Preview}
-          className='overflow-x-auto bg-slate-900 p-4 text-sm text-gray-100'
-        >
+        <div className='h-px bg-[#ff9a3c]/12 dark:bg-[#3de8ff]/10' aria-hidden />
+
+        <pre hidden={isMermaid && effectiveMode === Mode.Preview} className='code-block-pre'>
           <NodeViewContent as='code' />
         </pre>
 
@@ -164,7 +182,7 @@ export default function CodeBlock(props: CodeBlockProps) {
             contentEditable={false}
             hidden={effectiveMode === Mode.Edit}
             ref={previewer}
-            className='overflow-x-auto bg-slate-900 p-4'
+            className='code-block-pre code-block-mermaid'
           />
         )}
       </div>

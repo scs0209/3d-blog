@@ -15,7 +15,7 @@ export const BlogSectionTitle = ({ children, subtitle }: BlogSectionTitleProps) 
         </h2>
         <span className={blogTheme.sectionLineReverse} aria-hidden />
       </div>
-      {subtitle && <p className={`mt-2 text-center text-xs ${blogTheme.textMuted}`}>{subtitle}</p>}
+      {subtitle && <p className={`mt-2 text-center text-sm ${blogTheme.textMuted}`}>{subtitle}</p>}
     </div>
   );
 };
