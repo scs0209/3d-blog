@@ -62,7 +62,7 @@ export const SearchBar = ({
           onChange={(e) => onTextChange(e.target.value)}
           placeholder={pills.length === 0 ? placeholder : '검색어 추가...'}
           aria-label='게시물 검색'
-          className={`min-w-[100px] flex-1 bg-transparent text-sm focus:outline-none ${blogTheme.textPrimary} placeholder:text-[#d4a8c0]/55 dark:placeholder:text-[#7ec8ff]/45`}
+          className={`min-w-[100px] flex-1 bg-transparent text-sm focus:outline-none ${blogTheme.textPrimary} placeholder:text-[#c9bfc8] dark:placeholder:text-[#a8b6c8]`}
         />
       </div>
     </motion.div>

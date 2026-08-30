@@ -19,8 +19,7 @@ const variantClass: Record<ThemeToggleVariant, string> = {
   // 블로그 헤더 네비 버튼과 동일 톤
   blog: 'h-9 w-9 rounded-lg border border-[#ff9a3c]/30 bg-[#2a1545]/60 text-[#ffc8a0] transition hover:border-[#ff9a3c]/55 hover:bg-[#3d1f5c]/70 hover:shadow-[0_0_12px_rgba(255,154,60,0.2)] dark:border-[#3de8ff]/25 dark:bg-black/35 dark:text-[#3de8ff] dark:hover:border-[#3de8ff]/50 dark:hover:bg-black/50 dark:hover:shadow-[0_0_12px_rgba(61,232,255,0.15)]',
   // 어드민 헤더용 최소 스타일
-  admin:
-    'h-9 w-9 rounded-lg border border-[#ff9a3c]/30 bg-[#2a1545]/60 text-[#ffc8a0] transition hover:border-[#ff9a3c]/55 hover:bg-[#3d1f5c]/70 dark:border-[#3de8ff]/25 dark:bg-black/35 dark:text-[#3de8ff] dark:hover:border-[#3de8ff]/50 dark:hover:bg-black/50',
+  admin: 'h-10 w-10 rounded-full border border-white/15 bg-white/10 text-white/80 hover:bg-white/16 hover:text-white',
 };
 
 export default function ThemeToggleButton({ className, variant = 'navbar' }: ThemeToggleButtonProps) {

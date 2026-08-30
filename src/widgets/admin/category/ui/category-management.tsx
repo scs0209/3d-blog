@@ -31,12 +31,14 @@ const toCategoryFormData = (category: CategoryListItem): Category => ({
 type CategoryRowProps = {
   node: CategoryTreeNode<CategoryListItem>;
   depth: number;
+  deletingId: number | null;
   onEdit: (category: CategoryListItem, trigger: HTMLButtonElement) => void;
   onDelete: (category: CategoryListItem) => void;
 };
 
-const CategoryRow = ({ node, depth, onEdit, onDelete }: CategoryRowProps) => {
+const CategoryRow = ({ node, depth, deletingId, onEdit, onDelete }: CategoryRowProps) => {
   const hasChildren = (node._count?.children ?? node.children.length) > 0;
+  const isDeleting = deletingId === node.id;
 
   return (
     <div className='flex flex-col gap-2'>
@@ -77,17 +79,31 @@ const CategoryRow = ({ node, depth, onEdit, onDelete }: CategoryRowProps) => {
             size='sm'
             className='text-red-300 hover:text-red-200'
             onClick={() => onDelete(node)}
-            disabled={hasChildren}
-            aria-label={hasChildren ? `${node.name} 삭제 불가 (하위 카테고리 있음)` : `${node.name} 삭제`}
+            disabled={hasChildren || isDeleting}
+            aria-busy={isDeleting}
+            aria-label={
+              hasChildren
+                ? `${node.name} 삭제 불가 (하위 카테고리 있음)`
+                : isDeleting
+                  ? `${node.name} 삭제 중`
+                  : `${node.name} 삭제`
+            }
             title={hasChildren ? '하위 카테고리를 먼저 삭제하세요' : undefined}
           >
             <Trash2 size={14} />
-            삭제
+            {isDeleting ? '삭제 중...' : '삭제'}
           </Button>
         </div>
       </div>
       {node.children.map((child) => (
-        <CategoryRow key={child.id} node={child} depth={depth + 1} onEdit={onEdit} onDelete={onDelete} />
+        <CategoryRow
+          key={child.id}
+          node={child}
+          depth={depth + 1}
+          deletingId={deletingId}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
       ))}
     </div>
   );
@@ -98,6 +114,7 @@ export const CategoryManagement = () => {
   const { data, isLoading } = useCategories();
   const [createOpen, setCreateOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryListItem | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const categories = useMemo(() => toCategoryListItems(data), [data]);
@@ -136,12 +153,15 @@ export const CategoryManagement = () => {
     const confirmed = window.confirm(`"${category.name}" 카테고리를 삭제할까요?`);
     if (!confirmed) return;
 
+    setDeletingId(category.id);
     try {
       await deleteCategory(String(category.id));
       await invalidateCategories();
       toast.success(`"${category.name}" 카테고리를 삭제했습니다.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '카테고리 삭제에 실패했습니다.');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -174,13 +194,24 @@ export const CategoryManagement = () => {
         </div>
 
         {isLoading ? (
-          <p className={adminTheme.textMuted}>불러오는 중...</p>
+          <div className='flex flex-col gap-2' role='status' aria-live='polite' aria-label='카테고리를 불러오는 중'>
+            {['a', 'b', 'c', 'd'].map((id) => (
+              <div key={`category-skeleton-${id}`} className={`h-14 animate-pulse rounded-xl ${adminTheme.surface}`} />
+            ))}
+          </div>
         ) : tree.length === 0 ? (
           <p className={adminTheme.textMuted}>카테고리가 없습니다. 새 카테고리를 만들어 주세요.</p>
         ) : (
           <div className='flex flex-col gap-2'>
             {tree.map((node) => (
-              <CategoryRow key={node.id} node={node} depth={0} onEdit={handleEdit} onDelete={handleDelete} />
+              <CategoryRow
+                key={node.id}
+                node={node}
+                depth={0}
+                deletingId={deletingId}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         )}

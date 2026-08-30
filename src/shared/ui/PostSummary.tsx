@@ -14,8 +14,7 @@ interface PostSummaryProps {
 }
 
 export function PostSummary({ post }: PostSummaryProps) {
-  const revisedAt =
-    post.updatedAt instanceof Date ? post.updatedAt.toISOString() : (post.updatedAt ?? '');
+  const revisedAt = post.updatedAt instanceof Date ? post.updatedAt.toISOString() : (post.updatedAt ?? '');
 
   const { summary, isLoading, error, refetch, isFetching } = usePostSummary({
     postId: post.id,
@@ -63,8 +62,10 @@ export function PostSummary({ post }: PostSummaryProps) {
 
   const paragraphs = summary
     .split(/\n\s*\n/)
-    .map((p) => p.trim())
+    .map((paragraph) => paragraph.trim())
     .filter(Boolean);
+
+  const seenParagraphs = new Map<string, number>();
 
   return (
     <div className={`relative mb-6 ${blogTheme.summaryBox}`}>
@@ -72,15 +73,21 @@ export function PostSummary({ post }: PostSummaryProps) {
         <div className='h-4 w-4 rounded-full bg-[#ff9a3c]/70 dark:bg-[#3de8ff]/70' />
         <span className={`text-sm font-medium ${blogTheme.textAccent}`}>AI 요약</span>
       </div>
-      <div className={`blog-prose space-y-2 text-sm leading-relaxed ${blogTheme.textPrimary}`}>
-        {paragraphs.map((paragraph, index) => (
-          <p
-            key={`summary-p-${index}`}
-            className='m-0'
-            // 서버에서 받은 plain text에 한해 `code`만 허용
-            dangerouslySetInnerHTML={{ __html: formatSummaryText(paragraph) }}
-          />
-        ))}
+      <div className={`blog-prose space-y-2 text-[15px] leading-relaxed ${blogTheme.textPrimary}`}>
+        {paragraphs.map((paragraph) => {
+          const occurrence = seenParagraphs.get(paragraph) ?? 0;
+          seenParagraphs.set(paragraph, occurrence + 1);
+          const key = occurrence === 0 ? paragraph : `${paragraph}#${occurrence}`;
+
+          return (
+            <p
+              key={key}
+              className='m-0'
+              // 서버에서 받은 plain text에 한해 `code`만 허용
+              dangerouslySetInnerHTML={{ __html: formatSummaryText(paragraph) }}
+            />
+          );
+        })}
       </div>
     </div>
   );

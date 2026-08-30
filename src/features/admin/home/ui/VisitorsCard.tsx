@@ -1,11 +1,11 @@
-import type { VisitorResponse } from '@/entities/visitor/model/visitor';
+import { TrendingUp } from 'lucide-react';
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shadcn-ui/components/ui/card';
 import { Tag } from '@/shared/ui/Tag';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
-import { TrendingUp } from 'lucide-react';
+import type { AdminStats } from '../api/stats-api';
 
 type VisitorsCardProps = {
-  visitor: VisitorResponse;
+  visitor: AdminStats['visitors'];
 };
 
 export function VisitorsCard({ visitor }: VisitorsCardProps) {

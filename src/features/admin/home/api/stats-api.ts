@@ -23,70 +23,93 @@ export type AdminStats = {
     thisMonth: number;
     lastMonth: number;
   };
+  visitors: {
+    today: number;
+    total: number;
+  };
 };
 
-/** Supabase session pool burst 방지: 요청당 1회, 쿼리는 순차 실행 */
+type StatsRow = {
+  totalPosts: number;
+  thisMonthPosts: number;
+  lastMonthPosts: number;
+  totalUsers: number;
+  thisMonthUsers: number;
+  lastMonthUsers: number;
+  totalComments: number;
+  thisMonthComments: number;
+  lastMonthComments: number;
+  totalViews: number;
+  thisMonthViews: number;
+  lastMonthViews: number;
+  todayVisitors: number;
+  totalVisitors: number;
+};
+
+const toCount = (value: unknown) => Number(value ?? 0);
+
+const getSeoulDateKey = (date = new Date()) =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+
+/** Supabase session pool(connection_limit=1) 폭주 방지: 왕복 1회로 통계를 모음 */
 export const getStats = cache(async (): Promise<AdminStats> => {
   return withPrismaRetry(async () => {
     const now = new Date();
     const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+    const todayKey = getSeoulDateKey(now);
 
-    const totalPosts = await prisma.post.count();
-    const thisMonthPosts = await prisma.post.count({
-      where: { createdAt: { gte: thisMonthStart } },
-    });
-    const lastMonthPosts = await prisma.post.count({
-      where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
-    });
+    const [row] = await prisma.$queryRaw<StatsRow[]>`
+      SELECT
+        (SELECT COUNT(*)::int FROM "Post") AS "totalPosts",
+        (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthPosts",
+        (SELECT COUNT(*)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthPosts",
+        (SELECT COUNT(*)::int FROM "User") AS "totalUsers",
+        (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthUsers",
+        (SELECT COUNT(*)::int FROM "User" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthUsers",
+        (SELECT COUNT(*)::int FROM "Comment") AS "totalComments",
+        (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthComments",
+        (SELECT COUNT(*)::int FROM "Comment" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthComments",
+        (SELECT COALESCE(SUM("views"), 0)::int FROM "Post") AS "totalViews",
+        (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${thisMonthStart}) AS "thisMonthViews",
+        (SELECT COALESCE(SUM("views"), 0)::int FROM "Post" WHERE "createdAt" >= ${lastMonthStart} AND "createdAt" < ${thisMonthStart}) AS "lastMonthViews",
+        (SELECT COALESCE((SELECT "count" FROM "VisitorDaily" WHERE "date" = ${todayKey}), 0)::int) AS "todayVisitors",
+        (SELECT COALESCE(SUM("count"), 0)::int FROM "VisitorDaily") AS "totalVisitors"
+    `;
 
-    const totalUsers = await prisma.user.count();
-    const thisMonthUsers = await prisma.user.count({
-      where: { createdAt: { gte: thisMonthStart } },
-    });
-    const lastMonthUsers = await prisma.user.count({
-      where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
-    });
-
-    const totalComments = await prisma.comment.count();
-    const thisMonthComments = await prisma.comment.count({
-      where: { createdAt: { gte: thisMonthStart } },
-    });
-    const lastMonthComments = await prisma.comment.count({
-      where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
-    });
-
-    const totalViews = await prisma.post.aggregate({ _sum: { views: true } });
-    const thisMonthViews = await prisma.post.aggregate({
-      _sum: { views: true },
-      where: { createdAt: { gte: thisMonthStart } },
-    });
-    const lastMonthViews = await prisma.post.aggregate({
-      _sum: { views: true },
-      where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
-    });
+    if (!row) {
+      throw new Error('Failed to fetch admin stats');
+    }
 
     return {
       posts: {
-        total: totalPosts,
-        thisMonth: thisMonthPosts,
-        lastMonth: lastMonthPosts,
+        total: toCount(row.totalPosts),
+        thisMonth: toCount(row.thisMonthPosts),
+        lastMonth: toCount(row.lastMonthPosts),
       },
       users: {
-        total: totalUsers,
-        thisMonth: thisMonthUsers,
-        lastMonth: lastMonthUsers,
+        total: toCount(row.totalUsers),
+        thisMonth: toCount(row.thisMonthUsers),
+        lastMonth: toCount(row.lastMonthUsers),
       },
       comments: {
-        total: totalComments,
-        thisMonth: thisMonthComments,
-        lastMonth: lastMonthComments,
+        total: toCount(row.totalComments),
+        thisMonth: toCount(row.thisMonthComments),
+        lastMonth: toCount(row.lastMonthComments),
       },
       views: {
-        total: totalViews._sum.views ?? 0,
-        thisMonth: thisMonthViews._sum.views ?? 0,
-        lastMonth: lastMonthViews._sum.views ?? 0,
+        total: toCount(row.totalViews),
+        thisMonth: toCount(row.thisMonthViews),
+        lastMonth: toCount(row.lastMonthViews),
+      },
+      visitors: {
+        today: toCount(row.todayVisitors),
+        total: toCount(row.totalVisitors),
       },
     };
   });

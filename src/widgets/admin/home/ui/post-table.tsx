@@ -1,30 +1,19 @@
 'use client';
 
-import * as React from 'react';
 import {
   closestCenter,
   DndContext,
+  type DragEndEvent,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
+  type UniqueIdentifier,
   useSensor,
   useSensors,
-  type DragEndEvent,
-  type UniqueIdentifier,
 } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {
-  ChevronDown,
-  EllipsisVertical,
-  GripVertical,
-  Columns2,
-  ChevronsLeft,
-  ChevronsRight,
-  ChevronRight,
-  ChevronLeft,
-} from 'lucide-react';
 import {
   type ColumnFiltersState,
   createColumnHelper,
@@ -41,6 +30,20 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Columns2,
+  EllipsisVertical,
+  GripVertical,
+  LoaderCircle,
+} from 'lucide-react';
+import * as React from 'react';
+import { deletePost } from '@/features/post/api/post-api';
+import { type GetPostListResponse, usePostList } from '@/features/post/model';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { Checkbox } from '@/shadcn-ui/components/ui/checkbox';
 import {
@@ -54,12 +57,11 @@ import {
 import { Label } from '@/shadcn-ui/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shadcn-ui/components/ui/table';
-import { type GetPostListResponse, usePostList } from '@/features/post/model';
-import { useRouter } from 'next/navigation';
-import { deletePost } from '@/features/post/api/post-api';
-import { Tag, type ColorToken } from '@/shared/ui/Tag';
+import { type ColorToken, Tag } from '@/shared/ui/Tag';
 import { toast } from '@/shared/ui/toast/useToast';
+import { AdminTableSkeleton } from '@/widgets/admin/ui/admin-skeleton';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
+import { useAdminNavigation } from '@/widgets/admin/ui/use-admin-navigation';
 
 const TAG_COLORS: ColorToken[] = ['orange', 'cyan', 'amber', 'rose', 'violet', 'emerald', 'sky', 'fuchsiaToBlue'];
 
@@ -133,7 +135,11 @@ const columns = [
     id: 'header',
     header: '제목',
     cell: ({ row }) => {
-      return <div className={`max-w-[280px] truncate font-medium ${adminTheme.textPrimary}`}>{row.original?.title ?? ''}</div>;
+      return (
+        <div className={`max-w-[280px] truncate font-medium ${adminTheme.textPrimary}`}>
+          {row.original?.title ?? ''}
+        </div>
+      );
     },
     enableHiding: false,
   }),
@@ -187,57 +193,102 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     cell: ({ row, table }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='data-[state=open]:bg-muted text-muted-foreground flex size-8' size='icon'>
-            <EllipsisVertical />
-            <span className='sr-only'>메뉴 열기</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-32'>
-          <DropdownMenuItem>수정</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            variant='destructive'
-            onClick={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              await deletePost(row.original?.id ?? 0);
-              toast.success('게시물을 삭제했습니다');
-              table.options.meta?.refetch?.();
-            }}
-          >
-            삭제
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <PostActionsCell postId={row.original?.id ?? 0} onDeleted={() => table.options.meta?.refetch?.()} />
     ),
   }),
 ];
 
+function PostActionsCell({ postId, onDeleted }: { postId: number; onDeleted: () => void }) {
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const { navigate } = useAdminNavigation();
+
+  const handleEdit = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(`/admin/post/${postId}`);
+  };
+
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+    try {
+      await deletePost(postId);
+      toast.success('게시물을 삭제했습니다');
+      onDeleted();
+    } catch {
+      toast.error('게시물 삭제에 실패했습니다');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleMenuTriggerClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant='ghost'
+          className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
+          size='icon'
+          aria-label='게시물 메뉴 열기'
+          onClick={handleMenuTriggerClick}
+        >
+          {isDeleting ? <LoaderCircle className='size-4 animate-spin' /> : <EllipsisVertical />}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end' className='w-32'>
+        <DropdownMenuItem onClick={handleEdit}>수정</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant='destructive' disabled={isDeleting} onClick={handleDelete}>
+          {isDeleting ? '삭제 중...' : '삭제'}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function DraggableRow({ row }: { row: Row<PostItem> }) {
-  const router = useRouter();
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original?.id ?? 0,
   });
+  const { isPending, pendingHref, navigate, prefetch } = useAdminNavigation();
+  const href = `/admin/post/${row.original?.id}`;
+  const isRowPending = isPending && pendingHref === href;
 
   return (
     <TableRow
       data-state={row.getIsSelected() && 'selected'}
       data-dragging={isDragging}
       ref={setNodeRef}
-      className='relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 glass-row-hover'
+      aria-busy={isRowPending}
+      className={`relative z-0 cursor-pointer data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 glass-row-hover ${
+        isRowPending ? 'pointer-events-none opacity-60' : ''
+      }`}
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
       }}
       onClick={() => {
-        router.push(`/admin/post/${row.original?.id}`);
+        navigate(href);
+      }}
+      onMouseEnter={() => {
+        prefetch(href);
       }}
     >
       {row.getVisibleCells().map((cell) => (
         <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
       ))}
+      {isRowPending && (
+        <td className='pointer-events-none absolute right-4 top-1/2 z-10 -translate-y-1/2'>
+          <LoaderCircle className={`size-4 animate-spin ${adminTheme.textAccent}`} aria-hidden />
+        </td>
+      )}
     </TableRow>
   );
 }
@@ -308,11 +359,14 @@ export function PostTable() {
     }
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (isLoading) return;
     setData(posts);
   }, [isLoading, posts]);
+
+  if (isLoading && data.length === 0) {
+    return <AdminTableSkeleton />;
+  }
 
   return (
     <>

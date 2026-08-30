@@ -1,7 +1,7 @@
 import { CodeBlockLowlight } from 'novel/extensions';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { all, common, createLowlight } from 'lowlight';
-import CodeBlock from './code-block';
+import CodeBlock, { shouldStopCodeBlockEvent } from './code-block';
 
 export const createCodeBlockExtension = (scope: 'all' | 'common' = 'all') => {
   const lowlight = scope === 'all' ? createLowlight(all) : createLowlight(common);
@@ -20,7 +20,11 @@ export const createCodeBlockExtension = (scope: 'all' | 'common' = 'all') => {
       };
     },
     addNodeView() {
-      return ReactNodeViewRenderer(CodeBlock);
+      return ReactNodeViewRenderer(CodeBlock, {
+        as: 'div',
+        className: 'code-block-root',
+        stopEvent: shouldStopCodeBlockEvent,
+      });
     },
   }).configure({ lowlight });
 };

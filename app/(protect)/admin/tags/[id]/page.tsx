@@ -1,10 +1,10 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { deleteTag, getTagDetail, updateTag } from '@/features/tag/api/tag-api';
 import { toast } from '@/shared/ui/toast/useToast';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 interface TagDetail {
   id: number;
@@ -19,17 +19,15 @@ interface TagDetail {
   }>;
 }
 
-export default function TagDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function TagDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [tag, setTag] = useState<TagDetail | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchTag = async () => {
@@ -53,8 +51,9 @@ export default function TagDetailPage({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tag) return;
+    if (!tag || isSaving) return;
 
+    setIsSaving(true);
     try {
       const updatedTag = await updateTag(tag.id, { name });
       setTag((prevTag) => ({ ...prevTag!, ...updatedTag }));
@@ -62,18 +61,22 @@ export default function TagDetailPage({
       toast.success('태그를 수정했습니다');
     } catch {
       toast.error('태그 수정에 실패했습니다');
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!tag) return;
+    if (!tag || isDeleting) return;
 
+    setIsDeleting(true);
     try {
       await deleteTag(tag.id);
       toast.success('태그를 삭제했습니다');
       router.push('/admin');
     } catch {
       toast.error('태그 삭제에 실패했습니다');
+      setIsDeleting(false);
     }
   };
 
@@ -110,9 +113,10 @@ export default function TagDetailPage({
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(true)}
-              className='rounded-lg border border-red-400/40 bg-red-500/15 px-3 py-2 text-sm text-red-200 hover:bg-red-500/25'
+              disabled={isDeleting}
+              className='rounded-lg border border-red-400/40 bg-red-500/15 px-3 py-2 text-sm text-red-200 hover:bg-red-500/25 disabled:opacity-60'
             >
-              삭제
+              {isDeleting ? '삭제 중...' : '삭제'}
             </button>
           </div>
         </div>
@@ -132,8 +136,12 @@ export default function TagDetailPage({
                 required
               />
             </div>
-            <button type='submit' className={`rounded-lg px-4 py-2 text-sm font-medium ${adminTheme.navCta}`}>
-              저장
+            <button
+              type='submit'
+              disabled={isSaving}
+              className={`rounded-lg px-4 py-2 text-sm font-medium ${adminTheme.navCta} disabled:opacity-60`}
+            >
+              {isSaving ? '저장 중...' : '저장'}
             </button>
           </form>
         ) : (
@@ -166,7 +174,12 @@ export default function TagDetailPage({
 
       {isDeleteModalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4'>
-          <div className={`w-full max-w-md p-6 ${adminTheme.card}`} role='dialog' aria-modal='true' aria-label='태그 삭제 확인'>
+          <div
+            className={`w-full max-w-md p-6 ${adminTheme.card}`}
+            role='dialog'
+            aria-modal='true'
+            aria-label='태그 삭제 확인'
+          >
             <span className={adminTheme.cardTopGlow} aria-hidden />
             <h2 className={`mb-3 text-xl font-bold ${adminTheme.headerTitle}`}>태그 삭제</h2>
             <p className={`mb-6 ${adminTheme.textMuted}`}>이 태그를 삭제할까요? 이 작업은 되돌릴 수 없습니다.</p>
@@ -181,9 +194,10 @@ export default function TagDetailPage({
               <button
                 type='button'
                 onClick={handleDelete}
-                className='rounded-lg border border-red-400/40 bg-red-500/20 px-3 py-2 text-sm text-red-100 hover:bg-red-500/30'
+                disabled={isDeleting}
+                className='rounded-lg border border-red-400/40 bg-red-500/20 px-3 py-2 text-sm text-red-100 hover:bg-red-500/30 disabled:opacity-60'
               >
-                삭제
+                {isDeleting ? '삭제 중...' : '삭제'}
               </button>
             </div>
           </div>

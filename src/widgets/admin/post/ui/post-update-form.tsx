@@ -1,20 +1,20 @@
 'use client';
 
-import { useState, useOptimistic, useActionState, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { formatDateToYMD } from '@/shared/utils';
+import { Calendar, Loader2, Save, Tag as TagIcon, Trash2, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useActionState, useOptimistic, useRef, useState } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
-import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
-import { Button } from '@/shadcn-ui/components/ui/button';
-import { useToast } from '@/shared/ui';
-import { Tag as TagIcon, Save, Trash2, Calendar, User, Loader2 } from 'lucide-react';
-import { updatePostAction, deletePostAction } from '@/features/admin/post/api';
+import { deletePostAction, updatePostAction } from '@/features/admin/post/api';
 import { CategorySelector, TagsSelector } from '@/features/admin/post/ui';
 import type { CategorySelectorRef } from '@/features/admin/post/ui/category-selector';
 import type { TagsSelectorRef } from '@/features/admin/post/ui/tags-selector';
-import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { Button } from '@/shadcn-ui/components/ui/button';
 import { cn } from '@/shadcn-ui/lib/utils';
+import { useToast } from '@/shared/ui';
+import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
+import { formatDateToYMD } from '@/shared/utils';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 
 interface PostUpdateClientProps {

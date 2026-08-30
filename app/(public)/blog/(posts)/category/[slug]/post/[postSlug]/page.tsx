@@ -157,28 +157,29 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <section
           className={`relative mb-12 mt-0 px-4 py-8 sm:px-6 md:rounded-2xl md:px-8 md:overflow-hidden ${blogTheme.postSection}`}
         >
-          <div className='pointer-events-none absolute inset-0 z-0 hidden md:block'>
-            <div className='h-full w-full bg-gradient-to-tr from-[#8a4a68]/15 via-[#1c0e38]/20 to-[#ffc090]/10 blur-[2px] dark:from-cyan-900/20 dark:via-fuchsia-900/10 dark:to-cyan-800/10' />
-          </div>
           <h1
-            className={`relative z-10 mb-4 text-3xl font-extrabold md:drop-shadow-sm dark:md:drop-shadow-[0_2px_8px_#7dd3fc55] ${blogTheme.textPrimary}`}
+            className={`mb-4 font-[family-name:var(--font-syne),sans-serif] text-3xl font-bold tracking-tight md:text-4xl ${blogTheme.textPrimary}`}
           >
             {post.title}
           </h1>
-          <div className={`relative z-10 mb-6 flex items-center gap-3 text-xs ${blogTheme.textMuted}`}>
-            <span className='font-mono'>{post.author?.name || 'Unknown Author'}</span>
-            <span className='opacity-60'>|</span>
+          <div className={`mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm ${blogTheme.textMuted}`}>
+            <span>{post.author?.name || 'Unknown Author'}</span>
+            <span className='opacity-50' aria-hidden>
+              |
+            </span>
             <span>{formatDateToYMD(post?.createdAt ?? '')}</span>
             {post.category && (
               <>
-                <span className='opacity-60'>|</span>
+                <span className='opacity-50' aria-hidden>
+                  |
+                </span>
                 <span className={blogTheme.textAccent}>{post.category.name}</span>
               </>
             )}
           </div>
 
           {post.tags && post.tags.length > 0 && (
-            <div className='relative z-10 mb-6 flex flex-wrap gap-2'>
+            <div className='mb-6 flex flex-wrap gap-2'>
               {post.tags.map((tag) => (
                 <span key={tag.id} className={blogTheme.tagPill}>
                   #{tag.name}
@@ -187,7 +188,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </div>
           )}
 
-          <div className='relative z-10 mb-2 min-h-[88px] p-2'>
+          <div className='mb-2 min-h-[88px]'>
             <PostSummary
               post={{
                 id: post.id ?? post.slug ?? 'unknown',
@@ -198,7 +199,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             />
           </div>
 
-          <div className='relative z-10'>
+          <div>
             <PostContentViewer content={post.content ?? ''} />
           </div>
         </section>

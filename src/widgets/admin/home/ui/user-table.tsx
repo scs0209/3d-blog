@@ -1,15 +1,5 @@
 'use client';
 
-import * as React from 'react';
-import {
-  ChevronDown,
-  EllipsisVertical,
-  Columns2,
-  ChevronsLeft,
-  ChevronsRight,
-  ChevronRight,
-  ChevronLeft,
-} from 'lucide-react';
 import {
   type ColumnFiltersState,
   createColumnHelper,
@@ -26,6 +16,20 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Columns2,
+  EllipsisVertical,
+  LoaderCircle,
+} from 'lucide-react';
+import * as React from 'react';
+import type { UserResponse } from '@/entities/user/model/user';
+import { deleteUserById } from '@/features/user/actions/delete-user-action';
+import { useUser } from '@/features/user/model/use-user';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { Checkbox } from '@/shadcn-ui/components/ui/checkbox';
 import {
@@ -38,13 +42,10 @@ import {
 } from '@/shadcn-ui/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shadcn-ui/components/ui/table';
-import type { UserResponse } from '@/entities/user/model/user';
-import { useUser } from '@/features/user/model/use-user';
-import { useRouter } from 'next/navigation';
-import { deleteUser } from '@/features/user/api/user-api';
 import { toast } from '@/shared/ui/toast/useToast';
+import { AdminTableSkeleton } from '@/widgets/admin/ui/admin-skeleton';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
-import router from 'next/router';
+import { useAdminNavigation } from '@/widgets/admin/ui/use-admin-navigation';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
@@ -117,56 +118,92 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     cell: ({ row, table }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='data-[state=open]:bg-muted text-muted-foreground flex size-8' size='icon'>
-            <EllipsisVertical />
-            <span className='sr-only'>Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-32'>
-          <DropdownMenuItem onClick={() => router.push(`/admin/users/${row.original?.id ?? 0}/edit`)}>
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            variant='destructive'
-            onClick={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (window.confirm('정말로 이 유저를 삭제하시겠습니까?')) {
-                try {
-                  await deleteUser(row.original?.id ?? 0);
-                  toast.success('유저가 성공적으로 삭제되었습니다');
-                  table.options.meta?.refetch?.();
-                } catch (error) {
-                  toast.error('유저 삭제에 실패했습니다');
-                }
-              }
-            }}
-          >
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <UserActionsCell userId={row.original?.id ?? 0} onDeleted={() => table.options.meta?.refetch?.()} />
     ),
   }),
 ];
 
+function UserActionsCell({ userId, onDeleted }: { userId: number; onDeleted: () => void }) {
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const { navigate } = useAdminNavigation();
+
+  const handleEdit = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(`/admin/users/${userId}/edit`);
+  };
+
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (isDeleting) return;
+    if (!window.confirm('정말로 이 유저를 삭제하시겠습니까?')) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteUserById(userId);
+      toast.success('유저가 성공적으로 삭제되었습니다');
+      onDeleted();
+    } catch {
+      toast.error('유저 삭제에 실패했습니다');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleMenuTriggerClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant='ghost'
+          className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
+          size='icon'
+          aria-label='사용자 메뉴 열기'
+          onClick={handleMenuTriggerClick}
+        >
+          {isDeleting ? <LoaderCircle className='size-4 animate-spin' /> : <EllipsisVertical />}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end' className='w-32'>
+        <DropdownMenuItem onClick={handleEdit}>수정</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant='destructive' disabled={isDeleting} onClick={handleDelete}>
+          {isDeleting ? '삭제 중...' : '삭제'}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function UserRow({ row }: { row: Row<UserItem> }) {
-  const router = useRouter();
+  const { isPending, pendingHref, navigate, prefetch } = useAdminNavigation();
+  const href = `/admin/users/${row.original?.id ?? 0}/edit`;
+  const isRowPending = isPending && pendingHref === href;
 
   return (
     <TableRow
       data-state={row.getIsSelected() && 'selected'}
-      className='glass-row-hover cursor-pointer'
+      aria-busy={isRowPending}
+      className={`relative glass-row-hover cursor-pointer ${isRowPending ? 'pointer-events-none opacity-60' : ''}`}
       onClick={() => {
-        router.push(`/admin/users/${row.original?.id ?? 0}/edit`);
+        navigate(href);
+      }}
+      onMouseEnter={() => {
+        prefetch(href);
       }}
     >
       {row.getVisibleCells().map((cell) => (
         <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
       ))}
+      {isRowPending && (
+        <td className='pointer-events-none absolute right-4 top-1/2 z-10 -translate-y-1/2'>
+          <LoaderCircle className={`size-4 animate-spin ${adminTheme.textAccent}`} aria-hidden />
+        </td>
+      )}
     </TableRow>
   );
 }
@@ -210,13 +247,7 @@ export function UserTable() {
   });
 
   if (isLoading) {
-    return (
-      <div className={`p-8 ${adminTheme.tableWrap}`}>
-        <div className='flex items-center justify-center'>
-          <div className={adminTheme.textMuted}>사용자를 불러오는 중...</div>
-        </div>
-      </div>
-    );
+    return <AdminTableSkeleton rows={4} />;
   }
 
   return (
