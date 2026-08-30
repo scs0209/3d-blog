@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 import type { UserResponse } from '@/entities/user/model/user';
-import { deleteUser } from '@/features/user/api/user-api';
+import { deleteUserById } from '@/features/user/actions/delete-user-action';
 import { useUser } from '@/features/user/model/use-user';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { Checkbox } from '@/shadcn-ui/components/ui/checkbox';
@@ -141,7 +141,7 @@ function UserActionsCell({ userId, onDeleted }: { userId: number; onDeleted: () 
 
     setIsDeleting(true);
     try {
-      await deleteUser(userId);
+      await deleteUserById(userId);
       toast.success('유저가 성공적으로 삭제되었습니다');
       onDeleted();
     } catch {
@@ -149,6 +149,10 @@ function UserActionsCell({ userId, onDeleted }: { userId: number; onDeleted: () 
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleMenuTriggerClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
   };
 
   return (
@@ -159,6 +163,7 @@ function UserActionsCell({ userId, onDeleted }: { userId: number; onDeleted: () 
           className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
           size='icon'
           aria-label='사용자 메뉴 열기'
+          onClick={handleMenuTriggerClick}
         >
           {isDeleting ? <LoaderCircle className='size-4 animate-spin' /> : <EllipsisVertical />}
         </Button>

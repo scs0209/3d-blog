@@ -225,6 +225,10 @@ function PostActionsCell({ postId, onDeleted }: { postId: number; onDeleted: () 
     }
   };
 
+  const handleMenuTriggerClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -233,6 +237,7 @@ function PostActionsCell({ postId, onDeleted }: { postId: number; onDeleted: () 
           className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
           size='icon'
           aria-label='게시물 메뉴 열기'
+          onClick={handleMenuTriggerClick}
         >
           {isDeleting ? <LoaderCircle className='size-4 animate-spin' /> : <EllipsisVertical />}
         </Button>

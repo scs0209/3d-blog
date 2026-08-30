@@ -3,12 +3,20 @@
 import { revalidatePath } from 'next/cache';
 import { deleteUser } from '@/features/user/api/user-api';
 
-export async function deleteUserAction(prevState: { success: boolean; message: string }, formData: FormData) {
+export async function deleteUserById(id: number) {
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new Error('Failed to delete user');
+  }
+
+  await deleteUser(id);
+  revalidatePath('/admin');
+}
+
+export async function deleteUserAction(_prevState: { success: boolean; message: string }, formData: FormData) {
   const id = Number(formData.get('id'));
 
   try {
-    await deleteUser(id);
-    revalidatePath('/admin');
+    await deleteUserById(id);
     return { success: true, message: '유저가 성공적으로 삭제되었습니다.' };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
