@@ -4,13 +4,14 @@ import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import * as three from 'three';
-import { CYBER_SCREEN } from './cyber-computer';
+import { CYBER_SCREEN, SCREEN_WORLD } from './cyber-computer';
 import type { DeskCameraMode } from './types';
 
 type DeskCameraProps = {
   mode: DeskCameraMode;
   started: boolean;
   freeCam: boolean;
+  exiting: boolean;
 };
 
 const KEYS = {
@@ -24,7 +25,35 @@ const KEYS = {
   orbit: { pos: new three.Vector3(-15000, 10000, 15000), look: new three.Vector3(-100, 350, 0) },
 };
 
-export const DeskCamera = ({ mode, started, freeCam }: DeskCameraProps) => {
+const DEFAULT_FOV = 35;
+
+const fitCameraDistance = (
+  camera: three.Camera,
+  viewportWidth: number,
+  viewportHeight: number,
+  objectWidth: number,
+  objectHeight: number,
+  margin = 1.06,
+) => {
+  const cam = camera as three.PerspectiveCamera;
+  const vFov = (cam.fov * Math.PI) / 180;
+  const aspect = viewportWidth / Math.max(viewportHeight, 1);
+  const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
+  const distForWidth = (objectWidth * margin) / (2 * Math.tan(hFov / 2));
+  const distForHeight = (objectHeight * margin) / (2 * Math.tan(vFov / 2));
+  return Math.max(distForWidth, distForHeight);
+};
+
+const setCameraFov = (camera: three.Camera, fov: number) => {
+  const cam = camera as three.PerspectiveCamera;
+  if (cam.fov === fov) {
+    return;
+  }
+  cam.fov = fov;
+  cam.updateProjectionMatrix();
+};
+
+export const DeskCamera = ({ mode, started, freeCam, exiting }: DeskCameraProps) => {
   const { camera, size, clock } = useThree();
   const mouse = useRef({ x: 0, y: 0 });
   const desiredPos = useRef(KEYS.loading.pos.clone());
@@ -33,6 +62,9 @@ export const DeskCamera = ({ mode, started, freeCam }: DeskCameraProps) => {
   const booted = useRef(false);
   const prevMode = useRef(mode);
   const prevStarted = useRef(started);
+  const exitHoldPos = useRef(new three.Vector3());
+  const exitHoldLook = useRef(new three.Vector3());
+  const exitFrozen = useRef(false);
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -47,6 +79,20 @@ export const DeskCamera = ({ mode, started, freeCam }: DeskCameraProps) => {
     if (freeCam) {
       return;
     }
+
+    if (exiting) {
+      if (!exitFrozen.current) {
+        exitHoldPos.current.copy(camera.position);
+        exitHoldLook.current.copy(look.current);
+        exitFrozen.current = true;
+      }
+      camera.position.copy(exitHoldPos.current);
+      look.current.copy(exitHoldLook.current);
+      camera.lookAt(look.current);
+      return;
+    }
+
+    exitFrozen.current = false;
 
     if (prevMode.current !== mode || prevStarted.current !== started) {
       if (!started) {
@@ -66,12 +112,18 @@ export const DeskCamera = ({ mode, started, freeCam }: DeskCameraProps) => {
     }
 
     const elapsed = clock.elapsedTime * 1000;
+    const mobile = size.width < 768;
+    const portrait = size.height > size.width;
     const aspect = size.height / Math.max(size.width, 1);
+    const screenY = CYBER_SCREEN.position[1];
+    const screenZ = CYBER_SCREEN.position[2];
 
     if (!started) {
+      setCameraFov(camera, DEFAULT_FOV);
       desiredPos.current.copy(KEYS.loading.pos);
       desiredLook.current.copy(KEYS.loading.look);
     } else if (mode === 'idle') {
+      setCameraFov(camera, DEFAULT_FOV);
       desiredPos.current.set(
         Math.sin((elapsed + 19000) * 0.00008) * KEYS.idle.pos.x,
         Math.sin((elapsed + 1000) * 0.000004) * 4000 + KEYS.idle.pos.y - 3000,
@@ -79,17 +131,29 @@ export const DeskCamera = ({ mode, started, freeCam }: DeskCameraProps) => {
       );
       desiredLook.current.copy(KEYS.idle.look);
     } else if (mode === 'desk') {
-      const mx = mouse.current.x - size.width / 2;
-      const my = -(mouse.current.y - size.height);
-      desiredLook.current.x += (mx - desiredLook.current.x) * 0.05;
-      desiredLook.current.y += (my - desiredLook.current.y) * 0.05;
-      desiredLook.current.z = KEYS.desk.look.z;
-      desiredPos.current.x += (mx - desiredPos.current.x) * 0.025;
-      desiredPos.current.y += (-(mouse.current.y - size.height * 2) - desiredPos.current.y) * 0.025;
-      desiredPos.current.z = KEYS.desk.pos.z + aspect * 3000 - 1800;
+      if (mobile) {
+        desiredPos.current.set(0, portrait ? 2200 : 2000, portrait ? 9200 : 7800);
+        desiredLook.current.set(0, screenY, screenZ);
+      } else {
+        const mx = mouse.current.x - size.width / 2;
+        const my = -(mouse.current.y - size.height);
+        desiredLook.current.x += (mx - desiredLook.current.x) * 0.05;
+        desiredLook.current.y += (my - desiredLook.current.y) * 0.05;
+        desiredLook.current.z = KEYS.desk.look.z;
+        desiredPos.current.x += (mx - desiredPos.current.x) * 0.025;
+        desiredPos.current.y += (-(mouse.current.y - size.height * 2) - desiredPos.current.y) * 0.025;
+        desiredPos.current.z = KEYS.desk.pos.z + aspect * 3000 - 1800;
+      }
     } else {
-      const extra = size.width < 768 ? 0 : 600;
-      desiredPos.current.set(0, CYBER_SCREEN.position[1], KEYS.monitor.pos.z + aspect * 1200 - extra);
+      const distance = fitCameraDistance(
+        camera,
+        size.width,
+        size.height,
+        SCREEN_WORLD.w,
+        SCREEN_WORLD.h,
+        mobile ? 1.1 : 1.05,
+      );
+      desiredPos.current.set(0, screenY, screenZ + distance);
       desiredLook.current.copy(KEYS.monitor.look);
     }
 

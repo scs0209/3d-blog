@@ -6,11 +6,14 @@ import type { OsAppId, OsWindowState } from '../types';
 import { OsAppContent } from './OsAppContent';
 import { APP_META, OsWindow } from './OsWindow';
 
+import { DESK_OS_SITE_LINKS } from '../DeskSiteNav';
+
 const ICONS: OsAppId[] = ['welcome', 'about', 'experience', 'projects', 'skills', 'contact'];
 
 type DesktopOsProps = {
   interactive: boolean;
   compact?: boolean;
+  onNavigate?: (href: string) => void;
 };
 
 const OVERLAY_ID = 'desk-os-overlay';
@@ -24,7 +27,7 @@ const createWindow = (id: OsAppId, z: number, compact: boolean): OsWindowState =
   maximized: false,
 });
 
-export const DesktopOs = ({ interactive, compact = false }: DesktopOsProps) => {
+export const DesktopOs = ({ interactive, compact = false, onNavigate }: DesktopOsProps) => {
   const [windows, setWindows] = useState<OsWindowState[]>([createWindow('welcome', 1, compact)]);
   const [startOpen, setStartOpen] = useState(false);
   const [zCounter, setZCounter] = useState(2);
@@ -124,6 +127,14 @@ export const DesktopOs = ({ interactive, compact = false }: DesktopOsProps) => {
     }
     return current;
   }, null);
+
+  const handleSiteNavigate = (href: string) => {
+    if (!interactive || !onNavigate) {
+      return;
+    }
+    setStartOpen(false);
+    onNavigate(href);
+  };
 
   const desktopW = compact ? 512 : 1280;
   const desktopH = compact ? 288 : 720;
@@ -231,6 +242,20 @@ export const DesktopOs = ({ interactive, compact = false }: DesktopOsProps) => {
                 >
                   <span>{APP_META[id].icon}</span>
                   {APP_META[id].label}
+                </button>
+              </li>
+            ))}
+            <li className='my-1 border-t border-[#5ad8ff]/20' />
+            {DESK_OS_SITE_LINKS.map((link) => (
+              <li key={link.href}>
+                <button
+                  type='button'
+                  aria-label={`${link.label}로 이동`}
+                  tabIndex={0}
+                  onClick={() => handleSiteNavigate(link.href)}
+                  className='flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-[#9ec4dc] hover:bg-[#5ad8ff]/20 hover:text-[#5ad8ff]'
+                >
+                  {link.label}
                 </button>
               </li>
             ))}

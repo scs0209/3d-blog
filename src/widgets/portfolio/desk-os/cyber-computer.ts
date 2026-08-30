@@ -22,13 +22,16 @@ const CHAIR_CZ = (CHAIR_FIT.min[2] + CHAIR_FIT.max[2]) / 2;
 const CHAIR_SCALE = (CHAIR_FIT.max[1] - CHAIR_FIT.min[1]) / 1.18;
 const TYPING_SCALE = 1180;
 const SEAT_TOP_Y = CHAIR_CY + (-1.18 / 2 + 0.5825) * CHAIR_SCALE;
+/** Mixamo 바인드 높이 × 월드 스케일 */
+const TYPIST_HEIGHT = 1.18 * TYPING_SCALE;
 
 export const DESK_TYPIST = {
   model: '/Typing.glb',
   position: [CHAIR_CX - 40, SEAT_TOP_Y - 1.18 * TYPING_SCALE + 80, CHAIR_CZ + 40] as const,
   rotation: [0, Math.PI, 0] as const,
   scale: TYPING_SCALE,
-};
+  height: TYPIST_HEIGHT,
+} as const;
 
 export const CYBER_COMPUTER = {
   model: '/desk-os/computer/desk-pc.glb',
@@ -44,6 +47,11 @@ export const DESK_LIGHT_TARGET: [number, number, number] = [0, DESK_TOP, 400];
 
 /** Inner LCD: 363.3 x 202.7 at y 68.7–271.3, z 8.98 (16:9). Slight overscan so Html meets the bezel. */
 const SCREEN_LOCAL = { x: 0, y: 170, z: 11, w: 366, h: 205 };
+
+export const SCREEN_WORLD = {
+  w: SCREEN_LOCAL.w * CYBER_COMPUTER.scale,
+  h: SCREEN_LOCAL.h * CYBER_COMPUTER.scale,
+} as const;
 
 export const CYBER_SCREEN = {
   position: [

@@ -30,7 +30,7 @@ export const Navbar = () => {
   return (
     <>
       {/* 데스크톱 헤더 */}
-      <header className='hidden md:block fixed top-[10px] left-1/2 -translate-x-1/2 z-50 py-[5px] pl-5 pr-2 bg-[#1c1c1c] rounded-lg'>
+      <header className='hidden lg:block fixed top-[10px] left-1/2 -translate-x-1/2 z-50 py-[5px] pl-5 pr-2 bg-[#1c1c1c] rounded-lg'>
         <div className='max-w-6xl mx-auto flex items-center justify-between gap-8'>
           {/* 네비게이션 링크 */}
           <nav className='flex items-center gap-8'>
@@ -106,26 +106,35 @@ export const Navbar = () => {
       {/* 모바일 햄버거 메뉴 버튼 */}
       <button
         type='button'
-        className='md:hidden fixed top-4 left-4 z-50 p-3 bg-[#1c1c1c] rounded-lg text-gray-400 hover:text-white transition-all duration-300 border border-gray-700 hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:bg-[#1c1c1c]'
+        className='lg:hidden fixed top-4 left-4 z-50 rounded-lg border border-gray-700 bg-[#1c1c1c] p-3 text-gray-400 transition-all duration-300 hover:border-white hover:bg-[#1c1c1c] hover:text-white hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]'
         onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label='메뉴 열기'
       >
         <Menu size={20} />
       </button>
 
+      <div className='lg:hidden pointer-events-none fixed top-4 right-4 z-50 flex items-center gap-2'>
+        <div className='pointer-events-auto'>
+          <ThemeToggleButton variant='navbar' />
+        </div>
+        {status !== 'loading' && !session && (
+          <Link
+            href='/login'
+            className='pointer-events-auto rounded-xl border border-[#858585] px-3 py-2 text-xs font-semibold text-white transition hover:border-white'
+          >
+            Log In
+          </Link>
+        )}
+      </div>
+
       {/* 모바일 전체 화면 메뉴 */}
       {isMenuOpen && (
-        <div className='fixed inset-0 z-[60] md:hidden'>
+        <div className='fixed inset-0 z-[60] lg:hidden'>
           {/* 배경 */}
-          <div
+          <button
+            type='button'
             className='absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer animate-in fade-in duration-300'
             onClick={() => setIsMenuOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setIsMenuOpen(false);
-              }
-            }}
-            role='button'
-            tabIndex={0}
             aria-label='메뉴 닫기'
           />
 

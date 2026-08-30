@@ -7,6 +7,7 @@ import type { Group } from 'three';
 import * as three from 'three';
 import type { GLTF } from 'three-stdlib';
 import { setCosmosWalking } from '@/widgets/home/lib/cosmos-audio';
+import { getCosmosTouchMove } from '@/widgets/home/lib/cosmos-move-input';
 
 type GLTFResult = GLTF & {
   nodes: Record<string, three.SkinnedMesh>;
@@ -185,6 +186,14 @@ export function WalkingAvatar({
       }
       if (pressedCodes.has(CODE_D)) {
         dx += isCinematic ? 1 : -1;
+      }
+
+      if (dx === 0 && dz === 0 && isCinematic) {
+        const touch = getCosmosTouchMove();
+        if (touch.dx !== 0 || touch.dz !== 0) {
+          dx = touch.dx;
+          dz = touch.dz;
+        }
       }
     }
 

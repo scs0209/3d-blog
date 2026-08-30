@@ -1,8 +1,10 @@
 'use client';
 
+import { useViewportProfile } from '@/shared/hooks/use-viewport-profile';
 import { BakedGltf } from './BakedGltf';
 import { CyberpunkComputer } from './CyberpunkComputer';
 import { DECOR_NUDGE, DESK_FIT, ROOM_HIDE } from './cyber-computer';
+import { DeskExitPortal } from './DeskExitPortal';
 import { DeskLamp } from './DeskLamp';
 import { DeskTypist } from './DeskTypist';
 import { FittedGltf } from './FittedGltf';
@@ -14,11 +16,16 @@ import { VoidAtmosphere } from './VoidAtmosphere';
 type DeskSceneProps = {
   mode: DeskCameraMode;
   started: boolean;
+  exiting: boolean;
+  exitProgress: number;
   onEnterMonitor: () => void;
+  onNavigate: (href: string) => void;
 };
 
-/** Walls stay. Desk / chair / computer are downloaded models fitted to the original layout. */
-export const DeskScene = ({ mode, started, onEnterMonitor }: DeskSceneProps) => {
+export const DeskScene = ({ mode, started, exiting, exitProgress, onEnterMonitor, onNavigate }: DeskSceneProps) => {
+  const { isMobile } = useViewportProfile();
+  const hideForMobileMonitor = isMobile && mode === 'monitor';
+
   return (
     <>
       <VoidAtmosphere />
@@ -33,11 +40,16 @@ export const DeskScene = ({ mode, started, onEnterMonitor }: DeskSceneProps) => 
         nudge={DECOR_NUDGE}
       />
       <FittedGltf {...DESK_FIT} />
-      <MetalOfficeChair />
-      <DeskTypist />
+      <DeskExitPortal active={exiting} progress={exitProgress} />
+      {!hideForMobileMonitor ? (
+        <MetalOfficeChair exitProgress={exiting ? exitProgress : null} />
+      ) : null}
+      {(!hideForMobileMonitor || exiting) && (
+        <DeskTypist exitProgress={exiting ? exitProgress : null} />
+      )}
       <CyberpunkComputer />
       <DeskLamp />
-      <MonitorScreen mode={mode} started={started} onEnterMonitor={onEnterMonitor} />
+      <MonitorScreen mode={mode} started={started} onEnterMonitor={onEnterMonitor} onNavigate={onNavigate} />
     </>
   );
 };

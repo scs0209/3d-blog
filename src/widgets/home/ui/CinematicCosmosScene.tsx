@@ -852,7 +852,7 @@ const AvatarFollowCamera = ({
   target: MutableRefObject<three.Vector3>;
   enteringPortfolio: boolean;
 }) => {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const desired = useRef(new three.Vector3(5.5, 2.1, 14));
   const look = useRef(new three.Vector3(0.5, 1.35, -8));
   const smoothLook = useRef(new three.Vector3(0.5, 1.35, -8));
@@ -877,8 +877,17 @@ const AvatarFollowCamera = ({
     }
 
     const t = target.current;
-    desired.current.set(t.x + 5.2, t.y + 2.55, t.z + 11.8);
-    look.current.set(t.x + 0.35, t.y + 1.4, t.z - 7.5);
+    const narrow = size.width < 1024;
+    const portrait = size.height > size.width;
+    const followX = narrow ? (portrait ? 2.6 : 4.2) : 5.2;
+    const followY = narrow ? (portrait ? 3.2 : 2.45) : 2.55;
+    const followZ = narrow ? (portrait ? 7.8 : 10.2) : 11.8;
+    const lookX = narrow ? 0.15 : 0.35;
+    const lookY = narrow ? (portrait ? 1.55 : 1.32) : 1.4;
+    const lookZ = narrow ? (portrait ? -4.8 : -6.2) : -7.5;
+
+    desired.current.set(t.x + followX, t.y + followY, t.z + followZ);
+    look.current.set(t.x + lookX, t.y + lookY, t.z + lookZ);
 
     const camEase = 1 - Math.exp(-2.6 * delta);
     const lookEase = 1 - Math.exp(-3.2 * delta);
@@ -1004,7 +1013,16 @@ const NeonWisps = ({
   );
 };
 
-const BrandTitle = () => (
+const BrandTitle = () => {
+  const { size } = useThree();
+  const portrait = size.height > size.width;
+  const hideOnMobile = size.width < 1024 || (portrait && size.width < 900);
+
+  if (hideOnMobile) {
+    return null;
+  }
+
+  return (
   <group position={[-2.4, -0.55, 6.2]} rotation={[-0.08, 0.42, 0.02]}>
     <Text3D
       font='/gt.json'
@@ -1030,7 +1048,8 @@ const BrandTitle = () => (
     <pointLight position={[1.8, 1.4, 1.2]} color='#7aa8ff' intensity={5} distance={10} decay={2} />
     <pointLight position={[0.6, 0.4, 0.5]} color='#ff9a3c' intensity={2.4} distance={6} decay={2} />
   </group>
-);
+  );
+};
 
 export type CinematicCosmosSceneProps = {
   theme?: CosmosSceneTheme;

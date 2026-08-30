@@ -1,8 +1,10 @@
 'use client';
 
+import { useFrame } from '@react-three/fiber';
 import { useLayoutEffect, useRef } from 'react';
 import type { Group, Mesh } from 'three';
 import { CHAIR_FIT } from './cyber-computer';
+import { getExitChairOffsetZ } from './desk-exit';
 
 const LEATHER = {
   color: '#4a5566',
@@ -87,7 +89,11 @@ const ChairMesh = () => {
   );
 };
 
-export const MetalOfficeChair = () => {
+type MetalOfficeChairProps = {
+  exitProgress?: number | null;
+};
+
+export const MetalOfficeChair = ({ exitProgress = null }: MetalOfficeChairProps) => {
   const groupRef = useRef<Group>(null);
   const localH = 1.18;
   const scale = (CHAIR_FIT.max[1] - CHAIR_FIT.min[1]) / localH;
@@ -105,6 +111,14 @@ export const MetalOfficeChair = () => {
       mesh.receiveShadow = false;
     });
   }, []);
+
+  useFrame(() => {
+    if (!groupRef.current) {
+      return;
+    }
+    const pushZ = exitProgress === null ? 0 : getExitChairOffsetZ(exitProgress);
+    groupRef.current.position.set(cx, cy, cz + pushZ);
+  });
 
   return (
     <group ref={groupRef} position={[cx, cy, cz]} scale={scale}>
