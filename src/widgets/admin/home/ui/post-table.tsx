@@ -361,7 +361,7 @@ export function PostTable() {
 
   React.useEffect(() => {
     if (isLoading) return;
-    setData(posts);
+    setData((current) => (current === posts ? current : posts));
   }, [isLoading, posts]);
 
   if (isLoading && data.length === 0) {
@@ -370,21 +370,7 @@ export function PostTable() {
 
   return (
     <>
-      <div className='flex items-center justify-between px-2'>
-        <Label htmlFor='view-selector' className='sr-only'>
-          View
-        </Label>
-        <Select defaultValue='outline'>
-          <SelectTrigger className='flex w-fit @4xl/main:hidden' size='sm' id='view-selector'>
-            <SelectValue placeholder='Select a view' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='outline'>Outline</SelectItem>
-            <SelectItem value='past-performance'>Past Performance</SelectItem>
-            <SelectItem value='key-personnel'>Key Personnel</SelectItem>
-            <SelectItem value='focus-documents'>Focus Documents</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className='flex items-center justify-end px-2'>
         <div className='flex items-center gap-2 px-4'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

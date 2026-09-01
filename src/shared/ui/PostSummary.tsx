@@ -3,6 +3,8 @@
 import { usePostSummary } from '@/features/post/model';
 import { formatSummaryText, isValidSummary } from '@/features/post/utils';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
+import { blogProseScope } from '@/widgets/post/ui/blog-prose-scope';
 
 interface PostSummaryProps {
   post: {
@@ -25,7 +27,7 @@ export function PostSummary({ post }: PostSummaryProps) {
 
   if (isLoading) {
     return (
-      <div className={`relative mb-6 ${blogTheme.summaryBox}`} aria-busy='true'>
+      <div className={`relative mb-6 ${blogPostSurface.summaryBox}`} aria-busy='true'>
         <div className='mb-2 flex items-center gap-2'>
           <div className='h-4 w-4 animate-pulse rounded-full bg-[#ff9a3c]/60 dark:bg-[#3de8ff]/60' />
           <span className={`text-sm font-medium ${blogTheme.textAccent}`}>AI 요약 생성 중...</span>
@@ -40,7 +42,7 @@ export function PostSummary({ post }: PostSummaryProps) {
 
   if (error || !isValidSummary(summary)) {
     return (
-      <div className={`relative mb-6 ${blogTheme.summaryBox}`}>
+      <div className={`relative mb-6 ${blogPostSurface.summaryBox}`}>
         <div className='flex flex-wrap items-center justify-between gap-3'>
           <div className='flex items-center gap-2'>
             <div className='h-4 w-4 rounded-full bg-[#ff9a3c]/40 dark:bg-[#3de8ff]/40' />
@@ -68,12 +70,12 @@ export function PostSummary({ post }: PostSummaryProps) {
   const seenParagraphs = new Map<string, number>();
 
   return (
-    <div className={`relative mb-6 ${blogTheme.summaryBox}`}>
+    <div className={`relative mb-6 ${blogPostSurface.summaryBox}`}>
       <div className='mb-3 flex items-center gap-2'>
         <div className='h-4 w-4 rounded-full bg-[#ff9a3c]/70 dark:bg-[#3de8ff]/70' />
         <span className={`text-sm font-medium ${blogTheme.textAccent}`}>AI 요약</span>
       </div>
-      <div className={`blog-prose space-y-2 text-[15px] leading-relaxed ${blogTheme.textPrimary}`}>
+      <div className={`${blogProseScope} space-y-2 text-[15px] leading-relaxed ${blogTheme.textPrimary}`}>
         {paragraphs.map((paragraph) => {
           const occurrence = seenParagraphs.get(paragraph) ?? 0;
           seenParagraphs.set(paragraph, occurrence + 1);

@@ -4,6 +4,7 @@ import { MeshReflectorMaterial } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import type { PerspectiveCamera } from 'three';
@@ -14,6 +15,7 @@ import { HelloBot } from '@/shared/ui/HelloBot';
 import { CanvasLoader } from '@/shared/ui/Loader';
 import { MoveBot } from '@/shared/ui/MoveBot';
 import { WatchRobot } from '@/shared/ui/WatchRobot';
+import { blogLandingTheme } from '@/widgets/post/ui/blog-landing-theme';
 import { ComputerBackground } from '@/widgets/post/ui/ComputerBackground';
 import { Macintosh } from '@/widgets/post/ui/Macintosh';
 
@@ -47,12 +49,17 @@ function ResponsiveBlogCamera() {
 
 const BlogLandingScene = () => {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
   const { isMobile } = useViewportProfile();
   const [htmlScale, setHtmlScale] = useState(1);
   const [htmlOpacity, setHtmlOpacity] = useState(1);
   const [isNavigating, setIsNavigating] = useState(false);
   const [enableEffects, setEnableEffects] = useState(false);
   const navigateTimeoutRef = useRef<number | null>(null);
+
+  const isDark = resolvedTheme === 'dark';
+  const canvasBg = isDark ? blogLandingTheme.canvasBgDark : blogLandingTheme.canvasBg;
+  const spotColor = isDark ? blogLandingTheme.accentDark : blogLandingTheme.accentLight;
 
   const handleWheel = (e: React.WheelEvent) => {
     if (!isNavigating) {
@@ -104,7 +111,7 @@ const BlogLandingScene = () => {
   }, []);
 
   return (
-    <main className='fixed inset-0 z-10 h-full w-full bg-gray-700' onWheel={handleWheel} style={{ overflow: 'hidden' }}>
+    <main className={blogLandingTheme.shell} onWheel={handleWheel}>
       <AnimatePresence>
         <motion.div
           key='mac-canvas'
@@ -120,9 +127,17 @@ const BlogLandingScene = () => {
             camera={{ fov: 70, near: 1, zoom: 15, position: [-0.2, 1.5, 8.88] }}
             eventPrefix='client'
           >
-            <color attach='background' args={['black']} />
-            <hemisphereLight intensity={0.15} groundColor='black' />
-            <spotLight decay={0} position={[10, 20, 10]} angle={0.12} penumbra={1} intensity={1} castShadow={false} />
+            <color attach='background' args={[canvasBg]} />
+            <hemisphereLight intensity={0.18} groundColor={canvasBg} color={isDark ? '#7ec8ff' : '#ffb870'} />
+            <spotLight
+              decay={0}
+              position={[10, 20, 10]}
+              angle={0.12}
+              penumbra={1}
+              intensity={1.1}
+              color={spotColor}
+              castShadow={false}
+            />
             <Suspense fallback={<CanvasLoader />}>
               <Macintosh
                 scale={isMobile ? 0.2 : 0.25}
@@ -161,28 +176,32 @@ const BlogLandingScene = () => {
                   depthScale={1.2}
                   minDepthThreshold={0.4}
                   maxDepthThreshold={1.4}
-                  color='#202020'
-                  metalness={0.8}
+                  color={blogLandingTheme.floor}
+                  metalness={0.75}
                 />
               </mesh>
               {enableEffects ? (
                 <EffectComposer enableNormalPass={false} multisampling={0}>
-                  <Bloom luminanceThreshold={0.2} mipmapBlur luminanceSmoothing={0.1} intensity={2.5} />
+                  <Bloom
+                    luminanceThreshold={0.2}
+                    mipmapBlur
+                    luminanceSmoothing={0.1}
+                    intensity={isDark ? 2.2 : 2.5}
+                  />
                 </EffectComposer>
               ) : null}
             </Suspense>
           </Canvas>
           <FloatingActionButton />
 
-          <div className='absolute bottom-4 left-1/2 w-[min(92vw,20rem)] -translate-x-1/2 transform text-center text-white sm:bottom-8'>
-            <div className='animate-pulse duration-[3000ms]'>
-              <p className='mb-2 text-xs opacity-80 sm:text-sm'>스크롤하여 블로그 보기</p>
-              <div className='relative mx-auto h-10 w-6 rounded-full border-2 border-white/70'>
-                <div
-                  className='mx-auto mt-2 h-3 w-1 translate-y-0 transform animate-bounce rounded-full bg-white duration-[2500ms]'
-                  style={{ animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)' }}
-                />
-              </div>
+          <div className='absolute bottom-4 left-1/2 w-[min(92vw,20rem)] -translate-x-1/2 transform text-center sm:bottom-8'>
+            <p className={blogLandingTheme.scrollHint}>스크롤하여 블로그 보기</p>
+            <div className={blogLandingTheme.scrollTrack} aria-hidden>
+              <motion.div
+                className={blogLandingTheme.scrollThumb}
+                animate={{ y: [0, 6, 0], opacity: [0.9, 0.35, 0.9] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
+              />
             </div>
           </div>
         </motion.div>

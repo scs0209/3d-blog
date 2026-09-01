@@ -1,28 +1,37 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { getBlogIndexHref } from '@/widgets/post/lib/blog-index-path';
 
-const colorCombos = [
-  'bg-orange-500 border-orange-200',
-  'bg-rose-500 border-rose-200',
-  'bg-amber-500 border-amber-200',
-  'bg-fuchsia-500 border-fuchsia-200',
-  'bg-cyan-500 border-cyan-200 dark:bg-cyan-500 dark:border-cyan-200',
-  'bg-indigo-500 border-indigo-200 dark:bg-indigo-500 dark:border-indigo-200',
-];
+const getTagHref = (name: string) => getBlogIndexHref({ tags: name });
 
-const getTagHref = (name: string) => `/blog/all?tags=${encodeURIComponent(name)}`;
+type TagProps = {
+  tag: { id?: number; name?: string };
+  count: number;
+  variant?: 'default' | 'sidebar';
+};
 
-export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count: number }) => {
-  function hashString(str: string) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return Math.abs(hash);
+export const Tag = ({ tag, count, variant = 'default' }: TagProps) => {
+  const isSidebar = variant === 'sidebar';
+
+  if (isSidebar) {
+    return (
+      <motion.span whileHover={{ scale: 1.02 }} className='inline-flex'>
+        <Link
+          href={getTagHref(tag.name ?? '')}
+          aria-label={`${tag.name ?? ''}, ${count}개의 글`}
+          className='inline-flex min-h-8 items-center gap-2 rounded-full border border-[#ff9a3c]/30 bg-[#ff9a3c]/10 py-1 pl-2.5 pr-1.5 text-xs font-semibold tracking-wide text-[#ffd4b0] transition hover:border-[#ff9a3c]/45 dark:border-[#3de8ff]/30 dark:bg-[#3de8ff]/10 dark:text-[#b8e4ff] dark:hover:border-[#3de8ff]/45'
+        >
+          <span className='max-w-[9rem] truncate'>{tag.name}</span>
+          <span
+            className='flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#ff9a3c]/25 px-1 text-xs font-semibold leading-none text-[#fff4e8] dark:bg-[#3de8ff]/25 dark:text-[#f4fbff]'
+            aria-hidden
+          >
+            {count}
+          </span>
+        </Link>
+      </motion.span>
+    );
   }
-
-  const colorIdx = hashString(tag.name ?? '') % colorCombos.length;
-  const colorClass = colorCombos[colorIdx];
 
   return (
     <motion.span
@@ -35,14 +44,7 @@ export const Tag = ({ tag, count }: { tag: { id?: number; name?: string }; count
         className='inline-block px-3 py-1 text-xs font-mono text-[#ffc8a0] backdrop-blur-sm dark:text-[#3de8ff]'
       >
         {tag.name}
-        <motion.span
-          className={`absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 text-xs text-white ${colorClass}`}
-          initial={{ scale: 0 }}
-          whileInView={{ scale: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          {count}
-        </motion.span>
+        <span className='ml-1.5 text-xs opacity-80'>({count})</span>
       </Link>
     </motion.span>
   );

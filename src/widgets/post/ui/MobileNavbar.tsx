@@ -7,6 +7,7 @@ import { Tag } from '@/features/tag/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
+import { isBlogIndexPath } from '@/widgets/post/lib/blog-index-path';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { CategoryTree } from './CategoryTree';
 
@@ -27,7 +28,7 @@ export const MobileNavbar = ({
     const match = pathname.match(/^\/blog\/category\/([^/]+)/);
     return match?.[1] ? decodeURIComponent(match[1]) : null;
   })();
-  const isAllPage = pathname === '/blog/all';
+  const isAllPage = isBlogIndexPath(pathname);
 
   const handleSelectCategory = (slug: string) => {
     router.push(`/blog/category/${slug}`);

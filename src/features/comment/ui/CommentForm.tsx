@@ -3,9 +3,11 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateComment, commentFormSchema, type CommentFormSchema } from '../model';
-import { Button, useToast } from '@/shared/ui';
+import { useToast } from '@/shared/ui';
 import { useSession } from 'next-auth/react';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
+import { BlogCommentSubmitButton } from './BlogCommentSubmitButton';
 
 type CommentFormProps = {
   postId: number;
@@ -51,28 +53,22 @@ export function CommentForm({ postId, disabled = false }: CommentFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className='relative flex items-start gap-2 mb-6'>
-        <div className='relative flex-1'>
-          <label htmlFor='comment-input' className='sr-only'>
-            댓글 입력
-          </label>
-          <textarea
-            id='comment-input'
-            {...register('content')}
-            className={`${blogTheme.commentInput} pr-16`}
-            rows={3}
-            placeholder={isAuthenticated ? '댓글을 입력하세요...' : '로그인이 필요합니다'}
-            aria-label='댓글 입력'
-            disabled={!canComment || disabled || isPending}
-          />
-          <Button
-            type='submit'
-            isPending={isPending}
-            disabled={!canComment || disabled}
-            size='sm'
-            submitType='comment'
-          />
+    <form onSubmit={handleSubmit(onSubmit)} className='mb-6'>
+      <div className={blogPostSurface.commentInputShell}>
+        <label htmlFor='comment-input' className='sr-only'>
+          댓글 입력
+        </label>
+        <textarea
+          id='comment-input'
+          {...register('content')}
+          className={blogPostSurface.commentInputField}
+          rows={3}
+          placeholder={isAuthenticated ? '댓글을 입력하세요...' : '로그인이 필요합니다'}
+          aria-label='댓글 입력'
+          disabled={!canComment || disabled || isPending}
+        />
+        <div className={blogPostSurface.commentFormActions}>
+          <BlogCommentSubmitButton isPending={isPending} disabled={!canComment || disabled} />
         </div>
       </div>
       {errors.content && <p className='text-red-400 text-xs mt-1 mb-2'>{errors.content.message}</p>}

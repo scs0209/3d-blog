@@ -79,22 +79,22 @@ const horizontalRule = HorizontalRule.configure({
 const starterKit = StarterKit.configure({
   bulletList: {
     HTMLAttributes: {
-      class: cx('list-disc list-outside leading-3 -mt-2'),
+      class: cx('my-4 list-outside list-disc space-y-1.5 pl-6'),
     },
   },
   orderedList: {
     HTMLAttributes: {
-      class: cx('list-decimal list-outside leading-3 -mt-2'),
+      class: cx('my-4 list-outside list-decimal space-y-1.5 pl-6'),
     },
   },
   listItem: {
     HTMLAttributes: {
-      class: cx('leading-normal -mb-2'),
+      class: cx('leading-relaxed pl-0.5'),
     },
   },
   blockquote: {
     HTMLAttributes: {
-      class: cx('border-l-4 border-primary'),
+      class: cx('my-4 pl-4'),
     },
   },
   codeBlock: {
@@ -110,8 +110,8 @@ const starterKit = StarterKit.configure({
   },
   horizontalRule: false,
   dropcursor: {
-    color: '#DBEAFE',
-    width: 4,
+    color: 'rgba(255, 255, 255, 0.35)',
+    width: 2,
   },
   gapcursor: false,
 });
@@ -146,24 +146,26 @@ const characterCount = CharacterCount.configure();
 const tableKit = TableKit.configure({
   table: {
     HTMLAttributes: {
-      class: cx('border-collapse border-2 border-gray-500 dark:border-gray-400 my-6 w-full'),
+      class: cx(
+        'admin-post-table my-4 table-auto w-max max-w-full border-separate border-spacing-0 overflow-hidden rounded-lg border border-white/20',
+      ),
     },
   },
   tableRow: {
     HTMLAttributes: {
-      class: cx('border-b border-gray-400 dark:border-gray-500'),
+      class: cx('border-b border-white/10 last:border-b-0'),
     },
   },
   tableHeader: {
     HTMLAttributes: {
       class: cx(
-        'border border-gray-500 dark:border-gray-400 bg-gray-700 px-4 py-3 text-left font-semibold text-foreground',
+        'border-b border-white/15 bg-white/10 px-2.5 py-1.5 text-left text-xs font-medium text-white',
       ),
     },
   },
   tableCell: {
     HTMLAttributes: {
-      class: cx('border border-gray-500 dark:border-gray-400 px-4 py-3 text-foreground'),
+      class: cx('px-2.5 py-1.5 text-xs leading-snug text-white/85'),
     },
   },
 });

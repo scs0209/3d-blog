@@ -63,17 +63,24 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ comme
       return NextResponse.json({ error: 'Forbidden: You can only delete your own comments' }, { status: 403 });
     }
 
-    // 대댓글이 있는 경우 먼저 대댓글들을 삭제
-    if (comment.replies.length > 0) {
-      await prisma.comment.deleteMany({
-        where: { parentId: commentIdNum },
-      });
-    }
+    const replyIds = comment.replies.map((reply) => reply.id);
+    const commentIdsToDelete = [commentIdNum, ...replyIds];
 
-    // 댓글 삭제
-    await prisma.comment.delete({
-      where: { id: commentIdNum },
-    });
+    await prisma.$transaction([
+      prisma.commentLike.deleteMany({
+        where: { commentId: { in: commentIdsToDelete } },
+      }),
+      ...(replyIds.length > 0
+        ? [
+            prisma.comment.deleteMany({
+              where: { parentId: commentIdNum },
+            }),
+          ]
+        : []),
+      prisma.comment.delete({
+        where: { id: commentIdNum },
+      }),
+    ]);
 
     return NextResponse.json({ message: 'Comment deleted successfully' });
   } catch (error) {

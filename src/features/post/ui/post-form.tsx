@@ -23,6 +23,7 @@ import { buildCategoryTree, flattenCategoryTree } from '@/entities/category/lib/
 import { Tag, type ColorToken } from '@/shared/ui/Tag';
 import { cn } from '@/shadcn-ui/lib/utils';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
+import { adminFormTheme } from '@/widgets/admin/ui/admin-form-theme';
 
 type PostFormProps = {
   onSubmit: (data: PostFormSchema) => Promise<void>;
@@ -117,7 +118,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
               render={({ field }) => (
                 <FormItem className='space-y-2'>
                   <FormLabel className={`flex h-4 items-center gap-1.5 ${adminTheme.sectionLabel}`}>
-                    <span className='h-1.5 w-1.5 rounded-full bg-[#ff9a3c] dark:bg-[#3de8ff]' aria-hidden />
+                    <span className={adminFormTheme.accentDot} aria-hidden />
                     카테고리
                   </FormLabel>
                   <Select
@@ -138,7 +139,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
                         <SelectItem
                           key={category.id}
                           value={category.id.toString()}
-                          className='rounded-md text-sm focus:bg-[#ff9a3c]/15 focus:text-[#ffe8d0] data-[highlighted]:bg-[#ff9a3c]/15 data-[highlighted]:text-[#ffe8d0] dark:focus:bg-[#3de8ff]/12 dark:focus:text-[#c8e8ff] dark:data-[highlighted]:bg-[#3de8ff]/12 dark:data-[highlighted]:text-[#c8e8ff]'
+                          className={adminFormTheme.selectItem}
                         >
                           {`${'—'.repeat(category.depth)}${category.depth > 0 ? ' ' : ''}${category.name}`}
                         </SelectItem>
@@ -179,7 +180,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
                             aria-pressed={selected}
                             aria-label={`${tag.name} 태그 ${selected ? '해제' : '선택'}`}
                             className={cn(
-                              'shrink-0 rounded-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/40 dark:focus-visible:ring-[#3de8ff]/40',
+                              `shrink-0 rounded-md transition ${adminFormTheme.focusRing}`,
                               selected ? 'scale-[1.02]' : 'opacity-70 hover:opacity-100',
                             )}
                           >
@@ -217,7 +218,7 @@ const PostForm = ({ onSubmit }: PostFormProps) => {
           )}
         />
 
-        <div className='flex items-center justify-end gap-3 border-t border-[#ff9a3c]/15 pt-4 dark:border-[#3de8ff]/15'>
+        <div className={`flex items-center justify-end gap-3 ${adminFormTheme.divider}`}>
           <p className={`mr-auto hidden text-xs sm:block ${adminTheme.textMuted}`}>
             카테고리는 필수, 태그는 선택입니다
           </p>

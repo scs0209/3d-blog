@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
-import prisma from '@/shared/lib/db';
 import { baseUrl } from '@/shared/consts/baseUrl';
+import prisma from '@/shared/lib/db';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
@@ -13,14 +13,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
+      changeFrequency: 'weekly',
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/blog/all`,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 0.85,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/portfolio`,

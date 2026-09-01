@@ -10,6 +10,7 @@ import { decodePathSegment } from '@/shared/lib/decode-path-segment';
 import { PostContentViewer } from '@/shared/ui/PostContentViewer';
 import { formatDateToYMD } from '@/shared/utils';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
 import { PostBackButton } from '@/widgets/post/ui/PostBackButton';
 import { PostViewTracker } from '@/widgets/post/ui/PostViewTracker';
 
@@ -155,8 +156,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <PostBackButton href={backHref} />
 
         <section
-          className={`relative mb-12 mt-0 px-4 py-8 sm:px-6 md:rounded-2xl md:px-8 md:overflow-hidden ${blogTheme.postSection}`}
+          className={`relative mb-12 mt-0 px-4 py-8 sm:px-6 md:px-8 ${blogPostSurface.postSection}`}
         >
+          <span className={blogTheme.cardTopGlow} aria-hidden />
           <h1
             className={`mb-4 font-[family-name:var(--font-syne),sans-serif] text-3xl font-bold tracking-tight md:text-4xl ${blogTheme.textPrimary}`}
           >

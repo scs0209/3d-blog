@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { getCodeBlockText, preprocessHTML } from '@/shared/utils/process-html';
+import { blogProseScope } from '@/widgets/post/ui/blog-prose-scope';
 
 type PostHtmlViewerProps = {
   content: string;
@@ -83,7 +84,7 @@ export default function PostHtmlViewer({ content }: PostHtmlViewerProps) {
   }, [html, isSanitized]);
 
   return (
-    <div className='blog-prose'>
+    <div className={blogProseScope}>
       <div ref={containerRef} className='ProseMirror' dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );

@@ -1,10 +1,11 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { blogProseScope } from '@/widgets/post/ui/blog-prose-scope';
 
 const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'), {
   ssr: false,
-  loading: () => <div className='blog-prose min-h-[120px]' aria-busy='true' role='status' />,
+  loading: () => <div className={`${blogProseScope} min-h-[120px]`} aria-busy='true' role='status' />,
 });
 
 type PostContentViewerProps = {

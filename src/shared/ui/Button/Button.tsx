@@ -13,7 +13,6 @@ type ButtonProps = {
   loading?: boolean;
   disabled?: boolean;
   className?: string;
-  // Submit 버튼 전용 props (하위 호환성)
   isPending?: boolean;
   submitType?: 'comment' | 'reply';
 };
@@ -25,17 +24,21 @@ const sizeClasses = {
 };
 
 const variantColors = {
-  primary: 'from-blue-600/70 to-indigo-600/70 hover:from-blue-500/80 hover:to-indigo-500/80 border-blue-400/30',
-  secondary: 'from-slate-600/70 to-gray-600/70 hover:from-slate-500/80 hover:to-gray-500/80 border-slate-400/30',
-  comment: 'from-blue-600/70 to-indigo-800/70 hover:from-blue-500/80 hover:to-indigo-500/80 border-blue-400/30',
-  reply: 'from-indigo-600/70 to-purple-600/70 hover:from-indigo-500/80 hover:to-purple-500/80 border-indigo-400/30',
+  primary:
+    'border-white/25 bg-white/12 text-white/90 hover:border-white/40 hover:bg-white/18 dark:border-white/20 dark:bg-white/10 dark:hover:bg-white/16',
+  secondary:
+    'border-white/15 bg-transparent text-white/75 hover:border-white/30 hover:bg-white/8 dark:text-white/70',
+  comment:
+    'border-[#ff9a3c]/35 bg-[#ff9a3c]/12 text-[#ffd4b0] hover:border-[#ff9a3c]/55 hover:bg-[#ff9a3c]/20 dark:border-[#3de8ff]/30 dark:bg-[#3de8ff]/10 dark:text-[#b8e4ff] dark:hover:border-[#3de8ff]/45 dark:hover:bg-[#3de8ff]/16',
+  reply:
+    'border-[#ff9a3c]/30 bg-[#ff9a3c]/10 text-[#ffb870] hover:border-[#ff9a3c]/50 hover:bg-[#ff9a3c]/16 dark:border-[#3de8ff]/25 dark:bg-[#3de8ff]/8 dark:text-[#7ec8ff] dark:hover:border-[#3de8ff]/40 dark:hover:bg-[#3de8ff]/14',
 };
 
 const glowColors = {
-  primary: '0 0 15px rgba(59, 130, 246, 0.4)',
-  secondary: '0 0 15px rgba(100, 116, 139, 0.4)',
-  comment: '0 0 15px rgba(59, 130, 246, 0.4)',
-  reply: '0 0 15px rgba(99, 102, 241, 0.4)',
+  primary: '0 4px 18px rgba(255, 255, 255, 0.12)',
+  secondary: '0 4px 14px rgba(255, 255, 255, 0.08)',
+  comment: '0 4px 16px rgba(255, 154, 60, 0.18)',
+  reply: '0 4px 16px rgba(255, 154, 60, 0.14)',
 };
 
 export function Button({
@@ -47,30 +50,24 @@ export function Button({
   loading = false,
   disabled = false,
   className = '',
-  // 하위 호환성을 위한 submit 관련 props
   isPending,
   submitType,
 }: ButtonProps) {
-  // 하위 호환성 처리
   const isLoading = loading || isPending || false;
   const buttonVariant = submitType ? submitType : variant;
-
-  // glassmorphism 버튼인지 확인
   const isGlassButton = buttonVariant === 'glass' || buttonVariant === 'glass-primary';
-
   const colorClasses = isGlassButton ? '' : variantColors[buttonVariant as keyof typeof variantColors];
   const glowColor = isGlassButton
-    ? '0 0 15px rgba(255, 255, 255, 0.3)'
+    ? '0 4px 18px rgba(255, 255, 255, 0.12)'
     : glowColors[buttonVariant as keyof typeof glowColors];
 
-  // Submit 버튼인 경우 기본 children 설정
   const defaultChildren = submitType ? (
     isLoading ? (
       <>
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: 'linear' }}
-          className='w-2.5 h-2.5 border border-white/40 border-t-white rounded-full'
+          className='h-2.5 w-2.5 rounded-full border border-white/40 border-t-white'
         />
         <span>등록중...</span>
       </>
@@ -105,33 +102,24 @@ export function Button({
       ${className}
     `
     : `
-      bg-gradient-to-r ${colorClasses}
-      backdrop-blur-sm border
-      text-white/90 font-medium rounded-md shadow-lg
-      transition-all duration-300 
+      border backdrop-blur-sm
+      font-medium rounded-md
+      transition-all duration-200
       disabled:opacity-50 disabled:cursor-not-allowed 
       flex items-center gap-1.5 justify-center
+      ${colorClasses}
       ${sizeClasses[size]}
-      dark:text-white/95
       ${className}
     `;
 
-  // Submit 버튼인 경우 absolute 위치 클래스 추가
   const submitClasses = submitType ? 'absolute bottom-4 right-2' : '';
 
   return (
     <motion.button
       type={type}
       onClick={onClick}
-      whileHover={{
-        scale: 1.02,
-        rotate: 1,
-        boxShadow: glowColor,
-      }}
-      whileTap={{
-        scale: 0.98,
-        rotate: 0,
-      }}
+      whileHover={{ scale: 1.01, boxShadow: glowColor }}
+      whileTap={{ scale: 0.99 }}
       className={`${baseClasses} ${submitClasses}`}
       disabled={disabled || isLoading}
     >

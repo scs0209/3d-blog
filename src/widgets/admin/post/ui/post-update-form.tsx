@@ -17,6 +17,7 @@ import { useToast } from '@/shared/ui';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { formatDateToYMD } from '@/shared/utils';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
+import { adminFormTheme } from '@/widgets/admin/ui/admin-form-theme';
 
 interface PostUpdateClientProps {
   initialPost: PostResponse;
@@ -141,7 +142,7 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
         <NovelEditor value={content} onChange={setContent} />
       </div>
 
-      <div className='flex flex-wrap justify-end gap-3 border-t border-[#ff9a3c]/15 pt-4 dark:border-[#3de8ff]/15'>
+      <div className={`flex flex-wrap justify-end gap-3 ${adminFormTheme.divider}`}>
         <form action={updateAction} className='contents'>
           <Button
             type='submit'

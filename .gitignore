@@ -44,3 +44,9 @@ next-env.d.ts
 .pnpm-store
 .gemini/
 gha-creds-*.json
+.gstack/
+
+# impeccable (local overrides only — skill 본체는 repo에 포함)
+.impeccable/config.local.json
+.claude/skills/
+.agents/skills/

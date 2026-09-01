@@ -5,6 +5,9 @@ import { queryKeys } from '@/shared/queryKeys';
 import { getPostList } from '../api/post-api';
 import type { GetPostListParams, GetPostListResponse } from './post-types';
 
+type PostListItem = NonNullable<GetPostListResponse['data']>[number];
+const EMPTY_POSTS: PostListItem[] = [];
+
 export const usePost = <T extends GetPostListResponse>(params: GetPostListParams) => {
   const { data, ...rest } = useInfiniteQuery<T>({
     queryKey: queryKeys.post.all(params).queryKey,
@@ -39,7 +42,7 @@ export const usePostList = (params: GetPostListParams) => {
   });
 
   return {
-    posts: data?.data ?? [],
+    posts: data?.data ?? EMPTY_POSTS,
     meta: data?.meta,
     ...rest,
   };

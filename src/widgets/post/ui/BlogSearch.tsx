@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQueryState, parseAsString, parseAsArrayOf } from 'nuqs';
 import { Search, X, Filter } from 'lucide-react';
 import { useCategories } from '@/features/category/model';
+import { isBlogIndexPath } from '@/widgets/post/lib/blog-index-path';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import type { SearchPill } from './SearchBar';
 
@@ -79,7 +80,7 @@ export function BlogSearch() {
     }
   };
 
-  const shouldShowSearch = pathname === '/blog/all';
+  const shouldShowSearch = isBlogIndexPath(pathname);
 
   const searchBarPlaceholder = useMemo(() => {
     if (pills.length > 0) return '검색어 추가...';

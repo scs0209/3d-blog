@@ -81,7 +81,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='ko' suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}
+        style={{ fontFamily: 'var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
+      >
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <Providers>
             <VisitorLogger />
