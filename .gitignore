@@ -46,9 +46,7 @@ next-env.d.ts
 gha-creds-*.json
 .gstack/
 
-# impeccable (locally installed skills — re-run `npx impeccable install` to restore)
-.cursor/skills/
-.github/skills/
+# impeccable (local overrides only — skill 본체는 repo에 포함)
+.impeccable/config.local.json
 .claude/skills/
 .agents/skills/
-.impeccable/config.local.json
