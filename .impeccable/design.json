@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-01T10:35:00.000Z",
+  "title": "Design System: 3D Blog",
+  "extensions": {
+    "colorMeta": {
+      "cosmos-void": {
+        "role": "neutral",
+        "displayName": "Cosmos Void",
+        "canonical": "oklch(14% 0.04 280)",
+        "tonalRamp": ["#020108", "#070414", "#0c0820", "#12082a", "#1a1040", "#2a1545", "#3d1f5c", "#5a2868"]
+      },
+      "accent-warm": {
+        "role": "primary",
+        "displayName": "Warm Horizon",
+        "canonical": "oklch(72% 0.16 55)",
+        "tonalRamp": ["#5c3a1a", "#8a4a28", "#b86530", "#ff9a3c", "#ffb870", "#ffc8a0", "#ffd4b0", "#fff4e8"]
+      },
+      "accent-cool": {
+        "role": "primary",
+        "displayName": "Deep Cyan Pulse",
+        "canonical": "oklch(82% 0.12 195)",
+        "tonalRamp": ["#0a3040", "#1a4a6a", "#2a7090", "#3de8ff", "#5ad8ff", "#7ec8ff", "#b8e4ff", "#f4fbff"]
+      },
+      "text-warm-body": {
+        "role": "neutral",
+        "displayName": "Warm Parchment",
+        "canonical": "oklch(95% 0.01 80)",
+        "tonalRamp": ["#3a3028", "#5a5048", "#7a7068", "#9a9088", "#b9afa8", "#c9bfc8", "#e8ddd4", "#f5f0e8"]
+      },
+      "admin-cta": {
+        "role": "secondary",
+        "displayName": "Admin Signal Green",
+        "canonical": "oklch(72% 0.2 145)",
+        "tonalRamp": ["#0a4020", "#126830", "#1a9040", "#1ed760", "#3be072", "#6ef098", "#a0f8c0", "#d0fce0"]
+      },
+      "glass-surface": {
+        "role": "neutral",
+        "displayName": "Glass White",
+        "canonical": "rgba(255, 255, 255, 0.1)",
+        "tonalRamp": ["rgba(255,255,255,0.02)", "rgba(255,255,255,0.05)", "rgba(255,255,255,0.08)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0.15)", "rgba(255,255,255,0.2)", "rgba(255,255,255,0.3)", "rgba(255,255,255,0.5)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Blog section titles, card headlines, Syne geometric display." },
+      "body": { "displayName": "Body", "purpose": "Prose, UI copy, admin forms. Geist Sans at 1.0625rem / lh 1.85." },
+      "mono": { "displayName": "Mono", "purpose": "Code blocks, lang selectors, desk-os monospace UI." }
+    },
+    "shadows": [
+      { "name": "blog-card", "value": "0 4px 24px rgba(255,154,60,0.08)", "purpose": "Resting blog post card lift (light theme)." },
+      { "name": "blog-card-hover", "value": "0 0 28px rgba(255,154,60,0.18)", "purpose": "Blog card hover glow escalation." },
+      { "name": "admin-window", "value": "0 40px 120px rgba(0,0,0,0.45)", "purpose": "Main admin spatial window depth." },
+      { "name": "admin-cta", "value": "0 8px 24px rgba(30,215,96,0.28)", "purpose": "Admin primary green button glow." },
+      { "name": "glass", "value": "10px 18px 6px rgba(0,0,0,0.1)", "purpose": "Generic glass panel shadow." }
+    ],
+    "motion": [
+      { "name": "ease-glass", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default glass hover/state transitions (0.3s)." },
+      { "name": "ease-nav-slide", "value": "cubic-bezier(0.77, 0, 0.175, 1)", "purpose": "Navbar link slide-up hover (600ms)." },
+      { "name": "blog-planet-float", "value": "ease-in-out 8s infinite", "purpose": "Blog decorative planet float animation." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Glass Button",
+      "kind": "button",
+      "refersTo": "button-glass",
+      "description": "Default glass CTA on dark/cosmic surfaces.",
+      "html": "<button class=\"ds-btn-glass\" type=\"button\">Explore</button>",
+      "css": ".ds-btn-glass { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); color: rgba(255,255,255,0.9); font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.3s ease, transform 0.3s ease; } .ds-btn-glass:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); } .ds-btn-glass:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.35); } .ds-btn-glass:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Admin Primary Button",
+      "kind": "button",
+      "refersTo": "button-admin-primary",
+      "description": "Primary action in admin spatial UI — save, publish, create.",
+      "html": "<button class=\"ds-btn-admin-primary\" type=\"button\">Save changes</button>",
+      "css": ".ds-btn-admin-primary { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; border-radius: 9999px; border: none; background: #1ed760; color: #000; font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 0.875rem; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(30,215,96,0.28); transition: background 0.2s ease; } .ds-btn-admin-primary:hover { background: #3be072; } .ds-btn-admin-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(30,215,96,0.5), 0 8px 24px rgba(30,215,96,0.28); }"
+    },
+    {
+      "name": "Blog Nav Active",
+      "kind": "nav",
+      "refersTo": "blog-nav-active",
+      "description": "Active state for blog sidebar/top nav items (warm theme).",
+      "html": "<a class=\"ds-nav-active\" href=\"#\">All posts</a>",
+      "css": ".ds-nav-active { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,154,60,0.45); background: rgba(255,154,60,0.1); color: #fff4e8; font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 0.875rem; font-weight: 500; text-decoration: none; box-shadow: 0 0 12px rgba(255,154,60,0.15); transition: border-color 0.2s ease, box-shadow 0.2s ease; } .ds-nav-active:hover { border-color: rgba(255,154,60,0.55); box-shadow: 0 0 16px rgba(255,154,60,0.2); } .ds-nav-active:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(255,154,60,0.35); }"
+    },
+    {
+      "name": "Blog Post Card",
+      "kind": "card",
+      "refersTo": "blog-card",
+      "description": "Post list card on blog main — warm theme with top glow line.",
+      "html": "<article class=\"ds-blog-card\"><div class=\"ds-blog-card-glow\"></div><h3 class=\"ds-blog-card-title\">Next.js와 R3F 번들 분리</h3><p class=\"ds-blog-card-excerpt\">Lighthouse 52에서 80으로 올린 기록.</p></article>",
+      "css": ".ds-blog-card { position: relative; padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,154,60,0.2); background: rgba(26,20,36,0.88); backdrop-filter: blur(4px); box-shadow: 0 4px 24px rgba(255,154,60,0.08); transition: border-color 0.2s ease, box-shadow 0.2s ease; } .ds-blog-card-glow { pointer-events: none; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(to right, transparent, rgba(255,154,60,0.7), transparent); } .ds-blog-card-title { margin: 0 0 8px; font-family: var(--font-syne, Syne, sans-serif); font-size: 1.125rem; font-weight: 600; color: #fffaf3; letter-spacing: -0.02em; } .ds-blog-card-excerpt { margin: 0; font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 0.9375rem; line-height: 1.6; color: #c9bfc8; } .ds-blog-card:hover { border-color: rgba(255,154,60,0.45); box-shadow: 0 0 28px rgba(255,154,60,0.18); }"
+    },
+    {
+      "name": "Category Pill",
+      "kind": "chip",
+      "refersTo": "blog-card",
+      "description": "Category/tag pill on blog cards and detail.",
+      "html": "<span class=\"ds-pill\">Next.js</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; border: 1px solid rgba(255,154,60,0.3); background: rgba(255,154,60,0.1); font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; color: #ffd4b0; }"
+    },
+    {
+      "name": "Admin Spatial Window",
+      "kind": "card",
+      "refersTo": "blog-card",
+      "description": "Main content window in admin spatial UI.",
+      "html": "<div class=\"ds-admin-window\"><div class=\"ds-admin-window-sheen\"></div><p class=\"ds-admin-window-body\">Dashboard content</p></div>",
+      "css": ".ds-admin-window { position: relative; flex: 1; overflow: hidden; border-radius: 32px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); backdrop-filter: blur(40px) saturate(150%); box-shadow: 0 40px 120px rgba(0,0,0,0.45); padding: 24px; } .ds-admin-window-sheen { pointer-events: none; position: absolute; top: 0; left: 40px; right: 40px; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent); } .ds-admin-window-body { margin: 0; font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 1rem; color: rgba(255,255,255,0.9); }"
+    },
+    {
+      "name": "Blog Comment Input",
+      "kind": "input",
+      "refersTo": "blog-card",
+      "description": "Comment textarea on post detail — warm theme.",
+      "html": "<textarea class=\"ds-comment-input\" rows=\"3\" placeholder=\"Leave a comment…\"></textarea>",
+      "css": ".ds-comment-input { width: 100%; resize: none; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #f5f0e8; font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 0.875rem; line-height: 1.6; } .ds-comment-input::placeholder { color: #c9bfc8; } .ds-comment-input:focus { outline: none; box-shadow: 0 0 0 2px rgba(255,154,60,0.4); }"
+    },
+    {
+      "name": "Home Navbar Link",
+      "kind": "nav",
+      "refersTo": "button-glass",
+      "description": "Desktop navbar link on 3D home — slide-up hover animation.",
+      "html": "<a class=\"ds-nav-link\" href=\"#\"><span class=\"ds-nav-link-text\">Blog</span></a>",
+      "css": ".ds-nav-link { position: relative; display: inline-block; overflow: hidden; color: #d1d5db; font-family: var(--font-geist-sans, Geist, sans-serif); font-size: 0.875rem; font-weight: 400; text-decoration: none; } .ds-nav-link-text { display: block; transition: transform 600ms cubic-bezier(0.77, 0, 0.175, 1); } .ds-nav-link:hover .ds-nav-link-text { transform: translateY(100%); } .ds-nav-link::after { content: attr(data-label); position: absolute; left: 0; top: 0; color: #fff; transform: translateY(-100%); transition: transform 600ms cubic-bezier(0.77, 0, 0.175, 1); } .ds-nav-link:hover::after { transform: translateY(0); } .ds-nav-link:focus-visible { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; border-radius: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Glass Orbit",
+    "overview": "3D Blog는 React Three Fiber 3D 홈을 중심으로, 글래스모피즘 UI가 궤도처럼 공개면을 감싸는 정제된 tech 포트폴리오다. 방문자는 먼저 3D 씬에 몰입하고, 블로그·포트폴리오·관리자로 이동할수록 각 존(zone)에 맞는 UI 언어로 전환된다. 전체적으로 어두운 코스믹 배경 위에 반투명 레이어, 부드러운 blur, 절제된 glow가 겹쳐지며 \"우주 안의 유리 패널\" 느낌을 만든다.",
+    "keyCharacteristics": [
+      "3D 코스믹 void(#070414)를 앵커로, radial gradient·별빛·네온 glow가 깊이를 만든다",
+      "글래스모피즘: backdrop-blur + 반투명 border + inset sheen이 기본 표면 언어",
+      "존별 혼합: 홈=몰입, 블로그=고대비 읽기, admin=spatial glass + Spotify-green CTA",
+      "Syne display + Geist body/mono — 기술 포트폴리오에 맞는 기하학적 display + 깔끔한 UI 본문",
+      "테마별 warm/cool accent 전환 — orange #ff9a3c (light) ↔ cyan #3de8ff (dark)"
+    ],
+    "rules": [
+      { "name": "The Link-Only Accent Rule", "body": "블로그 본문(blog-prose)에서는 액센트 색을 링크·blockquote border·code highlight에만 쓴다. 본문 텍스트는 #f5f0e8(light) / #e8eef5(dark) 고대비를 유지한다.", "section": "colors" },
+      { "name": "The Zone Palette Rule", "body": "홈 3D는 코스믹 void 팔레트, 블로그는 warm/cool 듀얼, admin은 white/glass + green CTA. 존을 넘을 때 팔레트를 섞지 않는다.", "section": "colors" },
+      { "name": "The Syne-for-Chrome Rule", "body": "Display/headline에 Syne, 본문·UI chrome에 Geist. 3D 씬 HTML overlay는 sans-serif fallback.", "section": "typography" },
+      { "name": "The Blur-Before-Shadow Rule", "body": "Glass surfaces always pair backdrop-blur-md (12px) or stronger with a semi-transparent border. Shadow alone without blur is not the default glass look.", "section": "elevation" },
+      { "name": "The Sheen Line Rule", "body": "Chrome bars, cards, admin windows get a 1px top gradient sheen (via-accent/50 or via-white/35) for spatial glass realism.", "section": "elevation" },
+      { "name": "The Pill-for-Tags Rule", "body": "Tags, categories, admin dock items use full pill radius. Rectangular cards use lg–glass radius, never sharp corners on public surfaces.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do keep blog prose body at #f5f0e8 / #e8eef5 with line-height 1.85 for readability.",
+      "Do use warm orange accent in light theme and cool cyan in dark theme for blog chrome consistently.",
+      "Do pair glass surfaces with backdrop-blur and semi-transparent borders.",
+      "Do use Syne for display headings and Geist for body/UI in blog and admin.",
+      "Do reserve admin green #1ed760 exclusively for primary actions in admin zone.",
+      "Do add top sheen gradient lines on glass chrome bars and cards."
+    ],
+    "donts": [
+      "Don't use accent colors for blog body text — links and labels only.",
+      "Don't mix admin spatial glass palette into blog or 3D home surfaces.",
+      "Don't use flat opaque cards on blog without border/glow treatment.",
+      "Don't apply heavy box-shadow without blur on glass components.",
+      "Don't use generic shadcn gray defaults on blog/public surfaces — use blogTheme tokens."
+    ]
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "buildPath": "comp",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "arial",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-09-01T11:14:25.684Z",
+        "reason": "P1: remove legacy Arial body rule; Geist applied via layout"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-09-01T11:14:25.737Z",
+        "reason": "P1: remove unscoped legacy ProseMirror blue block from globals"
+      },
+      {
+        "rule": "overused-font",
+        "value": "arial",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-09-01T11:14:49.790Z",
+        "reason": "P1: removing legacy Arial from globals body rule"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "15px",
+        "files": [
+          "src/shared/ui/PostSummary.tsx"
+        ],
+        "createdAt": "2026-09-01T11:15:03.162Z",
+        "reason": "P1: preserve existing AI summary compact size"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-09-01T11:15:18.385Z",
+        "reason": "P1 globals cleanup: legacy prose styles being removed"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-09-01T11:15:18.477Z",
+        "reason": "P1 globals cleanup: JetBrains mono in code blocks is intentional"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-09-01T11:15:18.604Z",
+        "reason": "P1 globals cleanup: legacy scrollbar and prose radii"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-09-01T11:15:30.930Z",
+        "reason": "P1 globals cleanup: legacy prose and code block font sizes"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#dbeafe",
+        "files": [
+          "src/shared/ui/TextEditor/extensions.ts"
+        ],
+        "createdAt": "2026-09-01T11:44:59.850Z",
+        "reason": "P2: legacy blue dropcursor being replaced"
+      }
+    ]
+  }
+}
