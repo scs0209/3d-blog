@@ -6,14 +6,14 @@ export const CATALOG_STALE_TIME = 1000 * 60 * 30;
 export const POST_LIST_STALE_TIME = 1000 * 60 * 5;
 export const QUERY_PERSIST_GC_TIME = QUERY_PERSIST_MAX_AGE;
 export const QUERY_PERSIST_STORAGE_KEY = '3d-blog-query-cache';
-export const QUERY_PERSIST_BUSTER = 'v1';
+export const QUERY_PERSIST_BUSTER = 'v2';
 
 type PersistableQuery = {
   queryKey: readonly unknown[];
   state: { status: string };
 };
 
-/** 사이드바·카테고리·태그·글 목록만 남긴다. 좋아요/댓글/유저/AI 요약은 제외 */
+/** 사이드바·카테고리·태그 전체·글 목록만 남긴다. 태그 상세·좋아요/댓글/유저/AI 요약은 제외 */
 export const shouldPersistQuery = (query: PersistableQuery) => {
   if (query.state.status !== 'success') {
     return false;
@@ -26,8 +26,12 @@ export const shouldPersistQuery = (query: PersistableQuery) => {
     return true;
   }
 
-  if (root === 'category' || root === 'tag') {
+  if (root === 'category') {
     return true;
+  }
+
+  if (root === 'tag') {
+    return operation === 'all';
   }
 
   return root === 'post' && operation === 'all';

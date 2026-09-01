@@ -9,7 +9,12 @@ describe('shouldPersistQuery', () => {
     expect(shouldPersistQuery({ queryKey: ['sidebar'], state: success })).toBe(true);
     expect(shouldPersistQuery({ queryKey: ['category', 'all'], state: success })).toBe(true);
     expect(shouldPersistQuery({ queryKey: ['tag', 'all'], state: success })).toBe(true);
+    expect(shouldPersistQuery({ queryKey: ['category', 'posts', 'web', 1, 10], state: success })).toBe(true);
     expect(shouldPersistQuery({ queryKey: ['post', 'all', { page: 1 }], state: success })).toBe(true);
+  });
+
+  test('태그 상세는 영속화하지 않는다', () => {
+    expect(shouldPersistQuery({ queryKey: ['tag', 'detail', '1'], state: success })).toBe(false);
   });
 
   test('좋아요·댓글·유저·AI 요약은 영속화하지 않는다', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isCacheableStaticAssetPath, STATIC_ASSET_CACHE_NAME } from '../static-asset-cache';
+import { isCacheableStaticAssetPath, STATIC_ASSET_CACHE_NAME, STATIC_ASSET_CACHE_PREFIX } from '../static-asset-cache';
 
 describe('isCacheableStaticAssetPath', () => {
   test('3D 모델과 폰트 확장자를 캐시한다', () => {
@@ -25,6 +25,7 @@ describe('isCacheableStaticAssetPath', () => {
     const { readFileSync } = await import('node:fs');
     const { join } = await import('node:path');
     const sw = readFileSync(join(process.cwd(), 'public/sw-asset-cache.js'), 'utf8');
+    expect(sw).toContain(`const CACHE_PREFIX = '${STATIC_ASSET_CACHE_PREFIX}'`);
     expect(sw).toContain(`const CACHE_NAME = '${STATIC_ASSET_CACHE_NAME}'`);
   });
 });

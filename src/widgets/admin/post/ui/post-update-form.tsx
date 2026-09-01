@@ -62,6 +62,7 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
 
     if (result.success) {
       toast.success('포스트를 삭제했습니다');
+      await invalidateCatalogQueries(queryClient);
       router.push('/admin');
       router.refresh();
     } else {
