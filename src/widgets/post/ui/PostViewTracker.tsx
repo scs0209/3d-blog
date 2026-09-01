@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnalyticsEvents, trackEvent } from '@/shared/lib/analytics';
+import { isBlogIndexPath } from '@/widgets/post/lib/blog-index-path';
 
 type PostViewTrackerProps = {
   postId: string | number;
@@ -21,9 +22,16 @@ export const PostViewTracker = ({ postId, slug, categorySlug }: PostViewTrackerP
     let from = 'direct';
     if (fromParam) from = fromParam;
     else if (utmSource === 'rss' || utmSource === 'feed') from = 'rss';
-    else if (document.referrer.includes('/blog/all') || hasSearch) from = 'search';
-    else if (document.referrer.includes('/blog/category/')) from = 'category';
-    else if (document.referrer) from = 'referral';
+    else if (document.referrer) {
+      try {
+        const refPath = new URL(document.referrer).pathname;
+        if (isBlogIndexPath(refPath) || hasSearch) from = 'search';
+        else if (refPath.includes('/blog/category/')) from = 'category';
+        else from = 'referral';
+      } catch {
+        from = 'referral';
+      }
+    }
 
     trackEvent(AnalyticsEvents.blogPostView, {
       post_id: String(postId),
