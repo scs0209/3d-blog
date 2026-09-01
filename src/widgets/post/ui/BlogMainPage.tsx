@@ -7,6 +7,7 @@ import { getPostList } from '@/features/post/api/post-api';
 import type { GetPostListParams, GetPostListResponse } from '@/features/post/model';
 import { AnalyticsEvents, trackEvent } from '@/shared/lib/analytics';
 import { getNextPageParamFromMeta } from '@/shared/lib/pagination';
+import { POST_LIST_STALE_TIME } from '@/shared/lib/query-persist';
 import { queryKeys } from '@/shared/queryKeys';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { LoadMoreSentinel } from '@/widgets/post/ui/LoadMoreSentinel';
@@ -42,7 +43,7 @@ export const BlogMainPage = ({ initialPosts }: BlogMainPageProps) => {
       queryKey: queryKeys.post.all(listParams).queryKey,
       queryFn: ({ pageParam = 1 }) => getPostList({ ...listParams, page: pageParam as number }),
       initialPageParam: 1,
-      staleTime: 60_000,
+      staleTime: POST_LIST_STALE_TIME,
       initialData: canUseInitialData
         ? {
             pages: [initialPosts as GetPostListResponse],

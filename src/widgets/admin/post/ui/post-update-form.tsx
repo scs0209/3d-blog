@@ -12,6 +12,7 @@ import type { CategorySelectorRef } from '@/features/admin/post/ui/category-sele
 import type { TagsSelectorRef } from '@/features/admin/post/ui/tags-selector';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { cn } from '@/shadcn-ui/lib/utils';
+import { invalidateCatalogQueries } from '@/shared/lib/invalidate-catalog-queries';
 import { useToast } from '@/shared/ui';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { formatDateToYMD } from '@/shared/utils';
@@ -45,6 +46,7 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
     if (result.success && result.post) {
       setPost(result.post);
       toast.success('포스트를 저장했습니다');
+      void invalidateCatalogQueries(queryClient);
       void queryClient.invalidateQueries({
         queryKey: ['post', 'summary', String(initialPost.id)],
       });
@@ -60,6 +62,7 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
 
     if (result.success) {
       toast.success('포스트를 삭제했습니다');
+      await invalidateCatalogQueries(queryClient);
       router.push('/admin');
       router.refresh();
     } else {

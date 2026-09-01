@@ -15,7 +15,7 @@ import { useCategories } from '@/features/category/model';
 import type { CategoryFormSchema } from '@/features/category/model/category-schema';
 import CategoryForm from '@/features/category/ui/category-form';
 import { Button } from '@/shadcn-ui/components/ui/button';
-import { queryKeys } from '@/shared/queryKeys';
+import { invalidateCatalogQueries } from '@/shared/lib/invalidate-catalog-queries';
 import Modal from '@/shared/ui/modal';
 import { toast } from '@/shared/ui/toast/useToast';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
@@ -123,7 +123,7 @@ export const CategoryManagement = () => {
   const flatCount = useMemo(() => flattenCategoryTree(tree).length, [tree]);
 
   const invalidateCategories = async () => {
-    await queryClient.invalidateQueries({ queryKey: queryKeys.category.all.queryKey });
+    await invalidateCatalogQueries(queryClient);
   };
 
   const handleCreate = async (formData: CategoryFormSchema) => {

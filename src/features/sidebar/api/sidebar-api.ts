@@ -7,7 +7,7 @@ export type SidebarData = {
 };
 
 export const getSidebarData = async (): Promise<SidebarData> => {
-  const response = await fetch('/api/sidebar', { cache: 'no-store' });
+  const response = await fetch('/api/sidebar');
 
   if (!response.ok) {
     throw new Error(`Sidebar fetch failed: ${response.status}`);

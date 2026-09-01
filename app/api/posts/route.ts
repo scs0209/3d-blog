@@ -1,6 +1,7 @@
-import { createSlug } from '@/shared/utils/create-slug';
 import { type NextRequest, NextResponse } from 'next/server';
+import { READ_API_CACHE_HEADERS } from '@/shared/lib/api-cache-headers';
 import prisma from '@/shared/lib/db';
+import { createSlug } from '@/shared/utils/create-slug';
 
 /**
  * @swagger
@@ -181,19 +182,22 @@ export async function GET(req: NextRequest) {
       take: limit,
     });
 
-    return NextResponse.json({
-      data: posts,
-      meta: {
-        pagination: {
-          currentPage: page,
-          totalPages: Math.ceil(totalItems / limit),
-          totalItems,
-          itemsPerPage: limit,
-          hasNextPage: page < Math.ceil(totalItems / limit),
-          hasPrevPage: page > 1,
+    return NextResponse.json(
+      {
+        data: posts,
+        meta: {
+          pagination: {
+            currentPage: page,
+            totalPages: Math.ceil(totalItems / limit),
+            totalItems,
+            itemsPerPage: limit,
+            hasNextPage: page < Math.ceil(totalItems / limit),
+            hasPrevPage: page > 1,
+          },
         },
       },
-    });
+      { headers: READ_API_CACHE_HEADERS },
+    );
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
