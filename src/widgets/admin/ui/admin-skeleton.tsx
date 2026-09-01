@@ -1,7 +1,8 @@
 import { adminTheme } from './admin-theme';
+import { adminFormTheme } from './admin-form-theme';
 
 const Pulse = ({ className }: { className: string }) => (
-  <div className={`animate-pulse rounded-lg bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15 ${className}`} />
+  <div className={`${adminFormTheme.skeletonPulse} ${className}`} />
 );
 
 const TABLE_ROW_IDS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;

@@ -6,6 +6,7 @@ import { Tag as TagIcon } from 'lucide-react';
 import { Tag, type ColorToken } from '@/shared/ui/Tag';
 import { cn } from '@/shadcn-ui/lib/utils';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
+import { adminFormTheme } from '@/widgets/admin/ui/admin-form-theme';
 
 export interface TagsSelectorRef {
   getSelectedTagIds: () => string[];
@@ -73,7 +74,7 @@ export const TagsSelector = forwardRef<TagsSelectorRef, TagsSelectorProps>(({ in
                 aria-pressed={selected}
                 aria-label={`${tag.name} 태그 ${selected ? '해제' : '선택'}`}
                 className={cn(
-                  'shrink-0 rounded-md transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/40 dark:focus-visible:ring-[#3de8ff]/40',
+                  `shrink-0 rounded-md transition ${adminFormTheme.focusRing}`,
                   selected ? 'scale-[1.02]' : 'opacity-70 hover:opacity-100',
                 )}
               >

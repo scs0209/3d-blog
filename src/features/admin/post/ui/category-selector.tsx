@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useCategories } from '@/features/category/model';
 import { buildCategoryTree, flattenCategoryTree } from '@/entities/category/lib/build-category-tree';
 import { adminTheme } from '@/widgets/admin/ui/admin-theme';
+import { adminFormTheme } from '@/widgets/admin/ui/admin-form-theme';
 
 export interface CategorySelectorRef {
   getSelectedCategoryId: () => string;
@@ -45,7 +46,7 @@ export const CategorySelector = forwardRef<CategorySelectorRef, CategorySelector
     return (
       <div className='space-y-2'>
         <span className={`flex h-4 items-center gap-1.5 ${adminTheme.sectionLabel}`}>
-          <span className='h-1.5 w-1.5 rounded-full bg-[#ff9a3c] dark:bg-[#3de8ff]' aria-hidden />
+          <span className={adminFormTheme.accentDot} aria-hidden />
           카테고리
         </span>
         <Select value={selectedCategoryId} onValueChange={handleCategoryChange}>
@@ -57,7 +58,7 @@ export const CategorySelector = forwardRef<CategorySelectorRef, CategorySelector
               <SelectItem
                 key={category.id}
                 value={category.id.toString()}
-                className='rounded-md text-sm focus:bg-[#ff9a3c]/15 focus:text-[#ffe8d0] data-[highlighted]:bg-[#ff9a3c]/15 data-[highlighted]:text-[#ffe8d0] dark:focus:bg-[#3de8ff]/12 dark:focus:text-[#c8e8ff] dark:data-[highlighted]:bg-[#3de8ff]/12 dark:data-[highlighted]:text-[#c8e8ff]'
+                className={adminFormTheme.selectItem}
               >
                 {`${'—'.repeat(category.depth)}${category.depth > 0 ? ' ' : ''}${category.name}`}
               </SelectItem>
