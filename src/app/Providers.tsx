@@ -1,25 +1,30 @@
 'use client';
 
-import { QueryClientProvider } from '@tanstack/react-query';
-import type * as React from 'react';
-import { QueryClient, defaultShouldDehydrateQuery, isServer } from '@tanstack/react-query';
-import { SessionProvider } from 'next-auth/react';
-import { ToastProvider } from '@/shared/ui/toast';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { AnalyticsProvider } from '@/shared/ui/AnalyticsProvider';
+import { defaultShouldDehydrateQuery, isServer, QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
+import { SessionProvider } from 'next-auth/react';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import type * as React from 'react';
+import { AssetCacheRegistrar } from '@/app/AssetCacheRegistrar';
+import { createQueryPersister, getQueryPersistOptions, QUERY_PERSIST_GC_TIME } from '@/shared/lib/query-persist';
+import { AnalyticsProvider } from '@/shared/ui/AnalyticsProvider';
+import { ToastProvider } from '@/shared/ui/toast';
 
-const CosmosCursor = dynamic(
-  () => import('@/widgets/home/ui/CosmosCursor').then((mod) => mod.CosmosCursor),
-  { ssr: false },
-);
+const CosmosCursor = dynamic(() => import('@/widgets/home/ui/CosmosCursor').then((mod) => mod.CosmosCursor), {
+  ssr: false,
+});
+
+const queryPersister = createQueryPersister();
+const queryPersistOptions = getQueryPersistOptions(queryPersister);
 
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,
+        gcTime: QUERY_PERSIST_GC_TIME,
       },
       dehydrate: {
         shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) || query.state.status === 'pending',
@@ -28,7 +33,7 @@ function makeQueryClient() {
   });
 }
 
-let browserQueryClient: QueryClient | undefined = undefined;
+let browserQueryClient: QueryClient | undefined;
 
 export function getQueryClient() {
   if (isServer) {
@@ -53,16 +58,17 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={queryPersistOptions}>
       <NuqsAdapter>
         <ToastProvider maxToasts={5}>
           <SessionProvider>
+            <AssetCacheRegistrar />
             <HomeOnlyCosmosCursor />
             <AnalyticsProvider />
             {children}
           </SessionProvider>
         </ToastProvider>
       </NuqsAdapter>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }

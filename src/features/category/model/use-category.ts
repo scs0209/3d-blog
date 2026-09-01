@@ -1,8 +1,9 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { getCategories, getCategoryPosts } from '../api/category-api';
-import { queryKeys } from '@/shared/queryKeys';
-import { getNextPageParamFromMeta } from '@/shared/lib/pagination';
 import type { CategoryResponse, CategoryWithPosts } from '@/entities/category/model';
+import { getNextPageParamFromMeta } from '@/shared/lib/pagination';
+import { CATALOG_STALE_TIME, POST_LIST_STALE_TIME } from '@/shared/lib/query-persist';
+import { queryKeys } from '@/shared/queryKeys';
+import { getCategories, getCategoryPosts } from '../api/category-api';
 
 const getAllCategories = () => getCategories();
 
@@ -10,7 +11,7 @@ export const useCategories = <T extends CategoryResponse>() => {
   const { data, isLoading, error } = useQuery<T>({
     queryKey: queryKeys.category.all.queryKey,
     queryFn: getAllCategories,
-    staleTime: 5 * 60 * 1000,
+    staleTime: CATALOG_STALE_TIME,
     retry: 3,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
   });
@@ -22,6 +23,7 @@ export const useCategoryPosts = (slug: string, page = 1, limit = 10) => {
   const { data, isLoading, error } = useQuery<CategoryWithPosts>({
     queryKey: queryKeys.category.posts(slug, page, limit).queryKey,
     queryFn: () => getCategoryPosts(slug, page, limit),
+    staleTime: POST_LIST_STALE_TIME,
   });
 
   return { data, isLoading, error };
@@ -34,7 +36,7 @@ export const useCategoryPostsInfinite = (slug: string, limit = 10) => {
       queryFn: ({ pageParam = 1 }) => getCategoryPosts(slug, pageParam as number, limit),
       initialPageParam: 1,
       getNextPageParam: (lastPage) => getNextPageParamFromMeta(lastPage),
-      staleTime: 60_000,
+      staleTime: POST_LIST_STALE_TIME,
       enabled: Boolean(slug),
     });
 
