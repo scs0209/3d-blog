@@ -44,3 +44,11 @@ next-env.d.ts
 .pnpm-store
 .gemini/
 gha-creds-*.json
+.gstack/
+
+# impeccable (locally installed skills — re-run `npx impeccable install` to restore)
+.cursor/skills/
+.github/skills/
+.claude/skills/
+.agents/skills/
+.impeccable/config.local.json
