@@ -3,12 +3,15 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { LikeDislikeButtons } from '@/features/like/ui';
+import { useToast } from '@/shared/ui';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
 import { Reply } from './Reply';
 import { ReplyForm } from './ReplyForm';
 import { CommentEditForm } from './CommentEditForm';
 import type { Comment, ReplyType } from '@/entities/comment/model/types';
 import { formatDateToYMD } from '@/shared/utils';
+import { getDeleteCommentErrorMessage } from '../lib/get-delete-comment-error-message';
 import { useDeleteComment } from '../model';
 
 type CommentProps = {
@@ -19,11 +22,22 @@ type CommentProps = {
 
 export function Comment({ comment, replies = [], postId }: CommentProps) {
   const { data: session } = useSession();
-  const { deleteComment } = useDeleteComment();
+  const toast = useToast();
+  const { deleteComment, isPending: isDeleting } = useDeleteComment();
   const [isEditing, setIsEditing] = useState(false);
 
   const handleDelete = (commentId: number) => {
-    deleteComment({ commentId });
+    deleteComment(
+      { commentId, postId },
+      {
+        onSuccess: () => {
+          toast.success('댓글을 삭제했습니다');
+        },
+        onError: (error) => {
+          toast.error(getDeleteCommentErrorMessage(error));
+        },
+      },
+    );
   };
 
   if (!comment) {
@@ -36,7 +50,7 @@ export function Comment({ comment, replies = [], postId }: CommentProps) {
 
   return (
     <li>
-      <article className={blogTheme.commentCard}>
+      <article className={blogPostSurface.commentCard}>
         <header className='mb-1 flex items-center gap-2'>
           <address className={`not-italic font-bold ${blogTheme.textAccent}`}>{comment.author?.name}</address>
           <time className={`text-xs ${blogTheme.textMuted}`} dateTime={comment.createdAt}>
@@ -45,7 +59,7 @@ export function Comment({ comment, replies = [], postId }: CommentProps) {
         </header>
 
         {isEditing ? (
-          <CommentEditForm comment={comment} onCancel={() => setIsEditing(false)} />
+          <CommentEditForm comment={comment} postId={postId} onCancel={() => setIsEditing(false)} />
         ) : (
           <p className={`mb-2 ${blogTheme.textPrimary}`}>{comment.content}</p>
         )}
@@ -75,9 +89,10 @@ export function Comment({ comment, replies = [], postId }: CommentProps) {
               )}
               {canManage && (
                 <button
-                  className='text-xs text-rose-400 hover:text-rose-300 hover:underline'
+                  className={blogPostSurface.commentDanger}
                   type='button'
                   aria-label='댓글 삭제'
+                  disabled={isDeleting}
                   onClick={() => handleDelete(comment.id ?? 0)}
                 >
                   삭제
@@ -90,8 +105,8 @@ export function Comment({ comment, replies = [], postId }: CommentProps) {
           </div>
         )}
 
-        <ul className={`mt-4 space-y-3 ${blogTheme.commentReplyBorder}`}>
-          {replies.length > 0 && replies.map((reply) => <Reply key={reply.id} reply={reply} />)}
+        <ul className={blogPostSurface.commentReplyThread}>
+          {replies.length > 0 && replies.map((reply) => <Reply key={reply.id} reply={reply} postId={postId} />)}
           <ReplyForm commentId={comment.id} postId={postId} />
         </ul>
       </article>

@@ -3,8 +3,8 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button, useToast } from '@/shared/ui';
-import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { useToast } from '@/shared/ui';
+import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
 import { useUpdateComment } from '../model';
 import type { Comment } from '@/entities/comment/model/types';
 
@@ -17,10 +17,11 @@ type UpdateCommentFormData = z.infer<typeof updateCommentSchema>;
 
 type CommentEditFormProps = {
   comment: Comment;
+  postId: number;
   onCancel: () => void;
 };
 
-export function CommentEditForm({ comment, onCancel }: CommentEditFormProps) {
+export function CommentEditForm({ comment, postId, onCancel }: CommentEditFormProps) {
   const { updateComment, isPending: isUpdating } = useUpdateComment();
   const toast = useToast();
 
@@ -38,7 +39,7 @@ export function CommentEditForm({ comment, onCancel }: CommentEditFormProps) {
 
   const onSubmit = (data: UpdateCommentFormData) => {
     updateComment(
-      { params: { commentId: comment.id ?? 0 }, body: { content: data.content } },
+      { params: { commentId: comment.id ?? 0 }, body: { content: data.content }, postId },
       {
         onSuccess: () => {
           toast.success('수정 성공');
@@ -59,7 +60,7 @@ export function CommentEditForm({ comment, onCancel }: CommentEditFormProps) {
         render={({ field }) => (
           <textarea
             {...field}
-            className={blogTheme.commentInput}
+            className={blogPostSurface.commentInput}
             rows={3}
             placeholder='댓글을 수정하세요...'
             disabled={isUpdating}
@@ -67,20 +68,22 @@ export function CommentEditForm({ comment, onCancel }: CommentEditFormProps) {
         )}
       />
       {errors.content && <p className='text-red-400 text-xs mt-1'>{errors.content.message}</p>}
-      <div className='flex gap-2 mt-2'>
-        <Button type='submit' size='sm' variant='primary' loading={isUpdating} disabled={!isValid || isUpdating}>
-          저장
-        </Button>
-        <Button
+      <div className='mt-2 flex gap-2'>
+        <button
+          type='submit'
+          disabled={!isValid || isUpdating}
+          className={blogPostSurface.commentActionPrimary}
+        >
+          {isUpdating ? '저장중...' : '저장'}
+        </button>
+        <button
           type='button'
-          size='sm'
-          variant='primary'
           onClick={onCancel}
           disabled={isUpdating}
-          className={`border-[#ff9a3c]/30 bg-transparent text-[#ffb870] hover:border-[#ff9a3c]/50 hover:bg-[#ff9a3c]/10 hover:text-[#ffc8a0] dark:border-[#3de8ff]/30 dark:text-[#3de8ff] dark:hover:border-[#3de8ff]/50 dark:hover:bg-[#3de8ff]/10 dark:hover:text-[#7ec8ff]`}
+          className={blogPostSurface.commentActionGhost}
         >
           취소
-        </Button>
+        </button>
       </div>
     </form>
   );

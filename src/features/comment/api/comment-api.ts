@@ -10,7 +10,7 @@ export const createComment = (body: CreateCommentRequest) =>
   });
 
 type GetCommentsParams = ApiRequestParams<'/api/comments/{postId}', 'get'>;
-type GetCommentsResponse = ApiResponse<'/api/comments/{postId}', 'get'>;
+export type GetCommentsResponse = ApiResponse<'/api/comments/{postId}', 'get'>;
 
 export const getComments = (params: GetCommentsParams): Promise<GetCommentsResponse> =>
   fetcher({
