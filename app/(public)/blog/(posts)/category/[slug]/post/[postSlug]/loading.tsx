@@ -1,9 +1,10 @@
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
 
 export default function PostDetailLoading() {
   return (
     <div className='mx-4 mb-12 mt-4 max-w-4xl lg:mx-auto' aria-busy='true'>
-      <section className={`relative overflow-hidden px-4 py-8 sm:px-6 md:rounded-2xl md:px-8 ${blogTheme.postSection}`}>
+      <section className={`relative px-4 py-8 sm:px-6 md:px-8 ${blogPostSurface.postSection}`}>
         <span className={blogTheme.cardTopGlow} aria-hidden />
         <div className='space-y-4'>
           <div className='h-9 w-3/4 max-w-xl animate-pulse rounded-lg bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
@@ -17,7 +18,7 @@ export default function PostDetailLoading() {
             <div className='h-6 w-16 animate-pulse rounded-full bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
             <div className='h-6 w-12 animate-pulse rounded-full bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
           </div>
-          <div className={`mt-6 space-y-3 p-4 ${blogTheme.summaryBox}`}>
+          <div className={`mt-6 space-y-3 p-4 ${blogPostSurface.summaryBox}`}>
             <div className='h-4 w-24 animate-pulse rounded bg-[#ff9a3c]/20 dark:bg-[#3de8ff]/20' />
             <div className='h-3 w-full animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
             <div className='h-3 w-5/6 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />

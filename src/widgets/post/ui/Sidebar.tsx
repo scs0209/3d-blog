@@ -7,11 +7,21 @@ import { useSidebarData } from '@/features/sidebar/model/use-sidebar-data';
 import { Tag } from '@/features/tag/ui';
 import { SidebarSkeleton } from '@/shared/ui/skeleton';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutGrid } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { isBlogIndexPath } from '@/widgets/post/lib/blog-index-path';
+import { sidebarLayout } from '@/widgets/post/ui/sidebar-layout';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { CategoryTree } from './CategoryTree';
+
+const SidebarSectionHeader = ({ title }: { title: string }) => (
+  <div className={sidebarLayout.sectionHeader}>
+    <span className={`h-px flex-1 ${blogTheme.sectionLine}`} aria-hidden />
+    <span className={`text-sm font-semibold uppercase tracking-[0.16em] ${blogTheme.labelAccent}`}>{title}</span>
+    <span className={`h-px flex-1 ${blogTheme.sectionLineReverse}`} aria-hidden />
+  </div>
+);
 
 export default function Sidebar() {
   const router = useRouter();
@@ -25,7 +35,7 @@ export default function Sidebar() {
     const match = pathname.match(/^\/blog\/category\/([^/]+)/);
     return match?.[1] ? decodeURIComponent(match[1]) : null;
   })();
-  const isAllPage = pathname === '/blog/all';
+  const isAllPage = isBlogIndexPath(pathname);
 
   if (isLoading) {
     return <SidebarSkeleton />;
@@ -41,7 +51,7 @@ export default function Sidebar() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
-            className={`relative z-10 hidden h-screen w-80 flex-shrink-0 flex-col gap-8 p-6 lg:flex ${blogTheme.sidebar}`}
+            className={`relative z-10 hidden h-screen w-80 shrink-0 flex-col overflow-hidden p-6 lg:flex ${blogTheme.sidebar}`}
             style={{ minWidth: 320, fontFamily: 'var(--font-syne), sans-serif' }}
           >
             <button
@@ -53,47 +63,42 @@ export default function Sidebar() {
               <ChevronRight size={28} />
             </button>
 
-            <div>
-              <VisitorCounter />
-              <div className='mb-3 flex items-center gap-2 px-3'>
-                <span className={`h-px flex-1 ${blogTheme.sectionLine}`} aria-hidden />
-                <span className={`text-sm font-semibold uppercase tracking-[0.16em] ${blogTheme.labelAccent}`}>
-                  Category
-                </span>
-                <span className={`h-px flex-1 ${blogTheme.sectionLineReverse}`} aria-hidden />
-              </div>
-              <nav className='flex flex-col gap-2 px-3 py-4'>
-                <motion.button
-                  type='button'
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`rounded-lg px-2 py-1.5 text-left text-sm transition ${
-                    isAllPage ? blogTheme.navActive : blogTheme.navIdle
-                  }`}
-                  onClick={() => router.push('/blog/all')}
-                >
-                  All
-                </motion.button>
+            <VisitorCounter />
 
-                <CategoryTree
-                  categories={categories}
-                  currentCategorySlug={currentCategorySlug}
-                  onSelect={(slug) => router.push(`/blog/category/${slug}`)}
-                />
-              </nav>
-            </div>
+            <div className='flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto'>
+              <section className={sidebarLayout.section} aria-label='카테고리'>
+                <SidebarSectionHeader title='Category' />
+                <nav className={sidebarLayout.navList} aria-label='블로그 카테고리'>
+                  <div className={sidebarLayout.navRow}>
+                    <span className={sidebarLayout.navToggle} aria-hidden />
+                    <motion.button
+                      type='button'
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className={`${sidebarLayout.navButton} ${isAllPage ? blogTheme.navActive : blogTheme.navIdle}`}
+                      onClick={() => router.push('/blog/all')}
+                    >
+                      <LayoutGrid size={15} className='shrink-0 opacity-80' aria-hidden />
+                      <span className='truncate'>All</span>
+                    </motion.button>
+                  </div>
 
-            <div>
-              <div className='mb-3 flex items-center gap-2 px-3'>
-                <span className={`h-px flex-1 ${blogTheme.sectionLine}`} aria-hidden />
-                <h2 className={`text-sm font-semibold uppercase tracking-[0.16em] ${blogTheme.labelAccent}`}>Tags</h2>
-                <span className={`h-px flex-1 ${blogTheme.sectionLineReverse}`} aria-hidden />
-              </div>
-              <div className='flex flex-wrap gap-2'>
-                {tags?.map((tag) => (
-                  <Tag key={tag.id} tag={tag} count={getTagPostCount(tag)} />
-                ))}
-              </div>
+                  <CategoryTree
+                    categories={categories}
+                    currentCategorySlug={currentCategorySlug}
+                    onSelect={(slug) => router.push(`/blog/category/${slug}`)}
+                  />
+                </nav>
+              </section>
+
+              <section className={sidebarLayout.section} aria-label='태그'>
+                <SidebarSectionHeader title='Tags' />
+                <div className={sidebarLayout.tags}>
+                  {tags?.map((tag) => (
+                    <Tag key={tag.id} tag={tag} count={getTagPostCount(tag)} variant='sidebar' />
+                  ))}
+                </div>
+              </section>
             </div>
           </motion.aside>
         )}

@@ -60,22 +60,22 @@ const horizontalRule = HorizontalRule.configure({
 const starterKit = StarterKit.configure({
   bulletList: {
     HTMLAttributes: {
-      class: cx('list-disc list-outside leading-3 -mt-2'),
+      class: cx('my-4 list-outside list-disc space-y-1.5 pl-6'),
     },
   },
   orderedList: {
     HTMLAttributes: {
-      class: cx('list-decimal list-outside leading-3 -mt-2'),
+      class: cx('my-4 list-outside list-decimal space-y-1.5 pl-6'),
     },
   },
   listItem: {
     HTMLAttributes: {
-      class: cx('leading-normal -mb-2'),
+      class: cx('leading-relaxed pl-0.5'),
     },
   },
   blockquote: {
     HTMLAttributes: {
-      class: cx('border-l-4 border-primary'),
+      class: cx('my-4 pl-4'),
     },
   },
   codeBlock: false,
@@ -111,24 +111,17 @@ const mathematics = Mathematics.configure({
 const tableKit = TableKit.configure({
   table: {
     HTMLAttributes: {
-      class: cx('border-collapse border-2 border-gray-500 dark:border-gray-400 my-6 w-full'),
-    },
-  },
-  tableRow: {
-    HTMLAttributes: {
-      class: cx('border-b border-gray-400 dark:border-gray-500'),
+      class: cx('blog-post-table my-4 table-auto w-max max-w-full'),
     },
   },
   tableHeader: {
     HTMLAttributes: {
-      class: cx(
-        'border border-gray-500 dark:border-gray-400 bg-gray-700 px-4 py-3 text-left font-semibold text-foreground',
-      ),
+      class: cx('text-left text-xs font-medium'),
     },
   },
   tableCell: {
     HTMLAttributes: {
-      class: cx('border border-gray-500 dark:border-gray-400 px-4 py-3 text-foreground'),
+      class: cx('text-xs leading-snug'),
     },
   },
 });

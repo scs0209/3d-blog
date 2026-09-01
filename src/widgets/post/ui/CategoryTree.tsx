@@ -10,6 +10,7 @@ import {
 } from '@/entities/category/lib/build-category-tree';
 import type { CategoryListItem } from '@/entities/category/model';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { sidebarLayout, TREE_INDENT_PX } from '@/widgets/post/ui/sidebar-layout';
 
 type CategoryTreeProps = {
   categories: CategoryListItem[];
@@ -42,11 +43,11 @@ const CategoryTreeItem = ({
 
   return (
     <div className='flex flex-col gap-1'>
-      <div className='flex items-center gap-1' style={{ paddingLeft: depth * 12 }}>
+      <div className={sidebarLayout.navRow} style={{ paddingLeft: depth * TREE_INDENT_PX }}>
         {hasChildren ? (
           <button
             type='button'
-            className={`shrink-0 rounded p-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/40 dark:focus-visible:ring-[#3de8ff]/50 ${blogTheme.textMuted} hover:text-[#ff9a3c] dark:hover:text-[#3de8ff]`}
+            className={`${sidebarLayout.navToggle} rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/40 dark:focus-visible:ring-[#3de8ff]/50 ${blogTheme.textMuted} hover:text-[#ff9a3c] dark:hover:text-[#3de8ff]`}
             aria-label={isExpanded ? `${node.name} 접기` : `${node.name} 펼치기`}
             aria-expanded={isExpanded}
             onClick={() => onToggle(node.id)}
@@ -54,13 +55,13 @@ const CategoryTreeItem = ({
             {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </button>
         ) : (
-          <span className='inline-block w-5 shrink-0' aria-hidden />
+          <span className={sidebarLayout.navToggle} aria-hidden />
         )}
         <motion.button
           type='button'
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          className={`relative flex flex-1 items-center gap-2 rounded-lg px-2 py-1 text-left text-sm transition ${getActiveClassName(isActive)}`}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          className={`${sidebarLayout.navButton} ${getActiveClassName(isActive)}`}
           onClick={() => onSelect(node.slug)}
         >
           {hasChildren ? (
@@ -84,7 +85,7 @@ const CategoryTreeItem = ({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className='overflow-hidden flex flex-col gap-1'
+            className='flex flex-col gap-1 overflow-hidden'
           >
             {node.children.map((child) => (
               <CategoryTreeItem

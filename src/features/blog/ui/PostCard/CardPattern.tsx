@@ -1,18 +1,19 @@
 import { motion, useMotionTemplate, type MotionValue } from 'framer-motion';
 import { useMemo } from 'react';
 
+/** Glass Orbit blog card hover sheen — zone palette only (no generic blue/indigo) */
 const warmGradients = [
-  'bg-gradient-to-r from-orange-500 via-amber-400 to-rose-500',
-  'bg-gradient-to-r from-rose-500 via-orange-400 to-yellow-400',
-  'bg-gradient-to-r from-fuchsia-500 via-orange-400 to-amber-300',
-  'bg-gradient-to-r from-amber-500 via-rose-400 to-orange-600',
+  'bg-gradient-to-r from-[#e86a20]/55 via-[#ff9a3c]/45 to-[#ffc8a0]/40',
+  'bg-gradient-to-r from-[#ff9a3c]/50 via-[#ffb870]/40 to-[#ffd4b0]/35',
+  'bg-gradient-to-r from-[#c94e12]/50 via-[#ff9a3c]/42 to-[#ffb870]/38',
+  'bg-gradient-to-r from-[#ff9a3c]/48 via-[#ffc8a0]/38 to-[#ffd4b0]/32',
 ];
 
 const coolGradients = [
-  'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600',
-  'bg-gradient-to-r from-blue-600 via-cyan-400 to-violet-600',
-  'bg-gradient-to-r from-indigo-500 via-cyan-500 to-blue-700',
-  'bg-gradient-to-r from-teal-500 via-cyan-400 to-blue-600',
+  'bg-gradient-to-r from-[#2a9fd4]/50 via-[#3de8ff]/42 to-[#7ec8ff]/38',
+  'bg-gradient-to-r from-[#3de8ff]/48 via-[#7ec8ff]/40 to-[#b8e4ff]/34',
+  'bg-gradient-to-r from-[#1a7a9e]/52 via-[#3de8ff]/44 to-[#7ec8ff]/36',
+  'bg-gradient-to-r from-[#3de8ff]/46 via-[#5ef0ff]/38 to-[#b8e4ff]/32',
 ];
 
 const hashSeed = (seed: string) => {
