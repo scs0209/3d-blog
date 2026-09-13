@@ -1,18 +1,14 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-import { blogProseScope } from '@/widgets/post/ui/blog-prose-scope';
-
-const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'), {
-  ssr: false,
-  loading: () => <div className={`${blogProseScope} min-h-[120px]`} aria-busy='true' role='status' />,
-});
+import PostHtmlViewer from '@/shared/ui/PostHtmlViewer';
 
 type PostContentViewerProps = {
   content: string;
 };
 
-/** NovelViewer + 에디터와 동일한 CodeBlock NodeView(언어 셀렉트·머메이드 미리보기) */
+/**
+ * 포스트 본문 뷰어.
+ * TipTap HTML을 초기 응답에 포함해 크롤러/AI가 JS 없이도 읽을 수 있게 한다.
+ * (구 NovelViewer + ssr:false 는 본문이 빈 셸만 내려가 크롤이 실패했음)
+ */
 export const PostContentViewer = ({ content }: PostContentViewerProps) => {
-  return <NovelViewer content={content} />;
+  return <PostHtmlViewer content={content} />;
 };

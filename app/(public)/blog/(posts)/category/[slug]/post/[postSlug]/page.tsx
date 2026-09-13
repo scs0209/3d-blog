@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
 import { CommentSection } from '@/features/comment/ui';
 import { getPostBySlugOnServer } from '@/features/post/api/get-post-by-slug.server';
-import { extractDescription, getPostPath, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
+import { extractDescription, extractPlainText, getPostPath, getPostUrl, toAbsoluteUrl } from '@/shared/consts/baseUrl';
 import { decodePathSegment } from '@/shared/lib/decode-path-segment';
 import { PostContentViewer } from '@/shared/ui/PostContentViewer';
 import { formatDateToYMD } from '@/shared/utils';
@@ -90,11 +90,14 @@ const PostStructuredData = ({ post }: { post: PostResponse }) => {
     `/blog/category/${post.category?.slug || 'uncategorized'}/post/${encodeURIComponent(post.slug ?? '')}/opengraph-image`,
   );
 
+  const plainBody = extractPlainText(post.content ?? '');
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: extractDescription(post.content ?? ''),
+    articleBody: plainBody || undefined,
     image: [imageUrl],
     author: {
       '@type': 'Person',

@@ -49,7 +49,8 @@ const enhanceCodeBlocks = async (root: HTMLElement) => {
 
 /**
  * 읽기 전용 HTML 본문 렌더러.
- * DOMPurify(jsdom)는 Vercel serverless SSR에서 실패하므로 클라이언트에서만 sanitize한다.
+ * 초기 HTML(preprocess)은 SSR되어 크롤러가 본문을 읽을 수 있다.
+ * DOMPurify(jsdom)는 Vercel serverless SSR에서 실패할 수 있어 sanitize·mermaid는 클라이언트에서만 수행한다.
  */
 export default function PostHtmlViewer({ content }: PostHtmlViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);

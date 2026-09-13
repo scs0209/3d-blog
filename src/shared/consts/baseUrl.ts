@@ -26,3 +26,11 @@ export const extractDescription = (content: string, maxLength = 160) => {
 
   return `${plainText.substring(0, maxLength).replace(/\s+\S*$/, '')}...`;
 };
+
+/** HTML 본문을 길이 제한 없이 평문으로 추출 (JSON-LD articleBody 등) */
+export const extractPlainText = (content: string) =>
+  content
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
