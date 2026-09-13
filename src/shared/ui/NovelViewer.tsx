@@ -1,14 +1,16 @@
 'use client';
-import { preprocessHTML } from '../utils';
-import { viewerExtensions } from './TextEditor/viewerExtensions';
+
 import { EditorContent } from 'novel';
 import { blogProseScope } from '@/widgets/post/ui/blog-prose-scope';
+import { preprocessHTML } from '../utils';
+import { viewerExtensions } from './TextEditor/viewerExtensions';
 
 type NovelViewerProps = {
   content: string;
+  onReady?: () => void;
 };
 
-export default function NovelViewer({ content }: NovelViewerProps) {
+export default function NovelViewer({ content, onReady }: NovelViewerProps) {
   const processedValue = content ? preprocessHTML(content) : content;
 
   return (
@@ -18,6 +20,7 @@ export default function NovelViewer({ content }: NovelViewerProps) {
         immediatelyRender={false}
         editable={false}
         initialContent={processedValue as any}
+        onCreate={() => onReady?.()}
       />
     </div>
   );

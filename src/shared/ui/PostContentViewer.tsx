@@ -1,18 +1,17 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-import { blogProseScope } from '@/widgets/post/ui/blog-prose-scope';
-
-const NovelViewer = dynamic(() => import('@/shared/ui/NovelViewer'), {
-  ssr: false,
-  loading: () => <div className={`${blogProseScope} min-h-[120px]`} aria-busy='true' role='status' />,
-});
+import { preprocessHTML } from '@/shared/utils/process-html';
+import { PostContentInteractive } from '@/shared/ui/PostContentInteractive';
 
 type PostContentViewerProps = {
   content: string;
 };
 
-/** NovelViewer + 에디터와 동일한 CodeBlock NodeView(언어 셀렉트·머메이드 미리보기) */
+/**
+ * 포스트 본문 뷰어.
+ * - 서버: TipTap HTML을 응답에 넣어 크롤러/AI가 본문을 읽게 함
+ * - 클라이언트: NovelViewer로 기존 코드블록·표·Mermaid UI 유지
+ */
 export const PostContentViewer = ({ content }: PostContentViewerProps) => {
-  return <NovelViewer content={content} />;
+  const ssrHtml = content ? preprocessHTML(content) : '';
+
+  return <PostContentInteractive content={content} ssrHtml={ssrHtml} />;
 };
