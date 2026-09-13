@@ -1,4 +1,5 @@
-import PostHtmlViewer from '@/shared/ui/PostHtmlViewer';
+import { preprocessHTML } from '@/shared/utils/process-html';
+import { PostContentInteractive } from '@/shared/ui/PostContentInteractive';
 
 type PostContentViewerProps = {
   content: string;
@@ -6,9 +7,11 @@ type PostContentViewerProps = {
 
 /**
  * 포스트 본문 뷰어.
- * TipTap HTML을 초기 응답에 포함해 크롤러/AI가 JS 없이도 읽을 수 있게 한다.
- * (구 NovelViewer + ssr:false 는 본문이 빈 셸만 내려가 크롤이 실패했음)
+ * - 서버: TipTap HTML을 응답에 넣어 크롤러/AI가 본문을 읽게 함
+ * - 클라이언트: NovelViewer로 기존 코드블록·표·Mermaid UI 유지
  */
 export const PostContentViewer = ({ content }: PostContentViewerProps) => {
-  return <PostHtmlViewer content={content} />;
+  const ssrHtml = content ? preprocessHTML(content) : '';
+
+  return <PostContentInteractive content={content} ssrHtml={ssrHtml} />;
 };
