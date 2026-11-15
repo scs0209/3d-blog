@@ -1,10 +1,10 @@
 'use client';
 
-import { CommentForm } from './CommentForm';
-import { Comment } from './Comment';
-import { useComments } from '../model';
-import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { useComments } from '../model';
+import { Comment } from './Comment';
+import { CommentForm } from './CommentForm';
 
 type CommentSectionProps = {
   postId: number;
@@ -16,7 +16,9 @@ export function CommentSection({ postId }: CommentSectionProps) {
   return (
     <section className={blogPostSurface.commentSection}>
       <span className={blogTheme.cardTopGlow} aria-hidden />
-      <h2 className={`mb-4 text-lg font-bold ${blogTheme.textPrimary}`}>댓글</h2>
+      <h2 className='mb-5 font-[family-name:var(--font-syne),sans-serif] text-[22px] font-semibold text-[#e9edf1]'>
+        댓글
+      </h2>
       <CommentForm postId={postId} />
       {isLoading ? (
         <p className={`py-4 text-sm ${blogTheme.textMuted}`} role='status' aria-live='polite'>

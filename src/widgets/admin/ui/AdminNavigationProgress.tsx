@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { subscribeAdminNavPending } from './admin-nav-pending';
 import { adminFormTheme } from './admin-form-theme';
+import { subscribeAdminNavPending } from './admin-nav-pending';
 
 export const AdminNavigationProgress = () => {
   const [pending, setPending] = useState(false);

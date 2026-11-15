@@ -1,76 +1,106 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
-import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
-import { SpaceBackground } from '@/widgets/post/ui/SpaceBackground';
+import { type FocusEvent, type ReactNode, useEffect, useState } from 'react';
+import { useViewportProfile } from '@/shared/hooks/use-viewport-profile';
+import { useVisitAccent } from '@/widgets/portfolio/mainboard/accent';
 import { authTheme } from './auth-theme';
+
+/** 3D 장면은 브라우저에서만 그린다 */
+const AuthScene = dynamic(() => import('./AuthScene'), { ssr: false, loading: () => null });
 
 type AuthLayoutProps = {
   title: string;
   subtitle: string;
+  /** 접근 카드에 찍히는 글씨 */
+  pass?: string;
   children: ReactNode;
 };
 
-const syne = { fontFamily: 'var(--font-syne), sans-serif' } as const;
+const SYNE = 'font-[family-name:var(--font-syne),sans-serif]';
 
-export const AuthLayout = ({ title, subtitle, children }: AuthLayoutProps) => {
+const usePrefersReducedMotion = () => {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handleChange = () => setReduced(query.matches);
+    handleChange();
+    query.addEventListener('change', handleChange);
+    return () => query.removeEventListener('change', handleChange);
+  }, []);
+  return reduced;
+};
+
+/**
+ * 로그인·회원가입의 틀. 화면 전체가 포트폴리오와 같은 칩 안 도시이고,
+ * 입력 면은 그 위에 얹힌다. 입력칸에 들어가면 접근 카드가 솟고,
+ * 비밀번호를 치는 동안에는 슬롯을 지키는 꼬마가 등을 돌린다.
+ */
+export const AuthLayout = ({ title, subtitle, pass = 'ACCESS', children }: AuthLayoutProps) => {
+  const [mounted, setMounted] = useState(false);
+  const [active, setActive] = useState(false);
+  const [shy, setShy] = useState(false);
+  const viewport = useViewportProfile();
+  const still = usePrefersReducedMotion();
+  const accent = useVisitAccent();
+  const compact = mounted && viewport.isMobile;
+
+  useEffect(() => setMounted(true), []);
+
+  const handleFocus = (event: FocusEvent<HTMLDivElement>) => {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      setActive(true);
+      setShy(target.type === 'password');
+    }
+  };
+  const handleBlur = () => {
+    setActive(false);
+    setShy(false);
+  };
+
   return (
     <div className={authTheme.shellRoot}>
-      <div className={`relative min-h-screen w-full overflow-hidden ${authTheme.shell}`}>
-        <SpaceBackground />
-
-        <div className='relative z-10 flex min-h-screen flex-col'>
-          <header className='flex items-center justify-between p-4 sm:px-6 lg:px-8 lg:pt-6'>
-            <Link href='/' className={authTheme.backBtn} aria-label='홈으로 돌아가기'>
-              <ArrowLeft size={14} aria-hidden />
-              Home
-            </Link>
-            <ThemeToggleButton variant='blog' />
-          </header>
-
-          <div className='flex flex-1 items-center justify-center px-4 pb-10 sm:px-6 sm:pb-12'>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className='w-full max-w-md'
-            >
-              <div className='mb-6 text-center sm:mb-8'>
-                <Link
-                  href='/blog'
-                  className='mb-4 inline-flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/50 dark:focus-visible:ring-[#3de8ff]/50'
-                  aria-label='블로그 홈'
-                >
-                  <Image src='/logo.png' alt='' width={28} height={28} />
-                  <span
-                    className={`text-base font-semibold tracking-wide sm:text-lg ${authTheme.titleGradient}`}
-                    style={syne}
-                  >
-                    3D Tech Blog
-                  </span>
-                </Link>
-                <h1 className={`text-xl font-bold sm:text-2xl ${authTheme.textPrimary}`} style={syne}>
-                  {title}
-                </h1>
-                <p className={`mt-2 text-sm ${authTheme.textMuted}`}>{subtitle}</p>
-              </div>
-
-              <div className={`${authTheme.card} p-5 sm:p-8`}>
-                <span className={authTheme.cardGlow} aria-hidden />
-                {children}
-              </div>
-            </motion.div>
-          </div>
+      <div className={`relative flex min-h-dvh w-full flex-col overflow-hidden ${authTheme.shell}`}>
+        {/* 화면 전체가 장면이다 */}
+        <div className='absolute inset-0'>
+          {mounted ? (
+            <AuthScene label={pass} accent={accent} compact={compact} still={still} shy={shy} active={active} />
+          ) : null}
         </div>
 
-        <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[28vh] ${authTheme.bottomVeil}`}
-          aria-hidden
-        />
+        <header className='relative z-10 flex h-16 items-center justify-between px-5 md:px-12'>
+          <Link
+            href='/'
+            className={`${SYNE} text-[15px] font-bold tracking-[0.04em] text-[#e9edf1]`}
+            aria-label='포트폴리오로 이동'
+          >
+            AYAAN
+          </Link>
+          <Link href='/blog' className={authTheme.backBtn}>
+            <ArrowLeft size={14} aria-hidden />
+            블로그로
+          </Link>
+        </header>
+
+        {/* 넓은 화면은 오른쪽에 떠 있는 면, 좁은 화면은 아래에서 올라온 시트 */}
+        <div className='relative z-10 flex flex-1 items-end justify-center lg:items-center lg:justify-end lg:px-12 lg:pb-16'>
+          <div
+            className='w-full rounded-t-3xl bg-[#0b0e12]/90 px-6 pt-6 pb-8 lg:max-w-md lg:rounded-2xl lg:p-8'
+            onFocusCapture={handleFocus}
+            onBlurCapture={handleBlur}
+          >
+            <h1
+              className={`${SYNE} break-keep text-[clamp(1.9rem,6vw,3rem)] font-bold leading-none tracking-[-0.02em] ${authTheme.textPrimary}`}
+            >
+              {title}
+            </h1>
+            <p className={`mt-2 mb-5 text-[15px] lg:mt-3 lg:mb-7 ${authTheme.textMuted}`}>{subtitle}</p>
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );

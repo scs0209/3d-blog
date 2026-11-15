@@ -1,11 +1,11 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
+import { Filter, Search, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useQueryState, parseAsString, parseAsArrayOf } from 'nuqs';
-import { Search, X, Filter } from 'lucide-react';
+import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCategories } from '@/features/category/model';
 import { isBlogIndexPath } from '@/widgets/post/lib/blog-index-path';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
@@ -103,7 +103,7 @@ export function BlogSearch() {
               animate={{ width: 380, opacity: 1 }}
               exit={{ width: 40, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 0.8 }}
-              className='relative flex items-center gap-2 rounded-lg bg-[#12082a]/60 dark:bg-black/10'
+              className='relative flex items-center gap-2 rounded-md bg-[#0a0d11]/60'
             >
               <div className='flex-1 pl-2'>
                 <SearchBar
@@ -118,9 +118,7 @@ export function BlogSearch() {
                 ref={filterButtonRef}
                 type='button'
                 onClick={() => setFilterOpen(!filterOpen)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className={`rounded-full p-1 transition-all duration-200 ${blogTheme.searchIcon}`}
+                className={`p-1 transition-all duration-200 ${blogTheme.searchIcon}`}
                 aria-label='검색 필터'
                 aria-expanded={filterOpen}
               >
@@ -129,9 +127,7 @@ export function BlogSearch() {
               <motion.button
                 type='button'
                 onClick={toggleSearch}
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                className={`mr-1 flex-shrink-0 rounded-full p-1 transition-all duration-200 ${blogTheme.searchIcon}`}
+                className={`mr-1 flex-shrink-0 p-1 transition-all duration-200 ${blogTheme.searchIcon}`}
               >
                 <X size={16} />
               </motion.button>
@@ -153,10 +149,8 @@ export function BlogSearch() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              whileHover={{ scale: 1.1, rotate: 15 }}
-              whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className={`rounded-full p-2 transition-all duration-300 ${blogTheme.searchIcon}`}
+              className={`p-2 transition-all duration-300 ${blogTheme.searchIcon}`}
               aria-label='검색 열기'
             >
               <Search size={18} />
@@ -170,9 +164,7 @@ export function BlogSearch() {
         <motion.button
           type='button'
           onClick={toggleSearch}
-          whileHover={{ scale: 1.1, rotate: 15 }}
-          whileTap={{ scale: 0.9 }}
-          className={`rounded-full p-2 transition-all duration-300 ${blogTheme.searchIcon}`}
+          className={`p-2 transition-all duration-300 ${blogTheme.searchIcon}`}
         >
           <Search size={18} />
         </motion.button>
@@ -183,7 +175,7 @@ export function BlogSearch() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className='fixed inset-0 z-40 flex items-start justify-center bg-slate-900/40 p-4 backdrop-blur-sm dark:bg-black/50'
+              className='fixed inset-0 z-40 flex items-start justify-center bg-slate-900/40 p-4'
               onClick={toggleSearch}
             >
               <motion.div
@@ -191,7 +183,7 @@ export function BlogSearch() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className={`mt-16 w-full max-w-md rounded-2xl p-4 shadow-2xl ${blogTheme.searchPanel}`}
+                className={`mt-16 w-full max-w-md rounded-md p-4 shadow-2xl ${blogTheme.searchPanel}`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className='flex items-center gap-2 mb-4'>
@@ -207,9 +199,7 @@ export function BlogSearch() {
                   <motion.button
                     type='button'
                     onClick={() => setFilterOpen(!filterOpen)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className={`rounded-full p-2 transition-all duration-200 ${blogTheme.searchIcon}`}
+                    className={`p-2 transition-all duration-200 ${blogTheme.searchIcon}`}
                   >
                     <Filter size={20} />
                   </motion.button>

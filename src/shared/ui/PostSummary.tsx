@@ -2,9 +2,9 @@
 
 import { usePostSummary } from '@/features/post/model';
 import { formatSummaryText, isValidSummary } from '@/features/post/utils';
-import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
 import { blogProseScope } from '@/widgets/post/ui/blog-prose-scope';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 
 interface PostSummaryProps {
   post: {
@@ -29,12 +29,11 @@ export function PostSummary({ post }: PostSummaryProps) {
     return (
       <div className={`relative mb-6 ${blogPostSurface.summaryBox}`} aria-busy='true'>
         <div className='mb-2 flex items-center gap-2'>
-          <div className='h-4 w-4 animate-pulse rounded-full bg-[#ff9a3c]/60 dark:bg-[#3de8ff]/60' />
-          <span className={`text-sm font-medium ${blogTheme.textAccent}`}>AI 요약 생성 중...</span>
+          <span className='text-[13px] font-medium text-[#8d98a3]'>AI 요약 생성 중</span>
         </div>
         <div className='space-y-2'>
-          <div className='h-3 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
-          <div className='h-3 w-3/4 animate-pulse rounded bg-[#ff9a3c]/15 dark:bg-[#3de8ff]/15' />
+          <div className='h-3 animate-pulse rounded bg-white/[0.07]' />
+          <div className='h-3 w-3/4 animate-pulse rounded bg-white/[0.07]' />
         </div>
       </div>
     );
@@ -45,14 +44,13 @@ export function PostSummary({ post }: PostSummaryProps) {
       <div className={`relative mb-6 ${blogPostSurface.summaryBox}`}>
         <div className='flex flex-wrap items-center justify-between gap-3'>
           <div className='flex items-center gap-2'>
-            <div className='h-4 w-4 rounded-full bg-[#ff9a3c]/40 dark:bg-[#3de8ff]/40' />
-            <span className={`text-sm font-medium ${blogTheme.textMuted}`}>AI 요약을 불러오지 못했습니다</span>
+            <span className={`text-sm ${blogTheme.textMuted}`}>AI 요약을 불러오지 못했습니다</span>
           </div>
           <button
             type='button'
             onClick={() => refetch()}
             disabled={isFetching}
-            className={`rounded-md border px-2.5 py-1 text-xs transition disabled:opacity-50 ${blogTheme.navBtn}`}
+            className={`px-2.5 py-1 text-xs disabled:opacity-50 ${blogTheme.navBtn}`}
             aria-label='AI 요약 다시 시도'
           >
             {isFetching ? '재시도 중...' : '다시 시도'}
@@ -72,8 +70,7 @@ export function PostSummary({ post }: PostSummaryProps) {
   return (
     <div className={`relative mb-6 ${blogPostSurface.summaryBox}`}>
       <div className='mb-3 flex items-center gap-2'>
-        <div className='h-4 w-4 rounded-full bg-[#ff9a3c]/70 dark:bg-[#3de8ff]/70' />
-        <span className={`text-sm font-medium ${blogTheme.textAccent}`}>AI 요약</span>
+        <span className='text-[13px] font-medium text-[#8d98a3]'>AI 요약</span>
       </div>
       <div className={`${blogProseScope} space-y-2 text-[15px] leading-relaxed ${blogTheme.textPrimary}`}>
         {paragraphs.map((paragraph) => {

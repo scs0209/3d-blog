@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
     useTypeScriptCli: true,
     optimizePackageImports: ['lucide-react', 'framer-motion', 'date-fns'],
   },
+  // 예전 주소는 하나로 합친 새 주소로 넘긴다 (쿼리는 그대로 따라간다)
+  async redirects() {
+    return [
+      { source: '/portfolio', destination: '/', permanent: true },
+      { source: '/classic', destination: '/', permanent: true },
+      { source: '/blog/all', destination: '/blog', permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

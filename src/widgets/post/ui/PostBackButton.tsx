@@ -24,11 +24,11 @@ export const PostBackButton = ({ href, label = '목록으로' }: PostBackButtonP
     <button
       type='button'
       onClick={handleClick}
-      className={`mb-4 inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${blogTheme.navBtn}`}
+      className={`mb-10 inline-flex items-center gap-2 py-1 text-[14px] text-[#8d98a3] transition-colors hover:text-white ${blogTheme.focus}`}
       aria-label={`${label}로 돌아가기`}
     >
-      <ArrowLeft size={16} className={blogTheme.textAccent} aria-hidden />
-      <span className={blogTheme.textPrimary}>{label}</span>
+      <ArrowLeft size={14} className={blogTheme.textAccent} aria-hidden />
+      <span>{label}</span>
     </button>
   );
 };

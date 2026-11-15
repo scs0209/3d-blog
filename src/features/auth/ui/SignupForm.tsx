@@ -108,7 +108,7 @@ const SignupForm = () => {
             <button
               type='button'
               onClick={togglePasswordVisibility}
-              className='absolute right-3 top-1/2 -translate-y-1/2 text-[#ffc8a0]/70 transition hover:text-[#ffe8d0] dark:text-[#3de8ff]/70 dark:hover:text-[#7ec8ff]'
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-[#8d98a3] transition-colors hover:text-white'
               aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -139,7 +139,7 @@ const SignupForm = () => {
             <button
               type='button'
               onClick={toggleConfirmPasswordVisibility}
-              className='absolute right-3 top-1/2 -translate-y-1/2 text-[#ffc8a0]/70 transition hover:text-[#ffe8d0] dark:text-[#3de8ff]/70 dark:hover:text-[#7ec8ff]'
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-[#8d98a3] transition-colors hover:text-white'
               aria-label={showConfirmPassword ? '비밀번호 확인 숨기기' : '비밀번호 확인 보기'}
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}

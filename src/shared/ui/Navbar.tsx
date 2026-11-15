@@ -7,7 +7,7 @@ import { useState } from 'react';
 import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
 
 const menuItems = [
-  { href: '/portfolio', label: 'Portfolio', isComingSoon: false },
+  { href: '/', label: 'Portfolio', isComingSoon: false },
   { href: '/blog', label: 'Blog', isComingSoon: false },
   // { href: '/', label: 'Contact', isComingSoon: true },
 ];

@@ -106,7 +106,7 @@ export default function TagDetailPage({ params }: { params: Promise<{ id: string
             <button
               type='button'
               onClick={() => setIsEditing(!isEditing)}
-              className={`rounded-lg px-3 py-2 text-sm ${adminTheme.navIdle} border border-[#ff9a3c]/25 dark:border-[#3de8ff]/20`}
+              className={`rounded-lg px-3 py-2 text-sm ${adminTheme.navIdle}`}
             >
               {isEditing ? '취소' : '수정'}
             </button>
@@ -132,7 +132,7 @@ export default function TagDetailPage({ params }: { params: Promise<{ id: string
                 type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className={`w-full rounded-lg border border-[#ff9a3c]/30 bg-[#2a1545]/60 px-3 py-2 ${adminTheme.textPrimary} outline-none focus:ring-2 focus:ring-[#ff9a3c]/35 dark:border-[#3de8ff]/25 dark:bg-[#070414]/70 dark:focus:ring-[#3de8ff]/35`}
+                className={`w-full rounded-lg border border-transparent bg-white/[0.06] px-3 py-2 ${adminTheme.textPrimary} outline-none focus:border-[#4de3ff]`}
                 required
               />
             </div>
@@ -187,7 +187,7 @@ export default function TagDetailPage({ params }: { params: Promise<{ id: string
               <button
                 type='button'
                 onClick={() => setIsDeleteModalOpen(false)}
-                className={`rounded-lg px-3 py-2 text-sm ${adminTheme.navIdle} border border-[#ff9a3c]/25 dark:border-[#3de8ff]/20`}
+                className={`rounded-lg px-3 py-2 text-sm ${adminTheme.navIdle}`}
               >
                 취소
               </button>

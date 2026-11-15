@@ -1,12 +1,11 @@
-import { useState, useTransition } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { PostCardSkeleton } from '@/shared/ui/skeleton';
-import { PostCard } from '@/features/blog/ui';
-import type { PostResponse } from '@/entities/post/model/post';
-import { getPostPath } from '@/shared/consts/baseUrl';
+import { LoaderCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LoaderCircle } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import type { PostResponse } from '@/entities/post/model/post';
+import { PostCard } from '@/features/blog/ui';
+import { getPostPath } from '@/shared/consts/baseUrl';
+import { PostCardSkeleton } from '@/shared/ui/skeleton';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 
 type RecentPostsProps = {
@@ -14,16 +13,17 @@ type RecentPostsProps = {
   isLoading: boolean;
 };
 
+const GRID = 'mb-14 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3';
+
 export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
   const router = useRouter();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const recentPosts = posts.slice(0, 6);
 
   if (isLoading) {
     return (
-      <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
+      <div className={GRID}>
         {['a', 'b', 'c', 'd', 'e', 'f'].map((id) => (
           <PostCardSkeleton key={`skeleton-card-${id}`} />
         ))}
@@ -36,7 +36,7 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
   }
 
   return (
-    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10'>
+    <div className={GRID}>
       {recentPosts.map((post, idx) => {
         const postKey = post.id ?? post.slug ?? `recent-${idx}`;
         const href = getPostPath(post.category?.slug, post.slug ?? '');
@@ -60,35 +60,18 @@ export const RecentPosts = ({ posts, isLoading }: RecentPostsProps) => {
             key={postKey}
             prefetch
             onClick={handleNavigate}
-            onMouseEnter={() => {
-              setHoveredIndex(idx);
-              router.prefetch(href);
-            }}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => router.prefetch(href)}
             aria-busy={isCardPending}
-            className={`relative group block p-2 h-full w-full transition-opacity ${
+            className={`group/card relative block h-full outline-none transition-opacity ${
               isCardPending ? 'pointer-events-none opacity-60' : ''
             }`}
           >
-            {isCardPending && (
-              <span className={`absolute right-3 top-3 z-20 ${blogTheme.textAccent}`} aria-hidden>
+            {isCardPending ? (
+              <span className={`absolute right-3 bottom-3 z-10 ${blogTheme.textAccent}`} aria-hidden>
                 <LoaderCircle className='size-4 animate-spin' />
               </span>
-            )}
-            <AnimatePresence>
-              {hoveredIndex === idx && (
-                <motion.span
-                  key={`hover-${postKey}`}
-                  className='pointer-events-none absolute inset-0 block h-full w-full rounded-xl bg-[#ff9a3c]/8 backdrop-blur-md dark:bg-[#3de8ff]/8'
-                  layoutId='hoverBackground'
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { duration: 0.15 } }}
-                  exit={{ opacity: 0, transition: { duration: 0.15, delay: 0.2 } }}
-                  style={{ willChange: 'opacity, background' }}
-                />
-              )}
-            </AnimatePresence>
-            <PostCard post={post} />
+            ) : null}
+            <PostCard post={post} index={idx} />
           </Link>
         );
       })}

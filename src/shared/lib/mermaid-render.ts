@@ -11,20 +11,20 @@ const initMermaid = async () => {
       startOnLoad: false,
       theme: 'dark',
       themeVariables: {
-        background: '#1c0e38',
+        background: '#0a0d11',
         primaryColor: '#2a1a4a',
         primaryTextColor: '#ffe8d0',
-        primaryBorderColor: '#ff9a3c',
-        secondaryColor: '#1c0e38',
+        primaryBorderColor: '#4de3ff',
+        secondaryColor: '#0a0d11',
         tertiaryColor: '#3d2860',
-        lineColor: '#ff9a3c',
+        lineColor: '#4de3ff',
         textColor: '#ffe8d0',
-        mainBkg: '#1c0e38',
-        nodeBorder: '#ff9a3c',
+        mainBkg: '#0a0d11',
+        nodeBorder: '#4de3ff',
         clusterBkg: '#2a1a4a',
-        clusterBorder: '#ff9a3c',
-        titleColor: '#ffc8a0',
-        edgeLabelBackground: '#1c0e38',
+        clusterBorder: '#4de3ff',
+        titleColor: '#e9edf1',
+        edgeLabelBackground: '#0a0d11',
       },
     });
     mermaidInitialized = true;
@@ -37,10 +37,7 @@ export const enhanceMermaidDiagrams = async (root: HTMLElement) => {
   const blocks = root.querySelectorAll(MERMAID_CODE_SELECTOR);
   if (blocks.length === 0) return;
 
-  const [mermaid, { sanitizeSvgHtml }] = await Promise.all([
-    initMermaid(),
-    import('@/shared/utils/sanitize-html'),
-  ]);
+  const [mermaid, { sanitizeSvgHtml }] = await Promise.all([initMermaid(), import('@/shared/utils/sanitize-html')]);
 
   await Promise.all(
     Array.from(blocks).map(async (block, index) => {
@@ -52,7 +49,7 @@ export const enhanceMermaidDiagrams = async (root: HTMLElement) => {
         const pre = block.closest('pre');
         if (pre) {
           const safeSvg = sanitizeSvgHtml(svg);
-          pre.outerHTML = `<div class="mermaid-diagram my-4 overflow-x-auto rounded-lg border border-[#ff9a3c]/30 bg-[#1c0e38] p-4 dark:border-[#3de8ff]/30 dark:bg-[#070414]">${safeSvg}</div>`;
+          pre.outerHTML = `<div class="mermaid-diagram my-4 overflow-x-auto rounded-[3px] border border-[#4de3ff]/30 bg-[#0a0d11] p-4 dark:border-[#4de3ff]/30 dark:bg-[#07090c]">${safeSvg}</div>`;
         }
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {

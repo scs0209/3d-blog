@@ -16,8 +16,8 @@ import { invalidateCatalogQueries } from '@/shared/lib/invalidate-catalog-querie
 import { useToast } from '@/shared/ui';
 import NovelEditor from '@/shared/ui/TextEditor/novel-editor';
 import { formatDateToYMD } from '@/shared/utils';
-import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { adminFormTheme } from '@/widgets/admin/ui/admin-form-theme';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 
 interface PostUpdateClientProps {
   initialPost: PostResponse;
@@ -162,7 +162,7 @@ export function PostUpdateForm({ initialPost }: PostUpdateClientProps) {
             variant='destructive'
             size='lg'
             disabled={isDeletePending}
-            className='border border-red-400/30 bg-red-500/20 text-red-300 backdrop-blur-md transition-all duration-300 hover:bg-red-500/30 hover:text-red-200'
+            className='border-0 bg-[#ff8a8a]/15 text-[#ffb3b3] transition-colors hover:bg-[#ff8a8a]/25 hover:text-red-200'
           >
             {isDeletePending ? <Loader2 className='h-4 w-4 animate-spin' /> : <Trash2 className='h-4 w-4' />}
             {isDeletePending ? '삭제 중...' : '포스트 삭제'}

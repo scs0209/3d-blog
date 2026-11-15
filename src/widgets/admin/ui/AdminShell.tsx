@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { type ReactNode, useState } from 'react';
 import { cn } from '@/shadcn-ui/lib/utils';
 import AuthSidebar from '@/shared/ui/AuthSidebar';
-import ThemeToggleButton from '@/shared/ui/ThemeToggleButton';
 import { AdminDock } from '@/widgets/admin/ui/AdminDock';
 import { AdminHeaderTitle } from '@/widgets/admin/ui/AdminHeader';
 import { AdminNavigationProgress } from '@/widgets/admin/ui/AdminNavigationProgress';
@@ -38,14 +37,14 @@ export const AdminShell = ({ children }: AdminShellProps) => {
 
             <div
               className={cn(
-                'absolute inset-y-0 left-0 z-30 w-[15.5rem] bg-[#1c1828]/85 backdrop-blur-2xl transition-transform md:static md:z-0 md:translate-x-0 md:bg-transparent md:backdrop-blur-none',
+                'absolute inset-y-0 left-0 z-30 w-[15.5rem] bg-[#090b0f] transition-transform md:static md:z-0 md:translate-x-0',
                 navOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
               )}
             >
               <div className='flex justify-end p-3 md:hidden'>
                 <button
                   type='button'
-                  className='flex h-10 w-10 items-center justify-center rounded-full text-white/80 hover:bg-white/12'
+                  className='flex h-10 w-10 items-center justify-center rounded-full text-[#c3ccd4] hover:bg-white/[0.08]'
                   onClick={handleCloseNav}
                   aria-label='메뉴 닫기'
                 >
@@ -78,7 +77,7 @@ export const AdminShell = ({ children }: AdminShellProps) => {
                 <div className='hidden items-center gap-1 md:flex'>
                   <button
                     type='button'
-                    className='flex h-8 w-8 items-center justify-center rounded-full text-white/50 transition hover:bg-white/10 hover:text-white'
+                    className='flex h-8 w-8 items-center justify-center rounded-full text-[#8d98a3] transition-colors hover:bg-white/[0.07] hover:text-white'
                     onClick={() => router.back()}
                     aria-label='뒤로'
                   >
@@ -86,7 +85,7 @@ export const AdminShell = ({ children }: AdminShellProps) => {
                   </button>
                   <button
                     type='button'
-                    className='flex h-8 w-8 items-center justify-center rounded-full text-white/50 transition hover:bg-white/10 hover:text-white'
+                    className='flex h-8 w-8 items-center justify-center rounded-full text-[#8d98a3] transition-colors hover:bg-white/[0.07] hover:text-white'
                     onClick={() => router.forward()}
                     aria-label='앞으로'
                   >
@@ -94,9 +93,6 @@ export const AdminShell = ({ children }: AdminShellProps) => {
                   </button>
                 </div>
                 <AdminHeaderTitle />
-                <div className='ml-auto'>
-                  <ThemeToggleButton variant='admin' />
-                </div>
               </div>
 
               <div className='min-h-0 flex-1 overflow-y-auto px-6 pb-6'>{children}</div>

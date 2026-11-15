@@ -415,7 +415,7 @@ pre {
 
 /* Blog post prose — 본문은 고대비, 액센트는 링크만 */
 .blog-prose .ProseMirror {
-  color: #f5f0e8;
+  color: #e9edf1;
   font-size: 1.0625rem;
   line-height: 1.8;
   letter-spacing: 0.01em;
@@ -424,7 +424,7 @@ pre {
 .blog-prose .ProseMirror h1,
 .blog-prose .ProseMirror h2,
 .blog-prose .ProseMirror h3 {
-  color: #fffaf3;
+  color: #e9edf1;
   letter-spacing: -0.02em;
 }
 
@@ -432,7 +432,7 @@ pre {
 .blog-prose .ProseMirror ul,
 .blog-prose .ProseMirror ol,
 .blog-prose .ProseMirror li {
-  color: #f5f0e8;
+  color: #e9edf1;
 }
 
 .blog-prose .ProseMirror p {
@@ -472,17 +472,17 @@ pre {
   line-height: 1.45;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 0.5rem;
+  border-radius: 3px;
   overflow: hidden;
-  border: 1px solid rgba(255, 154, 60, 0.32);
+  border: 0;
   background: rgba(26, 20, 36, 0.28);
 }
 
 .blog-prose .ProseMirror th,
 .blog-prose .ProseMirror td {
   padding: 0.375rem 0.625rem;
-  border-right: 1px solid rgba(255, 154, 60, 0.14);
-  border-bottom: 1px solid rgba(255, 154, 60, 0.14);
+  border-right: 1px solid rgba(77, 227, 255, 0.14);
+  border-bottom: 1px solid rgba(77, 227, 255, 0.14);
 }
 
 .blog-prose .ProseMirror th:last-child,
@@ -496,12 +496,12 @@ pre {
 }
 
 .blog-prose .ProseMirror th {
-  background: rgba(255, 154, 60, 0.1);
+  background: rgba(77, 227, 255, 0.1);
   text-align: left;
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.03em;
-  color: #ffd4b0;
+  color: #e9edf1;
 }
 
 .blog-prose .ProseMirror td {
@@ -510,7 +510,7 @@ pre {
 }
 
 .blog-prose .ProseMirror strong {
-  color: #fffaf3;
+  color: #e9edf1;
   font-weight: 600;
 }
 
@@ -519,34 +519,34 @@ pre {
 }
 
 .blog-prose .ProseMirror a {
-  color: #ffb070;
+  color: #4de3ff;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .blog-prose .ProseMirror a:hover {
-  color: #ffd4b0;
+  color: #e9edf1;
 }
 
 .blog-prose .ProseMirror blockquote {
-  border-left-color: rgba(255, 154, 60, 0.55);
-  color: #e8ddd4;
-  background: rgba(255, 154, 60, 0.08);
+  border-left-color: rgba(77, 227, 255, 0.55);
+  color: #e9edf1;
+  background: rgba(77, 227, 255, 0.08);
 }
 
 .blog-prose .ProseMirror code {
-  color: #fff4e8;
+  color: #e9edf1;
   background: rgba(255, 255, 255, 0.08);
 }
 
 .blog-prose .ProseMirror pre {
-  background: #140e1e;
-  border: 1px solid rgba(255, 154, 60, 0.22);
-  border-radius: 0.75rem;
+  background: #0a0d11;
+  border: 0;
+  border-radius: 3px;
 }
 
 .blog-prose .ProseMirror pre code {
-  color: #f5f0e8;
+  color: #e9edf1;
 }
 
 .blog-prose .ProseMirror .highlight {
@@ -593,17 +593,17 @@ pre {
   flex-shrink: 0;
   margin-right: 22px;
   border-radius: 999px;
-  background: #ff9a3c;
+  background: #4de3ff;
   box-shadow:
-    14px 0 0 #e878a0,
-    28px 0 0 #ffd4b0;
+    14px 0 0 #8d98a3,
+    28px 0 0 #e9edf1;
 }
 
 .dark .code-block-dots {
-  background: #3de8ff;
+  background: #4de3ff;
   box-shadow:
-    14px 0 0 #7ec8ff,
-    28px 0 0 #dbeafe;
+    14px 0 0 #4de3ff,
+    28px 0 0 #e9edf1;
 }
 
 .code-block-toolbar,
@@ -615,9 +615,9 @@ pre {
   appearance: none;
   max-width: 11rem;
   cursor: pointer;
-  border: 1px solid rgba(255, 154, 60, 0.28);
-  border-radius: 999px;
-  background-color: rgba(255, 154, 60, 0.08);
+  border: 0;
+  border-radius: 3px;
+  background-color: rgba(77, 227, 255, 0.08);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23ffd4b0' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-position: right 0.55rem center;
   background-repeat: no-repeat;
@@ -627,43 +627,43 @@ pre {
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: #ffd4b0;
+  color: #e9edf1;
   outline: none;
 }
 
 .code-block-lang-select:hover {
-  border-color: rgba(255, 154, 60, 0.5);
-  background-color: rgba(255, 154, 60, 0.14);
+  border-color: rgba(77, 227, 255, 0.5);
+  background-color: rgba(77, 227, 255, 0.14);
 }
 
 .code-block-lang-select:focus-visible {
-  box-shadow: 0 0 0 2px rgba(255, 154, 60, 0.35);
+  box-shadow: 0 0 0 2px rgba(77, 227, 255, 0.35);
 }
 
 .code-block-lang-select option {
-  background-color: #1c0e38;
-  color: #f5f0e8;
+  background-color: #0a0d11;
+  color: #e9edf1;
 }
 
 .dark .code-block-lang-select {
-  border-color: rgba(61, 232, 255, 0.28);
-  background-color: rgba(61, 232, 255, 0.08);
+  border-color: rgba(77, 227, 255, 0.28);
+  background-color: rgba(77, 227, 255, 0.08);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23b8e4ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  color: #b8e4ff;
+  color: #e9edf1;
 }
 
 .dark .code-block-lang-select:hover {
-  border-color: rgba(61, 232, 255, 0.5);
-  background-color: rgba(61, 232, 255, 0.14);
+  border-color: rgba(77, 227, 255, 0.5);
+  background-color: rgba(77, 227, 255, 0.14);
 }
 
 .dark .code-block-lang-select:focus-visible {
-  box-shadow: 0 0 0 2px rgba(61, 232, 255, 0.35);
+  box-shadow: 0 0 0 2px rgba(77, 227, 255, 0.35);
 }
 
 .dark .code-block-lang-select option {
-  background-color: #070414;
-  color: #e8eef5;
+  background-color: #07090c;
+  color: #e9edf1;
 }
 
 .code-block-root pre,
@@ -677,7 +677,7 @@ pre {
   font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
   font-size: 0.8125rem !important;
   line-height: 1.7 !important;
-  color: #e8eef5 !important;
+  color: #e9edf1 !important;
 }
 
 .code-block-root code,
@@ -743,24 +743,24 @@ pre {
 }
 
 .dark .blog-prose .ProseMirror {
-  color: #e8eef5;
+  color: #e9edf1;
 }
 
 .dark .blog-prose .ProseMirror h1,
 .dark .blog-prose .ProseMirror h2,
 .dark .blog-prose .ProseMirror h3 {
-  color: #f4f8fc;
+  color: #e9edf1;
 }
 
 .dark .blog-prose .ProseMirror p,
 .dark .blog-prose .ProseMirror ul,
 .dark .blog-prose .ProseMirror ol,
 .dark .blog-prose .ProseMirror li {
-  color: #e8eef5;
+  color: #e9edf1;
 }
 
 .dark .blog-prose .ProseMirror strong {
-  color: #f4f8fc;
+  color: #e9edf1;
 }
 
 .dark .blog-prose .ProseMirror em {
@@ -768,47 +768,47 @@ pre {
 }
 
 .dark .blog-prose .ProseMirror a {
-  color: #7ec8ff;
+  color: #4de3ff;
 }
 
 .dark .blog-prose .ProseMirror a:hover {
-  color: #b8e4ff;
+  color: #e9edf1;
 }
 
 .dark .blog-prose .ProseMirror blockquote {
-  border-left-color: rgba(126, 200, 255, 0.5);
-  color: #d5e4f2;
-  background: rgba(61, 232, 255, 0.06);
+  border-left-color: rgba(77, 227, 255, 0.5);
+  color: #e9edf1;
+  background: rgba(77, 227, 255, 0.06);
 }
 
 .dark .blog-prose .ProseMirror code {
-  color: #f4f8fc;
+  color: #e9edf1;
   background: rgba(255, 255, 255, 0.08);
 }
 
 .dark .blog-prose .ProseMirror pre {
-  background: #080b12;
-  border: 1px solid rgba(61, 232, 255, 0.18);
+  background: #07090c;
+  border: 0;
 }
 
 .dark .blog-prose .ProseMirror pre code {
-  color: #e8eef5;
+  color: #e9edf1;
 }
 
 .dark .blog-prose .ProseMirror table {
-  border-color: rgba(61, 232, 255, 0.28);
+  border-color: rgba(77, 227, 255, 0.28);
   background: rgba(11, 14, 22, 0.35);
 }
 
 .dark .blog-prose .ProseMirror th,
 .dark .blog-prose .ProseMirror td {
-  border-right-color: rgba(61, 232, 255, 0.12);
-  border-bottom-color: rgba(61, 232, 255, 0.12);
+  border-right-color: rgba(77, 227, 255, 0.12);
+  border-bottom-color: rgba(77, 227, 255, 0.12);
 }
 
 .dark .blog-prose .ProseMirror th {
-  background: rgba(61, 232, 255, 0.08);
-  color: #b8e4ff;
+  background: rgba(77, 227, 255, 0.08);
+  color: #e9edf1;
 }
 
 /* Mermaid SVG — blog-prose color 상속으로 글자가 사라지는 문제 방지 */
@@ -824,8 +824,8 @@ pre {
 .blog-prose .mermaid-diagram text,
 .blog-prose .mermaid-diagram .messageText,
 .blog-prose .mermaid-diagram .loopText {
-  fill: #f5f0e8 !important;
-  color: #f5f0e8 !important;
+  fill: #e9edf1 !important;
+  color: #e9edf1 !important;
 }
 
 .dark .blog-prose .mermaid-diagram .nodeLabel,
@@ -834,8 +834,8 @@ pre {
 .dark .blog-prose .mermaid-diagram text,
 .dark .blog-prose .mermaid-diagram .messageText,
 .dark .blog-prose .mermaid-diagram .loopText {
-  fill: #e8eef5 !important;
-  color: #e8eef5 !important;
+  fill: #e9edf1 !important;
+  color: #e9edf1 !important;
 }
 
 .void-scanlines::after {
@@ -886,4 +886,57 @@ pre {
     radial-gradient(1px 1px at 81% 34%, #5ad8ff 50%, transparent 51%),
     radial-gradient(1px 1px at 91% 88%, #ff6ad5 50%, transparent 51%),
     radial-gradient(1.5px 1.5px at 8% 82%, #d8f4ff 50%, transparent 51%);
+}
+
+/* 블로그 본문 — 포트폴리오와 같은 표기: 제목은 Syne, 구획은 가는 선, 장식 없는 코드 블록 */
+.blog-prose .ProseMirror :is(h1, h2, h3) {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.blog-prose .ProseMirror h1 {
+  margin: 2.75rem 0 1rem;
+  font-size: 1.75rem;
+}
+
+.blog-prose .ProseMirror h2 {
+  margin: 3.25rem 0 1rem;
+  font-size: 1.5rem;
+}
+
+.blog-prose .ProseMirror h3 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+.blog-prose .ProseMirror > :first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.blog-prose .ProseMirror blockquote {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.blog-prose .ProseMirror blockquote p {
+  margin: 0;
+}
+
+.blog-prose .ProseMirror :is(pre, table) {
+  border: 0;
+  border-radius: 8px;
+}
+
+.blog-prose .ProseMirror code {
+  border-radius: 4px;
+}
+
+.code-block-dots {
+  display: none !important;
 }
