@@ -63,7 +63,22 @@ export const insidePad = (district: District, x: number, z: number) =>
   Math.abs(x - district.x) < PAD.width / 2 - PAD.inset &&
   Math.abs(z - (district.z + PAD.offset)) < PAD.depth / 2 - PAD.inset;
 
-/** 패널을 뽑을 때 내 캐릭터가 서는 자리: 슬롯 왼쪽 가이드 레일 옆 */
+/** 서버 랙: 거치대 바로 뒤, 지구 한가운데에 선 양문형 캐비닛. front는 지구 중심에서 본 앞면의 z */
+export const RACK = { width: 13, depth: 6, front: -7.5, shelf: 10 };
+
+/** 랙의 높이: 꺼낸 패널 위로 머리가 올라오도록 패널보다 조금 높다 */
+export const rackHeight = (portrait: boolean) => {
+  const size = panelSize(portrait);
+  return Math.max(size.centre + size.height / 2 + 3.5, 27);
+};
+
+/** 랙의 중심 (x, z) */
+export const rackSpot = (district: District): [number, number] => [
+  district.x,
+  district.z + RACK.front - RACK.depth / 2,
+];
+
+/** 기억을 꺼낼 때 내 캐릭터가 서는 자리: 거치대 왼쪽 기둥 옆, 패널을 가리지 않는 곳 */
 export const grabSpot = (district: District, portrait: boolean): [number, number] => [
   district.x - panelSize(portrait).width / 2 - 4.2,
   district.z + 3.2,

@@ -18,6 +18,8 @@ import {
   MONUMENT_OFFSET,
   PAD,
   panelSize,
+  RACK,
+  rackHeight,
   type ViewId,
 } from './district';
 import { seededRandom } from './layout';
@@ -764,28 +766,54 @@ type PanelProps = {
   onSelect: (id: ViewId) => void;
 };
 
-/** 꽂혀 있을 때 슬롯 밖으로 나와 있는 높이. 머리줄(이름)이 보일 만큼 */
-const TAB = 4.2;
+/** 랙 기둥에 달린 상태등의 줄 번호 */
+const LED_ROWS = [0, 1, 2, 3, 4, 5, 6];
+const smoothstep = (from: number, to: number, value: number) => {
+  const t = Math.min(1, Math.max(0, (value - from) / (to - from)));
+  return t * t * (3 - 2 * t);
+};
 
 /**
- * 지구의 내용 패널. 평소에는 바닥 슬롯에 꽂혀 이름표만 나와 있고,
- * 그 지구를 열면 슬롯에서 뽑혀 올라온다. 글과 링크는 3D 표면에 그대로 놓인다.
+ * 지구의 내용 패널. 평소에는 작은 카트리지로 서버 랙 안에 꽂혀 있고 랙의 문은 닫혀 있다.
+ * 그 지구를 열면 문이 열리고, 카트리지가 랙에서 꺼내져 앞의 거치대에 놓이며 패널로 펼쳐진다.
+ * 글과 링크는 3D 표면에 그대로 놓인다.
  */
 const Panel = ({ district, m, accent, portrait, focused, pulled, fonts, still, onSelect }: PanelProps) => {
   const size = panelSize(portrait);
-  const drop = size.height - TAB + (size.centre - size.height / 2);
+  const bottom = size.centre - size.height / 2;
+  const height = rackHeight(portrait);
+  /** 랙 중심의, 지구 중심에서 본 z */
+  const rackZ = RACK.front - RACK.depth / 2;
+  /** 랙 안에 있을 때의 크기 비율: 선반에 들어갈 만큼 작다 */
+  const stowedScale = (RACK.width - 3) / (size.width + 1.4);
   const body = useRef<three.Group>(null);
   const latch = useRef<three.Mesh>(null);
+  const doorLeft = useRef<three.Group>(null);
+  const doorRight = useRef<three.Group>(null);
+  const screen = useRef<three.MeshBasicMaterial>(null);
+  const leds = useRef<three.Group>(null);
   const out = focused || pulled;
   const motion = useRef({ value: out ? 1 : 0, velocity: 0, delay: 0, target: out ? 1 : 0 });
+  const glass = useMemo(
+    () =>
+      new three.MeshStandardMaterial({
+        color: '#0b1016',
+        transparent: true,
+        opacity: 0.42,
+        metalness: 0.7,
+        roughness: 0.18,
+      }),
+    [],
+  );
+  useEffect(() => () => glass.dispose(), [glass]);
 
-  useFrame((_, rawDelta) => {
+  useFrame(({ clock }, rawDelta) => {
     const state = motion.current;
     const target = out ? 1 : 0;
     if (target !== state.target) {
       state.target = target;
-      // 뽑을 때는 뜸을 들인다: 캐릭터가 힘을 주는 순간에 맞춘다
-      state.delay = target === 1 ? 0.34 : 0;
+      // 꺼낼 때는 뜸을 들인다: 캐릭터가 힘을 주는 순간에 맞춘다
+      state.delay = target === 1 ? 0.2 : 0;
     }
     const delta = Math.min(rawDelta, 0.05);
     if (still) {
@@ -794,19 +822,45 @@ const Panel = ({ district, m, accent, portrait, focused, pulled, fonts, still, o
     } else if (state.delay > 0) {
       state.delay -= delta;
     } else {
-      // 스프링: 뽑을 때는 살짝 튀어 오르고, 넣을 때는 툭 떨어진다
-      const stiffness = target === 1 ? 70 : 120;
-      const damping = target === 1 ? 10.5 : 22;
+      // 스프링: 꺼낼 때는 거치대에서 살짝 튕기고, 넣을 때는 빠르게 돌아간다
+      const stiffness = target === 1 ? 34 : 60;
+      const damping = target === 1 ? 8.2 : 15;
       state.velocity += ((target - state.value) * stiffness - state.velocity * damping) * delta;
       state.value += state.velocity * delta;
     }
+    // 문이 먼저 열리고, 그다음 카트리지가 나온다. 닫을 때는 그 반대
+    const swing = smoothstep(0, 0.34, state.value) * 1.85;
+    if (doorLeft.current) {
+      doorLeft.current.rotation.y = -swing;
+    }
+    if (doorRight.current) {
+      doorRight.current.rotation.y = swing;
+    }
+    const travel = smoothstep(0.22, 1, state.value) + Math.max(0, state.value - 1);
     if (body.current) {
-      body.current.position.y = -(1 - state.value) * drop;
+      const scale = stowedScale + (1 - stowedScale) * travel;
+      body.current.scale.setScalar(scale);
+      // 선반에서 앞으로 빠져나온 뒤, 포물선을 그리며 거치대로 날아가 펼쳐진다
+      const leave = smoothstep(0.22, 0.42, state.value);
+      body.current.position.set(
+        0,
+        RACK.shelf + (size.centre - RACK.shelf) * travel + Math.sin(Math.PI * Math.min(1, travel)) * 5,
+        (rackZ + leave * (RACK.depth / 2 + 1)) * (1 - travel),
+      );
+    }
+    if (screen.current) {
+      // 랙 안에서는 화면이 꺼져 있고, 꺼내서 펼쳐지며 켜진다
+      screen.current.color.setScalar(0.05 + 0.95 * smoothstep(0.35, 0.95, state.value));
     }
     if (latch.current) {
-      // 움직이는 동안 슬롯의 빛이 밝아진다
+      // 움직이는 동안 거치대의 빛이 밝아진다
       const busy = Math.min(1, Math.abs(state.velocity) * 0.6);
       latch.current.scale.y = 1 + busy * 5;
+    }
+    if (leds.current && !still) {
+      leds.current.children.forEach((led, index) => {
+        led.visible = Math.sin(clock.elapsedTime * (2.1 + (index % 5) * 0.7) + index * 1.9) > -0.35;
+      });
     }
   });
   const [hovered, setHovered] = useState<number | null>(null);
@@ -825,7 +879,7 @@ const Panel = ({ district, m, accent, portrait, focused, pulled, fonts, still, o
 
   return (
     <group position={[district.x, 0, district.z]}>
-      {/* 슬롯: 바닥에 고정된 소켓과 양옆의 가이드 레일 */}
+      {/* 거치대: 꺼낸 카트리지가 놓이는 받침과 양옆의 기둥 */}
       <mesh position={[0, 0.7, -0.6]} material={m.frame} castShadow receiveShadow>
         <boxGeometry args={[size.width + 4.4, 1.4, 3.4]} />
       </mesh>
@@ -835,11 +889,11 @@ const Panel = ({ district, m, accent, portrait, focused, pulled, fonts, still, o
       {[-1, 1].map((side) => (
         <mesh
           key={side}
-          position={[side * (size.width / 2 + 1.5), (size.centre - size.height / 2 + 3) / 2, -0.6]}
+          position={[side * (size.width / 2 + 1.5), (bottom + 3) / 2, -0.6]}
           material={m.frame}
           castShadow
         >
-          <boxGeometry args={[1.2, size.centre - size.height / 2 + 3, 1.8]} />
+          <boxGeometry args={[1.2, bottom + 3, 1.8]} />
         </mesh>
       ))}
       <mesh ref={latch} position={[0, 0.72, 1.12]} material={m.glow}>
@@ -849,25 +903,104 @@ const Panel = ({ district, m, accent, portrait, focused, pulled, fonts, still, o
         <boxGeometry args={[size.width, 0.1, 0.24]} />
       </mesh>
 
-      {/* 뽑혀 나오는 카드 */}
+      {/* 서버 랙: 거치대 바로 뒤 한가운데에 선 캐비닛 */}
+      <group position={[0, 0, rackZ]}>
+        <mesh position={[0, height / 2, -RACK.depth / 2 + 0.2]} material={m.frame} castShadow receiveShadow>
+          <boxGeometry args={[RACK.width, height, 0.4]} />
+        </mesh>
+        {[-1, 1].map((side) => (
+          <mesh
+            key={side}
+            position={[side * (RACK.width / 2 - 0.3), height / 2, 0]}
+            material={m.frame}
+            castShadow
+            receiveShadow
+          >
+            <boxGeometry args={[0.6, height, RACK.depth]} />
+          </mesh>
+        ))}
+        <mesh position={[0, height - 0.4, 0]} material={m.frame} castShadow>
+          <boxGeometry args={[RACK.width, 0.8, RACK.depth]} />
+        </mesh>
+        <mesh position={[0, 0.5, 0]} material={m.frame} receiveShadow>
+          <boxGeometry args={[RACK.width, 1, RACK.depth]} />
+        </mesh>
+        <mesh position={[0, height + 0.06, RACK.depth / 2 - 0.4]} material={m.glow}>
+          <boxGeometry args={[RACK.width - 1, 0.12, 0.3]} />
+        </mesh>
+        {/* 안에 층층이 꽂힌 다른 유닛들. 카트리지가 있는 선반만 비어 있다 */}
+        <group ref={leds}>
+          {LED_ROWS.flatMap((row) => {
+            const y = 2.4 + (row / (LED_ROWS.length - 1)) * (height - 5.2);
+            if (Math.abs(y - RACK.shelf) < 2.6) {
+              return [];
+            }
+            return [-1, 1].map((side) => (
+              <mesh key={`${row}:${side}`} position={[side * 3.6, y + 0.5, RACK.depth / 2 - 0.9]} material={m.glow}>
+                <boxGeometry args={[0.9, 0.22, 0.1]} />
+              </mesh>
+            ));
+          })}
+        </group>
+        {LED_ROWS.map((row) => {
+          const y = 2.4 + (row / (LED_ROWS.length - 1)) * (height - 5.2);
+          return Math.abs(y - RACK.shelf) < 2.6 ? null : (
+            <mesh key={row} position={[0, y, -0.4]} material={m.frame} castShadow>
+              <boxGeometry args={[RACK.width - 1.6, 2.2, RACK.depth - 1.4]} />
+            </mesh>
+          );
+        })}
+        <mesh position={[0, RACK.shelf - 2.2, 0]} material={m.gold}>
+          <boxGeometry args={[RACK.width - 1.6, 0.12, RACK.depth - 1]} />
+        </mesh>
+        {/* 문: 양쪽으로 열리는 유리문 */}
+        {[
+          { side: -1, ref: doorLeft },
+          { side: 1, ref: doorRight },
+        ].map(({ side, ref }) => (
+          <group key={side} ref={ref} position={[side * (RACK.width / 2), 0, RACK.depth / 2 + 0.1]}>
+            <group position={[-side * (RACK.width / 4), height / 2 + 0.3, 0]}>
+              <mesh material={glass}>
+                <boxGeometry args={[RACK.width / 2 - 0.5, height - 1.8, 0.12]} />
+              </mesh>
+              {[-1, 1].map((edge) => (
+                <mesh key={edge} position={[0, (edge * (height - 1.2)) / 2, 0]} material={m.frame} castShadow>
+                  <boxGeometry args={[RACK.width / 2, 0.6, 0.3]} />
+                </mesh>
+              ))}
+              {[-1, 1].map((edge) => (
+                <mesh key={edge} position={[(edge * (RACK.width / 2 - 0.3)) / 2, 0, 0]} material={m.frame} castShadow>
+                  <boxGeometry args={[0.3, height - 0.6, 0.3]} />
+                </mesh>
+              ))}
+              {/* 손잡이: 가운데 쪽 가장자리 */}
+              <mesh position={[-side * (RACK.width / 4 - 0.9), -height / 2 + 6, 0.3]} material={m.gold}>
+                <boxGeometry args={[0.28, 3.4, 0.4]} />
+              </mesh>
+            </group>
+          </group>
+        ))}
+      </group>
+
+      {/* 랙에서 꺼내져 펼쳐지는 카드 */}
       <group ref={body}>
-        <mesh position={[0, size.centre, -0.6]} material={m.frame} castShadow receiveShadow>
+        <mesh position={[0, 0, -0.6]} material={m.frame} castShadow receiveShadow>
           <boxGeometry args={[size.width + 1.4, size.height + 1.4, 1]} />
         </mesh>
-        <mesh position={[0, size.centre + size.height / 2 + 0.8, -0.3]} material={m.glow}>
+        <mesh position={[0, size.height / 2 + 0.8, -0.3]} material={m.glow}>
           <boxGeometry args={[size.width + 1.4, 0.14, 0.3]} />
         </mesh>
 
         {/* 내용 */}
         {/* biome-ignore lint/a11y/noStaticElementInteractions: 3D 메시이며, 같은 이동은 화면의 버튼과 키보드로도 할 수 있다 */}
         <mesh
-          position={[0, size.centre, 0]}
+          position={[0, 0, 0]}
           onClick={handleSelect}
           onPointerOver={() => !focused && setCursor(true)}
           onPointerOut={() => setCursor(false)}
         >
           <planeGeometry args={[size.width, size.height]} />
-          <meshBasicMaterial map={art.texture} toneMapped={false} />
+          <meshBasicMaterial ref={screen} map={art.texture} toneMapped={false} />
         </mesh>
 
         {/* 링크: 이 지구를 보고 있을 때만 누를 수 있다 */}
@@ -878,7 +1011,7 @@ const Panel = ({ district, m, accent, portrait, focused, pulled, fonts, still, o
                 key={hit.url}
                 position={[
                   ((hit.x + hit.w / 2) / art.width - 0.5) * size.width,
-                  size.centre + (0.5 - (hit.y + hit.h / 2) / art.height) * size.height,
+                  (0.5 - (hit.y + hit.h / 2) / art.height) * size.height,
                   0.05,
                 ]}
                 onClick={(event) => {
