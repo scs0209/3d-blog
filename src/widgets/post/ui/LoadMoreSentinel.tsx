@@ -69,7 +69,7 @@ export const LoadMoreSentinel = ({ hasNextPage, isFetchingNextPage, onLoadMore }
         type='button'
         onClick={tryLoadMore}
         disabled={isFetchingNextPage || !hasNextPage}
-        className={`rounded-lg px-4 py-2 text-sm transition disabled:opacity-60 ${blogTheme.navBtn}`}
+        className={`px-4 py-2 disabled:opacity-60 ${blogTheme.mono} ${blogTheme.navBtn}`}
         aria-label='다음 글 불러오기'
       >
         {isFetchingNextPage ? '불러오는 중...' : '더 보기'}

@@ -1,24 +1,24 @@
-import { blogTheme } from '@/widgets/post/ui/blog-theme';
+/** 로그인·회원가입 테마. 포트폴리오·블로그와 같은 어두운 바탕, 옅은 면, 강조색 하나 */
+const FOCUS =
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4de3ff]';
 
-/** 로그인·회원가입 — blogTheme 기반 */
 export const authTheme = {
-  shell: blogTheme.shell,
-  shellRoot: blogTheme.shellRoot,
-  bottomVeil: blogTheme.bottomVeil,
-  titleGradient: blogTheme.titleGradient,
-  textPrimary: blogTheme.textPrimary,
-  textMuted: blogTheme.textMuted,
-  textAccent: blogTheme.textAccent,
-  card: `${blogTheme.card} ${blogTheme.cardHover} relative overflow-hidden rounded-2xl`,
-  cardGlow: blogTheme.cardTopGlow,
-  label: `mb-1.5 block text-xs font-medium uppercase tracking-[0.14em] ${blogTheme.labelAccent}`,
+  shell: 'bg-[#050608] text-[#c3ccd4]',
+  shellRoot: 'min-h-screen bg-[#050608]',
+  bottomVeil: 'hidden',
+  titleGradient: 'text-[#e9edf1]',
+  textPrimary: 'text-[#e9edf1]',
+  textMuted: 'text-[#8d98a3]',
+  textAccent: 'text-[#4de3ff]',
+  card: 'relative rounded-2xl bg-white/[0.045]',
+  cardGlow: 'hidden',
+  label: 'mb-1.5 block text-[13px] font-medium text-[#8d98a3]',
   input:
-    'w-full rounded-lg border border-[#ff9a3c]/25 bg-[#2a1545]/50 px-4 py-2.5 text-sm text-[#ffe8d0] placeholder:text-[#d4a8c0]/40 backdrop-blur-sm transition focus:border-[#ff9a3c]/55 focus:outline-none focus:ring-2 focus:ring-[#ff9a3c]/25 dark:border-[#3de8ff]/20 dark:bg-[#070414]/60 dark:text-[#c8e8ff] dark:placeholder:text-[#7ec8ff]/35 dark:focus:border-[#3de8ff]/45 dark:focus:ring-[#3de8ff]/20',
-  submitBtn:
-    'w-full rounded-lg border border-[#ff9a3c]/40 bg-gradient-to-r from-[#ff9a3c]/90 via-[#e878a0]/80 to-[#c44d2a]/90 px-4 py-2.5 text-sm font-semibold tracking-wide text-white shadow-[0_0_20px_rgba(255,154,60,0.25)] transition hover:scale-[1.01] hover:shadow-[0_0_28px_rgba(255,154,60,0.35)] focus:outline-none focus:ring-2 focus:ring-[#ff9a3c]/40 disabled:cursor-not-allowed disabled:opacity-60 dark:border-[#3de8ff]/35 dark:from-[#3de8ff]/80 dark:via-[#6366f1]/70 dark:to-[#312e81]/90 dark:shadow-[0_0_20px_rgba(61,232,255,0.2)] dark:hover:shadow-[0_0_28px_rgba(61,232,255,0.3)] dark:focus:ring-[#3de8ff]/35',
-  linkBtn: `font-medium ${blogTheme.textAccent} underline-offset-4 transition hover:underline`,
-  error: 'mt-1 text-sm text-red-400',
-  rootError: 'mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-center text-sm text-red-300',
-  footer: `text-center text-sm ${blogTheme.textMuted}`,
-  backBtn: `inline-flex items-center gap-1.5 rounded-lg border border-[#ff9a3c]/25 bg-[#2a1545]/40 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] text-[#ffc8a0] transition hover:border-[#ff9a3c]/45 hover:bg-[#3d1f5c]/50 dark:border-[#3de8ff]/20 dark:bg-black/30 dark:text-[#3de8ff] dark:hover:border-[#3de8ff]/40 dark:hover:bg-black/50`,
+    'w-full rounded-lg border border-transparent bg-white/[0.06] px-4 py-2.5 text-sm text-[#e9edf1] placeholder:text-[#8d98a3]/70 transition-colors focus:border-[#4de3ff] focus:bg-white/[0.08] focus:outline-none',
+  submitBtn: `w-full rounded-full bg-white px-4 py-3 text-[15px] font-semibold text-[#050608] transition-colors hover:bg-[#4de3ff] disabled:cursor-not-allowed disabled:opacity-60 ${FOCUS}`,
+  linkBtn: 'font-medium text-[#4de3ff] underline-offset-4 transition-colors hover:underline',
+  error: 'mt-1 text-sm text-[#ff8a8a]',
+  rootError: 'mb-4 rounded-lg bg-[#ff8a8a]/10 px-3 py-2 text-center text-sm text-[#ffb3b3]',
+  footer: 'text-center text-sm text-[#8d98a3]',
+  backBtn: `inline-flex items-center gap-1.5 rounded-full bg-white/[0.07] px-3.5 py-1.5 text-[13px] text-[#dfe5ea] transition-colors hover:bg-white/[0.14] hover:text-white ${FOCUS}`,
 } as const;

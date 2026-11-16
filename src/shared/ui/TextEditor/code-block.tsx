@@ -12,18 +12,18 @@ const ensureMermaid = async () => {
       startOnLoad: false,
       theme: 'dark',
       themeVariables: {
-        primaryColor: '#2a1545',
-        primaryTextColor: '#f5f0e8',
-        primaryBorderColor: '#ff9a3c',
-        lineColor: '#ffb870',
-        secondaryColor: '#1c0e38',
-        tertiaryColor: '#12082a',
+        primaryColor: '#0a0d11',
+        primaryTextColor: '#e9edf1',
+        primaryBorderColor: '#4de3ff',
+        lineColor: '#4de3ff',
+        secondaryColor: '#0a0d11',
+        tertiaryColor: '#0a0d11',
         background: '#12091c',
-        mainBkg: '#1c0e38',
-        nodeBorder: '#ff9a3c',
-        clusterBkg: '#1a1424',
-        titleColor: '#f5f0e8',
-        edgeLabelBackground: '#1c0e38',
+        mainBkg: '#0a0d11',
+        nodeBorder: '#4de3ff',
+        clusterBkg: '#0a0d11',
+        titleColor: '#e9edf1',
+        edgeLabelBackground: '#0a0d11',
       },
     });
     mermaidInitialized = true;
@@ -133,9 +133,9 @@ export default function CodeBlock({ editor, node, updateAttributes, extension, g
 
   return (
     <NodeViewWrapper className='code-block-root not-prose my-6'>
-      <div className='relative overflow-hidden rounded-2xl border border-[#ff9a3c]/20 bg-[#12091c]/92 shadow-[0_16px_48px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,200,160,0.12)] backdrop-blur-md dark:border-[#3de8ff]/15 dark:bg-[#070b12]/92 dark:shadow-[0_16px_48px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]'>
+      <div className='relative overflow-hidden rounded-[3px] border border-[#4de3ff]/20 bg-[#12091c]/92 dark:border-[#4de3ff]/15 dark:bg-[#070b12]/92'>
         <span
-          className='pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#ff9a3c]/55 to-transparent dark:via-[#3de8ff]/45'
+          className='pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#4de3ff]/55 to-transparent dark:via-[#4de3ff]/45'
           aria-hidden
         />
 
@@ -167,14 +167,14 @@ export default function CodeBlock({ editor, node, updateAttributes, extension, g
               contentEditable={false}
               onMouseDown={handleControlMouseDown}
               onClick={handleToggleMermaidPreview}
-              className='shrink-0 rounded-full border border-[#ff9a3c]/30 bg-[#ff9a3c]/10 px-2.5 py-1 text-[11px] font-medium tracking-wide text-[#ffd4b0] transition-colors hover:border-[#ff9a3c]/55 hover:bg-[#ff9a3c]/16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/45 dark:border-[#3de8ff]/30 dark:bg-[#3de8ff]/10 dark:text-[#b8e4ff] dark:hover:border-[#3de8ff]/50 dark:hover:bg-[#3de8ff]/16 dark:focus-visible:ring-[#3de8ff]/40'
+              className='shrink-0 rounded-full border border-[#4de3ff]/30 bg-[#4de3ff]/10 px-2.5 py-1 text-[11px] font-medium tracking-wide text-[#e9edf1] transition-colors hover:border-[#4de3ff]/55 hover:bg-[#4de3ff]/16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4de3ff]/45 dark:border-[#4de3ff]/30 dark:bg-[#4de3ff]/10 dark:text-[#e9edf1] dark:hover:border-[#4de3ff]/50 dark:hover:bg-[#4de3ff]/16 dark:focus-visible:ring-[#4de3ff]/40'
             >
               {effectiveMode === Mode.Edit ? '미리보기' : '편집'}
             </button>
           )}
         </div>
 
-        <div className='h-px bg-[#ff9a3c]/12 dark:bg-[#3de8ff]/10' aria-hidden />
+        <div className='h-px bg-[#4de3ff]/12 dark:bg-[#4de3ff]/10' aria-hidden />
 
         <pre hidden={isMermaid && effectiveMode === Mode.Preview} className='code-block-pre'>
           <NodeViewContent as='code' />

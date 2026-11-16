@@ -1,14 +1,13 @@
 'use client';
 
+import { LoaderCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
 import type { PostResponse } from '@/entities/post/model/post';
 import { getPostPath } from '@/shared/consts/baseUrl';
 import { formatDateToYMD } from '@/shared/utils';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
-import { motion } from 'framer-motion';
-import { Eye, LoaderCircle } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
 
 type PostListCardProps = {
   post: PostResponse;
@@ -16,6 +15,7 @@ type PostListCardProps = {
   categorySlug?: string;
 };
 
+/** 글 목록의 한 줄: 작성일 · 제목 · 분류와 조회수. 줄 사이는 선 없이 여백으로 나눈다 */
 export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -40,41 +40,21 @@ export const PostListCard = ({ post, categoryName, categorySlug }: PostListCardP
       onClick={handleNavigate}
       onMouseEnter={() => router.prefetch(href)}
       aria-busy={isPending}
-      className={`block rounded-lg transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/50 dark:focus-visible:ring-[#3de8ff]/50 ${
+      className={`group -mx-3 grid grid-cols-1 gap-x-6 gap-y-1.5 rounded-lg px-3 py-4 transition-[opacity,background-color] hover:bg-white/[0.045] sm:grid-cols-[6.5rem_1fr_auto] sm:items-baseline ${blogTheme.focus} ${
         isPending ? 'pointer-events-none opacity-60' : ''
       }`}
     >
-      <motion.div
-        key={`${post.id}-list`}
-        whileHover={isPending ? undefined : { x: 4 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-        className={`relative cursor-pointer rounded-xl px-4 py-4 transition ${blogTheme.listRow}`}
-      >
-        <span className={blogTheme.listAccent} aria-hidden />
-        {isPending && (
-          <span className={`absolute right-4 top-4 ${blogTheme.textAccent}`} aria-hidden>
-            <LoaderCircle className='size-4 animate-spin' />
-          </span>
-        )}
-        <div className='flex items-center justify-between'>
-          {categoryLabel && <span className={blogTheme.categoryPill}>#{categoryLabel}</span>}
-          <span className={`ml-auto flex items-center justify-center gap-1 text-sm ${blogTheme.textMuted}`}>
-            <Eye size={15} className='inline-block' />
-            {post?.views ?? 0}
-          </span>
-        </div>
-        <h2
-          className={`mt-2.5 text-xl font-semibold leading-snug tracking-tight transition-colors group-hover:text-[#ffd4b0] dark:group-hover:text-[#b8e4ff] ${blogTheme.textPrimary}`}
-          style={{ fontFamily: 'var(--font-syne), sans-serif' }}
-        >
-          {post?.title}
-        </h2>
-        <div className={`mt-2.5 flex items-center justify-between text-sm ${blogTheme.textMuted}`}>
-          <span>{post?.author ? post?.author?.name : '관리자'}</span>
-          <span>{formatDateToYMD(post?.updatedAt ?? '')}</span>
-        </div>
-        <hr className={`my-5 ${blogTheme.divider}`} />
-      </motion.div>
+      <time className='text-[13px] tabular-nums text-[#8d98a3]'>
+        {formatDateToYMD(post?.createdAt ?? post?.updatedAt ?? '')}
+      </time>
+      <h2 className='break-keep font-[family-name:var(--font-syne),sans-serif] text-[19px] font-semibold leading-snug text-[#e9edf1] transition-colors group-hover:text-[#4de3ff]'>
+        {post?.title}
+      </h2>
+      <div className='flex items-center gap-4 text-[13px] text-[#8d98a3]'>
+        {categoryLabel ? <span className='text-[#4de3ff]'>{categoryLabel}</span> : null}
+        <span>조회 {post?.views ?? 0}</span>
+        {isPending ? <LoaderCircle className='size-3.5 animate-spin text-[#4de3ff]' aria-hidden /> : null}
+      </div>
     </Link>
   );
 };

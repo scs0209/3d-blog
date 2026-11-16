@@ -10,7 +10,7 @@ type PostListProps = {
 export const PostList = ({ posts, isLoading }: PostListProps) => {
   if (isLoading) {
     return (
-      <div className='flex flex-col gap-8' aria-busy='true'>
+      <div className='flex flex-col' aria-busy='true'>
         {['a', 'b', 'c', 'd', 'e'].map((id) => (
           <PostListCardSkeleton key={`skeleton-list-${id}`} />
         ))}
@@ -19,7 +19,7 @@ export const PostList = ({ posts, isLoading }: PostListProps) => {
   }
 
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='flex flex-col'>
       {posts.map((post) => (
         <PostListCard key={post.id} post={post} />
       ))}

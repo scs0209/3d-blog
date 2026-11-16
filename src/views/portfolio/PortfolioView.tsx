@@ -1,7 +1,7 @@
 'use client';
 
-import { DeskOsClient } from '@/widgets/portfolio/desk-os';
+import { ChipPortfolio } from '@/widgets/portfolio/mainboard';
 
 export const PortfolioView = () => {
-  return <DeskOsClient />;
+  return <ChipPortfolio />;
 };

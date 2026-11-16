@@ -3,6 +3,7 @@ import { baseUrl } from '@/shared/consts/baseUrl';
 import prisma from '@/shared/lib/db';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // 첫 화면(/)이 포트폴리오이고 /blog가 글 목록이다
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -13,20 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/blog/all`,
-      lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/portfolio`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
     },
     {
       url: `${baseUrl}/feed.xml`,
@@ -77,9 +66,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     });
 
-    // 태그 검색 페이지 URL (/blog/all?tags=name)
+    // 태그 검색 페이지 URL (/blog?tags=name)
     const tagPages = tags.map((tag) => ({
-      url: `${baseUrl}/blog/all?tags=${encodeURIComponent(tag.name)}`,
+      url: `${baseUrl}/blog?tags=${encodeURIComponent(tag.name)}`,
       lastModified: tag.createdAt || new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.5,

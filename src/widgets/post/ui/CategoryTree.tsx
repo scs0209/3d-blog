@@ -47,7 +47,7 @@ const CategoryTreeItem = ({
         {hasChildren ? (
           <button
             type='button'
-            className={`${sidebarLayout.navToggle} rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff9a3c]/40 dark:focus-visible:ring-[#3de8ff]/50 ${blogTheme.textMuted} hover:text-[#ff9a3c] dark:hover:text-[#3de8ff]`}
+            className={`${sidebarLayout.navToggle} rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4de3ff]/40 ${blogTheme.textMuted} hover:text-[#4de3ff]`}
             aria-label={isExpanded ? `${node.name} 접기` : `${node.name} 펼치기`}
             aria-expanded={isExpanded}
             onClick={() => onToggle(node.id)}
@@ -59,8 +59,6 @@ const CategoryTreeItem = ({
         )}
         <motion.button
           type='button'
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
           className={`${sidebarLayout.navButton} ${getActiveClassName(isActive)}`}
           onClick={() => onSelect(node.slug)}
         >

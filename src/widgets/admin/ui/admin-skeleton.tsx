@@ -1,5 +1,5 @@
-import { adminTheme } from './admin-theme';
 import { adminFormTheme } from './admin-form-theme';
+import { adminTheme } from './admin-theme';
 
 const Pulse = ({ className }: { className: string }) => (
   <div className={`${adminFormTheme.skeletonPulse} ${className}`} />

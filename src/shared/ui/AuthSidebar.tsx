@@ -25,7 +25,7 @@ const AuthSidebar = ({ onNavigate }: AuthSidebarProps) => {
 
   return (
     <nav className={adminTheme.navCol} aria-label='관리 메뉴'>
-      <p className={adminTheme.navBrand}>Discover</p>
+      <p className={adminTheme.navBrand}>AYAAN</p>
       <p className={`${adminTheme.sectionLabel} mb-2 px-3`}>관리</p>
       <ul className='flex flex-col gap-0.5'>
         {navItems.map((item) => {

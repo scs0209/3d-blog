@@ -5,7 +5,7 @@ export const sidebarLayout = {
   navList: 'flex flex-col gap-1 px-3',
   navRow: 'flex items-center gap-1',
   navToggle: 'inline-flex h-5 w-5 shrink-0 items-center justify-center',
-  navButton: 'flex w-full min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition',
+  navButton: 'flex w-full min-w-0 items-center gap-2 rounded-[3px] px-2 py-1.5 text-left text-sm transition',
   tags: 'flex flex-wrap gap-2 px-3',
 } as const;
 

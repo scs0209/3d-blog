@@ -9,8 +9,8 @@ import { extractDescription, extractPlainText, getPostPath, getPostUrl, toAbsolu
 import { decodePathSegment } from '@/shared/lib/decode-path-segment';
 import { PostContentViewer } from '@/shared/ui/PostContentViewer';
 import { formatDateToYMD } from '@/shared/utils';
-import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { blogPostSurface } from '@/widgets/post/ui/blog-post-surface';
+import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import { PostBackButton } from '@/widgets/post/ui/PostBackButton';
 import { PostViewTracker } from '@/widgets/post/ui/PostViewTracker';
 
@@ -155,36 +155,21 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         />
       </Suspense>
 
-      <div className='mx-4 max-w-4xl lg:mx-auto'>
+      <div className='mx-auto max-w-3xl'>
         <PostBackButton href={backHref} />
 
-        <section
-          className={`relative mb-12 mt-0 px-4 py-8 sm:px-6 md:px-8 ${blogPostSurface.postSection}`}
-        >
-          <span className={blogTheme.cardTopGlow} aria-hidden />
-          <h1
-            className={`mb-4 font-[family-name:var(--font-syne),sans-serif] text-3xl font-bold tracking-tight md:text-4xl ${blogTheme.textPrimary}`}
-          >
+        <article className={`mb-12 ${blogPostSurface.postSection}`}>
+          <div className='mb-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-[#8d98a3]'>
+            {post.category ? <span className='text-[#4de3ff]'>{post.category.name}</span> : null}
+            <time>{formatDateToYMD(post?.createdAt ?? '')}</time>
+            <span>{post.author?.name || 'Unknown Author'}</span>
+          </div>
+          <h1 className='mb-8 break-keep font-[family-name:var(--font-syne),sans-serif] text-[clamp(2rem,5vw,3.25rem)] font-bold leading-[1.08] tracking-[-0.02em] text-[#e9edf1]'>
             {post.title}
           </h1>
-          <div className={`mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm ${blogTheme.textMuted}`}>
-            <span>{post.author?.name || 'Unknown Author'}</span>
-            <span className='opacity-50' aria-hidden>
-              |
-            </span>
-            <span>{formatDateToYMD(post?.createdAt ?? '')}</span>
-            {post.category && (
-              <>
-                <span className='opacity-50' aria-hidden>
-                  |
-                </span>
-                <span className={blogTheme.textAccent}>{post.category.name}</span>
-              </>
-            )}
-          </div>
 
           {post.tags && post.tags.length > 0 && (
-            <div className='mb-6 flex flex-wrap gap-2'>
+            <div className='mb-10 flex flex-wrap gap-2'>
               {post.tags.map((tag) => (
                 <span key={tag.id} className={blogTheme.tagPill}>
                   #{tag.name}
@@ -207,7 +192,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <div>
             <PostContentViewer content={post.content ?? ''} />
           </div>
-        </section>
+        </article>
 
         <CommentSection postId={post.id ?? 0} />
       </div>

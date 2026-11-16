@@ -48,7 +48,8 @@ export function getQueryClient() {
 
 const HomeOnlyCosmosCursor = () => {
   const pathname = usePathname();
-  if (pathname !== '/') {
+  // 예전 우주 홈에서 쓰던 커서. 그 화면을 더는 열지 않으므로 어디에서도 켜지 않는다
+  if (pathname !== '/classic') {
     return null;
   }
   return <CosmosCursor />;

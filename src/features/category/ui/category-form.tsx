@@ -1,20 +1,21 @@
 'use client';
 
-import type { Category } from '@/entities/category/model';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   buildCategoryTree,
   collectDescendantIds,
   flattenCategoryTree,
 } from '@/entities/category/lib/build-category-tree';
+import type { Category } from '@/entities/category/model';
 import { useCategories } from '@/features/category/model';
 import { Button } from '@/shadcn-ui/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shadcn-ui/components/ui/form';
 import { Input } from '@/shadcn-ui/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shadcn-ui/components/ui/select';
 import { Textarea } from '@/shadcn-ui/components/ui/textarea';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { adminTheme } from '@/widgets/admin/ui/admin-theme';
 import { type CategoryFormSchema, categoryFormSchema } from '../model/category-schema';
 
 type CategoryFormProps = {
@@ -124,13 +125,11 @@ const CategoryForm = ({ onSubmit, initialData }: CategoryFormProps) => {
                 }}
               >
                 <FormControl>
-                  <SelectTrigger className='w-full border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/15'>
+                  <SelectTrigger className={adminTheme.selectTrigger}>
                     <SelectValue placeholder='루트 카테고리' />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent
-                  className='z-[100] overflow-hidden rounded-xl border border-white/30 bg-gradient-to-br from-white/20 via-[#1b2133]/85 to-[#151a28]/90 text-white shadow-[0_0_30px_rgba(255,255,255,0.18)] backdrop-blur-2xl'
-                >
+                <SelectContent className={adminTheme.selectContent}>
                   <SelectItem
                     value={ROOT_PARENT_VALUE}
                     className='rounded-md focus:bg-white/20 focus:text-white data-[highlighted]:bg-white/20 data-[highlighted]:text-white'

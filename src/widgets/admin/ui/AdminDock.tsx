@@ -26,7 +26,7 @@ export const AdminDock = () => {
       />
       <span className='mx-1 h-5 w-px bg-white/15' aria-hidden />
       <div className='flex items-center gap-2 px-3 py-2.5'>
-        <span className='h-2 w-2 rounded-full bg-[#1ed760] shadow-[0_0_8px_rgba(30,215,96,0.7)]' />
+        <span className='h-2 w-2 rounded-full bg-[#4de3ff]' />
         <span className='text-sm text-white/60'>운영 중</span>
       </div>
     </div>

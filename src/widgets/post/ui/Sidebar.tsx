@@ -1,26 +1,24 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, LayoutGrid } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import { toCategoryListItems } from '@/entities/category';
 import { getTagPostCount } from '@/entities/tag/lib/get-tag-post-count';
 import { VisitorCounter } from '@/features/blog/ui';
 import { useSidebarData } from '@/features/sidebar/model/use-sidebar-data';
 import { Tag } from '@/features/tag/ui';
 import { SidebarSkeleton } from '@/shared/ui/skeleton';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, LayoutGrid } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
 import { isBlogIndexPath } from '@/widgets/post/lib/blog-index-path';
-import { sidebarLayout } from '@/widgets/post/ui/sidebar-layout';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
+import { sidebarLayout } from '@/widgets/post/ui/sidebar-layout';
 import { CategoryTree } from './CategoryTree';
 
 const SidebarSectionHeader = ({ title }: { title: string }) => (
-  <div className={sidebarLayout.sectionHeader}>
-    <span className={`h-px flex-1 ${blogTheme.sectionLine}`} aria-hidden />
-    <span className={`text-sm font-semibold uppercase tracking-[0.16em] ${blogTheme.labelAccent}`}>{title}</span>
-    <span className={`h-px flex-1 ${blogTheme.sectionLineReverse}`} aria-hidden />
-  </div>
+  <h2 className='mb-2 px-3 font-[family-name:var(--font-syne),sans-serif] text-[15px] font-semibold text-[#e9edf1]'>
+    {title}
+  </h2>
 );
 
 export default function Sidebar() {
@@ -52,15 +50,15 @@ export default function Sidebar() {
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
             className={`relative z-10 hidden h-screen w-80 shrink-0 flex-col overflow-hidden p-6 lg:flex ${blogTheme.sidebar}`}
-            style={{ minWidth: 320, fontFamily: 'var(--font-syne), sans-serif' }}
+            style={{ minWidth: 320 }}
           >
             <button
               type='button'
-              className={`absolute left-[-40px] top-4 z-20 m-0 border-none bg-transparent p-0 outline-none transition hover:text-[#ff9a3c] dark:hover:text-[#3de8ff] ${blogTheme.textMuted}`}
+              className={`absolute left-[-40px] top-4 z-20 m-0 border-none bg-transparent p-0 outline-none transition hover:text-[#4de3ff] ${blogTheme.textMuted}`}
               onClick={() => setSidebarOpen(false)}
               aria-label='사이드바 접기'
             >
-              <ChevronRight size={28} />
+              <ChevronRight size={20} />
             </button>
 
             <VisitorCounter />
@@ -73,10 +71,8 @@ export default function Sidebar() {
                     <span className={sidebarLayout.navToggle} aria-hidden />
                     <motion.button
                       type='button'
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
                       className={`${sidebarLayout.navButton} ${isAllPage ? blogTheme.navActive : blogTheme.navIdle}`}
-                      onClick={() => router.push('/blog/all')}
+                      onClick={() => router.push('/blog')}
                     >
                       <LayoutGrid size={15} className='shrink-0 opacity-80' aria-hidden />
                       <span className='truncate'>All</span>
@@ -107,11 +103,11 @@ export default function Sidebar() {
       {!sidebarOpen && (
         <button
           type='button'
-          className={`fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 border-none bg-transparent p-0 outline-none transition hover:text-[#ff9a3c] dark:hover:text-[#3de8ff] lg:flex ${blogTheme.textMuted}`}
+          className={`fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 border-none bg-transparent p-0 outline-none transition hover:text-[#4de3ff] lg:flex ${blogTheme.textMuted}`}
           onClick={() => setSidebarOpen(true)}
           aria-label='사이드바 열기'
         >
-          <ChevronLeft size={28} />
+          <ChevronLeft size={20} />
         </button>
       )}
     </>

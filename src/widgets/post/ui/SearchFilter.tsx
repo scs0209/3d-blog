@@ -1,12 +1,12 @@
 'use client';
 
+import { motion } from 'framer-motion';
+import { Folder, Inbox, Loader2, Tag as TagIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useCategories } from '@/features/category/model';
 import { useTags } from '@/features/tag/model';
-import { motion } from 'framer-motion';
-import { Loader2, Tag as TagIcon, Folder, Inbox } from 'lucide-react';
 import { Tag } from '@/shared/ui/Tag';
-import { createPortal } from 'react-dom';
-import { useEffect, useState } from 'react';
 import { blogTheme } from '@/widgets/post/ui/blog-theme';
 import type { SearchPill } from './SearchBar';
 
@@ -49,7 +49,7 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-      className={`fixed z-[9999] w-80 rounded-xl p-1 shadow-2xl ${blogTheme.searchPanel}`}
+      className={`fixed z-[9999] w-80 rounded-md p-1 shadow-2xl ${blogTheme.searchPanel}`}
       style={{
         top: `${position.top}px`,
         right: `${position.right}px`,
@@ -80,8 +80,6 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
                   {categories.map((category) => (
                     <motion.div
                       key={category.id}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         if (!isPillSelected({ type: 'category', value: category.name })) {
                           onSelect({ type: 'category', value: category.name }, category.slug);
@@ -125,8 +123,6 @@ export const SearchFilter = ({ onSelect, existingPills, triggerRef }: SearchFilt
                     return (
                       <motion.div
                         key={tag.id}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() => {
                           if (!isPillSelected({ type: 'tag', value: tag.name ?? '' })) {
                             onSelect({ type: 'tag', value: tag.name ?? '' });
