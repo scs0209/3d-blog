@@ -223,6 +223,14 @@ const Rig = ({
         const reach = Math.hypot(pad.x - player.x, pad.z - player.z);
         const shift = reach === 0 ? 0 : Math.min(reach * 0.3, 3) / reach;
         follow.set(player.x + (pad.x - player.x) * shift, 3.5, player.z + (pad.z - player.z) * shift);
+        if (compact) {
+          // 좁은 화면: 캐릭터와 가운데의 패널 사이를 올려다봐야 둘이 함께 들어온다
+          follow.set(player.x + (pad.x - player.x) * 0.6, 8, player.z + (pad.z - player.z) * Math.min(1, 4 / reach));
+        }
+      }
+      // 세로 화면은 좌우 시야가 좁아 랙 앞의 캐릭터와 패널이 함께 들어오지 않는다. 지구 안에서만 시야를 넓힌다
+      if (compact) {
+        fovTarget.current = pad ? 60 : FOV;
       }
       follow.sub(orbit.target);
       // 시야 거리 단계를 바꿨으면, 보던 방향은 그대로 둔 채 거리만 부드럽게 옮긴다

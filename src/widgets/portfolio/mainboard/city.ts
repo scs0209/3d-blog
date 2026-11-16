@@ -1,4 +1,4 @@
-import { DIE_HALF, DISTRICTS, distanceToDistrict, HUB, isCleared, MONUMENT_OFFSET, panelSize } from './district';
+import { DIE_HALF, DISTRICTS, distanceToDistrict, HUB, isCleared, MONUMENT_OFFSET, panelSize, RACK } from './district';
 import { seededRandom } from './layout';
 
 export type CityBlock = {
@@ -43,6 +43,14 @@ const districtObstacles = (portrait: boolean): Rect[] => {
       x1: district.x + half,
       z0: district.z - 1.6,
       z1: district.z + 0.8,
+      h: Number.POSITIVE_INFINITY,
+    },
+    // 거치대 뒤의 서버 랙 (문이 열리는 자리까지)
+    {
+      x0: district.x - RACK.width / 2 - 0.6,
+      x1: district.x + RACK.width / 2 + 0.6,
+      z0: district.z + RACK.front - RACK.depth - 0.4,
+      z1: district.z - 1.6,
       h: Number.POSITIVE_INFINITY,
     },
     {

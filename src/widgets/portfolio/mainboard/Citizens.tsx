@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber';
 import { type RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 import * as three from 'three';
 import type { City } from './city';
-import { ability, DISTRICTS, type DistrictId, grabSpot, HUB, insidePad, type ViewId } from './district';
+import { ability, DISTRICTS, type DistrictId, grabSpot, HUB, insidePad, RACK, rackSpot, type ViewId } from './district';
 import { seededRandom } from './layout';
 
 const BOT_URL = '/portfolio/bot.glb';
@@ -140,6 +140,8 @@ export type Spot = { x: number; z: number };
 const LANE_SIDE = 1.7;
 /** 미니어처끼리 이보다 가까워지지 않는다 */
 const GAP = 3.3;
+/** 내 캐릭터와 주민 사이의 최소 거리. 주민끼리의 간격(GAP)보다 좁아야 길이 막히지 않는다 */
+const PLAYER_GAP = 2.3;
 
 type Walker = {
   bot: Bot;
@@ -485,7 +487,8 @@ export const Player = ({
       const [x, z] = grabSpot(district, portrait);
       positionRef.current.set(x, 0, z);
       destinationRef.current = null;
-      state.current.heading = Math.atan2(district.x - x, district.z - z);
+      // 가운데의 랙을 보고 선다
+      state.current.heading = Math.atan2(district.x - x, district.z + RACK.front - z);
       state.current.pullId = district.id;
       state.current.pullTime = PULL_START;
     }
@@ -536,14 +539,17 @@ export const Player = ({
     let moveX = 0;
     let moveZ = 0;
 
-    // 뽑는 몸짓 중에는 조작을 받지 않고 그 자리에서 패널을 바라본다
+    // 꺼내는 몸짓 중에는 조작을 받지 않는다. 먼저 랙을 보고 문을 열고, 꺼낸 뒤에는 패널 쪽으로 돌아선다
     const target = DISTRICTS.find((item) => item.id === current.pullId);
     const acting = target !== undefined && current.pullTime < PULL_TIME && !still;
     if (acting && target) {
       current.pullTime += delta;
+      const [rackX, rackZ] = rackSpot(target);
+      const lookX = current.pullTime < 0.9 ? rackX : target.x;
+      const lookZ = current.pullTime < 0.9 ? rackZ : target.z;
       current.heading = turn(
         current.heading,
-        Math.atan2(target.x - position.x, target.z - position.z),
+        Math.atan2(lookX - position.x, lookZ - position.z),
         Math.min(1, delta * 14),
       );
     } else if (still) {
@@ -592,8 +598,9 @@ export const Player = ({
         return false;
       }
       for (const spot of crowdRef.current) {
+        // 내 캐릭터는 주민들끼리보다 가까이 지나갈 수 있다: 몸이 겹치지 않는 선에서 옆으로 비켜 간다
         const after = Math.hypot(spot.x - x, spot.z - z);
-        if (after < GAP && after < Math.hypot(spot.x - position.x, spot.z - position.z)) {
+        if (after < PLAYER_GAP && after < Math.hypot(spot.x - position.x, spot.z - position.z)) {
           return true;
         }
       }
@@ -620,7 +627,8 @@ export const Player = ({
       // 모서리에 걸렸으면 옆으로 살짝 비켜 지나간다
       if (!movedX && !movedZ) {
         const dominantZ = Math.abs(stepZ) >= Math.abs(stepX);
-        for (const reach of [1.2, 2.4]) {
+        // 서 있는 주민은 둘레(GAP)가 넓어서, 그 바깥까지 살펴야 돌아갈 길이 보인다
+        for (const reach of [1.2, 2.4, 3.8, 5.2]) {
           let passed = false;
           for (const side of [-1, 1]) {
             const probeX = position.x + (dominantZ ? side * reach : stepX);
@@ -675,7 +683,7 @@ export const Player = ({
     bot.root.position.set(position.x, position.y, position.z);
     bot.root.rotation.y = current.heading;
     pose(bot, current.phase, still ? 0 : current.gait, clock.elapsedTime, 0);
-    // 뽑는 몸짓: 웅크려 손을 뻗고 → 두 팔을 번쩍 들며 뛰어올라 뽑고 → 착지
+    // 꺼내는 몸짓: 손잡이를 잡아 문을 열고 → 꺼낸 것을 번쩍 들며 뛰어오르고 → 착지
     const time = acting ? current.pullTime : PULL_TIME;
     const crouch = smooth(0.3, 0.52, time) * (1 - smooth(0.6, 0.72, time));
     const leap = Math.sin(Math.min(1, Math.max(0, (time - 0.64) / 0.56)) * Math.PI);
@@ -696,7 +704,8 @@ export const Player = ({
       }
     }
     if (acting) {
-      const angle = -1.25 * crouch - 3 * armsUp;
+      // 손잡이를 잡으려 팔을 앞으로 뻗고, 꺼낸 것을 번쩍 들어 올린다
+      const angle = -1.5 * crouch - 3 * armsUp;
       if (bot.parts.arm_l) {
         bot.parts.arm_l.rotation.x = angle;
       }
@@ -751,7 +760,7 @@ export const Player = ({
       if (near === null) {
         current.pullId = null;
       } else if (current.pullId !== near) {
-        // 사각형에 들어서는 순간 그 자리에서 패널을 뽑아 올린다
+        // 사각형에 들어서는 순간 랙 문이 열리고 기억이 나온다. 캐릭터는 그 자리에서 랙을 보고 받아 든다
         current.pullId = near;
         current.pullTime = PULL_START;
         destinationRef.current = null;
