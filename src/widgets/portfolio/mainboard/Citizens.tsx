@@ -5,7 +5,20 @@ import { useFrame } from '@react-three/fiber';
 import { type RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 import * as three from 'three';
 import type { City } from './city';
-import { ability, DISTRICTS, type DistrictId, grabSpot, HUB, insidePad, RACK, rackSpot, type ViewId } from './district';
+import {
+  ability,
+  DISTRICTS,
+  type DistrictId,
+  grabSpot,
+  HUB,
+  insidePad,
+  RACK,
+  rackSpot,
+  SECRET_ACT,
+  SECRET_PULL,
+  type SecretAct,
+  type ViewId,
+} from './district';
 import { seededRandom } from './layout';
 
 const BOT_URL = '/portfolio/bot.glb';
@@ -464,6 +477,8 @@ export const Player = ({
     jumps: 0,
     /** 뛰어오르라는 요청 (키·버튼에서 들어온다) */
     jumpQueued: false,
+    /** 숨은 서버의 서랍을 당기는 중: 먼저 그 앞으로 걸어가고(walk), 손을 뻗어 당긴다(pull) */
+    act: null as (SecretAct & { phase: 'walk' | 'pull'; time: number; fired: boolean }) | null,
   });
   const scratch = useMemo(
     () => ({ forward: new three.Vector3(), right: new three.Vector3(), up: new three.Vector3(0, 1, 0) }),
@@ -493,6 +508,17 @@ export const Player = ({
       state.current.pullTime = PULL_START;
     }
   }, [view, portrait, positionRef, destinationRef]);
+
+  // 숨은 서버가 서랍을 당겨 달라고 하면, 그 앞으로 걸어가 손으로 당긴다
+  useEffect(() => {
+    const handleAct = (event: Event) => {
+      const detail = (event as CustomEvent<SecretAct>).detail;
+      state.current.act = { ...detail, phase: 'walk', time: 0, fired: false };
+      destinationRef.current = new three.Vector3(detail.standX, 0, detail.standZ);
+    };
+    window.addEventListener(SECRET_ACT, handleAct);
+    return () => window.removeEventListener(SECRET_ACT, handleAct);
+  }, [destinationRef]);
 
   // 이동 키는 걷기 화면이 아닐 때도 기억해 둔다: 기억을 보다가 이동 키를 눌러
   // 걷기로 돌아오면, 누르고 있던 방향으로 곧바로 걷기 시작한다
@@ -556,7 +582,35 @@ export const Player = ({
       current.pullTime = PULL_TIME;
     }
 
-    if (walking && !acting) {
+    // 숨은 서버의 서랍: 그 앞까지 몇 걸음 걸어가서, 손잡이를 잡고 당긴다
+    const act = current.act;
+    if (act) {
+      act.time += delta;
+      if (act.phase === 'walk') {
+        const gap = Math.hypot(act.standX - position.x, act.standZ - position.z);
+        if (gap < 1 || act.time > 1.4 || destinationRef.current === null || still || !walking) {
+          act.phase = 'pull';
+          act.time = 0;
+          destinationRef.current = null;
+        }
+      } else {
+        current.heading = turn(
+          current.heading,
+          Math.atan2(act.faceX - position.x, act.faceZ - position.z),
+          Math.min(1, delta * 14),
+        );
+        if (!act.fired && (act.time >= 0.34 || still)) {
+          act.fired = true;
+          window.dispatchEvent(new Event(SECRET_PULL));
+        }
+        if (act.time > 1.05 || still) {
+          current.act = null;
+        }
+      }
+    }
+    const handling = current.act?.phase === 'pull';
+
+    if (walking && !acting && !handling) {
       let inputX = 0;
       let inputY = 0;
       for (const key of keys.current) {
@@ -720,6 +774,26 @@ export const Player = ({
     } else if (bot.parts.head) {
       bot.parts.head.rotation.x = 0;
     }
+    if (current.act?.phase === 'pull' && !still) {
+      // 서랍을 여는 손짓: 팔을 앞으로 뻗어 손잡이를 잡고 → 몸을 뒤로 빼며 당기고 → 놓는다
+      const time = current.act.time;
+      const reach = smooth(0, 0.26, time) * (1 - smooth(0.82, 1.05, time));
+      const haul = smooth(0.34, 0.62, time) * (1 - smooth(0.82, 1.05, time));
+      const angle = -1.55 * reach + 0.6 * haul;
+      if (bot.parts.arm_l) {
+        bot.parts.arm_l.rotation.x = angle;
+      }
+      if (bot.parts.arm_r) {
+        bot.parts.arm_r.rotation.x = angle;
+      }
+      if (bot.parts.head) {
+        bot.parts.head.rotation.x = 0.28 * reach;
+        bot.parts.head.rotation.y = 0;
+      }
+      bot.root.position.x += Math.sin(current.heading) * (reach * 0.5 - haul * 1.1);
+      bot.root.position.z += Math.cos(current.heading) * (reach * 0.5 - haul * 1.1);
+      bot.root.scale.set(SCALE * (1 + reach * 0.05), SCALE * (1 - reach * 0.07), SCALE * (1 + reach * 0.05));
+    }
     if (burst.current) {
       // 힘을 주는 순간 발밑에서 퍼지는 고리
       const spread = (time - 0.64) / 0.5;
@@ -832,9 +906,11 @@ export const Bits = ({
       if (!spot || !child.visible) {
         return;
       }
-      if (!still) {
-        child.rotation.y = clock.elapsedTime * 1.4 + index;
-        child.position.y = 3 + Math.sin(clock.elapsedTime * 2 + index) * 0.4;
+      // 돌고 떠오르는 것은 조각 자체뿐이다. 바닥의 빛 원반은 제자리에 있다
+      const gem = child.children[0];
+      if (!still && gem) {
+        gem.rotation.y = clock.elapsedTime * 1.4 + index;
+        gem.position.y = Math.sin(clock.elapsedTime * 2 + index) * 0.4;
       }
       if (Math.hypot(playerRef.current.x - spot.x, playerRef.current.z - spot.z) < 3.2) {
         onCollect(index);
@@ -857,7 +933,12 @@ export const Bits = ({
               emissiveIntensity={0.9}
             />
           </mesh>
-          <pointLight color='#ffd27a' intensity={60} distance={18} decay={1.8} />
+          {/* 조명 대신 빛나는 원반을 바닥에 깐다: 조각을 주울 때 조명 수가 바뀌면
+              장면의 모든 재질이 다시 컴파일되면서 화면이 잠깐 멈춘다 */}
+          <mesh position={[0, -2.88, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[2.6, 32]} />
+            <meshBasicMaterial color='#ffd27a' transparent opacity={0.22} depthWrite={false} toneMapped={false} />
+          </mesh>
         </group>
       ))}
     </group>

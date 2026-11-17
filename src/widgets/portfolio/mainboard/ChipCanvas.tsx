@@ -421,16 +421,25 @@ export const Effects = ({
 
   const inside = world === 'die';
   return (
-    <EffectComposer key={`${world}-${walking}`} multisampling={0} enableNormalPass={false}>
-      <N8AO aoRadius={inside ? 6 : 2.4} distanceFalloff={1.2} intensity={inside ? 3 : 2.6} quality='medium' halfRes />
+    // 가는 선(바닥 인쇄·대로의 빛줄)이 움직일 때 지글거리지 않도록 다중 샘플링을 켜고,
+    // 주변 음영은 제 해상도에서 계산한 뒤 잡음을 넉넉히 걷어 낸다
+    <EffectComposer key={`${world}-${walking}`} multisampling={4} enableNormalPass={false}>
+      <N8AO
+        aoRadius={inside ? 6 : 2.4}
+        distanceFalloff={1.2}
+        intensity={inside ? 3 : 2.6}
+        quality='medium'
+        denoiseSamples={8}
+        denoiseRadius={14}
+      />
       <DepthOfField
         ref={depth as never}
-        worldFocusRange={walking ? 38 : inside ? 150 : 34}
-        bokehScale={walking ? 4.6 : inside ? 2.2 : 3.2}
-        resolutionScale={0.5}
+        worldFocusRange={walking ? 52 : inside ? 150 : 34}
+        bokehScale={walking ? 3.2 : inside ? 2.2 : 3.2}
+        resolutionScale={0.75}
       />
       <Bloom mipmapBlur luminanceThreshold={1} luminanceSmoothing={0.2} intensity={0.6} radius={0.74} />
-      <Noise opacity={0.045} />
+      <Noise opacity={0.028} />
       <Vignette offset={0.22} darkness={0.78} />
       <ToneMapping />
     </EffectComposer>
