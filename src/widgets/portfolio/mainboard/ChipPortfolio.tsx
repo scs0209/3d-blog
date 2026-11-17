@@ -7,7 +7,17 @@ import { experiences } from '@/entities/portfolio/model/constants/experienceCons
 import { useViewportProfile } from '@/shared/hooks/use-viewport-profile';
 import { aboutMeData, portfolioProjects, skillSections } from '@/widgets/portfolio/consts';
 import type { Shot, World } from './ChipCanvas';
-import { ability, DISTRICT_IDS, DISTRICTS, type DistrictId, type ViewId } from './district';
+import {
+  ability,
+  DISTRICT_IDS,
+  DISTRICTS,
+  type DistrictId,
+  SECRET_FOUND,
+  SECRET_NEAR,
+  SECRET_OPEN,
+  type SecretNear,
+  type ViewId,
+} from './district';
 
 const ChipCanvas = dynamic(() => import('./ChipCanvas').then((mod) => mod.ChipCanvas), { ssr: false });
 
@@ -15,6 +25,8 @@ const ChipCanvas = dynamic(() => import('./ChipCanvas').then((mod) => mod.ChipCa
 const ACCENTS = ['#4de3ff', '#9d8cff', '#5cf0b6', '#ff7ab6'] as const;
 const BOOT_KEY = 'ayaan-portfolio-boot';
 const BITS_KEY = 'ayaan-portfolio-bits';
+const SECRETS_KEY = 'ayaan-portfolio-secrets';
+const SECRET_TOTAL = 6;
 /** 이동 키. 한글 입력 상태에서도 되도록 글자가 아니라 자판 위치로 받는다 */
 const WALK_CODES = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
 /** 도시에 숨겨진 비트의 개수 (Citizens의 BIT_COUNT와 같다) */
@@ -123,6 +135,43 @@ export const ChipPortfolio = () => {
       }
       return next;
     });
+  }, []);
+
+  /** 지금 앞에 서 있는 숨은 서버와, 지금까지 열어 본 숨은 서버들 */
+  const [secret, setSecret] = useState<SecretNear>(null);
+  const [secrets, setSecrets] = useState<number[]>([]);
+
+  useEffect(() => {
+    try {
+      const saved: unknown = JSON.parse(window.localStorage.getItem(SECRETS_KEY) ?? '[]');
+      if (Array.isArray(saved)) {
+        setSecrets(saved.filter((item): item is number => Number.isInteger(item) && item >= 0 && item < SECRET_TOTAL));
+      }
+    } catch {
+      // 저장된 기록을 못 읽으면 처음부터 센다
+    }
+    const handleNear = (event: Event) => setSecret((event as CustomEvent<SecretNear>).detail);
+    const handleFound = (event: Event) => {
+      const id = (event as CustomEvent<number>).detail;
+      setSecrets((current) => {
+        if (current.includes(id)) {
+          return current;
+        }
+        const next = [...current, id];
+        try {
+          window.localStorage.setItem(SECRETS_KEY, JSON.stringify(next));
+        } catch {
+          // 저장하지 못해도 이번 방문 동안은 유지된다
+        }
+        return next;
+      });
+    };
+    window.addEventListener(SECRET_NEAR, handleNear);
+    window.addEventListener(SECRET_FOUND, handleFound);
+    return () => {
+      window.removeEventListener(SECRET_NEAR, handleNear);
+      window.removeEventListener(SECRET_FOUND, handleFound);
+    };
   }, []);
 
   const complete = bits.length === BIT_TOTAL;
@@ -246,6 +295,10 @@ export const ChipPortfolio = () => {
         if (near && !onButton && (event.code === 'KeyE' || event.key === 'Enter')) {
           event.preventDefault();
           handleSelect(near);
+        } else if (secret && !onButton && (event.code === 'KeyE' || event.key === 'Enter')) {
+          // 숨은 서버 앞: 문을 여닫는다
+          event.preventDefault();
+          window.dispatchEvent(new Event(SECRET_OPEN));
         }
       } else if (WALK_CODES.has(event.code)) {
         // 기억을 보고 있거나 전체를 보는 중에 이동 키를 누르면, 바로 걷기로 돌아가 그 방향으로 걷는다
@@ -255,7 +308,7 @@ export const ChipPortfolio = () => {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [world, walking, near, handleEnter, handleExit, handleSelect]);
+  }, [world, walking, near, secret, handleEnter, handleExit, handleSelect]);
 
   const bio = aboutMeData.sections[0];
   const current = DISTRICTS.find((district) => district.id === view);
@@ -385,6 +438,18 @@ export const ChipPortfolio = () => {
               </span>
             </button>
           ) : null}
+          {walking && !near && secret ? (
+            <button
+              type='button'
+              onClick={() => window.dispatchEvent(new Event(SECRET_OPEN))}
+              className={`pointer-events-auto flex items-center gap-3 rounded-full bg-[#e2b85c] py-2 pr-2 pl-5 text-[13px] font-semibold text-[#050608] transition-transform hover:scale-[1.03] ${FOCUS}`}
+            >
+              이 서버 열어 보기
+              <span className='grid h-7 min-w-7 place-items-center rounded-full bg-[#050608] px-2 font-mono text-[11px] text-[#e2b85c]'>
+                {isMobile ? '↑' : 'E'}
+              </span>
+            </button>
+          ) : null}
           {restored ? (
             <div className='rounded-2xl bg-[#e2b85c] px-5 py-3 text-center text-[#050608]' role='status'>
               <p className='text-[15px] font-semibold'>기억 복원 완료</p>
@@ -394,6 +459,8 @@ export const ChipPortfolio = () => {
           <p className='text-[12px] text-[#e2b85c]' aria-live='polite'>
             ◆ 기억 조각 {bits.length}/{BIT_TOTAL}
             {complete ? ' · 연속 점프 해금' : walking && !isMobile ? ' · 도시에 흩어진 금빛 조각을 찾아보세요' : ''}
+            {/* 하나라도 열어 보기 전에는 숨은 서버가 있다는 것을 알리지 않는다 */}
+            {secrets.length > 0 ? ` · 숨은 서버 ${secrets.length}/${SECRET_TOTAL}` : ''}
             {complete ? (
               <button
                 type='button'

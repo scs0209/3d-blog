@@ -129,3 +129,16 @@ export const distanceToDistrict = (x: number, z: number) =>
 
 /** 기억 조각을 모두 모으면 켜진다: 공중에서 몇 번이든 다시 뛸 수 있다 */
 export const ability = { flight: false };
+
+/** 숨은 서버(이스터에그)가 3D 장면과 화면 UI 사이에 주고받는 신호의 이름 */
+export const SECRET_NEAR = 'portfolio:secret-near';
+export const SECRET_OPEN = 'portfolio:secret-open';
+export const SECRET_FOUND = 'portfolio:secret-found';
+/** 숨은 서버가 캐릭터에게: 이 서랍 앞으로 와서 손으로 당겨 달라 (여닫기 모두) */
+export const SECRET_ACT = 'portfolio:secret-act';
+/** 캐릭터가 숨은 서버에게: 지금 손잡이를 잡아당겼다 */
+export const SECRET_PULL = 'portfolio:secret-pull';
+/** 캐릭터가 서야 할 자리와 바라볼 곳 */
+export type SecretAct = { standX: number; standZ: number; faceX: number; faceZ: number };
+/** 지금 캐릭터가 앞에 서 있는 숨은 서버. 없으면 null */
+export type SecretNear = { id: number; file: string } | null;

@@ -16,6 +16,12 @@ export type CityBlock = {
 /** 충돌 상자. h는 그 구조물의 높이: 이보다 높이 떠 있으면 위로 지나갈 수 있다 */
 type Rect = { x0: number; x1: number; z0: number; z1: number; h: number };
 
+/** 문을 열어 볼 수 있는 숨은 서버. (x, z)는 문이 달린 앞면의 가운데 */
+export type Secret = { id: number; x: number; z: number; width: number; height: number };
+
+/** 숨은 서버의 수 */
+export const SECRET_COUNT = 6;
+
 export type LaneNode = { x: number; z: number; links: number[] };
 
 export type City = {
@@ -28,6 +34,8 @@ export type City = {
   groundAt: (x: number, z: number, radius: number) => number;
   /** 중심 광장에서 걸어서 닿을 수 있는 자리인가 */
   reachable: (x: number, z: number) => boolean;
+  /** 문을 열어 볼 수 있는 숨은 서버들 */
+  secrets: Secret[];
 };
 
 const CELL = 12;
@@ -256,5 +264,39 @@ export const createCity = (compact: boolean): City => {
   }
   const reachable = (x: number, z: number) => walkable.has(cellKey(Math.round(x / Step), Math.round(z / Step)));
 
-  return { blocks, nodes, blocked, groundAt, reachable };
+  // 숨은 서버: 앞이 트여 있어 걸어가 설 수 있고, 문을 달 만한 크기인 건물 가운데서 고른다.
+  // 첫 번째는 광장에서 멀지 않은 곳에 둬서 우연히 마주칠 수 있게 하고, 나머지는 서로 멀리 흩어 놓는다
+  const candidates = blocks
+    .map((block) => ({
+      x: block.x,
+      z: block.z + block.depth / 2,
+      width: block.width,
+      height: block.height,
+    }))
+    .filter(
+      (spot) =>
+        spot.height >= 4 &&
+        spot.height <= 14 &&
+        spot.width >= 3.4 &&
+        distanceToDistrict(spot.x, spot.z) > 34 &&
+        Math.hypot(spot.x - HUB[0], spot.z - HUB[1]) > 18 &&
+        !blocked(spot.x, spot.z + 2, 1.3) &&
+        reachable(spot.x, spot.z + 2),
+    );
+  const secrets: Secret[] = [];
+  const nearest = [...candidates].sort(
+    (a, b) => Math.hypot(a.x - HUB[0], a.z - HUB[1]) - Math.hypot(b.x - HUB[0], b.z - HUB[1]),
+  )[0];
+  if (nearest) {
+    secrets.push({ id: 0, ...nearest });
+  }
+  const pick = seededRandom(23);
+  for (let attempt = 0; attempt < 600 && secrets.length < SECRET_COUNT && candidates.length > 0; attempt += 1) {
+    const spot = candidates[Math.floor(pick() * candidates.length)];
+    if (spot && secrets.every((other) => Math.hypot(other.x - spot.x, other.z - spot.z) > 60)) {
+      secrets.push({ id: secrets.length, ...spot });
+    }
+  }
+
+  return { blocks, nodes, blocked, groundAt, reachable, secrets };
 };

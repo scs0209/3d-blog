@@ -24,6 +24,7 @@ import {
 } from './district';
 import { seededRandom } from './layout';
 import { createBeaconLabel, createPanel } from './panels';
+import { Secrets } from './Secrets';
 import { createSilk, type SilkPen } from './silk';
 import { createLabelTexture } from './textures';
 
@@ -354,7 +355,7 @@ export const Floor = ({ fonts, onGround }: { fonts: number; onGround: (point: th
       }}
     >
       <planeGeometry args={[DIE_HALF * 2, DIE_HALF * 2]} />
-      <meshStandardMaterial map={map} metalness={0.78} roughness={0.34} envMapIntensity={0.9} />
+      <meshStandardMaterial map={map} metalness={0.78} roughness={0.42} envMapIntensity={0.9} />
     </mesh>
   );
 };
@@ -1271,6 +1272,7 @@ export const DieWorld = ({
           crowdRef={crowdRef}
         />
         <Bits city={city} collected={collected} still={still} playerRef={positionRef} onCollect={onCollect} />
+        <Secrets city={city} m={m} accent={accent} still={still} fonts={fonts} playerRef={positionRef} />
         <Player
           city={city}
           accent={accent}
